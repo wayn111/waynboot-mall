@@ -4,6 +4,7 @@ import com.wayn.common.util.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -48,6 +49,7 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage());
         return R.error(HttpStatus.FORBIDDEN.value(), "没有权限，请联系管理员授权");
     }
+
     /**
      * 全局异常
      */
@@ -55,5 +57,15 @@ public class GlobalExceptionHandler {
     public R handleException(Exception e) {
         log.error(e.getMessage(), e);
         return R.error(e.getMessage());
+    }
+
+    /**
+     * 自定义验证异常
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public R validExceptionHandler(MethodArgumentNotValidException e) {
+        log.error(e.getMessage(), e);
+        String message = e.getBindingResult().getFieldError().getDefaultMessage();
+        return R.error(message);
     }
 }

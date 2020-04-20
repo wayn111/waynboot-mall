@@ -59,6 +59,12 @@ public interface IMenuService extends IService<SysMenu> {
      * @param menus 菜单列表
      * @return 树结构列表
      */
-    public List<TreeVO> buildMenuTreeSelect(List<SysMenu> menus);
+    List<TreeVO> buildMenuTreeSelect(List<SysMenu> menus);
 
+    /**
+     * 根据角色id 查询关联的菜单id集合
+     * @param roleId 角色id
+     * @return 菜单id集合
+     */
+    List<Long> selectCheckedkeys(Long roleId);
 }

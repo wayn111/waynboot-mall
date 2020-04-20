@@ -60,8 +60,8 @@ public class BaseController {
             Page<T> tPage = new Page<>(pageNumber, pageSize);
             if (StringUtils.isNotEmpty(sortName)) {
                 OrderItem orderItem = new OrderItem();
-                orderItem.setColumn(sortName);
-                if (Constants.ORDER_DESC.equals(sortOrder)) {
+                orderItem.setColumn(sortName.replaceAll("[A-Z]", "_$0").toLowerCase());
+                if (sortOrder.startsWith(Constants.ORDER_DESC)) {
                     orderItem.setAsc(false);
                 }
                 tPage.addOrder(orderItem);
