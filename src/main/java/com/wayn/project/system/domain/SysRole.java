@@ -7,6 +7,7 @@ import com.wayn.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -26,16 +27,19 @@ public class SysRole extends BaseEntity {
     /**
      * 角色名称
      */
+    @NotBlank(message = "角色名称不能为空")
     private String roleName;
 
     /**
      * 角色权限
      */
+    @NotBlank(message = "权限字符不能为空")
     private String roleKey;
 
     /**
      * 角色排序
      */
+    @NotBlank(message = "角色排序不能为空")
     private String roleSort;
 
     /**
@@ -53,6 +57,13 @@ public class SysRole extends BaseEntity {
      * 删除标志（0代表存在 1代表删除）
      */
     private String delFlag;
+
+    public SysRole(Long roleId) {
+        this.roleId = roleId;
+    }
+    public SysRole() {
+    }
+
 
     public static boolean isAdmin(Long roleId) {
         return roleId != null && 1L == roleId;

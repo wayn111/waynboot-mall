@@ -50,8 +50,30 @@ public interface IRoleService extends IService<SysRole> {
 
     /**
      * 保存角色信息和关联菜单
-     *
-     * @return boolean类型
+     * @param role 角色信息
+     * @return boolean
      */
     boolean insertRoleAndMenu(SysRole role);
+
+    /**
+     * 更新角色信息和关联菜单
+     * @param role 角色信息
+     * @return boolean
+     */
+    boolean updateRoleAndMenu(SysRole role);
+
+    /**
+     * 通过角色id删除角色
+     * @param roleIds
+     * @return boolean
+     */
+    boolean deleteRoleByIds(List<Long> roleIds);
+
+    /**
+     * 通过角色ID查询角色使用数量
+     *
+     * @param roleId 角色id
+     * @return int
+     */
+    int countUserRoleByRoleId(Long roleId);
 }

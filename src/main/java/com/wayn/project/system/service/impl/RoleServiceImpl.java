@@ -8,11 +8,14 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.project.system.domain.SysRole;
 import com.wayn.project.system.domain.SysRoleMenu;
+import com.wayn.project.system.domain.SysUserRole;
 import com.wayn.project.system.mapper.RoleMapper;
 import com.wayn.project.system.service.IRoleMenuService;
 import com.wayn.project.system.service.IRoleService;
+import com.wayn.project.system.service.IUserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +30,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
 
     @Autowired
     private IRoleMenuService iRoleMenuService;
+
+    @Autowired
+    private IUserRoleService iUserRoleService;
 
     @Override
     public List<String> selectRoleByUserId(Long userId) {
@@ -60,11 +66,40 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         }
     }
 
+    @Transactional
     @Override
     public boolean insertRoleAndMenu(SysRole role) {
         save(role);
         List<SysRoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new SysRoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
-        return iRoleMenuService.saveBatch(roleMenus);
+        return roleMenus.isEmpty() ? true : iRoleMenuService.saveBatch(roleMenus);
+    }
+
+    @Transactional
+    @Override
+    public boolean updateRoleAndMenu(SysRole role) {
+
+        updateById(role);
+        iRoleMenuService.remove(new QueryWrapper<SysRoleMenu>().eq("role_id", role.getRoleId()));
+        List<SysRoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new SysRoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
+        return roleMenus.isEmpty() ? true : iRoleMenuService.saveBatch(roleMenus);
+    }
+
+    @Override
+    public boolean deleteRoleByIds(List<Long> roleIds) {
+        for (Long roleId : roleIds) {
+            checkRoleAllowed(new SysRole(roleId));
+            SysRole sysRole = getById(roleId);
+            int count = countUserRoleByRoleId(roleId);
+            if (count > 0) {
+                throw new BusinessException(String.format("%1$s已分配,不能删除", sysRole.getRoleName()));
+            }
+        }
+        return removeByIds(roleIds);
+    }
+
+    @Override
+    public int countUserRoleByRoleId(Long roleId) {
+        return iUserRoleService.count(new QueryWrapper<SysUserRole>().eq("role_id", roleId));
     }
 
     @Override

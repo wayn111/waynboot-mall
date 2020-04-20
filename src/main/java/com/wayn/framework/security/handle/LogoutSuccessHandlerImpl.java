@@ -10,10 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -30,17 +28,16 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
 
     @SneakyThrows
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException, ServletException {
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
         if (Objects.nonNull(loginUser)) {
             // 删除用户缓存记录
             tokenService.delLoginUser(loginUser.getToken());
-            //设置状态码
-            response.setStatus(200);
-            //将 登录失败 信息打包成json格式返回
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().print(JsonUtil.marshal(R.success("退出成功")));
         }
+        // 设置状态码
+        response.setStatus(200);
+        // 将登录失败信息打包成json格式返回
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().print(JsonUtil.marshal(R.success("退出成功")));
     }
 }

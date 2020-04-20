@@ -10,6 +10,7 @@ import com.wayn.project.system.domain.SysMenu;
 import com.wayn.project.system.service.IMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,4 +42,16 @@ public class MenuController extends BaseController {
         List<SysMenu> menus = iMenuService.selectMenuList(menu, userId);
         return R.success().add("menuTree", iMenuService.buildMenuTreeSelect(menus));
     }
+
+    /**
+     * 获取菜单树列表
+     */
+    @GetMapping("/roleMenuTreeselect/{roleId}")
+    public R roleMenuTreeselect(@PathVariable Long roleId) {
+        LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        Long userId = loginUser.getUser().getUserId();
+        List<SysMenu> menus = iMenuService.selectMenuList(null, userId);
+        return R.success().add("menuTree", iMenuService.buildMenuTreeSelect(menus)).add("checkedKeys", iMenuService.selectCheckedkeys(roleId));
+    }
+
 }
