@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.wayn.common.base.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * 角色表 sys_role
  */
 @Data
+@ApiModel("角色实体")
 @EqualsAndHashCode(callSuper = true)
 public class SysRole extends BaseEntity {
 
