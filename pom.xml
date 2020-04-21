@@ -24,6 +24,7 @@
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <fastjson.version>1.2.58</fastjson.version>
         <swagger.version>2.9.2</swagger.version>
+        <easypoi.version>4.1.0</easypoi.version>
     </properties>
 
     <dependencies>
@@ -133,6 +134,23 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-base</artifactId>
+            <version>${easypoi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-annotation</artifactId>
+            <version>${easypoi.version}</version>
         </dependency>
 
         <!-- swagger2-->

@@ -1,5 +1,6 @@
 package com.wayn.common.base;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,6 +19,7 @@ public class BaseEntity implements Serializable {
     /**
      * 创建时间
      */
+    @Excel(name = "创建时间", format="yyyy-MM-dd HH:mm:ss" ,width = 25)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
@@ -36,6 +38,7 @@ public class BaseEntity implements Serializable {
     /**
      * 备注
      */
+    @Excel(name = "备注", width = 25)
     private String remark;
 
     /**

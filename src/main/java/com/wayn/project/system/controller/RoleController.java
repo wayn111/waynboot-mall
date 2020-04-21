@@ -5,10 +5,12 @@ import com.wayn.common.base.BaseController;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.util.R;
 import com.wayn.common.util.SecurityUtils;
+import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.project.system.domain.SysRole;
 import com.wayn.project.system.service.IRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Api(value = "角色接口")
 @RestController
 @RequestMapping("system/role")
@@ -76,4 +79,12 @@ public class RoleController extends BaseController {
     public R deleteRole(@PathVariable List<Long> roleIds) {
         return R.success().add("data", iRoleService.deleteRoleByIds(roleIds));
     }
+
+    @GetMapping("/export")
+    public R export(SysRole role) {
+        List<SysRole> list = iRoleService.list(role);
+        return R.success(ExcelUtil.exportExcel(list, "角色数据.xls"));
+    }
+
+
 }

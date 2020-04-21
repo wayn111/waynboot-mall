@@ -11,4 +11,6 @@ public interface RoleMapper extends BaseMapper<SysRole> {
     List<String> selectRoleByUserId(Long userId);
 
     IPage<SysRole> selectListPage(Page<SysRole> page, SysRole role);
+
+    List<SysRole> selectList(SysRole role);
 }

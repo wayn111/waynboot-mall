@@ -27,6 +27,9 @@ public class WaynConfig {
     public static String getUploadDir() {
         return uploadDir;
     }
+    public static String getDownloadPath() {
+        return getUploadDir() + "/download/";
+    }
 
     public void setUploadDir(String uploadDir) {
         WaynConfig.uploadDir = uploadDir;
