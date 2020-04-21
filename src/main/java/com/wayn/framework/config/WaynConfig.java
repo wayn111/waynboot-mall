@@ -14,15 +14,15 @@ public class WaynConfig {
     /**
      * 项目名称
      */
-    private String name;
+    private static String name;
     /**
      * 项目版本
      */
-    private String version;
+    private static String version;
     /**
      * 联系邮件
      */
-    private String email;
+    private static String email;
 
     public static String getUploadDir() {
         return uploadDir;
@@ -30,5 +30,29 @@ public class WaynConfig {
 
     public void setUploadDir(String uploadDir) {
         WaynConfig.uploadDir = uploadDir;
+    }
+
+    public static String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        WaynConfig.name = name;
+    }
+
+    public static String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        WaynConfig.version = version;
+    }
+
+    public static String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        WaynConfig.email = email;
     }
 }
