@@ -1,5 +1,6 @@
 package com.wayn.project.system.domain;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -8,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -24,30 +26,35 @@ public class SysRole extends BaseEntity {
      * 角色ID
      */
     @TableId(type = IdType.AUTO)
+    @Excel(name = "角色编号", type = 10)
     private Long roleId;
 
     /**
      * 角色名称
      */
     @NotBlank(message = "角色名称不能为空")
+    @Excel(name = "角色名称")
     private String roleName;
 
     /**
-     * 角色权限
+     * 权限字符
      */
     @NotBlank(message = "权限字符不能为空")
+    @Excel(name = "权限字符")
     private String roleKey;
 
     /**
      * 角色排序
      */
-    @NotBlank(message = "角色排序不能为空")
-    private String roleSort;
+    @DecimalMin(value = "0", message = "角色排序不能为空")
+    @Excel(name = "角色排序", type = 10)
+    private Integer roleSort;
 
     /**
      * 角色状态（0正常 1停用）
      */
-    private String roleStatus;
+    @Excel(name = "角色状态", replace = {"启用_0", "禁用_1"})
+    private Byte roleStatus;
 
     /**
      * 关联菜单id集合
@@ -58,11 +65,12 @@ public class SysRole extends BaseEntity {
     /**
      * 删除标志（0代表存在 1代表删除）
      */
-    private String delFlag;
+    private Byte delFlag;
 
     public SysRole(Long roleId) {
         this.roleId = roleId;
     }
+
     public SysRole() {
     }
 

@@ -65,7 +65,7 @@ public class SysUser extends BaseEntity {
      * 删除标志（0代表存在 1代表删除）
      */
     @TableLogic
-    private Integer delFlag;
+    private Byte delFlag;
 
     public static boolean isAdmin(Long userId) {
         return userId != null && 1L == userId;

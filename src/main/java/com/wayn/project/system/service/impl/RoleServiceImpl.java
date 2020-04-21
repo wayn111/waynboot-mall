@@ -106,4 +106,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     public IPage<SysRole> listPage(Page<SysRole> page, SysRole role) {
         return roleMapper.selectListPage(page, role);
     }
+
+    @Override
+    public List<SysRole> list(SysRole role) {
+        return roleMapper.selectList(role);
+    }
 }

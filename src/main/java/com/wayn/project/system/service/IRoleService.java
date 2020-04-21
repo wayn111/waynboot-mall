@@ -18,7 +18,14 @@ public interface IRoleService extends IService<SysRole> {
     IPage<SysRole> listPage(Page<SysRole> page, SysRole role);
 
     /**
-     * 查询用户id查询权限
+     * 查询角色列表
+     * @param role 查询参数
+     * @return 角色列表
+     */
+    List<SysRole> list(SysRole role);
+
+    /**
+     * 根据用户id查询权限
      *
      * @param userId 用户id
      * @return 权限列表
@@ -50,6 +57,7 @@ public interface IRoleService extends IService<SysRole> {
 
     /**
      * 保存角色信息和关联菜单
+     *
      * @param role 角色信息
      * @return boolean
      */
@@ -57,6 +65,7 @@ public interface IRoleService extends IService<SysRole> {
 
     /**
      * 更新角色信息和关联菜单
+     *
      * @param role 角色信息
      * @return boolean
      */
@@ -64,6 +73,7 @@ public interface IRoleService extends IService<SysRole> {
 
     /**
      * 通过角色id删除角色
+     *
      * @param roleIds
      * @return boolean
      */
