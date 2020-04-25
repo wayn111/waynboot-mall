@@ -34,7 +34,7 @@ public class RoleController extends BaseController {
         return R.success().add("page", iRoleService.listPage(page, role));
     }
 
-    @ApiOperation(value = "保存用户", notes = "保存用户")
+    @ApiOperation(value = "保存角色", notes = "保存角色")
     @PostMapping
     public R addRole(@Validated @RequestBody SysRole role) {
         if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleNameUnique(role))) {
@@ -60,7 +60,7 @@ public class RoleController extends BaseController {
         return R.result(iRoleService.updateRoleAndMenu(role));
     }
 
-    @ApiOperation(value = "更新用户状态", notes = "更新用户状态")
+    @ApiOperation(value = "更新角色状态", notes = "更新角色状态")
     @PutMapping("changeStatus")
     public R changeStatus(@RequestBody SysRole role) {
         iRoleService.checkRoleAllowed(role);
@@ -77,14 +77,13 @@ public class RoleController extends BaseController {
     @ApiOperation("删除角色")
     @DeleteMapping("/{roleIds}")
     public R deleteRole(@PathVariable List<Long> roleIds) {
-        return R.success().add("data", iRoleService.deleteRoleByIds(roleIds));
+        iRoleService.deleteRoleByIds(roleIds);
+        return R.success();
     }
 
     @GetMapping("/export")
     public R export(SysRole role) {
         List<SysRole> list = iRoleService.list(role);
-        return R.success(ExcelUtil.exportExcel(list, "角色数据.xls"));
+        return R.success(ExcelUtil.exportExcel(list, SysRole.class, "角色数据.xls"));
     }
-
-
 }

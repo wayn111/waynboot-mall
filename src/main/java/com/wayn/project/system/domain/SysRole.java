@@ -46,7 +46,7 @@ public class SysRole extends BaseEntity {
     /**
      * 角色排序
      */
-    @DecimalMin(value = "0", message = "角色排序不能为空")
+    @DecimalMin(value = "0", message = "角色排序不能小于0")
     @Excel(name = "角色排序", type = 10)
     private Integer roleSort;
 
@@ -54,7 +54,7 @@ public class SysRole extends BaseEntity {
      * 角色状态（0正常 1停用）
      */
     @Excel(name = "角色状态", replace = {"启用_0", "禁用_1"})
-    private Byte roleStatus;
+    private Integer roleStatus;
 
     /**
      * 关联菜单id集合
@@ -65,7 +65,7 @@ public class SysRole extends BaseEntity {
     /**
      * 删除标志（0代表存在 1代表删除）
      */
-    private Byte delFlag;
+    private Integer delFlag;
 
     public SysRole(Long roleId) {
         this.roleId = roleId;

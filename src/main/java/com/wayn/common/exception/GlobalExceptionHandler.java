@@ -4,6 +4,7 @@ import com.wayn.common.util.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,6 +31,15 @@ public class GlobalExceptionHandler {
             return R.error(e.getMessage());
         }
         return R.error(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 登陆错误异常
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public R badCredentialsException(BadCredentialsException e) {
+        log.error(e.getMessage(), e);
+        return R.error("用户名或者密码错误");
     }
 
     /**

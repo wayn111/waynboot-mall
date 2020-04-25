@@ -1,6 +1,7 @@
 package com.wayn.project.system.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.wayn.project.system.domain.SysDept;
 import com.wayn.project.system.domain.SysMenu;
 import lombok.Data;
 
@@ -30,6 +31,12 @@ public class TreeVO {
         this.id = menu.getMenuId();
         this.label = menu.getMenuName();
         this.children = menu.getChildren().stream().map(TreeVO::new).collect(Collectors.toList());
+    }
+
+    public TreeVO(SysDept dept) {
+        this.id = dept.getDeptId();
+        this.label = dept.getDeptName();
+        this.children = dept.getChildren().stream().map(TreeVO::new).collect(Collectors.toList());
     }
 
     public TreeVO() {
