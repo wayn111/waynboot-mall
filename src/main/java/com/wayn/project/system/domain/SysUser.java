@@ -1,13 +1,22 @@
 package com.wayn.project.system.domain;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.wayn.common.base.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.List;
+
 @Data
+@ApiModel("用户实体")
 @EqualsAndHashCode(callSuper = true)
 public class SysUser extends BaseEntity {
     private static final long serialVersionUID = -8079172156772887677L;
@@ -20,42 +29,61 @@ public class SysUser extends BaseEntity {
     /**
      * 用户名
      */
+    @Excel(name = "用户名称")
+    @NotBlank(message = "用户名不能为空")
     private String userName;
 
     /**
-     * 别称
+     * 用户昵称
      */
+    @Excel(name = "用户昵称")
+    @NotBlank(message = "用户名不能为空")
     private String nickName;
 
     /**
      * 密码
      */
+    @Size(min = 6, max = 50, message = "密码长度不能低于6个字符")
     private String password;
 
     /**
      * 性别
      */
-    private Byte sex;
+    @Excel(name = "用户性别", type = 10, replace = {"男_0", "女_1"})
+    private Integer sex;
 
     /**
      * 用户状态 0 启用 1 禁用
      */
-    private Byte userStatus;
+    @Excel(name = "用户状态", type = 10, replace = {"启用_0", "禁用_1"})
+    private Integer userStatus;
 
     /**
      * 邮箱
      */
+    @Email(message = "邮箱格式不正确")
+    @Size(min = 0, max = 50, message = "邮箱长度不能超过50个字符")
+    @Excel(name = "邮箱", width = 20)
     private String email;
 
     /**
      * 手机号码
      */
+    @Size(min = 0, max = 11, message = "联系电话长度不能超过11个字符")
+    @Excel(name = "手机号码", width = 20)
     private String phone;
 
     /**
      * 关联部门id
      */
-    private Integer deptId;
+    private Long deptId;
+
+    /**
+     * 关联部门名称
+     */
+    @TableField(exist = false)
+    @Excel(name = "部门名称", width = 15)
+    private String deptName;
 
     /**
      * 用户头像
@@ -65,7 +93,22 @@ public class SysUser extends BaseEntity {
      * 删除标志（0代表存在 1代表删除）
      */
     @TableLogic
-    private Byte delFlag;
+    private Integer delFlag;
+
+    @TableField(exist = false)
+    private SysDept sysDept;
+
+    /**
+     * 角色对象
+     */
+    @TableField(exist = false)
+    private List<SysRole> roles;
+
+    /**
+     * 角色组
+     */
+    @TableField(exist = false)
+    private Long[] roleIds;
 
     public static boolean isAdmin(Long userId) {
         return userId != null && 1L == userId;

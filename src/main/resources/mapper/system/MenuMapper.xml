@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wayn.project.system.mapper.MenuMapper">
 
 	<resultMap type="com.wayn.project.system.domain.SysMenu" id="SysMenuResult">
@@ -21,19 +21,23 @@
 		<result property="remark"         column="remark"         />
 	</resultMap>
 
-	<sql id="selectMenuVo">
+    <sql id="selectMenuVo">
         select menu_id, menu_name, parent_id, order_num, path, component, is_frame, menu_type, menu_status, visible, ifnull(perms,'') as perms, icon, create_time
-		from sys_menu
+		from sys_menu m
     </sql>
 
-	<select id="selectListPage" parameterType="com.wayn.project.system.domain.SysMenu" resultMap="SysMenuResult">
-		<include refid="selectMenuVo"></include>
-		<where>
-			<if test="menu.menuId != null ">and menu_id = #{menu.menuId}</if>
-		</where>
-	</select>
+    <select id="selectMenuList" parameterType="com.wayn.project.system.domain.SysMenu" resultMap="SysMenuResult">
+        <include refid="selectMenuVo"></include>
+        <where>
+			<if test="menuName != null  and menuName != '' ">
+				and m.menu_name like CONCAT('%',#{menuName},'%')
+			</if>
+            <if test="menuStatus != null">and m.menu_status = #{menuStatus}</if>
+        </where>
+		order by m.parent_id, m.order_num
+    </select>
 
-	<select id="selectMenuTreeAll" resultMap="SysMenuResult">
+    <select id="selectMenuTreeAll" resultMap="SysMenuResult">
 		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.menu_status, m.visible, ifnull(m.perms,'') as perms, m.visible, m.is_frame, m.menu_type, m.icon, m.order_num, m.create_time
 		from sys_menu m where m.menu_type in ('M', 'C') and m.menu_status = 0
 		order by m.parent_id, m.order_num
@@ -50,7 +54,7 @@
 		order by m.parent_id, m.order_num
 	</select>
 
-	<select id="selectMenuPermsByUserId" parameterType="Long" resultType="String">
+    <select id="selectMenuPermsByUserId" parameterType="Long" resultType="String">
 		select distinct m.perms
 		from sys_menu m
 			 left join sys_role_menu rm on m.menu_id = rm.menu_id
@@ -59,14 +63,19 @@
 		where m.menu_status = '0' and r.role_status = '0' and ur.user_id = #{userId}
 	</select>
 
-	<select id="selectMenuListByUserId" parameterType="long" resultMap="SysMenuResult">
-		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.menu_type, m.icon, m.order_num, m.create_time
+    <select id="selectMenuListByUserId" resultMap="SysMenuResult">
+		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.visible, m.menu_status, ifnull(m.perms,'') as perms, m.is_frame, m.menu_type, m.icon, m.order_num, m.create_time
 		from sys_menu m
 		left join sys_role_menu rm on m.menu_id = rm.menu_id
 		left join sys_user_role ur on rm.role_id = ur.role_id
 		left join sys_role ro on ur.role_id = ro.role_id
-		where ur.user_id = #{userId}
+		<where>
+			ur.user_id = #{userId}
+			<if test="menu.menuName != null and menu.menuName != '' ">
+				and m.menu_name like CONCAT('%',#{menu.menuName},'%')
+			</if>
+			<if test="menu.menuStatus != null">and menu_status = #{menu.menuStatus}</if>
+		</where>
 		order by m.parent_id, m.order_num
 	</select>
-
-</mapper> 
+</mapper>

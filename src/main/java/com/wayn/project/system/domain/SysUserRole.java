@@ -17,4 +17,11 @@ public class SysUserRole {
      */
     private Long roleId;
 
+    public SysUserRole(Long userId, Long roleId) {
+        this.userId = userId;
+        this.roleId = roleId;
+    }
+
+    public SysUserRole() {
+    }
 }

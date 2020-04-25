@@ -40,10 +40,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     }
 
     @Override
+    public List<Integer> selectRoleListByUserId(Long userId) {
+        return roleMapper.selectRoleListByUserId(userId);
+    }
+
+    @Override
     public String checkRoleNameUnique(SysRole role) {
-        Long roleId = Objects.isNull(role.getRoleId()) ? -1L : role.getRoleId();
+        long roleId = Objects.isNull(role.getRoleId()) ? -1L : role.getRoleId();
         SysRole sysRole = getOne(new QueryWrapper<SysRole>().eq("role_name", role.getRoleName()));
-        if (sysRole != null && sysRole.getRoleId().longValue() != roleId.longValue()) {
+        if (sysRole != null && sysRole.getRoleId() != roleId) {
             return SysConstants.NOT_UNIQUE;
         }
         return SysConstants.UNIQUE;
@@ -51,9 +56,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
 
     @Override
     public String checkRoleKeyUnique(SysRole role) {
-        Long roleId = Objects.isNull(role.getRoleId()) ? -1L : role.getRoleId();
+        long roleId = Objects.isNull(role.getRoleId()) ? -1L : role.getRoleId();
         SysRole sysRole = getOne(new QueryWrapper<SysRole>().eq("role_key", role.getRoleKey()));
-        if (sysRole != null && sysRole.getRoleId().longValue() != roleId.longValue()) {
+        if (sysRole != null && sysRole.getRoleId() != roleId) {
             return SysConstants.NOT_UNIQUE;
         }
         return SysConstants.UNIQUE;
@@ -71,17 +76,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     public boolean insertRoleAndMenu(SysRole role) {
         save(role);
         List<SysRoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new SysRoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
-        return roleMenus.isEmpty() ? true : iRoleMenuService.saveBatch(roleMenus);
+        return roleMenus.isEmpty() || iRoleMenuService.saveBatch(roleMenus);
     }
 
     @Transactional
     @Override
     public boolean updateRoleAndMenu(SysRole role) {
-
         updateById(role);
         iRoleMenuService.remove(new QueryWrapper<SysRoleMenu>().eq("role_id", role.getRoleId()));
         List<SysRoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new SysRoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
-        return roleMenus.isEmpty() ? true : iRoleMenuService.saveBatch(roleMenus);
+        return roleMenus.isEmpty() || iRoleMenuService.saveBatch(roleMenus);
     }
 
     @Override
@@ -104,11 +108,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
 
     @Override
     public IPage<SysRole> listPage(Page<SysRole> page, SysRole role) {
-        return roleMapper.selectListPage(page, role);
+        return roleMapper.selectRoleListPage(page, role);
     }
 
     @Override
     public List<SysRole> list(SysRole role) {
-        return roleMapper.selectList(role);
+        return roleMapper.selectRoleList(role);
     }
 }

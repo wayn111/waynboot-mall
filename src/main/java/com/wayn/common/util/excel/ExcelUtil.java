@@ -3,7 +3,6 @@ package com.wayn.common.util.excel;
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.wayn.framework.config.WaynConfig;
-import com.wayn.project.system.domain.SysRole;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -45,15 +44,17 @@ public class ExcelUtil {
 
     /**
      * 导出excel到指定文件中
-     * @param list excel数据
+     *
+     * @param list         excel数据
+     * @param tClass 解析对象类型
      * @param originalName 文件名
      * @return 返回指定文件的名称
      */
-    public static String exportExcel(List<SysRole> list, String originalName) {
+    public static <T> String exportExcel(List<T> list, Class<T> tClass, String originalName) {
         ExportParams exportParams = new ExportParams();
         exportParams.setStyle(IExcelExportStylerImpl.class);
         Workbook workbook = ExcelExportUtil.exportExcel(exportParams,
-                SysRole.class, list);
+                tClass, list);
         String filename = ExcelUtil.encodingFilename(originalName);
         try (OutputStream out = new FileOutputStream(ExcelUtil.getAbsoluteFile(filename))) {
             workbook.write(out);

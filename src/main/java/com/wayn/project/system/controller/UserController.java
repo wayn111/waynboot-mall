@@ -1,25 +1,139 @@
 package com.wayn.project.system.controller;
 
+import cn.afterturn.easypoi.excel.entity.ImportParams;
+import cn.afterturn.easypoi.excel.imports.ExcelImportService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.common.base.BaseController;
+import com.wayn.common.constant.SysConstants;
 import com.wayn.common.util.R;
+import com.wayn.common.util.SecurityUtils;
+import com.wayn.common.util.excel.ExcelUtil;
+import com.wayn.project.system.domain.SysUser;
+import com.wayn.project.system.service.IRoleService;
 import com.wayn.project.system.service.IUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
+@Api("用户接口")
 @RestController
-public class UserController {
+@RequestMapping("system/user")
+public class UserController extends BaseController {
 
     @Autowired
     private IUserService iUserService;
 
-    @GetMapping("system/user")
-    public R index(HttpServletRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @Autowired
+    private IRoleService iRoleService;
 
-        return R.success().add("list", iUserService.list());
+    @ApiOperation(value = "用户列表", notes = "用户列表")
+    @GetMapping("/list")
+    public R list(SysUser user) {
+        Page<SysUser> page = getPage();
+        return R.success().add("page", iUserService.listPage(page, user));
+    }
+
+    @ApiOperation("获取用户详细")
+    @GetMapping(value = {"/", "/{userId}"})
+    public R getInfo(@PathVariable(value = "userId", required = false) Long userId) {
+        R success = R.success();
+        success.add("roles", iRoleService.list());
+        if (Objects.nonNull(userId)) {
+            success.add("roleIds", iRoleService.selectRoleListByUserId(userId));
+            success.add("user", iUserService.getById(userId));
+        }
+        return success;
+    }
+
+    @ApiOperation("添加用户")
+    @PostMapping
+    public R addUser(@Validated @RequestBody SysUser user) {
+        if (SysConstants.NOT_UNIQUE.equals(iUserService.checkUserNameUnique(user.getUserName()))) {
+            return R.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+        } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
+            return R.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+        } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkEmailUnique(user))) {
+            return R.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+        }
+        user.setCreateBy(SecurityUtils.getUsername());
+        user.setCreateTime(new Date());
+        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+        return R.result(iUserService.insertUserAndRole(user));
+    }
+
+    @ApiOperation("更新用户")
+    @PutMapping
+    public R updateUser(@Validated @RequestBody SysUser user) {
+        iUserService.checkUserAllowed(user);
+        if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
+            return R.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+        } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkEmailUnique(user))) {
+            return R.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+        }
+        user.setUpdateBy(SecurityUtils.getUsername());
+        user.setUpdateTime(new Date());
+        return R.result(iUserService.updateUserAndRole(user));
+    }
+
+    @PutMapping("resetPwd")
+    public R resetPwd(@RequestBody SysUser user) {
+        iUserService.checkUserAllowed(user);
+        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+        user.setUpdateBy(SecurityUtils.getUsername());
+        user.setUpdateTime(new Date());
+        return R.result(iUserService.updateById(user));
+    }
+
+    @ApiOperation(value = "更新用户状态", notes = "更新用户状态")
+    @PutMapping("changeStatus")
+    public R changeStatus(@RequestBody SysUser user) {
+        iUserService.checkUserAllowed(user);
+        user.setUpdateBy(SecurityUtils.getUsername());
+        return R.result(iUserService.updateById(user));
+    }
+
+    @ApiOperation("删除用户")
+    @DeleteMapping("/{userIds}")
+    public R deleteUser(@PathVariable List<Long> userIds) {
+        iUserService.removeByIds(userIds);
+        return R.success();
+    }
+
+    @GetMapping("/export")
+    public R export(SysUser user) {
+        List<SysUser> list = iUserService.list(user);
+        list.forEach(item -> item.setDeptName(item.getSysDept().getDeptName()));
+        return R.success(ExcelUtil.exportExcel(list, SysUser.class, "用户数据.xls"));
+    }
+
+    @ResponseBody
+    @PostMapping("/importData")
+    public R importData(@RequestParam("file") MultipartFile file) throws Exception {
+        InputStream inputstream = file.getInputStream();
+        ImportParams params = new ImportParams();
+        List<SysUser> list = new ExcelImportService().importExcelByIs(inputstream, SysUser.class, params, false).getList();
+        for (SysUser user : list) {
+            if (SysConstants.NOT_UNIQUE.equals(iUserService.checkUserNameUnique(user.getUserName()))) {
+                return R.error("导入用户'" + user.getUserName() + "'失败，登录账号已存在");
+            } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
+                return R.error("导入用户'" + user.getUserName() + "'失败，手机号码已存在");
+            } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkEmailUnique(user))) {
+                return R.error("导入用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            }
+            user.setDeptId(101L);
+            user.setCreateBy(SecurityUtils.getUsername());
+            user.setCreateTime(new Date());
+            user.setPassword(SecurityUtils.encryptPassword(SysConstants.DEFAULT_PASSWORD));
+        }
+        iUserService.saveBatch(list);
+        return R.success("导入用户数据成功");
     }
 }

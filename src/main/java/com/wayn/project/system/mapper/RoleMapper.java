@@ -8,9 +8,12 @@ import com.wayn.project.system.domain.SysRole;
 import java.util.List;
 
 public interface RoleMapper extends BaseMapper<SysRole> {
+
+    IPage<SysRole> selectRoleListPage(Page<SysRole> page, SysRole role);
+
     List<String> selectRoleByUserId(Long userId);
 
-    IPage<SysRole> selectListPage(Page<SysRole> page, SysRole role);
+    List<Integer> selectRoleListByUserId(Long userId);
 
-    List<SysRole> selectList(SysRole role);
+    List<SysRole> selectRoleList(SysRole role);
 }

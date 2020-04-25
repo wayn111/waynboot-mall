@@ -1,7 +1,5 @@
 package com.wayn.project.system.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.project.system.domain.SysMenu;
 import com.wayn.project.system.domain.vo.RouterVo;
@@ -14,11 +12,10 @@ public interface IMenuService extends IService<SysMenu> {
     /**
      * 查询菜单列表
      *
-     * @param page 分页对象
      * @param menu 查询参数
-     * @return 菜单分页列表
+     * @return 菜单列表
      */
-    IPage<SysMenu> listPage(Page<SysMenu> page, SysMenu menu);
+    List<SysMenu> list(SysMenu menu);
 
     /**
      * 根据用户id查询权限
@@ -46,7 +43,8 @@ public interface IMenuService extends IService<SysMenu> {
 
     /**
      * 根据用户id查询菜单树列表
-     * @param menu 选寻参数
+     *
+     * @param menu   选寻参数
      * @param userId 用户id
      * @return 菜单树列表
      */
@@ -63,8 +61,33 @@ public interface IMenuService extends IService<SysMenu> {
 
     /**
      * 根据角色id 查询关联的菜单id集合
+     *
      * @param roleId 角色id
      * @return 菜单id集合
      */
     List<Long> selectCheckedkeys(Long roleId);
+
+    /**
+     * 校验菜单名称是否唯一
+     *
+     * @param menu 菜单信息
+     * @return 状态码 0 唯一 1 不唯一
+     */
+    String checkMenuNameUnique(SysMenu menu);
+
+    /**
+     * 是否存在菜单子节点
+     *
+     * @param menuId 菜单ID
+     * @return 结果 true 存在 false 不存在
+     */
+    boolean hasChildByMenuId(Long menuId);
+
+    /**
+     * 查询菜单是否存在角色
+     *
+     * @param menuId 菜单ID
+     * @return 结果 true 存在 false 不存在
+     */
+    boolean checkMenuExistRole(Long menuId);
 }

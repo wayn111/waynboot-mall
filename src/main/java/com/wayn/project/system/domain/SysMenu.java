@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.wayn.common.base.BaseEntity;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +17,7 @@ import java.util.List;
  * 菜单权限表 sys_menu
  */
 @Data
+@ApiModel("菜单实体")
 @EqualsAndHashCode(callSuper = true)
 public class SysMenu extends BaseEntity {
 
@@ -27,17 +31,20 @@ public class SysMenu extends BaseEntity {
     /**
      * 菜单名称
      */
+    @NotBlank(message = "菜单名称不能为空")
     private String menuName;
 
     /**
-     * 父菜单ID
+     * 父菜单id
      */
+    @DecimalMin(value = "0", message = "父菜单id不能小于0")
     private Long parentId;
 
     /**
      * 显示顺序
      */
-    private String orderNum;
+    @DecimalMin(value = "0", message = "显示顺序不能小于0")
+    private Integer orderNum;
 
     /**
      * 路由地址
@@ -57,16 +64,17 @@ public class SysMenu extends BaseEntity {
     /**
      * 类型（M目录 C菜单 F按钮）
      */
+    @NotBlank(message = "菜单类型不能为空")
     private String menuType;
 
     /**
      * 菜单状态（0显示 1隐藏）
      */
-    private String menuStatus;
+    private Integer menuStatus;
     /**
      * 显示状态（0显示 1隐藏）
      */
-    private String visible;
+    private Integer visible;
 
     /**
      * 权限字符串

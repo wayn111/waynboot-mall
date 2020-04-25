@@ -33,6 +33,14 @@ public interface IRoleService extends IService<SysRole> {
     List<String> selectRoleByUserId(Long userId);
 
     /**
+     * 根据用户id获取角色选择框列表
+     *
+     * @param userId 用户id
+     * @return 选中角色id列表
+     */
+    public List<Integer> selectRoleListByUserId(Long userId);
+
+    /**
      * 校验角色名称是否唯一
      *
      * @param role 角色信息

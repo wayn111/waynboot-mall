@@ -29,7 +29,15 @@
         WHERE r.del_flag = '0' and ur.user_id = #{userId}
     </select>
 
-    <select id="selectListPage" parameterType="com.wayn.project.system.domain.SysRole" resultMap="SysRoleResult">
+    <select id="selectRoleListByUserId" parameterType="Long" resultType="Integer">
+		select r.role_id
+        from sys_role r
+	        left join sys_user_role ur on ur.role_id = r.role_id
+	        left join sys_user u on u.user_id = ur.user_id
+	    where u.user_id = #{userId}
+	</select>
+
+    <select id="selectRoleListPage" parameterType="com.wayn.project.system.domain.SysRole" resultMap="SysRoleResult">
         <include refid="selectRoleVo"/>
         <where>
             <if test="role.roleId != null ">and r.role_id = #{role.roleId}</if>
@@ -49,7 +57,7 @@
             and r.del_flag = 0
         </where>
     </select>
-    <select id="selectList" parameterType="com.wayn.project.system.domain.SysRole" resultMap="SysRoleResult">
+    <select id="selectRoleList" parameterType="com.wayn.project.system.domain.SysRole" resultMap="SysRoleResult">
         <include refid="selectRoleVo"/>
         <where>
             <if test="roleId != null ">and r.role_id = #{roleId}</if>
