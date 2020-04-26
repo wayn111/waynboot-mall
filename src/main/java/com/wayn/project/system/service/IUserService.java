@@ -65,4 +65,12 @@ public interface IUserService extends IService<SysUser> {
      * @return 用户列表
      */
     List<SysUser> list(SysUser user);
+
+    /**
+     * 根据用户ID查询用户所属角色组
+     *
+     * @param userName 用户名
+     * @return 结果
+     */
+    String selectUserRoleGroup(String userName);
 }

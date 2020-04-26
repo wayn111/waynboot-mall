@@ -8,6 +8,7 @@ import com.wayn.project.system.service.IDeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class DeptController {
     @Autowired
     private IDeptService iDeptService;
 
+    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @ApiOperation(value = "部门列表", notes = "部门列表")
     @GetMapping("/list")
     public R list(SysDept dept) {
@@ -29,6 +31,7 @@ public class DeptController {
         return R.success().add("data", depts);
     }
 
+    @PreAuthorize("@ss.hasPermi('system:dept:add')")
     @ApiOperation(value = "保存部门", notes = "保存部门")
     @PostMapping
     public R addDept(@Validated @RequestBody SysDept dept) {
@@ -42,6 +45,7 @@ public class DeptController {
         return R.result(iDeptService.save(dept));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:dept:update')")
     @ApiOperation(value = "更新角色", notes = "更新部门")
     @PutMapping
     public R updateDept(@Validated @RequestBody SysDept dept) {
@@ -66,12 +70,14 @@ public class DeptController {
         return R.success().add("deptTree", iDeptService.buildDeptTreeSelect(depts));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:dept:query')")
     @ApiOperation(value = "获取部门详细", notes = "获取部门详细")
     @GetMapping("{deptId}")
     public R getDept(@PathVariable Long deptId) {
         return R.success().add("data", iDeptService.getById(deptId));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:dept:delete')")
     @ApiOperation(value = "删除部门", notes = "删除部门")
     @DeleteMapping("{deptId}")
     public R deleteDept(@PathVariable Long deptId) {

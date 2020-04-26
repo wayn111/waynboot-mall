@@ -27,12 +27,17 @@ public class WaynConfig {
     public static String getUploadDir() {
         return uploadDir;
     }
+
+    public void setUploadDir(String uploadDir) {
+        WaynConfig.uploadDir = uploadDir;
+    }
+
     public static String getDownloadPath() {
         return getUploadDir() + "/download/";
     }
 
-    public void setUploadDir(String uploadDir) {
-        WaynConfig.uploadDir = uploadDir;
+    public static String getAvatarPath() {
+        return getUploadDir() + "/avatar/";
     }
 
     public static String getName() {

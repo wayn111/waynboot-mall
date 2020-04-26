@@ -77,4 +77,8 @@
             and r.del_flag = 0
         </where>
     </select>
+    <select id="selectRolesByUserName" parameterType="string" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = '0' and u.user_name = #{userName}
+    </select>
 </mapper>

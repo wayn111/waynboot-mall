@@ -14,6 +14,7 @@ import com.wayn.project.system.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,7 @@ public class UserController extends BaseController {
     @Autowired
     private IRoleService iRoleService;
 
+    @PreAuthorize("@ss.hasPermi('system:user:list')")
     @ApiOperation(value = "用户列表", notes = "用户列表")
     @GetMapping("/list")
     public R list(SysUser user) {
@@ -41,6 +43,7 @@ public class UserController extends BaseController {
         return R.success().add("page", iUserService.listPage(page, user));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:query')")
     @ApiOperation("获取用户详细")
     @GetMapping(value = {"/", "/{userId}"})
     public R getInfo(@PathVariable(value = "userId", required = false) Long userId) {
@@ -53,6 +56,7 @@ public class UserController extends BaseController {
         return success;
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:add')")
     @ApiOperation("添加用户")
     @PostMapping
     public R addUser(@Validated @RequestBody SysUser user) {
@@ -69,6 +73,7 @@ public class UserController extends BaseController {
         return R.result(iUserService.insertUserAndRole(user));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:update')")
     @ApiOperation("更新用户")
     @PutMapping
     public R updateUser(@Validated @RequestBody SysUser user) {
@@ -83,6 +88,7 @@ public class UserController extends BaseController {
         return R.result(iUserService.updateUserAndRole(user));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
     @PutMapping("resetPwd")
     public R resetPwd(@RequestBody SysUser user) {
         iUserService.checkUserAllowed(user);
@@ -92,6 +98,7 @@ public class UserController extends BaseController {
         return R.result(iUserService.updateById(user));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:update')")
     @ApiOperation(value = "更新用户状态", notes = "更新用户状态")
     @PutMapping("changeStatus")
     public R changeStatus(@RequestBody SysUser user) {
@@ -100,6 +107,7 @@ public class UserController extends BaseController {
         return R.result(iUserService.updateById(user));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:delete')")
     @ApiOperation("删除用户")
     @DeleteMapping("/{userIds}")
     public R deleteUser(@PathVariable List<Long> userIds) {
@@ -107,6 +115,7 @@ public class UserController extends BaseController {
         return R.success();
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:export')")
     @GetMapping("/export")
     public R export(SysUser user) {
         List<SysUser> list = iUserService.list(user);
@@ -114,6 +123,7 @@ public class UserController extends BaseController {
         return R.success(ExcelUtil.exportExcel(list, SysUser.class, "用户数据.xls"));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:user:import')")
     @ResponseBody
     @PostMapping("/importData")
     public R importData(@RequestParam("file") MultipartFile file) throws Exception {
