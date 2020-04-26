@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,6 +32,15 @@ public class GlobalExceptionHandler {
             return R.error(e.getMessage());
         }
         return R.error(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 用户名不存在异常
+     */
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public R usernameNotFoundException(UsernameNotFoundException e) {
+        log.error(e.getMessage(), e);
+        return R.error(e.getMessage());
     }
 
     /**

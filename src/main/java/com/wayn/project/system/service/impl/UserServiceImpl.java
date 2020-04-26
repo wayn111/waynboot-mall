@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.exception.BusinessException;
+import com.wayn.project.system.domain.SysRole;
 import com.wayn.project.system.domain.SysUser;
 import com.wayn.project.system.domain.SysUserRole;
+import com.wayn.project.system.mapper.RoleMapper;
 import com.wayn.project.system.mapper.UserMapper;
 import com.wayn.project.system.service.IUserRoleService;
 import com.wayn.project.system.service.IUserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Autowired
     private IUserRoleService iUserRoleService;
@@ -87,5 +93,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     @Override
     public List<SysUser> list(SysUser user) {
         return userMapper.selectUserList(user);
+    }
+
+    @Override
+    public String selectUserRoleGroup(String userName) {
+        List<SysRole> list = roleMapper.selectRolesByUserName(userName);
+        StringBuffer idsStr = new StringBuffer();
+        for (SysRole role : list) {
+            idsStr.append(role.getRoleName()).append(",");
+        }
+        if (StringUtils.isNotEmpty(idsStr.toString())) {
+            return idsStr.substring(0, idsStr.length() - 1);
+        }
+        return idsStr.toString();
     }
 }

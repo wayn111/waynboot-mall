@@ -37,6 +37,11 @@ public class LoginUserDetail implements UserDetails {
         this.user = user;
     }
 
+    public LoginUserDetail(SysUser user, Set<String> permissions) {
+        this.user = user;
+        this.permissions = permissions;
+    }
+
     public LoginUserDetail() {
     }
 

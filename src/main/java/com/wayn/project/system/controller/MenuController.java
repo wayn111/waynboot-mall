@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ public class MenuController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
+    @PreAuthorize("@ss.hasPermi('system:menu:list')")
     @ApiOperation(value = "菜单列表", notes = "菜单列表")
     @GetMapping("/list")
     public R list(SysMenu menu) {
@@ -58,10 +60,11 @@ public class MenuController extends BaseController {
     public R roleMenuTreeselect(@PathVariable Long roleId) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Long userId = loginUser.getUser().getUserId();
-        List<SysMenu> menus = iMenuService.selectMenuList(null, userId);
+        List<SysMenu> menus = iMenuService.selectMenuList(new SysMenu(), userId);
         return R.success().add("menuTree", iMenuService.buildMenuTreeSelect(menus)).add("checkedKeys", iMenuService.selectCheckedkeys(roleId));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:menu:add')")
     @ApiOperation(value = "保存菜单", notes = "保存菜单")
     @PostMapping
     public R addRole(@Validated @RequestBody SysMenu menu) {
@@ -73,6 +76,7 @@ public class MenuController extends BaseController {
         return R.result(iMenuService.save(menu));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:menu:update')")
     @ApiOperation(value = "更新菜单", notes = "更新菜单")
     @PutMapping
     public R updateRole(@Validated @RequestBody SysMenu menu) {
@@ -84,12 +88,14 @@ public class MenuController extends BaseController {
         return R.result(iMenuService.updateById(menu));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:menu:query')")
     @ApiOperation(value = "获取菜单详细", notes = "获取菜单详细")
     @GetMapping("/{menuId}")
     public R getMenu(@PathVariable Long menuId) {
         return R.success().add("data", iMenuService.getById(menuId));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:menu:delete')")
     @ApiOperation(value = "删除菜单", notes = "删除菜单")
     @DeleteMapping("/{menuId}")
     public R deleteMenu(@PathVariable Long menuId) {
@@ -101,5 +107,4 @@ public class MenuController extends BaseController {
         }
         return R.success().add("data", iMenuService.removeById(menuId));
     }
-
 }
