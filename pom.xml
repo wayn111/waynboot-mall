@@ -25,6 +25,8 @@
         <fastjson.version>1.2.58</fastjson.version>
         <swagger.version>2.9.2</swagger.version>
         <easypoi.version>4.1.0</easypoi.version>
+        <jwt.version>3.9.0</jwt.version>
+        <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
     </properties>
 
     <dependencies>
@@ -111,11 +113,6 @@
             <artifactId>commons-fileupload</artifactId>
             <version>${commons.fileupload.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.13.1</version>
-        </dependency>
 
         <dependency>
             <groupId>redis.clients</groupId>
@@ -126,7 +123,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.9.0</version>
+            <version>${jwt.version}</version>
         </dependency>
 
         <!-- 阿里JSON解析器 -->
@@ -177,7 +174,7 @@
         <dependency>
             <groupId>com.qiniu</groupId>
             <artifactId>qiniu-java-sdk</artifactId>
-            <version>[7.2.0, 7.2.99]</version>
+            <version>${qiniu.version}</version>
         </dependency>
     </dependencies>
 
