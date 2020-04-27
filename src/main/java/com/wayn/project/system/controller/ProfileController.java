@@ -4,8 +4,8 @@ import com.wayn.common.util.R;
 import com.wayn.common.util.SecurityUtils;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUploadUtil;
-import com.wayn.common.util.http.HttpUtil;
 import com.wayn.framework.config.WaynConfig;
+import com.wayn.framework.manager.upload.service.UploadService;
 import com.wayn.framework.security.LoginUserDetail;
 import com.wayn.framework.security.service.TokenService;
 import com.wayn.project.system.domain.SysUser;
@@ -26,6 +26,9 @@ public class ProfileController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private UploadService uploadService;
 
     @GetMapping
     public R profile() {
@@ -74,15 +77,14 @@ public class ProfileController {
     public R avatar(@RequestParam("avatarfile") MultipartFile file, HttpServletRequest request) throws IOException {
         if (!file.isEmpty()) {
             LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-            String avatar = FileUploadUtil.uploadFile(file, WaynConfig.getAvatarPath());
-            String requestUrl = HttpUtil.getRequestContext(request);
-            String imgUrl = requestUrl + "/upload/avatar/" + avatar;
-            boolean result = iUserService.update().set("avatar", imgUrl).eq("user_name", loginUser.getUsername()).update();
+            String filename = FileUploadUtil.uploadFile(file, WaynConfig.getUploadDir());
+            String fileUrl = uploadService.uploadFile(filename);
+            boolean result = iUserService.update().set("avatar", fileUrl).eq("user_name", loginUser.getUsername()).update();
             if (result) {
                 R success = R.success();
-                success.add("imgUrl", imgUrl);
+                success.add("imgUrl", fileUrl);
                 // 更新缓存用户头像
-                loginUser.getUser().setAvatar(imgUrl);
+                loginUser.getUser().setAvatar(fileUrl);
                 tokenService.refreshToken(loginUser);
                 return success;
             }
