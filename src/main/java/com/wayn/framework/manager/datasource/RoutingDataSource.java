@@ -1,6 +1,6 @@
 package com.wayn.framework.manager.datasource;
 
-import com.wayn.framework.manager.thread.DataSourceHolder;
+import com.wayn.framework.manager.datasource.thread.DataSourceHolder;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;

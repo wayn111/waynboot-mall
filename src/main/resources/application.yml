@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 81
 
 spring:
   profiles:
@@ -7,6 +7,13 @@ spring:
   thymeleaf:
     cache: false
     suffix: .html
+  servlet:
+    multipart:
+      enabled: true
+      location: ${wayn.uploadDir}
+      file-size-threshold: 5MB
+      max-file-size: 200MB
+      max-request-size: 200MB
 
 # token配置
 token:
@@ -24,6 +31,7 @@ logging:
     org.springframework: debug
     com.baomidou: info
 
+# mybatis plus 配置
 mybatis-plus:
   scripting-language-driver:
     velocity:
@@ -44,3 +52,15 @@ wayn:
   version: 1.1.0
   email: 166738430@qq.com
   uploadDir: E:/wayn/upload
+
+# 七牛云配置·
+qiniu:
+  enabled: true
+  ## 此处填写你自己的七牛云 access key
+  accessKey:
+  ## 此处填写你自己的七牛云 secret key
+  secretKey:
+  ## 此处填写你自己的七牛云 bucket
+  bucket:
+  ## 此处填写你自己的七牛云 域名
+  prefix:

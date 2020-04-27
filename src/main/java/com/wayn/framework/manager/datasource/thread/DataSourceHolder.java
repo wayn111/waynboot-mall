@@ -1,4 +1,4 @@
-package com.wayn.framework.manager.thread;
+package com.wayn.framework.manager.datasource.thread;
 
 
 import com.wayn.common.enums.DataSourceEnum;
