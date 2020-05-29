@@ -50,7 +50,7 @@ public class HttpUtil {
      * </p>
      *
      * @param request 当前请求
-     * @return
+     * @return boolean
      */
     public static boolean isAjax(HttpServletRequest request) {
         return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
@@ -299,12 +299,12 @@ public class HttpUtil {
                 request.getContextPath();
     }
 
-    public static String getValueByCookie(HttpServletRequest request) {
+    public static String getValueByCookie(String key, HttpServletRequest request) {
         String value = "";
         Cookie[] cookies = request.getCookies();
         if (Objects.nonNull(cookies)) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("token")) {
+                if (cookie.getName().equals(key)) {
                     value = cookie.getValue();
                     break;
                 }

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 文件上传帮助类
@@ -15,14 +16,14 @@ import java.io.IOException;
 public class FileUploadUtil {
 
     public static String uploadFile(MultipartFile file, String filePath) throws IOException {
-        int fileNameLength = file.getOriginalFilename().length();
+        int fileNameLength = Objects.requireNonNull(file.getOriginalFilename()).length();
         if (fileNameLength > 100) {
             throw new BusinessException("文件名称过长");
         }
         String fileName = file.getOriginalFilename();
         String extension = FilenameUtils.getExtension(fileName);
         if (StringUtils.isEmpty(extension)) {
-            extension = MimeTypeUtils.getExtension(file.getContentType());
+            extension = MimeTypeUtils.getExtension(Objects.requireNonNull(file.getContentType()));
         }
         String encodingFilename = FileUtils.encodingFilename(fileName);
         fileName = DateUtils.datePath() + "/" + encodingFilename + "." + extension;

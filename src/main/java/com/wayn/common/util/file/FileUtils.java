@@ -60,7 +60,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      * 删除文件
      *
      * @param filePath 文件
-     * @return
+     * @return boolean
      */
     public static boolean deleteFile(String filePath) {
         boolean flag = false;

@@ -58,10 +58,8 @@ public class ExcelUtil {
         String filename = ExcelUtil.encodingFilename(originalName);
         try (OutputStream out = new FileOutputStream(ExcelUtil.getAbsoluteFile(filename))) {
             workbook.write(out);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
-        } catch (IOException exception) {
-            log.error(exception.getMessage(), exception);
         }
         return filename;
     }
