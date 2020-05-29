@@ -43,8 +43,7 @@ public class TokenService {
             // 解析对应的权限以及用户信息
             String sign = decodedJWT.getClaim(SysConstants.SIGN_KEY).asString();
             String userKey = getTokenKey(sign);
-            LoginUserDetail user = redisCache.getCacheObject(userKey);
-            return user;
+            return redisCache.getCacheObject(userKey);
         }
         return null;
     }
@@ -82,18 +81,22 @@ public class TokenService {
     /**
      * 获取请求头中的token
      *
-     * @param request
+     * @param request 请求
      * @return token
      */
     private String getToken(HttpServletRequest request) {
-        return request.getHeader(header);
+        String token = request.getHeader(header);
+        if (StringUtils.isNotEmpty(token) && token.startsWith(SysConstants.TOKEN_PREFIX)) {
+            token = token.replace(SysConstants.TOKEN_PREFIX, "");
+        }
+        return token;
     }
 
     /**
      * 获取缓存中用户的key
      *
-     * @param sign
-     * @return
+     * @param sign 签名
+     * @return 返回token的key
      */
     private String getTokenKey(String sign) {
         return SysConstants.LOGIN_TOKEN_KEY + sign;

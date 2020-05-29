@@ -21,9 +21,14 @@ public class SysConstants {
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
 
     /**
-     * 令牌前缀
+     * 登录用户key
      */
     public static final String SIGN_KEY = "login_user_key";
+
+    /**
+     * 令牌前缀
+     */
+    public static final String TOKEN_PREFIX = "Bearer ";
 
     /**
      * 类型（M目录 C菜单 F按钮）
