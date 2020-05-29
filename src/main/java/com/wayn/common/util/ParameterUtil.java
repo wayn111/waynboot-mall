@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class ParameterUtil {
 	private static final String BASE_ENTITY = "BaseEntity";
-	private static ThreadLocal<QueryWrapper> entityWrapperThreadLocal = new ThreadLocal<>();
+	private static final ThreadLocal<QueryWrapper> entityWrapperThreadLocal = new ThreadLocal<>();
 
 	/**
 	 * 设置wrapper类得通用查询属性
@@ -22,7 +22,7 @@ public class ParameterUtil {
 	 * @param <T>
 	 */
 	public static <T> void setWrapper() {
-		QueryWrapper<T> wrapper = new QueryWrapper<T>();
+		QueryWrapper<T> wrapper = new QueryWrapper<>();
 		String startTime = ServletUtils.getParameter("startTime");
 		String endTime = ServletUtils.getParameter("endTime");
 		ServletUtils.setParameter("startTime", startTime);

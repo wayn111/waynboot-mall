@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * 基础控制器类，获得通用的参数封装、返回值封装方法
+ */
 @Slf4j
 public class BaseController {
 

@@ -36,8 +36,8 @@ public class JwtUtil {
     /**
      * 获取签发时间
      *
-     * @param token
-     * @return
+     * @param token token
+     * @return 签发时间
      */
     public static Date getIssuedAt(String token) {
         try {

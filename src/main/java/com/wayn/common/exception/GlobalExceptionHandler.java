@@ -44,6 +44,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 自定义验证异常
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public R validExceptionHandler(MethodArgumentNotValidException e) {
+        log.error(e.getMessage(), e);
+        String message = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
+        return R.error(message);
+    }
+
+    /**
      * 登陆错误异常
      */
     @ExceptionHandler(BadCredentialsException.class)
@@ -77,15 +87,5 @@ public class GlobalExceptionHandler {
     public R handleException(Exception e) {
         log.error(e.getMessage(), e);
         return R.error(e.getMessage());
-    }
-
-    /**
-     * 自定义验证异常
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public R validExceptionHandler(MethodArgumentNotValidException e) {
-        log.error(e.getMessage(), e);
-        String message = e.getBindingResult().getFieldError().getDefaultMessage();
-        return R.error(message);
     }
 }

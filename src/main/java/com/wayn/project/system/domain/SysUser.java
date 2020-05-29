@@ -15,6 +15,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+/**
+ * 用户表 sys_user
+ */
 @Data
 @ApiModel("用户实体")
 @EqualsAndHashCode(callSuper = true)

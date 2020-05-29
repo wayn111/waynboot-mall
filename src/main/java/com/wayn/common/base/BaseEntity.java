@@ -9,6 +9,9 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 基础entity类，集成以获取通用字段
+ */
 @Data
 public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1956057929467119856L;

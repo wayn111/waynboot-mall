@@ -6,8 +6,7 @@ import com.wayn.common.util.file.FileUploadUtil;
 import com.wayn.common.util.file.FileUtils;
 import com.wayn.common.util.http.HttpUtil;
 import com.wayn.framework.config.WaynConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,14 +19,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 /**
- * 通用请求处理
+ * 通用请求处理类
  *
  * @author ruoyi
  */
+@Slf4j
 @Controller
 @RequestMapping("common")
 public class CommonController {
-    private static final Logger log = LoggerFactory.getLogger(CommonController.class);
 
     /**
      * 通用下载请求
@@ -36,19 +35,17 @@ public class CommonController {
      * @param delete   是否删除
      */
     @GetMapping("download")
-    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request) {
+    public void fileDownload(String fileName, boolean delete, HttpServletResponse response, HttpServletRequest request) {
         try {
             if (!FileUtils.isValidFilename(fileName)) {
                 throw new BusinessException("文件名称(" + fileName + ")非法，不允许下载。 ");
             }
-
             String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
             String filePath = WaynConfig.getDownloadPath() + fileName;
 
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
-            response.setHeader("Content-Disposition",
-                    "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, realFileName));
+            response.setHeader("Content-Disposition", "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, realFileName));
             FileUtils.writeBytes(filePath, response.getOutputStream());
             if (delete) {
                 FileUtils.deleteFile(filePath);
