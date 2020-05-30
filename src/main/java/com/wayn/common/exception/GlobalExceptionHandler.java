@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,13 +73,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 认证失败异常
+     * 拒绝访问异常
      */
     @ExceptionHandler(AccessDeniedException.class)
     public R handleAuthorizationException(AccessDeniedException e) {
         log.error(e.getMessage());
         return R.error(HttpStatus.FORBIDDEN.value(), "没有权限，请联系管理员授权");
     }
+
+    /**
+     * 认证失败异常
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public R handleAuthenticationException(AuthenticationException e) {
+        log.error(e.getMessage());
+        return R.error(HttpStatus.FORBIDDEN.value(), "认证失败，请联系管理员授权");
+    }
+
 
     /**
      * 全局异常

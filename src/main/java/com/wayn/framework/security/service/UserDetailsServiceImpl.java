@@ -1,12 +1,14 @@
 package com.wayn.framework.security.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wayn.common.enums.UserStatus;
 import com.wayn.framework.security.LoginUserDetail;
 import com.wayn.project.system.domain.SysUser;
 import com.wayn.project.system.service.IDeptService;
 import com.wayn.project.system.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,9 +41,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SysUser user = iUserService.getOne(new QueryWrapper<SysUser>().eq("user_name", username));
         if (user == null) {
-//            List<GrantedAuthority> authorityLists = AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER");
             log.info("登录用户：{} 不存在.", username);
             throw new UsernameNotFoundException("登录用户：" + username + " 不存在");
+        }
+        if (UserStatus.DISABLE.getCode() == user.getUserStatus()) {
+            log.info("登录用户：{} 已经被停用.", username);
+            throw new DisabledException("登录用户：" + username + " 不存在");
         }
         user.setSysDept(iDeptService.getById(user.getDeptId()));
         return new LoginUserDetail(user, permissionService.getMenuPermission(user));
