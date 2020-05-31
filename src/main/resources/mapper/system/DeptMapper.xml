@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
 	<select id="selectDeptList" parameterType="com.wayn.project.system.domain.SysDept" resultMap="SysDeptResult">
         <include refid="selectDeptVo"/>
-        where d.del_flag = '0'
+        where d.del_flag = 0
         <if test="parentId != null and parentId != 0">
 			AND parent_id = #{parentId}
 		</if>
