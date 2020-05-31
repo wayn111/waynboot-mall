@@ -23,6 +23,7 @@
         <commons.fileupload.version>1.3.3</commons.fileupload.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <fastjson.version>1.2.58</fastjson.version>
+        <easy-captcha.version>1.6.2</easy-captcha.version>
         <swagger.version>2.9.2</swagger.version>
         <easypoi.version>4.1.0</easypoi.version>
         <jwt.version>3.9.0</jwt.version>
@@ -106,6 +107,12 @@
             <version>${commons.collections.version}</version>
         </dependency>
 
+        <!-- 验证码 -->
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>${easy-captcha.version}</version>
+        </dependency>
 
         <!--文件上传工具类 -->
         <dependency>
