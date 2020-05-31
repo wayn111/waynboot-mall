@@ -50,7 +50,7 @@ public class SysDept extends BaseEntity {
      * 显示顺序
      */
     @DecimalMin(value = "0", message = "显示顺序不能小于0")
-    private String orderNum;
+    private Integer sort;
 
     /**
      * 负责人

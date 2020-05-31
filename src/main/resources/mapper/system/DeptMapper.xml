@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="parentId"   column="parent_id"   />
 		<result property="ancestors"  column="ancestors"   />
 		<result property="deptName"   column="dept_name"   />
-		<result property="orderNum"   column="order_num"   />
+		<result property="sort"       column="sort"        />
 		<result property="leader"     column="leader"      />
 		<result property="phone"      column="phone"       />
 		<result property="email"      column="email"       />
@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<sql id="selectDeptVo">
-        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.dept_status, d.del_flag, d.create_by,
+        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.sort, d.leader, d.phone, d.email, d.dept_status, d.del_flag, d.create_by,
         d.create_time, d.remark
         from sys_dept d
     </sql>
@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="deptStatus != null">
 			AND dept_status = #{deptStatus}
 		</if>
-		order by d.parent_id, d.order_num
+		order by d.parent_id, d.sort
     </select>
     
     <select id="selectDeptListByRoleId" parameterType="Long" resultType="Integer">
@@ -49,6 +49,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             left join sys_role_dept rd on d.dept_id = rd.dept_id
         where rd.role_id = #{roleId}
         	and d.dept_id not in (select d.parent_id from sys_dept d inner join sys_role_dept rd on d.dept_id = rd.dept_id and rd.role_id = #{roleId})
-		order by d.parent_id, d.order_num
+		order by d.parent_id, d.sort
 	</select>
 </mapper>

@@ -8,7 +8,7 @@
         <id     property="roleId"       column="role_id"        />
         <result property="roleName"     column="role_name"      />
         <result property="roleKey"      column="role_key"       />
-        <result property="roleSort"     column="role_sort"      />
+        <result property="sort"         column="sort"           />
         <result property="roleStatus"   column="role_status"    />
         <result property="delFlag"      column="del_flag"       />
         <result property="createTime"   column="create_time"    />
@@ -16,7 +16,7 @@
     </resultMap>
 
     <sql id="selectRoleVo">
-	    select distinct r.role_id, r.role_name, r.role_key, r.role_sort,
+	    select distinct r.role_id, r.role_name, r.role_key, r.sort,
             r.role_status, r.del_flag, r.create_time, r.remark
         from sys_role r
 	        left join sys_user_role ur on ur.role_id = r.role_id
