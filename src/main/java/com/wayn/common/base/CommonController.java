@@ -1,12 +1,17 @@
 package com.wayn.common.base;
 
+import com.wayn.common.constant.SysConstants;
 import com.wayn.common.exception.BusinessException;
+import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUploadUtil;
 import com.wayn.common.util.file.FileUtils;
 import com.wayn.common.util.http.HttpUtil;
 import com.wayn.framework.config.WaynConfig;
+import com.wayn.framework.redis.RedisCache;
+import com.wf.captcha.SpecCaptcha;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 通用请求处理类
@@ -27,6 +33,9 @@ import java.io.File;
 @Controller
 @RequestMapping("common")
 public class CommonController {
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 通用下载请求
@@ -99,4 +108,15 @@ public class CommonController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping("/captcha")
+    public R captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        SpecCaptcha specCaptcha = new SpecCaptcha(100, 43, 4);
+        String verCode = specCaptcha.text().toLowerCase();
+        String key = IdUtil.getUid();
+        // 存入redis并设置过期时间为30分钟
+        redisCache.setCacheObject(key, verCode, SysConstants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
+        // 将key和base64返回给前端
+        return R.success().add("key", key).add("image", specCaptcha.toBase64());
+    }
 }

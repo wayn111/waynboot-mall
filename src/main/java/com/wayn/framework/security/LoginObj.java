@@ -19,4 +19,9 @@ public class LoginObj {
      * 验证码
      */
     private String code;
+
+    /**
+     * 验证码 key
+     */
+    private String key;
 }

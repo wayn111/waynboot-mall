@@ -2,6 +2,7 @@ package com.wayn.project.system.controller;
 
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.util.R;
+import com.wayn.framework.redis.RedisCache;
 import com.wayn.framework.security.LoginObj;
 import com.wayn.framework.security.LoginUserDetail;
 import com.wayn.framework.security.service.LoginService;
@@ -35,12 +36,22 @@ public class LoginController {
     @Autowired
     private IMenuService iMenuService;
 
+    @Autowired
+    private RedisCache redisCache;
+
     @PostMapping("/login")
     public R login(@RequestBody LoginObj loginObj) {
-        R success = R.success();
+        // 获取redis中的验证码
+        String redisCode = redisCache.getCacheObject(loginObj.getKey());
+        // 判断验证码
+        if (loginObj.getCode() == null || !redisCode.equals(loginObj.getCode().trim().toLowerCase())) {
+            return R.error("验证码不正确");
+        }
+        // 删除验证码
+        redisCache.deleteObject(loginObj.getKey());
         // 生成令牌
         String token = loginService.login(loginObj.getUsername(), loginObj.getPassword(), loginObj.getCode());
-        return success.add(SysConstants.TOKEN, token);
+        return R.success().add(SysConstants.TOKEN, token);
     }
 
     @GetMapping("/getInfo")
