@@ -26,7 +26,7 @@
 
     <select id="selectRoleByUserId" parameterType="Long" resultMap="SysRoleResult">
         <include refid="selectRoleVo"/>
-        WHERE r.del_flag = '0' and ur.user_id = #{userId}
+        WHERE r.del_flag = 0 and ur.user_id = #{userId}
     </select>
 
     <select id="selectRoleListByUserId" parameterType="Long" resultType="Integer">
@@ -79,6 +79,6 @@
     </select>
     <select id="selectRolesByUserName" parameterType="string" resultMap="SysRoleResult">
         <include refid="selectRoleVo"/>
-        WHERE r.del_flag = '0' and u.user_name = #{userName}
+        WHERE r.del_flag = 0 and u.user_name = #{userName}
     </select>
 </mapper>
