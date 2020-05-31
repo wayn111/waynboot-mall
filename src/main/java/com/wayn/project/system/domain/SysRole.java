@@ -48,7 +48,7 @@ public class SysRole extends BaseEntity {
      */
     @DecimalMin(value = "0", message = "角色排序不能小于0")
     @Excel(name = "角色排序", type = 10)
-    private Integer roleSort;
+    private Integer sort;
 
     /**
      * 角色状态（0正常 1停用）

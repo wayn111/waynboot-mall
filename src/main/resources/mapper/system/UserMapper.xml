@@ -28,14 +28,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<id     property="deptId"       column="dept_id"     />
 		<result property="parentId" 	column="parent_id"   />
 		<result property="deptName" 	column="dept_name"   />
-		<result property="orderNum" 	column="order_num"   />
+		<result property="sort" 	    column="sort"        />
 		<result property="leader"   	column="leader"      />
 		<result property="deptStatus"   column="dept_status" />
 	</resultMap>
 	
 	<sql id="selectUserVo">
         select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phone, u.password, u.sex, u.user_status, u.del_flag, u.create_by, u.create_time, u.remark,
-        d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.dept_status
+        d.dept_id, d.parent_id, d.dept_name, d.sort, d.leader, d.dept_status
         from sys_user u
 		    left join sys_dept d on u.dept_id = d.dept_id
     </sql>
