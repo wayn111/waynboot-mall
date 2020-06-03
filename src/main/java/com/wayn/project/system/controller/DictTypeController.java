@@ -41,7 +41,7 @@ public class DictTypeController extends BaseController {
     public R addDict(@Validated @RequestBody SysDict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictTypeNameUnique(dict))) {
             return R.error("新增字典名称'" + dict.getName() + "'失败，字典名称已存在");
-        }else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictTypeValueUnique(dict))) {
+        } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictTypeValueUnique(dict))) {
             return R.error("新增字典类型'" + dict.getValue() + "'失败，字典类型已存在");
         }
         dict.setCreateBy(SecurityUtils.getUsername());
@@ -55,7 +55,7 @@ public class DictTypeController extends BaseController {
     public R updateDict(@Validated @RequestBody SysDict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictTypeNameUnique(dict))) {
             return R.error("更新字典名称'" + dict.getName() + "'失败，字典名称已存在");
-        }else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictTypeValueUnique(dict))) {
+        } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictTypeValueUnique(dict))) {
             return R.error("更新字典类型'" + dict.getValue() + "'失败，字典类型已存在");
         }
         dict.setUpdateBy(SecurityUtils.getUsername());
@@ -68,5 +68,12 @@ public class DictTypeController extends BaseController {
     @GetMapping("{dictId}")
     public R getDept(@PathVariable Long dictId) {
         return R.success().add("data", iDictService.getById(dictId));
+    }
+
+    @PreAuthorize("@ss.hasPermi('system:dict:delete')")
+    @ApiOperation(value = "删除字典类型", notes = "删除字典类型")
+    @DeleteMapping("{dictId}")
+    public R deleteDict(@PathVariable Long dictId) {
+        return R.success().add("data", iDictService.removeById(dictId));
     }
 }

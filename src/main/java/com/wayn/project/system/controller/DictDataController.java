@@ -40,4 +40,5 @@ public class DictDataController extends BaseController {
         List<SysDict> dicts = iDictService.list(new QueryWrapper<SysDict>().eq("type", 2).eq("parent_type", parentType));
         return R.success().add("data", dicts);
     }
+
 }
