@@ -85,8 +85,7 @@ public class RoleController extends BaseController {
     @ApiOperation("删除角色")
     @DeleteMapping("/{roleIds}")
     public R deleteRole(@PathVariable List<Long> roleIds) {
-        iRoleService.deleteRoleByIds(roleIds);
-        return R.success();
+        return R.result(iRoleService.deleteRoleByIds(roleIds));
     }
 
     @PreAuthorize("@ss.hasPermi('system:role:export')")

@@ -35,8 +35,8 @@ public class SysDict extends BaseEntity  implements Serializable {
     /**
      * 字典值
      */
-    @NotBlank(message = "字典值不能为空")
-    @Excel(name = "字典值")
+    @NotBlank(message = "字典类型不能为空")
+    @Excel(name = "字典类型")
     private String value;
 
     /**
