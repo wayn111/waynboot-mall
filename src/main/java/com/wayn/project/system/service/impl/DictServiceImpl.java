@@ -11,6 +11,7 @@ import com.wayn.project.system.service.IDictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -30,9 +31,15 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, SysDict> implements
     }
 
     @Override
-    public String checkDictTypeNameUnique(SysDict dict) {
+    public String checkDictNameUnique(SysDict dict) {
         long dictId = Objects.isNull(dict.getDictId()) ? -1L : dict.getDictId();
-        SysDict sysDict = getOne(new QueryWrapper<SysDict>().eq("name", dict.getName()).eq("type", 1));
+        QueryWrapper<SysDict> queryWrapper = new QueryWrapper<>();
+        if (dict.getType() == 1) {
+            queryWrapper.eq("name", dict.getName()).eq("type", 1);
+        } else {
+            queryWrapper.eq("name", dict.getName()).eq("type", 2).eq("parent_type", dict.getParentType());
+        }
+        SysDict sysDict = getOne(queryWrapper);
         if (sysDict != null && sysDict.getDictId() != dictId) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -40,12 +47,23 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, SysDict> implements
     }
 
     @Override
-    public String checkDictTypeValueUnique(SysDict dict) {
+    public String checkDictValueUnique(SysDict dict) {
         long dictId = Objects.isNull(dict.getDictId()) ? -1L : dict.getDictId();
-        SysDict sysDict = getOne(new QueryWrapper<SysDict>().eq("value", dict.getValue()).eq("type", 1));
+        QueryWrapper<SysDict> queryWrapper = new QueryWrapper<>();
+        if (dict.getType() == 1) {
+            queryWrapper.eq("value", dict.getValue()).eq("type", 1);
+        } else {
+            queryWrapper.eq("value", dict.getValue()).eq("type", 2).eq("parent_type", dict.getParentType());
+        }
+        SysDict sysDict = getOne(queryWrapper);
         if (sysDict != null && sysDict.getDictId() != dictId) {
             return SysConstants.NOT_UNIQUE;
         }
         return SysConstants.UNIQUE;
+    }
+
+    @Override
+    public List<SysDict> list(SysDict dict) {
+        return dictMapper.selectDictTypeList(dict);
     }
 }

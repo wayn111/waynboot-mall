@@ -105,6 +105,6 @@ public class MenuController extends BaseController {
         if (iMenuService.checkMenuExistRole(menuId)) {
             return R.error("菜单已分配,不允许删除");
         }
-        return R.success().add("data", iMenuService.removeById(menuId));
+        return R.result(iMenuService.removeById(menuId));
     }
 }

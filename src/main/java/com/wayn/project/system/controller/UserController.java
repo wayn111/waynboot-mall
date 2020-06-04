@@ -111,8 +111,7 @@ public class UserController extends BaseController {
     @ApiOperation("删除用户")
     @DeleteMapping("/{userIds}")
     public R deleteUser(@PathVariable List<Long> userIds) {
-        iUserService.removeByIds(userIds);
-        return R.success();
+        return R.result(iUserService.removeByIds(userIds));
     }
 
     @PreAuthorize("@ss.hasPermi('system:user:export')")
