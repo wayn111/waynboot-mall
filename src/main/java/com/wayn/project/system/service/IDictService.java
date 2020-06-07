@@ -10,11 +10,11 @@ import java.util.List;
 public interface IDictService extends IService<SysDict> {
 
     /**
-     * 查询字典类型列表
+     * 查询字典类型分页列表
      *
      * @param page 分页对象
      * @param dict 查询参数
-     * @return 字典类型列表
+     * @return 字典类型分页列表
      */
     IPage<SysDict> listDictTypePage(Page<SysDict> page, SysDict dict);
 
@@ -44,5 +44,18 @@ public interface IDictService extends IService<SysDict> {
      */
     String checkDictValueUnique(SysDict dict);
 
+    /**
+     * 查询字典类型列表
+     *
+     * @param dict 查询参数
+     * @return 字典类型列表
+     */
     List<SysDict> list(SysDict dict);
+
+    /**
+     * 删除字典类型以及子数据
+     * @param dictId 字典id
+     * @return boolean
+     */
+    boolean deleteDictTypeById(Long dictId);
 }

@@ -46,7 +46,7 @@ public class DeptController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:dept:update')")
-    @ApiOperation(value = "更新角色", notes = "更新部门")
+    @ApiOperation(value = "更新部门", notes = "更新部门")
     @PutMapping
     public R updateDept(@Validated @RequestBody SysDept dept) {
         if (SysConstants.NOT_UNIQUE.equals(iDeptService.checkDeptNameUnique(dept))) {
@@ -71,7 +71,7 @@ public class DeptController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:dept:query')")
-    @ApiOperation(value = "获取部门详细", notes = "获取部门详细")
+    @ApiOperation(value = "获取部门详细信息", notes = "获取部门详细信息")
     @GetMapping("{deptId}")
     public R getDept(@PathVariable Long deptId) {
         return R.success().add("data", iDeptService.getById(deptId));

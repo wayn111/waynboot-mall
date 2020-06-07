@@ -10,6 +10,7 @@ import com.wayn.project.system.mapper.DictMapper;
 import com.wayn.project.system.service.IDictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -65,5 +66,13 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, SysDict> implements
     @Override
     public List<SysDict> list(SysDict dict) {
         return dictMapper.selectDictTypeList(dict);
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteDictTypeById(Long dictId) {
+        SysDict dict = getById(dictId);
+        remove(new QueryWrapper<SysDict>().eq("parent_type", dict.getValue()));
+        return removeById(dictId);
     }
 }
