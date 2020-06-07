@@ -30,7 +30,7 @@ public class RoleController extends BaseController {
 
 
     @PreAuthorize("@ss.hasPermi('system:role:list')")
-    @ApiOperation(value = "角色列表", notes = "角色列表")
+    @ApiOperation(value = "角色分页列表", notes = "角色分页列表")
     @GetMapping("/list")
     public R list(SysRole role) {
         Page<SysRole> page = getPage();
@@ -52,7 +52,7 @@ public class RoleController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:role:update')")
-    @ApiOperation(value = "更新用户", notes = "更新用户")
+    @ApiOperation(value = "更新角色", notes = "更新角色")
     @PutMapping
     public R updateRole(@Validated @RequestBody SysRole role) {
         iRoleService.checkRoleAllowed(role);
@@ -75,14 +75,14 @@ public class RoleController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:role:query')")
-    @ApiOperation("获取角色详细")
+    @ApiOperation(value = "获取角色详细信息", notes = "获取角色详细信息")
     @GetMapping("/{roleId}")
     public R getRole(@PathVariable Long roleId) {
         return R.success().add("data", iRoleService.getById(roleId));
     }
 
     @PreAuthorize("@ss.hasPermi('system:role:delete')")
-    @ApiOperation("删除角色")
+    @ApiOperation(value = "删除角色",notes = "删除角色")
     @DeleteMapping("/{roleIds}")
     public R deleteRole(@PathVariable List<Long> roleIds) {
         return R.result(iRoleService.deleteRoleByIds(roleIds));

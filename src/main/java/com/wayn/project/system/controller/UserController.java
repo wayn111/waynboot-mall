@@ -36,7 +36,7 @@ public class UserController extends BaseController {
     private IRoleService iRoleService;
 
     @PreAuthorize("@ss.hasPermi('system:user:list')")
-    @ApiOperation(value = "用户列表", notes = "用户列表")
+    @ApiOperation(value = "用户分页列表", notes = "用户分页列表")
     @GetMapping("/list")
     public R list(SysUser user) {
         Page<SysUser> page = getPage();
@@ -44,7 +44,7 @@ public class UserController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:user:query')")
-    @ApiOperation("获取用户详细")
+    @ApiOperation(value = "获取用户详细信息", notes = "获取用户详细信息")
     @GetMapping(value = {"/", "/{userId}"})
     public R getInfo(@PathVariable(value = "userId", required = false) Long userId) {
         R success = R.success();
@@ -57,7 +57,7 @@ public class UserController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:user:add')")
-    @ApiOperation("添加用户")
+    @ApiOperation(value = "添加用户", notes = "添加用户")
     @PostMapping
     public R addUser(@Validated @RequestBody SysUser user) {
         if (SysConstants.NOT_UNIQUE.equals(iUserService.checkUserNameUnique(user.getUserName()))) {
@@ -74,7 +74,7 @@ public class UserController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:user:update')")
-    @ApiOperation("更新用户")
+    @ApiOperation(value = "更新用户", notes = "更新用户")
     @PutMapping
     public R updateUser(@Validated @RequestBody SysUser user) {
         iUserService.checkUserAllowed(user);
@@ -108,7 +108,7 @@ public class UserController extends BaseController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:user:delete')")
-    @ApiOperation("删除用户")
+    @ApiOperation(value = "删除用户", notes = "删除用户")
     @DeleteMapping("/{userIds}")
     public R deleteUser(@PathVariable List<Long> userIds) {
         return R.result(iUserService.removeByIds(userIds));

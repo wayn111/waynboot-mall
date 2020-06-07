@@ -76,8 +76,7 @@ public class DictTypeController extends BaseController {
     @ApiOperation(value = "删除字典类型", notes = "删除字典类型")
     @DeleteMapping("{dictId}")
     public R deleteDict(@PathVariable Long dictId) {
-//        return R.result(iDictService.removeById(dictId));
-        return R.success();
+        return R.result(iDictService.deleteDictTypeById(dictId));
     }
 
 
