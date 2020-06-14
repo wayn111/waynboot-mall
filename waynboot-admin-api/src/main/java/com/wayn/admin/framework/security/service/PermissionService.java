@@ -1,6 +1,6 @@
 package com.wayn.admin.framework.security.service;
 
-import com.wayn.admin.api.domain.SysRole;
+import com.wayn.admin.api.domain.system.SysRole;
 import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.common.util.ServletUtils;
 import org.apache.commons.lang3.StringUtils;

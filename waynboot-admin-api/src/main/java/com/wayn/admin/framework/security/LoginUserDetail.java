@@ -1,7 +1,7 @@
 package com.wayn.admin.framework.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wayn.admin.api.domain.SysUser;
+import com.wayn.admin.api.domain.system.SysUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

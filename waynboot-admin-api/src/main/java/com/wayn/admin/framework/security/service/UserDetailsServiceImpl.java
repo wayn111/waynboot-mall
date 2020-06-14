@@ -1,9 +1,9 @@
 package com.wayn.admin.framework.security.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wayn.admin.api.domain.SysUser;
-import com.wayn.admin.api.service.IDeptService;
-import com.wayn.admin.api.service.IUserService;
+import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.service.system.IDeptService;
+import com.wayn.admin.api.service.system.IUserService;
 import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.common.enums.UserStatus;
 import lombok.extern.slf4j.Slf4j;
