@@ -1,8 +1,8 @@
 package com.wayn.admin.api.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wayn.admin.api.domain.SysDept;
-import com.wayn.admin.api.domain.SysMenu;
+import com.wayn.admin.api.domain.system.SysDept;
+import com.wayn.admin.api.domain.system.SysMenu;
 import lombok.Data;
 
 import java.util.ArrayList;

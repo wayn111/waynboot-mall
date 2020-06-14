@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wayn.admin.api.mapper.RoleMapper">
+<mapper namespace="com.wayn.admin.api.mapper.system.RoleMapper">
 
-    <resultMap type="com.wayn.admin.api.domain.SysRole" id="SysRoleResult">
+    <resultMap type="com.wayn.admin.api.domain.system.SysRole" id="SysRoleResult">
         <id     property="roleId"       column="role_id"        />
         <result property="roleName"     column="role_name"      />
         <result property="roleKey"      column="role_key"       />
@@ -37,7 +37,7 @@
 	    where u.user_id = #{userId}
 	</select>
 
-    <select id="selectRoleListPage" parameterType="com.wayn.admin.api.domain.SysRole" resultMap="SysRoleResult">
+    <select id="selectRoleListPage" parameterType="com.wayn.admin.api.domain.system.SysRole" resultMap="SysRoleResult">
         <include refid="selectRoleVo"/>
         <where>
             <if test="role.roleId != null ">and r.role_id = #{role.roleId}</if>
@@ -57,7 +57,7 @@
             and r.del_flag = 0
         </where>
     </select>
-    <select id="selectRoleList" parameterType="com.wayn.admin.api.domain.SysRole" resultMap="SysRoleResult">
+    <select id="selectRoleList" parameterType="com.wayn.admin.api.domain.system.SysRole" resultMap="SysRoleResult">
         <include refid="selectRoleVo"/>
         <where>
             <if test="roleId != null ">and r.role_id = #{roleId}</if>
