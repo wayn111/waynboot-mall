@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.admin.api.mapper.shop.ChannelMapper">
+
+	<resultMap type="com.wayn.admin.api.domain.shop.ShopChannel" id="ShopChannelResult">
+		<result property="id"         	column="id"   			/>
+		<result property="name"       	column="name"   		/>
+		<result property="code"       	column="code"   		/>
+		<result property="createBy"   	column="create_by"   	/>
+		<result property="createTime" 	column="create_time" 	/>
+		<result property="updateBy"   	column="update_by"   	/>
+		<result property="updateTime" 	column="update_time" 	/>
+		<result property="remark"     	column="remark"      	/>
+	</resultMap>
+
+	<sql id="selectChannelVo">
+        select c.id, c.name, c.code, c.create_by,
+        c.create_time, c.update_by, c.update_time, c.remark
+        from shop_channel c
+    </sql>
+    
+	<select id="selectChannelList" parameterType="com.wayn.admin.api.domain.shop.ShopChannel" resultMap="ShopChannelResult">
+        <include refid="selectChannelVo"/>
+        <where>
+			<if test="name != null and name != ''">
+				AND name like concat('%', #{name}, '%')
+			</if>
+			<if test="code != null and code != ''">
+				AND code like concat('%', #{code}, '%')
+			</if>
+		</where>
+    </select>
+    
+</mapper>
