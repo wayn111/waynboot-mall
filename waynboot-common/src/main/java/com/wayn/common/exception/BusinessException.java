@@ -1,11 +1,13 @@
 package com.wayn.common.exception;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 自定义业务异常
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class BusinessException extends RuntimeException {
 
     private Integer code;
