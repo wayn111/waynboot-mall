@@ -1,9 +1,7 @@
 package com.wayn.admin.api.controller.shop;
 
 import com.wayn.admin.api.domain.shop.ShopBanner;
-import com.wayn.admin.api.domain.shop.ShopChannel;
 import com.wayn.admin.api.service.shop.IBannerService;
-import com.wayn.admin.api.service.shop.IChannelService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -22,12 +20,12 @@ public class BannerController {
         return R.success().add("channelList", iBannerService.list(banner));
     }
 
-    @PostMapping("/list")
+    @PostMapping
     public R addChannel(@Validated @RequestBody ShopBanner banner) {
         return R.result(iBannerService.save(banner));
     }
 
-    @PutMapping("/list")
+    @PutMapping
     public R updateChannel(@Validated @RequestBody ShopBanner banner) {
         return R.result(iBannerService.updateById(banner));
     }

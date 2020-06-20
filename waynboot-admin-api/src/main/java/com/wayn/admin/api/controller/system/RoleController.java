@@ -58,11 +58,12 @@ public class RoleController extends BaseController {
     public R updateRole(@Validated @RequestBody SysRole role) {
         iRoleService.checkRoleAllowed(role);
         if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleNameUnique(role))) {
-            return R.error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            return R.error("更新角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleKeyUnique(role))) {
-            return R.error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            return R.error("更新角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
         role.setUpdateBy(SecurityUtils.getUsername());
+        role.setUpdateTime(new Date());
         return R.result(iRoleService.updateRoleAndMenu(role));
     }
 
