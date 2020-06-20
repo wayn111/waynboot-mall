@@ -30,6 +30,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="code != null and code != ''">
 				AND code like concat('%', #{code}, '%')
 			</if>
+			<if test="startTime != null and startTime != ''">
+				and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endTime},'%Y-%m-%d')
+			</if>
 		</where>
     </select>
     
