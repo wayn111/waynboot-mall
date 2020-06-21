@@ -1,15 +1,20 @@
 package com.wayn.admin.api.controller.shop;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.api.domain.shop.ShopBanner;
 import com.wayn.admin.api.service.shop.IBannerService;
+import com.wayn.admin.framework.util.SecurityUtils;
+import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("shop/banner")
-public class BannerController {
+public class BannerController extends BaseController {
 
     @Autowired
     private IBannerService iBannerService;
@@ -17,11 +22,14 @@ public class BannerController {
 
     @GetMapping("/list")
     public R list(ShopBanner banner) {
-        return R.success().add("channelList", iBannerService.list(banner));
+        Page<ShopBanner> page = getPage();
+        return R.success().add("page", iBannerService.listPage(page, banner));
     }
 
     @PostMapping
     public R addChannel(@Validated @RequestBody ShopBanner banner) {
+        banner.setCreateBy(SecurityUtils.getUsername());
+        banner.setCreateTime(new Date());
         return R.result(iBannerService.save(banner));
     }
 
