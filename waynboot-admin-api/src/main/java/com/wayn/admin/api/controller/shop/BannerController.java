@@ -35,6 +35,8 @@ public class BannerController extends BaseController {
 
     @PutMapping
     public R updateChannel(@Validated @RequestBody ShopBanner banner) {
+        banner.setUpdateBy(SecurityUtils.getUsername());
+        banner.setUpdateTime(new Date());
         return R.result(iBannerService.updateById(banner));
     }
 
@@ -45,6 +47,6 @@ public class BannerController extends BaseController {
 
     @DeleteMapping("{bannerId}")
     public R deleteChannel(@PathVariable Long bannerId) {
-        return R.success().add("data", iBannerService.removeById(bannerId));
+        return R.result(iBannerService.removeById(bannerId));
     }
 }
