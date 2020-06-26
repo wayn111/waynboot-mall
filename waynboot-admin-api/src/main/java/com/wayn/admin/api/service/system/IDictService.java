@@ -3,11 +3,11 @@ package com.wayn.admin.api.service.system;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.admin.api.domain.system.SysDict;
+import com.wayn.admin.api.domain.system.Dict;
 
 import java.util.List;
 
-public interface IDictService extends IService<SysDict> {
+public interface IDictService extends IService<Dict> {
 
     /**
      * 查询字典类型分页列表
@@ -16,7 +16,7 @@ public interface IDictService extends IService<SysDict> {
      * @param dict 查询参数
      * @return 字典类型分页列表
      */
-    IPage<SysDict> listDictTypePage(Page<SysDict> page, SysDict dict);
+    IPage<Dict> listDictTypePage(Page<Dict> page, Dict dict);
 
     /**
      * 查询字典数据列表
@@ -25,7 +25,7 @@ public interface IDictService extends IService<SysDict> {
      * @param dict 查询参数
      * @return 字典数据列表
      */
-    IPage<SysDict> listDictDataPage(Page<SysDict> page, SysDict dict);
+    IPage<Dict> listDictDataPage(Page<Dict> page, Dict dict);
 
     /**
      * 校验字典name是否唯一
@@ -33,7 +33,7 @@ public interface IDictService extends IService<SysDict> {
      * @param dict 字典类型
      * @return 结果
      */
-    String checkDictNameUnique(SysDict dict);
+    String checkDictNameUnique(Dict dict);
 
 
     /**
@@ -42,7 +42,7 @@ public interface IDictService extends IService<SysDict> {
      * @param dict 字典类型
      * @return 结果
      */
-    String checkDictValueUnique(SysDict dict);
+    String checkDictValueUnique(Dict dict);
 
     /**
      * 查询字典类型列表
@@ -50,7 +50,7 @@ public interface IDictService extends IService<SysDict> {
      * @param dict 查询参数
      * @return 字典类型列表
      */
-    List<SysDict> list(SysDict dict);
+    List<Dict> list(Dict dict);
 
     /**
      * 删除字典类型以及子数据

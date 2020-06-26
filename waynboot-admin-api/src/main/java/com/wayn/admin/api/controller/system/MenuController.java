@@ -1,6 +1,6 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.SysMenu;
+import com.wayn.admin.api.domain.system.Menu;
 import com.wayn.admin.api.service.system.IMenuService;
 import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
@@ -35,10 +35,10 @@ public class MenuController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:menu:list')")
     @ApiOperation(value = "菜单列表", notes = "菜单列表")
     @GetMapping("/list")
-    public R list(SysMenu menu) {
+    public R list(Menu menu) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Long userId = loginUser.getUser().getUserId();
-        List<SysMenu> menus = iMenuService.selectMenuList(menu, userId);
+        List<Menu> menus = iMenuService.selectMenuList(menu, userId);
         return R.success().add("data", menus);
     }
 
@@ -46,10 +46,10 @@ public class MenuController extends BaseController {
      * 获取菜单树列表
      */
     @GetMapping("/treeselect")
-    public R treeselect(SysMenu menu) {
+    public R treeselect(Menu menu) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Long userId = loginUser.getUser().getUserId();
-        List<SysMenu> menus = iMenuService.selectMenuList(menu, userId);
+        List<Menu> menus = iMenuService.selectMenuList(menu, userId);
         return R.success().add("menuTree", iMenuService.buildMenuTreeSelect(menus));
     }
 
@@ -60,14 +60,14 @@ public class MenuController extends BaseController {
     public R roleMenuTreeselect(@PathVariable Long roleId) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Long userId = loginUser.getUser().getUserId();
-        List<SysMenu> menus = iMenuService.selectMenuList(new SysMenu(), userId);
+        List<Menu> menus = iMenuService.selectMenuList(new Menu(), userId);
         return R.success().add("menuTree", iMenuService.buildMenuTreeSelect(menus)).add("checkedKeys", iMenuService.selectCheckedkeys(roleId));
     }
 
     @PreAuthorize("@ss.hasPermi('system:menu:add')")
     @ApiOperation(value = "保存菜单", notes = "保存菜单")
     @PostMapping
-    public R addRole(@Validated @RequestBody SysMenu menu) {
+    public R addRole(@Validated @RequestBody Menu menu) {
         if (SysConstants.NOT_UNIQUE.equals(iMenuService.checkMenuNameUnique(menu))) {
             return R.error("新增菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
         }
@@ -79,7 +79,7 @@ public class MenuController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:menu:update')")
     @ApiOperation(value = "更新菜单", notes = "更新菜单")
     @PutMapping
-    public R updateRole(@Validated @RequestBody SysMenu menu) {
+    public R updateRole(@Validated @RequestBody Menu menu) {
         if (SysConstants.NOT_UNIQUE.equals(iMenuService.checkMenuNameUnique(menu))) {
             return R.error("更新菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
         }

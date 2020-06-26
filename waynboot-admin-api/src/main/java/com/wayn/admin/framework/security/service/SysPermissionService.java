@@ -1,6 +1,6 @@
 package com.wayn.admin.framework.security.service;
 
-import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.domain.system.User;
 import com.wayn.admin.api.service.system.IMenuService;
 import com.wayn.admin.api.service.system.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class SysPermissionService {
      * @param user 用户信息
      * @return 角色权限信息
      */
-    public Set<String> getRolePermission(SysUser user) {
+    public Set<String> getRolePermission(User user) {
         Set<String> roles = new HashSet<>();
         // 管理员拥有所有权限
         if (user.isAdmin()) {
@@ -43,7 +43,7 @@ public class SysPermissionService {
      * @param user 用户信息
      * @return 菜单权限信息
      */
-    public Set<String> getMenuPermission(SysUser user) {
+    public Set<String> getMenuPermission(User user) {
         Set<String> perms = new HashSet<>();
         // 管理员拥有所有权限
         if (user.isAdmin()) {

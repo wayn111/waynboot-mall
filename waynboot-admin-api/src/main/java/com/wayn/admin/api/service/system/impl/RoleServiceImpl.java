@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.admin.api.domain.system.SysRole;
-import com.wayn.admin.api.domain.system.SysRoleMenu;
-import com.wayn.admin.api.domain.system.SysUserRole;
+import com.wayn.admin.api.domain.system.Role;
+import com.wayn.admin.api.domain.system.RoleMenu;
+import com.wayn.admin.api.domain.system.UserRole;
 import com.wayn.admin.api.mapper.system.RoleMapper;
 import com.wayn.admin.api.service.system.IRoleMenuService;
 import com.wayn.admin.api.service.system.IRoleService;
@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements IRoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
 
     @Autowired
     private RoleMapper roleMapper;
@@ -45,9 +45,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     }
 
     @Override
-    public String checkRoleNameUnique(SysRole role) {
+    public String checkRoleNameUnique(Role role) {
         long roleId = Objects.isNull(role.getRoleId()) ? -1L : role.getRoleId();
-        SysRole sysRole = getOne(new QueryWrapper<SysRole>().eq("role_name", role.getRoleName()));
+        Role sysRole = getOne(new QueryWrapper<Role>().eq("role_name", role.getRoleName()));
         if (sysRole != null && sysRole.getRoleId() != roleId) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -55,9 +55,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     }
 
     @Override
-    public String checkRoleKeyUnique(SysRole role) {
+    public String checkRoleKeyUnique(Role role) {
         long roleId = Objects.isNull(role.getRoleId()) ? -1L : role.getRoleId();
-        SysRole sysRole = getOne(new QueryWrapper<SysRole>().eq("role_key", role.getRoleKey()));
+        Role sysRole = getOne(new QueryWrapper<Role>().eq("role_key", role.getRoleKey()));
         if (sysRole != null && sysRole.getRoleId() != roleId) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -65,7 +65,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     }
 
     @Override
-    public void checkRoleAllowed(SysRole role) {
+    public void checkRoleAllowed(Role role) {
         if (Objects.nonNull(role.getRoleId()) && role.isAdmin()) {
             throw new BusinessException("不允许操作管理员角色");
         }
@@ -73,29 +73,29 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
 
     @Transactional
     @Override
-    public boolean insertRoleAndMenu(SysRole role) {
+    public boolean insertRoleAndMenu(Role role) {
         save(role);
-        List<SysRoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new SysRoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
+        List<RoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new RoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
         return roleMenus.isEmpty() || iRoleMenuService.saveBatch(roleMenus);
     }
 
     @Transactional
     @Override
-    public boolean updateRoleAndMenu(SysRole role) {
+    public boolean updateRoleAndMenu(Role role) {
         updateById(role);
-        iRoleMenuService.remove(new QueryWrapper<SysRoleMenu>().eq("role_id", role.getRoleId()));
-        List<SysRoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new SysRoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
+        iRoleMenuService.remove(new QueryWrapper<RoleMenu>().eq("role_id", role.getRoleId()));
+        List<RoleMenu> roleMenus = role.getMenuIds().stream().map(menuId -> new RoleMenu(role.getRoleId(), menuId)).collect(Collectors.toList());
         return roleMenus.isEmpty() || iRoleMenuService.saveBatch(roleMenus);
     }
 
     @Override
     public boolean deleteRoleByIds(List<Long> roleIds) {
         for (Long roleId : roleIds) {
-            checkRoleAllowed(new SysRole(roleId));
-            SysRole sysRole = getById(roleId);
+            checkRoleAllowed(new Role(roleId));
+            Role role = getById(roleId);
             int count = countUserRoleByRoleId(roleId);
             if (count > 0) {
-                throw new BusinessException(String.format("%1$s已分配,不能删除", sysRole.getRoleName()));
+                throw new BusinessException(String.format("%1$s已分配,不能删除", role.getRoleName()));
             }
         }
         return removeByIds(roleIds);
@@ -103,16 +103,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
 
     @Override
     public int countUserRoleByRoleId(Long roleId) {
-        return iUserRoleService.count(new QueryWrapper<SysUserRole>().eq("role_id", roleId));
+        return iUserRoleService.count(new QueryWrapper<UserRole>().eq("role_id", roleId));
     }
 
     @Override
-    public IPage<SysRole> listPage(Page<SysRole> page, SysRole role) {
+    public IPage<Role> listPage(Page<Role> page, Role role) {
         return roleMapper.selectRoleListPage(page, role);
     }
 
     @Override
-    public List<SysRole> list(SysRole role) {
+    public List<Role> list(Role role) {
         return roleMapper.selectRoleList(role);
     }
 }

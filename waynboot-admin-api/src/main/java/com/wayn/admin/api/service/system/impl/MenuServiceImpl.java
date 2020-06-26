@@ -2,8 +2,8 @@ package com.wayn.admin.api.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.admin.api.domain.system.SysMenu;
-import com.wayn.admin.api.domain.system.SysRoleMenu;
+import com.wayn.admin.api.domain.system.Menu;
+import com.wayn.admin.api.domain.system.RoleMenu;
 import com.wayn.admin.api.domain.vo.MetaVo;
 import com.wayn.admin.api.domain.vo.RouterVo;
 import com.wayn.admin.api.domain.vo.TreeVO;
@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements IMenuService {
+public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
 
     @Autowired
     private MenuMapper menuMapper;
@@ -32,7 +32,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     private IRoleMenuService iRoleMenuService;
 
     @Override
-    public List<SysMenu> list(SysMenu menu) {
+    public List<Menu> list(Menu menu) {
         return menuMapper.selectMenuList(menu);
     }
 
@@ -42,8 +42,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     }
 
     @Override
-    public List<SysMenu> selectMenuTreeByUserId(Long userId) {
-        List<SysMenu> menus;
+    public List<Menu> selectMenuTreeByUserId(Long userId) {
+        List<Menu> menus;
         if (SecurityUtils.isAdmin(userId)) {
             menus = menuMapper.selectMenuTreeAll();
         } else {
@@ -53,16 +53,16 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     }
 
     @Override
-    public List<RouterVo> buildMenus(List<SysMenu> menus) {
+    public List<RouterVo> buildMenus(List<Menu> menus) {
         List<RouterVo> routers = new LinkedList<>();
-        for (SysMenu menu : menus) {
+        for (Menu menu : menus) {
             RouterVo router = new RouterVo();
             router.setHidden(1 == menu.getMenuStatus());
             router.setName(StringUtils.capitalize(menu.getPath()));
             router.setPath(getRouterPath(menu));
             router.setComponent(StringUtils.isEmpty(menu.getComponent()) ? "Layout" : menu.getComponent());
             router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
-            List<SysMenu> cMenus = menu.getChildren();
+            List<Menu> cMenus = menu.getChildren();
             if (!cMenus.isEmpty() && SysConstants.MENU_TYPE_M.equals(menu.getMenuType())) {
                 router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
@@ -74,8 +74,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     }
 
     @Override
-    public List<SysMenu> selectMenuList(SysMenu menu, Long userId) {
-        List<SysMenu> menuList;
+    public List<Menu> selectMenuList(Menu menu, Long userId) {
+        List<Menu> menuList;
         if (SecurityUtils.isAdmin(userId)) {
             menuList = list(menu);
         } else {
@@ -85,29 +85,29 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
     }
 
     @Override
-    public List<TreeVO> buildMenuTreeSelect(List<SysMenu> menus) {
-        List<SysMenu> sysMenus = buildMenuTreeByPid(menus, 0L);
+    public List<TreeVO> buildMenuTreeSelect(List<Menu> menus) {
+        List<Menu> sysMenus = buildMenuTreeByPid(menus, 0L);
         return sysMenus.stream().map(TreeVO::new).collect(Collectors.toList());
     }
 
     @Override
     public List<Long> selectCheckedkeys(Long roleId) {
-        List<SysRoleMenu> sysRoleMenus = iRoleMenuService.list(new QueryWrapper<SysRoleMenu>().eq("role_id", roleId));
-        List<Long> menuIds = sysRoleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
+        List<RoleMenu> roleMenus = iRoleMenuService.list(new QueryWrapper<RoleMenu>().eq("role_id", roleId));
+        List<Long> menuIds = roleMenus.stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
         if (!menuIds.isEmpty()) {
             // 去掉菜单中的父菜单
-            List<SysMenu> sysMenus = listByIds(menuIds);
-            for (SysMenu sysMenu : sysMenus) {
-                menuIds.remove(sysMenu.getParentId());
+            List<Menu> menus = listByIds(menuIds);
+            for (Menu menu : menus) {
+                menuIds.remove(menu.getParentId());
             }
         }
         return menuIds;
     }
 
     @Override
-    public String checkMenuNameUnique(SysMenu menu) {
+    public String checkMenuNameUnique(Menu menu) {
         long menuId = Objects.isNull(menu.getMenuId()) ? -1L : menu.getMenuId();
-        SysMenu sysMenu = getOne(new QueryWrapper<SysMenu>()
+        Menu sysMenu = getOne(new QueryWrapper<Menu>()
                 .eq("menu_name", menu.getMenuName())
                 .eq("parent_id", menu.getParentId()));
         if (sysMenu != null && sysMenu.getMenuId() != menuId) {
@@ -118,13 +118,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
 
     @Override
     public boolean hasChildByMenuId(Long menuId) {
-        int count = count(new QueryWrapper<SysMenu>().eq("parent_id", menuId));
+        int count = count(new QueryWrapper<Menu>().eq("parent_id", menuId));
         return count > 0;
     }
 
     @Override
     public boolean checkMenuExistRole(Long menuId) {
-        int count = iRoleMenuService.count(new QueryWrapper<SysRoleMenu>().eq("menu_id", menuId));
+        int count = iRoleMenuService.count(new QueryWrapper<RoleMenu>().eq("menu_id", menuId));
         return count > 0;
     }
 
@@ -135,8 +135,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
      * @param pid   父级id
      * @return 菜单树
      */
-    public List<SysMenu> buildMenuTreeByPid(List<SysMenu> menus, Long pid) {
-        List<SysMenu> returnList = new ArrayList<>();
+    public List<Menu> buildMenuTreeByPid(List<Menu> menus, Long pid) {
+        List<Menu> returnList = new ArrayList<>();
         menus.forEach(menu -> {
             if (pid.equals(menu.getParentId())) {
                 // 只添加菜单类型为目录或者菜单的记录
@@ -155,7 +155,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, SysMenu> implements
      * @param menu 菜单信息
      * @return 路由地址
      */
-    public String getRouterPath(SysMenu menu) {
+    public String getRouterPath(Menu menu) {
         String routerPath = menu.getPath();
         // 非外链并且是一级目录
         if (0 == menu.getParentId() && "1".equals(menu.getIsFrame())) {

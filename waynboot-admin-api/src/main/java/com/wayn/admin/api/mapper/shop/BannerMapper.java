@@ -3,13 +3,13 @@ package com.wayn.admin.api.mapper.shop;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.shop.ShopBanner;
+import com.wayn.admin.api.domain.shop.Banner;
 
 import java.util.List;
 
-public interface BannerMapper extends BaseMapper<ShopBanner> {
+public interface BannerMapper extends BaseMapper<Banner> {
 
-    List<ShopBanner> selectBannerList(ShopBanner banner);
+    List<Banner> selectBannerList(Banner banner);
 
-    IPage<ShopBanner> selectBannerListPage(Page<ShopBanner> page, ShopBanner banner);
+    IPage<Banner> selectBannerListPage(Page<Banner> page, Banner banner);
 }

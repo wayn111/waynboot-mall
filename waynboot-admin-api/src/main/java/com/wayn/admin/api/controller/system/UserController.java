@@ -3,7 +3,7 @@ package com.wayn.admin.api.controller.system;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.imports.ExcelImportService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.domain.system.User;
 import com.wayn.admin.api.service.system.IRoleService;
 import com.wayn.admin.api.service.system.IUserService;
 import com.wayn.admin.framework.config.WaynConfig;
@@ -39,8 +39,8 @@ public class UserController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:user:list')")
     @ApiOperation(value = "用户分页列表", notes = "用户分页列表")
     @GetMapping("/list")
-    public R list(SysUser user) {
-        Page<SysUser> page = getPage();
+    public R list(User user) {
+        Page<User> page = getPage();
         return R.success().add("page", iUserService.listPage(page, user));
     }
 
@@ -60,7 +60,7 @@ public class UserController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:user:add')")
     @ApiOperation(value = "添加用户", notes = "添加用户")
     @PostMapping
-    public R addUser(@Validated @RequestBody SysUser user) {
+    public R addUser(@Validated @RequestBody User user) {
         if (SysConstants.NOT_UNIQUE.equals(iUserService.checkUserNameUnique(user.getUserName()))) {
             return R.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
@@ -77,7 +77,7 @@ public class UserController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:user:update')")
     @ApiOperation(value = "更新用户", notes = "更新用户")
     @PutMapping
-    public R updateUser(@Validated @RequestBody SysUser user) {
+    public R updateUser(@Validated @RequestBody User user) {
         iUserService.checkUserAllowed(user);
         if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
             return R.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
@@ -91,7 +91,7 @@ public class UserController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
     @PutMapping("resetPwd")
-    public R resetPwd(@RequestBody SysUser user) {
+    public R resetPwd(@RequestBody User user) {
         iUserService.checkUserAllowed(user);
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         user.setUpdateBy(SecurityUtils.getUsername());
@@ -102,7 +102,7 @@ public class UserController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:user:update')")
     @ApiOperation(value = "更新用户状态", notes = "更新用户状态")
     @PutMapping("changeStatus")
-    public R changeStatus(@RequestBody SysUser user) {
+    public R changeStatus(@RequestBody User user) {
         iUserService.checkUserAllowed(user);
         user.setUpdateBy(SecurityUtils.getUsername());
         return R.result(iUserService.updateById(user));
@@ -117,10 +117,10 @@ public class UserController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:user:export')")
     @GetMapping("/export")
-    public R export(SysUser user) {
-        List<SysUser> list = iUserService.list(user);
-        list.forEach(item -> item.setDeptName(item.getSysDept().getDeptName()));
-        return R.success(ExcelUtil.exportExcel(list, SysUser.class, "用户数据.xls", WaynConfig.getDownloadPath()));
+    public R export(User user) {
+        List<User> list = iUserService.list(user);
+        list.forEach(item -> item.setDeptName(item.getDept().getDeptName()));
+        return R.success(ExcelUtil.exportExcel(list, User.class, "用户数据.xls", WaynConfig.getDownloadPath()));
     }
 
     @PreAuthorize("@ss.hasPermi('system:user:import')")
@@ -129,8 +129,8 @@ public class UserController extends BaseController {
     public R importData(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputstream = file.getInputStream();
         ImportParams params = new ImportParams();
-        List<SysUser> list = new ExcelImportService().importExcelByIs(inputstream, SysUser.class, params, false).getList();
-        for (SysUser user : list) {
+        List<User> list = new ExcelImportService().importExcelByIs(inputstream, User.class, params, false).getList();
+        for (User user : list) {
             if (SysConstants.NOT_UNIQUE.equals(iUserService.checkUserNameUnique(user.getUserName()))) {
                 return R.error("导入用户'" + user.getUserName() + "'失败，登录账号已存在");
             } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {

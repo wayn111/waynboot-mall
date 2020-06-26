@@ -19,7 +19,7 @@ import java.util.List;
 @Data
 @ApiModel("菜单实体")
 @EqualsAndHashCode(callSuper = true)
-public class SysMenu extends BaseEntity {
+public class Menu extends BaseEntity {
 
     private static final long serialVersionUID = 3675171030764421787L;
     /**
@@ -90,6 +90,6 @@ public class SysMenu extends BaseEntity {
      * 子菜单
      */
     @TableField(exist = false)
-    private List<SysMenu> children = new ArrayList<>();
+    private List<Menu> children = new ArrayList<>();
 
 }

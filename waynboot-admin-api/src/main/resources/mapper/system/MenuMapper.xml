@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wayn.admin.api.mapper.system.MenuMapper">
 
-	<resultMap type="com.wayn.admin.api.domain.system.SysMenu" id="SysMenuResult">
+	<resultMap type="com.wayn.admin.api.domain.system.Menu" id="SysMenuResult">
 		<id     property="menuId"         column="menu_id"        />
 		<result property="menuName"       column="menu_name"      />
 		<result property="parentId"       column="parent_id"      />
@@ -26,7 +26,7 @@
 		from sys_menu m
     </sql>
 
-    <select id="selectMenuList" parameterType="com.wayn.admin.api.domain.system.SysMenu" resultMap="SysMenuResult">
+    <select id="selectMenuList" parameterType="com.wayn.admin.api.domain.system.Menu" resultMap="SysMenuResult">
         <include refid="selectMenuVo"></include>
         <where>
 			<if test="menuName != null  and menuName != '' ">

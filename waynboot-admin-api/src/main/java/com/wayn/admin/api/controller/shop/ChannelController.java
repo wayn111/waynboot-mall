@@ -1,6 +1,6 @@
 package com.wayn.admin.api.controller.shop;
 
-import com.wayn.admin.api.domain.shop.ShopChannel;
+import com.wayn.admin.api.domain.shop.Channel;
 import com.wayn.admin.api.service.shop.IChannelService;
 import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.base.BaseController;
@@ -20,12 +20,12 @@ public class ChannelController extends BaseController {
     private IChannelService iChannelService;
 
     @GetMapping("/list")
-    public R list(ShopChannel channel) {
+    public R list(Channel channel) {
         return R.success().add("channelList", iChannelService.list(channel));
     }
 
     @PostMapping
-    public R addChannel(@Validated @RequestBody ShopChannel channel) {
+    public R addChannel(@Validated @RequestBody Channel channel) {
         if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelNameUnique(channel))) {
             return R.error("新增栏目'" + channel.getName() + "'失败，栏目名称已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelCodeUnique(channel))) {
@@ -37,7 +37,7 @@ public class ChannelController extends BaseController {
     }
 
     @PutMapping
-    public R updateChannel(@Validated @RequestBody ShopChannel channel) {
+    public R updateChannel(@Validated @RequestBody Channel channel) {
         if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelNameUnique(channel))) {
             return R.error("更新栏目'" + channel.getName() + "'失败，栏目名称已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelCodeUnique(channel))) {

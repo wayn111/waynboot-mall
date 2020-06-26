@@ -1,18 +1,18 @@
 package com.wayn.admin.api.mapper.system;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wayn.admin.api.domain.system.SysMenu;
+import com.wayn.admin.api.domain.system.Menu;
 
 import java.util.List;
 
-public interface MenuMapper extends BaseMapper<SysMenu> {
+public interface MenuMapper extends BaseMapper<Menu> {
     List<String> selectMenuPermsByUserId(Long userId);
 
-    List<SysMenu> selectMenuTreeByUserId(Long userId);
+    List<Menu> selectMenuTreeByUserId(Long userId);
 
-    List<SysMenu> selectMenuTreeAll();
+    List<Menu> selectMenuTreeAll();
 
-    List<SysMenu> selectMenuListByUserId(SysMenu menu, Long userId);
+    List<Menu> selectMenuListByUserId(Menu menu, Long userId);
 
-    List<SysMenu> selectMenuList(SysMenu menu);
+    List<Menu> selectMenuList(Menu menu);
 }

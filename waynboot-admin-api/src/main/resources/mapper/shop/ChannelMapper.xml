@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wayn.admin.api.mapper.shop.ChannelMapper">
 
-	<resultMap type="com.wayn.admin.api.domain.shop.ShopChannel" id="ShopChannelResult">
+	<resultMap type="com.wayn.admin.api.domain.shop.Channel" id="ShopChannelResult">
 		<result property="id"         	column="id"   			/>
 		<result property="name"       	column="name"   		/>
 		<result property="code"       	column="code"   		/>
@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from shop_channel c
     </sql>
     
-	<select id="selectChannelList" parameterType="com.wayn.admin.api.domain.shop.ShopChannel" resultMap="ShopChannelResult">
+	<select id="selectChannelList" parameterType="com.wayn.admin.api.domain.shop.Channel" resultMap="ShopChannelResult">
         <include refid="selectChannelVo"/>
         <where>
 			<if test="name != null and name != ''">

@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wayn.admin.api.mapper.shop.BannerMapper">
 
-	<resultMap type="com.wayn.admin.api.domain.shop.ShopBanner" id="ShopBannerResult">
+	<resultMap type="com.wayn.admin.api.domain.shop.Banner" id="ShopBannerResult">
 		<result property="id"         	column="id"   			/>
 		<result property="title"     	column="title"   	/>
 		<result property="jumpUrl"     	column="jump_url"   	/>
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from shop_banner b
     </sql>
     
-	<select id="selectBannerList" parameterType="com.wayn.admin.api.domain.shop.ShopBanner" resultMap="ShopBannerResult">
+	<select id="selectBannerList" parameterType="com.wayn.admin.api.domain.shop.Banner" resultMap="ShopBannerResult">
         <include refid="selectBannerVo"/>
         <where>
 			<if test="title != null and title != ''">

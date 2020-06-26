@@ -5,6 +5,7 @@
     <modules>
         <module>waynboot-common</module>
         <module>waynboot-admin-api</module>
+        <module>waynboot-generator</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

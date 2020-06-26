@@ -2,7 +2,7 @@ package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.system.SysDict;
+import com.wayn.admin.api.domain.system.Dict;
 import com.wayn.admin.api.service.system.IDictService;
 import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.base.BaseController;
@@ -31,8 +31,8 @@ public class DictDataController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @ApiOperation(value = "字典数据分页", notes = "字典数据分页")
     @GetMapping("/list")
-    public R list(SysDict dict) {
-        Page<SysDict> page = getPage();
+    public R list(Dict dict) {
+        Page<Dict> page = getPage();
         return R.success().add("page", iDictService.listDictDataPage(page, dict));
     }
 
@@ -40,20 +40,20 @@ public class DictDataController extends BaseController {
     @ApiOperation(value = "字典类型列表", notes = "字典类型列表")
     @GetMapping("/selectTypeList")
     public R selectTypeList() {
-        List<SysDict> typeList = iDictService.list(new QueryWrapper<SysDict>().eq("type", 1));
+        List<Dict> typeList = iDictService.list(new QueryWrapper<Dict>().eq("type", 1));
         return R.success().add("typeList", typeList);
     }
 
     @GetMapping("/type/{parentType}")
     public R dictType(@PathVariable String parentType) {
-        List<SysDict> dicts = iDictService.list(new QueryWrapper<SysDict>().eq("type", 2).eq("parent_type", parentType));
+        List<Dict> dicts = iDictService.list(new QueryWrapper<Dict>().eq("type", 2).eq("parent_type", parentType));
         return R.success().add("data", dicts);
     }
 
     @PreAuthorize("@ss.hasPermi('system:dict:add')")
     @ApiOperation(value = "保存字典数据", notes = "保存字典数据")
     @PostMapping
-    public R addDict(@Validated @RequestBody SysDict dict) {
+    public R addDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
             return R.error("新增标签名'" + dict.getName() + "'失败，标签名已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {
@@ -67,7 +67,7 @@ public class DictDataController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:add')")
     @ApiOperation(value = "保存字典数据", notes = "保存字典数据")
     @PutMapping
-    public R updateDict(@Validated @RequestBody SysDict dict) {
+    public R updateDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
             return R.error("更新标签名'" + dict.getName() + "'失败，标签名已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {

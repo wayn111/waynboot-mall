@@ -1,6 +1,6 @@
 package com.wayn.admin.framework.security.service;
 
-import com.wayn.admin.api.domain.system.SysRole;
+import com.wayn.admin.api.domain.system.Role;
 import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.common.util.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -99,7 +99,7 @@ public class PermissionService {
         if (Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getUser().getRoles())) {
             return false;
         }
-        for (SysRole sysRole : loginUser.getUser().getRoles()) {
+        for (Role sysRole : loginUser.getUser().getRoles()) {
             String roleKey = sysRole.getRoleKey();
             if (SUPER_ADMIN.contains(roleKey) || roleKey.contains(StringUtils.trim(role))) {
                 return true;

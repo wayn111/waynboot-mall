@@ -5,26 +5,23 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
- * 用户和角色关联 sys_user_role
+ * 角色和菜单关联 sys_role_menu
  */
 @Data
-public class SysUserRole {
-    /**
-     * 用户ID
-     */
-    @TableId(type = IdType.AUTO)
-    private Long userId;
-
+public class RoleMenu {
     /**
      * 角色ID
      */
+    @TableId(type = IdType.AUTO)
     private Long roleId;
 
-    public SysUserRole(Long userId, Long roleId) {
-        this.userId = userId;
-        this.roleId = roleId;
-    }
+    /**
+     * 菜单ID
+     */
+    private Long menuId;
 
-    public SysUserRole() {
+    public RoleMenu(Long roleId, Long menuId) {
+        this.roleId = roleId;
+        this.menuId = menuId;
     }
 }
