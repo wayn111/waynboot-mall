@@ -34,9 +34,6 @@ logging:
 
 # mybatis plus 配置
 mybatis-plus:
-  scripting-language-driver:
-    velocity:
-      additional-context-attributes:
   global-config:
     db-config:
       logic-delete-field: delFlag  #全局逻辑删除字段值 3.3.0开始支持，详情看下面。

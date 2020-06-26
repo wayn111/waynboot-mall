@@ -3,6 +3,7 @@ package com.wayn.admin.api.domain.system;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel("角色实体")
+@TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
 public class Dict extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -7521690041693138642L;

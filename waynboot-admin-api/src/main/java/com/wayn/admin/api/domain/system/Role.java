@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @Data
 @ApiModel("角色实体")
+@TableName("sys_role")
 @EqualsAndHashCode(callSuper = true)
 public class Role extends BaseEntity {
 
