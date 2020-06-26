@@ -1,7 +1,7 @@
 package com.wayn.admin.framework.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.domain.system.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,7 +15,7 @@ public class LoginUserDetail implements UserDetails {
 
     private String token;
 
-    private SysUser user;
+    private User user;
 
     /**
      * 登陆时间
@@ -33,11 +33,11 @@ public class LoginUserDetail implements UserDetails {
     private Set<String> permissions;
 
 
-    public LoginUserDetail(SysUser user) {
+    public LoginUserDetail(User user) {
         this.user = user;
     }
 
-    public LoginUserDetail(SysUser user, Set<String> permissions) {
+    public LoginUserDetail(User user, Set<String> permissions) {
         this.user = user;
         this.permissions = permissions;
     }
@@ -81,11 +81,11 @@ public class LoginUserDetail implements UserDetails {
         return this;
     }
 
-    public SysUser getUser() {
+    public User getUser() {
         return user;
     }
 
-    public LoginUserDetail setUser(SysUser user) {
+    public LoginUserDetail setUser(User user) {
         this.user = user;
         return this;
     }

@@ -3,11 +3,11 @@ package com.wayn.admin.api.service.system;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.admin.api.domain.system.SysRole;
+import com.wayn.admin.api.domain.system.Role;
 
 import java.util.List;
 
-public interface IRoleService extends IService<SysRole> {
+public interface IRoleService extends IService<Role> {
     /**
      * 查询角色列表
      *
@@ -15,14 +15,14 @@ public interface IRoleService extends IService<SysRole> {
      * @param role 查询参数
      * @return 角色分页列表
      */
-    IPage<SysRole> listPage(Page<SysRole> page, SysRole role);
+    IPage<Role> listPage(Page<Role> page, Role role);
 
     /**
      * 查询角色列表
      * @param role 查询参数
      * @return 角色列表
      */
-    List<SysRole> list(SysRole role);
+    List<Role> list(Role role);
 
     /**
      * 根据用户id查询权限
@@ -46,7 +46,7 @@ public interface IRoleService extends IService<SysRole> {
      * @param role 角色信息
      * @return 状态码 0 唯一 1 不唯一
      */
-    String checkRoleNameUnique(SysRole role);
+    String checkRoleNameUnique(Role role);
 
     /**
      * 校验角色权限是否唯一
@@ -54,14 +54,14 @@ public interface IRoleService extends IService<SysRole> {
      * @param role 角色信息
      * @return 状态码 0 唯一 1 不唯一
      */
-    String checkRoleKeyUnique(SysRole role);
+    String checkRoleKeyUnique(Role role);
 
     /**
      * 校验角色是否允许操作
      *
      * @param role 角色信息
      */
-    void checkRoleAllowed(SysRole role);
+    void checkRoleAllowed(Role role);
 
     /**
      * 保存角色信息和关联菜单
@@ -69,7 +69,7 @@ public interface IRoleService extends IService<SysRole> {
      * @param role 角色信息
      * @return boolean
      */
-    boolean insertRoleAndMenu(SysRole role);
+    boolean insertRoleAndMenu(Role role);
 
     /**
      * 更新角色信息和关联菜单
@@ -77,7 +77,7 @@ public interface IRoleService extends IService<SysRole> {
      * @param role 角色信息
      * @return boolean
      */
-    boolean updateRoleAndMenu(SysRole role);
+    boolean updateRoleAndMenu(Role role);
 
     /**
      * 通过角色id删除角色

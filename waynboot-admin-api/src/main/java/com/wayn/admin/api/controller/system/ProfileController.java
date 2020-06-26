@@ -1,6 +1,6 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.domain.system.User;
 import com.wayn.admin.api.service.system.IUserService;
 import com.wayn.admin.framework.config.WaynConfig;
 import com.wayn.admin.framework.manager.upload.service.UploadService;
@@ -40,7 +40,7 @@ public class ProfileController {
     }
 
     @PutMapping
-    public R updateProfile(@RequestBody SysUser user) {
+    public R updateProfile(@RequestBody User user) {
         if (iUserService.updateById(user)) {
             LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             // 更新缓存用户信息

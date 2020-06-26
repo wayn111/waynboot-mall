@@ -3,11 +3,11 @@ package com.wayn.admin.api.service.shop;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.admin.api.domain.shop.ShopBanner;
+import com.wayn.admin.api.domain.shop.Banner;
 
 import java.util.List;
 
-public interface IBannerService extends IService<ShopBanner> {
+public interface IBannerService extends IService<Banner> {
 
     /**
      * 查询banner列表
@@ -15,7 +15,7 @@ public interface IBannerService extends IService<ShopBanner> {
      * @param banner 查询参数
      * @return banner列表
      */
-    List<ShopBanner> list(ShopBanner banner);
+    List<Banner> list(Banner banner);
 
     /**
      * 查询banner分页列表
@@ -24,5 +24,5 @@ public interface IBannerService extends IService<ShopBanner> {
      * @param banner 查询参数
      * @return banner分页列表
      */
-    IPage<ShopBanner> listPage(Page<ShopBanner> page, ShopBanner banner);
+    IPage<Banner> listPage(Page<Banner> page, Banner banner);
 }

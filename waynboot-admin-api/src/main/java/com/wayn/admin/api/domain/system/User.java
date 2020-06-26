@@ -20,7 +20,7 @@ import java.util.List;
 @Data
 @ApiModel("用户实体")
 @EqualsAndHashCode(callSuper = true)
-public class SysUser extends BaseEntity {
+public class User extends BaseEntity {
     private static final long serialVersionUID = -8079172156772887677L;
     /**
      * 用户id
@@ -97,13 +97,13 @@ public class SysUser extends BaseEntity {
     private Integer delFlag;
 
     @TableField(exist = false)
-    private SysDept sysDept;
+    private Dept dept;
 
     /**
      * 角色对象
      */
     @TableField(exist = false)
-    private List<SysRole> roles;
+    private List<Role> roles;
 
     /**
      * 角色组

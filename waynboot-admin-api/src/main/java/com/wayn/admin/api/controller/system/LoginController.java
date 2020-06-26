@@ -1,7 +1,7 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.SysMenu;
-import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.domain.system.Menu;
+import com.wayn.admin.api.domain.system.User;
 import com.wayn.admin.api.service.system.IMenuService;
 import com.wayn.admin.framework.redis.RedisCache;
 import com.wayn.admin.framework.security.LoginObj;
@@ -59,7 +59,7 @@ public class LoginController {
     public R userInfo(HttpServletRequest request) {
         R success = R.success();
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
-        SysUser user = loginUser.getUser();
+        User user = loginUser.getUser();
         Set<String> rolePermission = sysPermissionService.getRolePermission(user);
         Set<String> menuPermission = sysPermissionService.getMenuPermission(user);
         success.add("user", user);
@@ -74,8 +74,8 @@ public class LoginController {
         R success = R.success();
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
         // 用户信息
-        SysUser user = loginUser.getUser();
-        List<SysMenu> menus = iMenuService.selectMenuTreeByUserId(user.getUserId());
+        User user = loginUser.getUser();
+        List<Menu> menus = iMenuService.selectMenuTreeByUserId(user.getUserId());
         return success.add("routers", iMenuService.buildMenus(menus));
     }
 

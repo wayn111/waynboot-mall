@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.admin.api.domain.system.SysRole;
-import com.wayn.admin.api.domain.system.SysUser;
-import com.wayn.admin.api.domain.system.SysUserRole;
+import com.wayn.admin.api.domain.system.Role;
+import com.wayn.admin.api.domain.system.User;
+import com.wayn.admin.api.domain.system.UserRole;
 import com.wayn.admin.api.mapper.system.RoleMapper;
 import com.wayn.admin.api.mapper.system.UserMapper;
 import com.wayn.admin.api.service.system.IUserRoleService;
@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements IUserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -35,12 +35,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     private IUserRoleService iUserRoleService;
 
     @Override
-    public IPage<SysUser> listPage(Page<SysUser> page, SysUser user) {
+    public IPage<User> listPage(Page<User> page, User user) {
         return userMapper.selectUserListPage(page, user);
     }
 
     @Override
-    public void checkUserAllowed(SysUser user) {
+    public void checkUserAllowed(User user) {
         if (user.isAdmin()) {
             throw new BusinessException("不允许操作管理员用户");
         }
@@ -48,7 +48,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
 
     @Override
     public String checkUserNameUnique(String userName) {
-        int count = count(new QueryWrapper<SysUser>().eq("user_name", userName));
+        int count = count(new QueryWrapper<User>().eq("user_name", userName));
         if (count > 0) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -56,9 +56,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     }
 
     @Override
-    public String checkPhoneUnique(SysUser user) {
+    public String checkPhoneUnique(User user) {
         long userId = Objects.nonNull(user.getUserId()) ? user.getUserId() : 0;
-        SysUser info = getOne(new QueryWrapper<SysUser>().eq("phone", user.getPhone()));
+        User info = getOne(new QueryWrapper<User>().eq("phone", user.getPhone()));
         if (info != null && info.getUserId() != userId) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -66,9 +66,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     }
 
     @Override
-    public String checkEmailUnique(SysUser user) {
+    public String checkEmailUnique(User user) {
         long userId = Objects.nonNull(user.getUserId()) ? user.getUserId() : 0;
-        SysUser info = getOne(new QueryWrapper<SysUser>().eq("email", user.getEmail()));
+        User info = getOne(new QueryWrapper<User>().eq("email", user.getEmail()));
         if (info != null && info.getUserId() != userId) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -76,30 +76,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     }
 
     @Override
-    public boolean insertUserAndRole(SysUser user) {
+    public boolean insertUserAndRole(User user) {
         save(user);
-        List<SysUserRole> userRoles = Arrays.stream(user.getRoleIds()).map(item -> new SysUserRole(user.getUserId(), item)).collect(Collectors.toList());
+        List<UserRole> userRoles = Arrays.stream(user.getRoleIds()).map(item -> new UserRole(user.getUserId(), item)).collect(Collectors.toList());
         return userRoles.isEmpty() || iUserRoleService.saveBatch(userRoles);
     }
 
     @Override
-    public boolean updateUserAndRole(SysUser user) {
+    public boolean updateUserAndRole(User user) {
         updateById(user);
-        iUserRoleService.remove(new QueryWrapper<SysUserRole>().eq("user_id", user.getUserId()));
-        List<SysUserRole> userRoles = Arrays.stream(user.getRoleIds()).map(item -> new SysUserRole(user.getUserId(), item)).collect(Collectors.toList());
+        iUserRoleService.remove(new QueryWrapper<UserRole>().eq("user_id", user.getUserId()));
+        List<UserRole> userRoles = Arrays.stream(user.getRoleIds()).map(item -> new UserRole(user.getUserId(), item)).collect(Collectors.toList());
         return userRoles.isEmpty() || iUserRoleService.saveBatch(userRoles);
     }
 
     @Override
-    public List<SysUser> list(SysUser user) {
+    public List<User> list(User user) {
         return userMapper.selectUserList(user);
     }
 
     @Override
     public String selectUserRoleGroup(String userName) {
-        List<SysRole> list = roleMapper.selectRolesByUserName(userName);
+        List<Role> list = roleMapper.selectRolesByUserName(userName);
         StringBuffer idsStr = new StringBuffer();
-        for (SysRole role : list) {
+        for (Role role : list) {
             idsStr.append(role.getRoleName()).append(",");
         }
         if (StringUtils.isNotEmpty(idsStr.toString())) {

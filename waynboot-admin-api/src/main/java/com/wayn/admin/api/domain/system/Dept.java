@@ -21,7 +21,7 @@ import java.util.List;
 @Data
 @ApiModel("部门实体")
 @EqualsAndHashCode(callSuper = true)
-public class SysDept extends BaseEntity {
+public class Dept extends BaseEntity {
 
     /**
      * 部门ID
@@ -84,5 +84,5 @@ public class SysDept extends BaseEntity {
      * 子部门
      */
     @TableField(exist = false)
-    private List<SysDept> children = new ArrayList<SysDept>();
+    private List<Dept> children = new ArrayList<Dept>();
 }

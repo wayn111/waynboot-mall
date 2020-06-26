@@ -1,7 +1,7 @@
 package com.wayn.admin.framework.security.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.domain.system.User;
 import com.wayn.admin.api.service.system.IDeptService;
 import com.wayn.admin.api.service.system.IUserService;
 import com.wayn.admin.framework.security.LoginUserDetail;
@@ -39,7 +39,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysUser user = iUserService.getOne(new QueryWrapper<SysUser>().eq("user_name", username));
+        User user = iUserService.getOne(new QueryWrapper<User>().eq("user_name", username));
         if (user == null) {
             log.info("登录用户：{} 不存在.", username);
             throw new UsernameNotFoundException("登录用户：" + username + " 不存在");
@@ -48,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             log.info("登录用户：{} 已经被停用.", username);
             throw new DisabledException("登录用户：" + username + " 不存在");
         }
-        user.setSysDept(iDeptService.getById(user.getDeptId()));
+        user.setDept(iDeptService.getById(user.getDeptId()));
         return new LoginUserDetail(user, permissionService.getMenuPermission(user));
     }
 

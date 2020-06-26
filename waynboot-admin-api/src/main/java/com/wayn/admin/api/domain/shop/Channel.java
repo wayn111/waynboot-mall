@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ShopChannel extends BaseEntity implements Serializable {
+public class Channel extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -7151701194368095457L;
 
     @TableId(type = IdType.AUTO)

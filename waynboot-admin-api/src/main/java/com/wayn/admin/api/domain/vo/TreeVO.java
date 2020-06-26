@@ -1,8 +1,8 @@
 package com.wayn.admin.api.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wayn.admin.api.domain.system.SysDept;
-import com.wayn.admin.api.domain.system.SysMenu;
+import com.wayn.admin.api.domain.system.Dept;
+import com.wayn.admin.api.domain.system.Menu;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -27,13 +27,13 @@ public class TreeVO {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<TreeVO> children = new ArrayList<>();
 
-    public TreeVO(SysMenu menu) {
+    public TreeVO(Menu menu) {
         this.id = menu.getMenuId();
         this.label = menu.getMenuName();
         this.children = menu.getChildren().stream().map(TreeVO::new).collect(Collectors.toList());
     }
 
-    public TreeVO(SysDept dept) {
+    public TreeVO(Dept dept) {
         this.id = dept.getDeptId();
         this.label = dept.getDeptName();
         this.children = dept.getChildren().stream().map(TreeVO::new).collect(Collectors.toList());

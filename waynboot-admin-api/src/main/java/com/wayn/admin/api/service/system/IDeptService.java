@@ -1,19 +1,19 @@
 package com.wayn.admin.api.service.system;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.admin.api.domain.system.SysDept;
+import com.wayn.admin.api.domain.system.Dept;
 import com.wayn.admin.api.domain.vo.TreeVO;
 
 import java.util.List;
 
-public interface IDeptService extends IService<SysDept> {
+public interface IDeptService extends IService<Dept> {
     /**
      * 查询部门列表
      *
      * @param dept 查询参数
      * @return 部门列表
      */
-    List<SysDept> list(SysDept dept);
+    List<Dept> list(Dept dept);
 
     /**
      * 校验部门名称是否唯一
@@ -21,7 +21,7 @@ public interface IDeptService extends IService<SysDept> {
      * @param dept 部门信息
      * @return 状态码 0 唯一 1 不唯一
      */
-    String checkDeptNameUnique(SysDept dept);
+    String checkDeptNameUnique(Dept dept);
 
     /**
      * 是否存在部门子节点
@@ -45,7 +45,7 @@ public interface IDeptService extends IService<SysDept> {
      * @param dept 选寻参数
      * @return 部门树列表
      */
-    List<SysDept> selectDeptList(SysDept dept);
+    List<Dept> selectDeptList(Dept dept);
 
 
     /**
@@ -54,5 +54,5 @@ public interface IDeptService extends IService<SysDept> {
      * @param depts 部门列表
      * @return 树结构列表
      */
-    List<TreeVO> buildDeptTreeSelect(List<SysDept> depts);
+    List<TreeVO> buildDeptTreeSelect(List<Dept> depts);
 }

@@ -1,7 +1,7 @@
 package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.system.SysRole;
+import com.wayn.admin.api.domain.system.Role;
 import com.wayn.admin.api.service.system.IRoleService;
 import com.wayn.admin.framework.config.WaynConfig;
 import com.wayn.admin.framework.util.SecurityUtils;
@@ -33,15 +33,15 @@ public class RoleController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:role:list')")
     @ApiOperation(value = "角色分页列表", notes = "角色分页列表")
     @GetMapping("/list")
-    public R list(SysRole role) {
-        Page<SysRole> page = getPage();
+    public R list(Role role) {
+        Page<Role> page = getPage();
         return R.success().add("page", iRoleService.listPage(page, role));
     }
 
     @PreAuthorize("@ss.hasPermi('system:role:add')")
     @ApiOperation(value = "保存角色", notes = "保存角色")
     @PostMapping
-    public R addRole(@Validated @RequestBody SysRole role) {
+    public R addRole(@Validated @RequestBody Role role) {
         if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleNameUnique(role))) {
             return R.error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleKeyUnique(role))) {
@@ -55,7 +55,7 @@ public class RoleController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:role:update')")
     @ApiOperation(value = "更新角色", notes = "更新角色")
     @PutMapping
-    public R updateRole(@Validated @RequestBody SysRole role) {
+    public R updateRole(@Validated @RequestBody Role role) {
         iRoleService.checkRoleAllowed(role);
         if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleNameUnique(role))) {
             return R.error("更新角色'" + role.getRoleName() + "'失败，角色名称已存在");
@@ -70,7 +70,7 @@ public class RoleController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:role:update')")
     @ApiOperation(value = "更新角色状态", notes = "更新角色状态")
     @PutMapping("changeStatus")
-    public R changeStatus(@RequestBody SysRole role) {
+    public R changeStatus(@RequestBody Role role) {
         iRoleService.checkRoleAllowed(role);
         role.setUpdateBy(SecurityUtils.getUsername());
         return R.result(iRoleService.updateById(role));
@@ -92,8 +92,8 @@ public class RoleController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:role:export')")
     @GetMapping("/export")
-    public R export(SysRole role) {
-        List<SysRole> list = iRoleService.list(role);
-        return R.success(ExcelUtil.exportExcel(list, SysRole.class, "角色数据.xls", WaynConfig.getDownloadPath()));
+    public R export(Role role) {
+        List<Role> list = iRoleService.list(role);
+        return R.success(ExcelUtil.exportExcel(list, Role.class, "角色数据.xls", WaynConfig.getDownloadPath()));
     }
 }

@@ -3,19 +3,19 @@ package com.wayn.admin.api.mapper.system;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.system.SysRole;
+import com.wayn.admin.api.domain.system.Role;
 
 import java.util.List;
 
-public interface RoleMapper extends BaseMapper<SysRole> {
+public interface RoleMapper extends BaseMapper<Role> {
 
-    IPage<SysRole> selectRoleListPage(Page<SysRole> page, SysRole role);
+    IPage<Role> selectRoleListPage(Page<Role> page, Role role);
 
     List<String> selectRoleByUserId(Long userId);
 
     List<Integer> selectRoleListByUserId(Long userId);
 
-    List<SysRole> selectRoleList(SysRole role);
+    List<Role> selectRoleList(Role role);
 
-    List<SysRole> selectRolesByUserName(String userName);
+    List<Role> selectRolesByUserName(String userName);
 }

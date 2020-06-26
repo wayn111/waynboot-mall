@@ -2,8 +2,8 @@ package com.wayn.admin.api.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.admin.api.domain.system.SysDept;
-import com.wayn.admin.api.domain.system.SysUser;
+import com.wayn.admin.api.domain.system.Dept;
+import com.wayn.admin.api.domain.system.User;
 import com.wayn.admin.api.domain.vo.TreeVO;
 import com.wayn.admin.api.mapper.system.DeptMapper;
 import com.wayn.admin.api.service.system.IDeptService;
@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class DeptServiceImpl extends ServiceImpl<DeptMapper, SysDept> implements IDeptService {
+public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements IDeptService {
 
     @Autowired
     private DeptMapper deptMapper;
@@ -27,14 +27,14 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, SysDept> implements
     private IUserService iUserService;
 
     @Override
-    public List<SysDept> list(SysDept dept) {
+    public List<Dept> list(Dept dept) {
         return deptMapper.selectDeptList(dept);
     }
 
     @Override
-    public String checkDeptNameUnique(SysDept dept) {
+    public String checkDeptNameUnique(Dept dept) {
         long deptId = Objects.isNull(dept.getDeptId()) ? -1L : dept.getDeptId();
-        SysDept sysDept = getOne(new QueryWrapper<SysDept>()
+        Dept sysDept = getOne(new QueryWrapper<Dept>()
                 .eq("dept_name", dept.getDeptName())
                 .eq("parent_id", dept.getParentId()));
         if (sysDept != null && sysDept.getDeptId() != deptId) {
@@ -45,24 +45,24 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, SysDept> implements
 
     @Override
     public boolean hasChildByDeptId(Long deptId) {
-        int count = count(new QueryWrapper<SysDept>().eq("parent_id", deptId));
+        int count = count(new QueryWrapper<Dept>().eq("parent_id", deptId));
         return count > 0;
     }
 
     @Override
     public boolean checkDeptExistUser(Long deptId) {
-        int count = iUserService.count(new QueryWrapper<SysUser>().eq("dept_id", deptId));
+        int count = iUserService.count(new QueryWrapper<User>().eq("dept_id", deptId));
         return count > 0;
     }
 
     @Override
-    public List<SysDept> selectDeptList(SysDept dept) {
+    public List<Dept> selectDeptList(Dept dept) {
         return deptMapper.selectDeptList(dept);
     }
 
     @Override
-    public List<TreeVO> buildDeptTreeSelect(List<SysDept> depts) {
-        List<SysDept> sysDepts = buildDeptTreeByPid(depts, 0L);
+    public List<TreeVO> buildDeptTreeSelect(List<Dept> depts) {
+        List<Dept> sysDepts = buildDeptTreeByPid(depts, 0L);
         return sysDepts.stream().map(TreeVO::new).collect(Collectors.toList());
     }
 
@@ -73,8 +73,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, SysDept> implements
      * @param pid   父级id
      * @return 部门树
      */
-    public List<SysDept> buildDeptTreeByPid(List<SysDept> depts, Long pid) {
-        List<SysDept> returnList = new ArrayList<>();
+    public List<Dept> buildDeptTreeByPid(List<Dept> depts, Long pid) {
+        List<Dept> returnList = new ArrayList<>();
         depts.forEach(dept -> {
             if (pid.equals(dept.getParentId())) {
                 dept.setChildren(buildDeptTreeByPid(depts, dept.getDeptId()));

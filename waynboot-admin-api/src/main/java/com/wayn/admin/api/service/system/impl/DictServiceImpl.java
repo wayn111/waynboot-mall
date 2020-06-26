@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.admin.api.domain.system.SysDict;
+import com.wayn.admin.api.domain.system.Dict;
 import com.wayn.admin.api.mapper.system.DictMapper;
 import com.wayn.admin.api.service.system.IDictService;
 import com.wayn.common.constant.SysConstants;
@@ -16,31 +16,31 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class DictServiceImpl extends ServiceImpl<DictMapper, SysDict> implements IDictService {
+public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements IDictService {
 
     @Autowired
     private DictMapper dictMapper;
 
     @Override
-    public IPage<SysDict> listDictTypePage(Page<SysDict> page, SysDict dict) {
+    public IPage<Dict> listDictTypePage(Page<Dict> page, Dict dict) {
         return dictMapper.selectDictTypeListPage(page, dict);
     }
 
     @Override
-    public IPage<SysDict> listDictDataPage(Page<SysDict> page, SysDict dict) {
+    public IPage<Dict> listDictDataPage(Page<Dict> page, Dict dict) {
         return dictMapper.selectDictDataListPage(page, dict);
     }
 
     @Override
-    public String checkDictNameUnique(SysDict dict) {
+    public String checkDictNameUnique(Dict dict) {
         long dictId = Objects.isNull(dict.getDictId()) ? -1L : dict.getDictId();
-        QueryWrapper<SysDict> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
         if (dict.getType() == 1) {
             queryWrapper.eq("name", dict.getName()).eq("type", 1);
         } else {
             queryWrapper.eq("name", dict.getName()).eq("type", 2).eq("parent_type", dict.getParentType());
         }
-        SysDict sysDict = getOne(queryWrapper);
+        Dict sysDict = getOne(queryWrapper);
         if (sysDict != null && sysDict.getDictId() != dictId) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -48,15 +48,15 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, SysDict> implements
     }
 
     @Override
-    public String checkDictValueUnique(SysDict dict) {
+    public String checkDictValueUnique(Dict dict) {
         long dictId = Objects.isNull(dict.getDictId()) ? -1L : dict.getDictId();
-        QueryWrapper<SysDict> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
         if (dict.getType() == 1) {
             queryWrapper.eq("value", dict.getValue()).eq("type", 1);
         } else {
             queryWrapper.eq("value", dict.getValue()).eq("type", 2).eq("parent_type", dict.getParentType());
         }
-        SysDict sysDict = getOne(queryWrapper);
+        Dict sysDict = getOne(queryWrapper);
         if (sysDict != null && sysDict.getDictId() != dictId) {
             return SysConstants.NOT_UNIQUE;
         }
@@ -64,15 +64,15 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, SysDict> implements
     }
 
     @Override
-    public List<SysDict> list(SysDict dict) {
+    public List<Dict> list(Dict dict) {
         return dictMapper.selectDictTypeList(dict);
     }
 
     @Transactional
     @Override
     public boolean deleteDictTypeById(Long dictId) {
-        SysDict dict = getById(dictId);
-        remove(new QueryWrapper<SysDict>().eq("parent_type", dict.getValue()));
+        Dict dict = getById(dictId);
+        remove(new QueryWrapper<Dict>().eq("parent_type", dict.getValue()));
         return removeById(dictId);
     }
 }

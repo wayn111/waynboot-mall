@@ -1,6 +1,6 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.SysDept;
+import com.wayn.admin.api.domain.system.Dept;
 import com.wayn.admin.api.service.system.IDeptService;
 import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.constant.SysConstants;
@@ -26,21 +26,21 @@ public class DeptController {
     @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @ApiOperation(value = "部门列表", notes = "部门列表")
     @GetMapping("/list")
-    public R list(SysDept dept) {
-        List<SysDept> depts = iDeptService.list(dept);
+    public R list(Dept dept) {
+        List<Dept> depts = iDeptService.list(dept);
         return R.success().add("data", depts);
     }
 
     @PreAuthorize("@ss.hasPermi('system:dept:add')")
     @ApiOperation(value = "保存部门", notes = "保存部门")
     @PostMapping
-    public R addDept(@Validated @RequestBody SysDept dept) {
+    public R addDept(@Validated @RequestBody Dept dept) {
         if (SysConstants.NOT_UNIQUE.equals(iDeptService.checkDeptNameUnique(dept))) {
             return R.error("新增角色'" + dept.getDeptName() + "'失败，部门名称已存在");
         }
         dept.setCreateBy(SecurityUtils.getUsername());
         dept.setCreateTime(new Date());
-        SysDept parent = iDeptService.getById(dept.getParentId());
+        Dept parent = iDeptService.getById(dept.getParentId());
         dept.setAncestors(parent.getAncestors() + "," + dept.getParentId());
         return R.result(iDeptService.save(dept));
     }
@@ -48,7 +48,7 @@ public class DeptController {
     @PreAuthorize("@ss.hasPermi('system:dept:update')")
     @ApiOperation(value = "更新部门", notes = "更新部门")
     @PutMapping
-    public R updateDept(@Validated @RequestBody SysDept dept) {
+    public R updateDept(@Validated @RequestBody Dept dept) {
         if (SysConstants.NOT_UNIQUE.equals(iDeptService.checkDeptNameUnique(dept))) {
             return R.error("更新角色'" + dept.getDeptName() + "'失败，部门名称已存在");
         } else if (dept.getParentId().equals(dept.getDeptId())) {
@@ -56,7 +56,7 @@ public class DeptController {
         }
         dept.setUpdateBy(SecurityUtils.getUsername());
         dept.setUpdateTime(new Date());
-        SysDept parent = iDeptService.getById(dept.getParentId());
+        Dept parent = iDeptService.getById(dept.getParentId());
         dept.setAncestors(parent.getAncestors() + "," + dept.getParentId());
         return R.result(iDeptService.updateById(dept));
     }
@@ -65,8 +65,8 @@ public class DeptController {
      * 获取部门下拉树列表
      */
     @GetMapping("/treeselect")
-    public R treeselect(SysDept dept) {
-        List<SysDept> depts = iDeptService.selectDeptList(dept);
+    public R treeselect(Dept dept) {
+        List<Dept> depts = iDeptService.selectDeptList(dept);
         return R.success().add("deptTree", iDeptService.buildDeptTreeSelect(depts));
     }
 

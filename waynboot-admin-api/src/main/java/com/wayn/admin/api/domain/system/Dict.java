@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @ApiModel("角色实体")
 @EqualsAndHashCode(callSuper = true)
-public class SysDict extends BaseEntity implements Serializable {
+public class Dict extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -7521690041693138642L;
 
     /**

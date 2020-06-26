@@ -19,7 +19,7 @@ import java.util.List;
 @Data
 @ApiModel("角色实体")
 @EqualsAndHashCode(callSuper = true)
-public class SysRole extends BaseEntity {
+public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -1024364179363548873L;
     /**
@@ -67,11 +67,11 @@ public class SysRole extends BaseEntity {
      */
     private Integer delFlag;
 
-    public SysRole(Long roleId) {
+    public Role(Long roleId) {
         this.roleId = roleId;
     }
 
-    public SysRole() {
+    public Role() {
     }
 
 

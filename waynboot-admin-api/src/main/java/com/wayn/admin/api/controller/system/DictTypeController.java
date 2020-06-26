@@ -1,7 +1,7 @@
 package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.system.SysDict;
+import com.wayn.admin.api.domain.system.Dict;
 import com.wayn.admin.api.service.system.IDictService;
 import com.wayn.admin.framework.config.WaynConfig;
 import com.wayn.admin.framework.util.SecurityUtils;
@@ -32,8 +32,8 @@ public class DictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @ApiOperation(value = "字典类型分页", notes = "字典类型分页")
     @GetMapping("/list")
-    public R list(SysDict dict) {
-        Page<SysDict> page = getPage();
+    public R list(Dict dict) {
+        Page<Dict> page = getPage();
         return R.success().add("page", iDictService.listDictTypePage(page, dict));
     }
 
@@ -41,7 +41,7 @@ public class DictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:add')")
     @ApiOperation(value = "保存字典类型", notes = "保存字典类型")
     @PostMapping
-    public R addDict(@Validated @RequestBody SysDict dict) {
+    public R addDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
             return R.error("新增字典名称'" + dict.getName() + "'失败，字典名称已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {
@@ -55,7 +55,7 @@ public class DictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:update')")
     @ApiOperation(value = "更新字典类型", notes = "更新字典类型")
     @PutMapping
-    public R updateDict(@Validated @RequestBody SysDict dict) {
+    public R updateDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
             return R.error("更新字典名称'" + dict.getName() + "'失败，字典名称已存在");
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {
@@ -83,8 +83,8 @@ public class DictTypeController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:dict:export')")
     @GetMapping("/export")
-    public R export(SysDict dict) {
-        List<SysDict> list = iDictService.list(dict);
-        return R.success(ExcelUtil.exportExcel(list, SysDict.class, "字典数据.xls", WaynConfig.getDownloadPath()));
+    public R export(Dict dict) {
+        List<Dict> list = iDictService.list(dict);
+        return R.success(ExcelUtil.exportExcel(list, Dict.class, "字典数据.xls", WaynConfig.getDownloadPath()));
     }
 }
