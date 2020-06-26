@@ -1,11 +1,13 @@
 package com.wayn.admin.api.domain.shop;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.wayn.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -18,10 +20,13 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("shop_category")
-public class Category implements Serializable {
+public class Category extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+
+    @TableId(type = IdType.AUTO)
+    private Long id;
     /**
      * 类目名称
      */
@@ -40,7 +45,7 @@ public class Category implements Serializable {
     /**
      * 父类目ID
      */
-    private Integer pid;
+    private Long pid;
 
     /**
      * 类目图标
@@ -59,40 +64,9 @@ public class Category implements Serializable {
      */
     private Integer sortOrder;
 
-    /**
-     * 创建时间
-     */
-    private LocalDateTime addTime;
 
     /**
      * banner状态（0启用 1禁用）
      */
     private Integer delFlag;
-
-    /**
-     * 创建时间
-     */
-    private String createBy;
-
-    /**
-     * 创建人
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 更新人
-     */
-    private String updateBy;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
-
-    /**
-     * 备注
-     */
-    private String remark;
-
-
 }

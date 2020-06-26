@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateBy"     column="update_by"    />
 		<result property="updateTime"   column="update_time"  />
 		<result property="remark"       column="remark"       />
-		<association property="sysDept" javaType="com.wayn.admin.api.domain.system.Dept" resultMap="deptResult" />
+		<association property="dept" javaType="com.wayn.admin.api.domain.system.Dept" resultMap="deptResult" />
 	</resultMap>
 	
 	<resultMap id="deptResult" type="com.wayn.admin.api.domain.system.Dept">

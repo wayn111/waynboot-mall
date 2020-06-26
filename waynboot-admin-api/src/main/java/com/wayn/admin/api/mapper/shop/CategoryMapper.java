@@ -3,6 +3,8 @@ package com.wayn.admin.api.mapper.shop;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wayn.admin.api.domain.shop.Category;
 
+import java.util.List;
+
 /**
  * <p>
  * 类目表 Mapper 接口
@@ -13,4 +15,5 @@ import com.wayn.admin.api.domain.shop.Category;
  */
 public interface CategoryMapper extends BaseMapper<Category> {
 
+    List<Category> selectCategoryList(Category category);
 }
