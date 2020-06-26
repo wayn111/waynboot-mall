@@ -2,6 +2,7 @@ package com.wayn.admin.api.domain.shop;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
+@TableName("shop_channel")
 @EqualsAndHashCode(callSuper = true)
 public class Channel extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -7151701194368095457L;

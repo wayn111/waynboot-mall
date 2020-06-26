@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 @Data
 @ApiModel("用户实体")
+@TableName("sys_user")
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity {
     private static final long serialVersionUID = -8079172156772887677L;
