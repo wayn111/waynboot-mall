@@ -47,7 +47,6 @@ public class BannerController extends BaseController {
 
     @DeleteMapping("{bannerId}")
     public R deleteChannel(@PathVariable Long bannerId) {
-        return R.result(iBannerService.removeById(bannerId)
-        );
+        return R.result(iBannerService.removeById(bannerId));
     }
 }
