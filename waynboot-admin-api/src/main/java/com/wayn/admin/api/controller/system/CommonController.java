@@ -1,12 +1,13 @@
 package com.wayn.admin.api.controller.system;
 
 import com.wayn.admin.framework.config.WaynConfig;
+import com.wayn.admin.framework.manager.upload.service.UploadService;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUploadUtil;
 import com.wayn.common.util.file.FileUtils;
-import com.wayn.common.util.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,9 @@ import java.io.File;
 @Controller
 @RequestMapping("common")
 public class CommonController {
+
+    @Autowired
+    private UploadService uploadService;
 
     /**
      * 通用下载请求
@@ -90,9 +94,8 @@ public class CommonController {
             // 上传文件路径
             String filePath = WaynConfig.getUploadDir();
             String fileName = FileUploadUtil.uploadFile(file, filePath);
-            String requestUrl = HttpUtil.getRequestContext(request);
-            String url = requestUrl + "/upload/" + fileName;
-            return R.success().add("url", url).add("fileName", fileName);
+            String fileUrl = uploadService.uploadFile(fileName);
+            return R.success().add("url", fileUrl).add("fileName", fileName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return R.error(e.getMessage());

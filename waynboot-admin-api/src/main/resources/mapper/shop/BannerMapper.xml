@@ -37,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectBannerListPage" resultMap="ShopBannerResult">
 		<include refid="selectBannerVo"/>
 		<where>
+			del_flag = 0
 			<if test="banner.title != null and banner.title != ''">
 				AND title like concat('%', #{banner.title}, '%')
 			</if>
