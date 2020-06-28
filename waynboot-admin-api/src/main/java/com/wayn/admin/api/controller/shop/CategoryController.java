@@ -3,12 +3,14 @@ package com.wayn.admin.api.controller.shop;
 
 import com.wayn.admin.api.domain.shop.Category;
 import com.wayn.admin.api.service.shop.ICategoryService;
+import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -30,4 +32,10 @@ public class CategoryController extends BaseController {
         return R.success().add("data", iCategoryService.list(category));
     }
 
+    @PostMapping
+    public R addCategory(@Validated @RequestBody Category category) {
+        category.setCreateBy(SecurityUtils.getUsername());
+        category.setCreateTime(new Date());
+        return R.result(iCategoryService.save(category));
+    }
 }

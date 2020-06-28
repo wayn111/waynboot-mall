@@ -27,26 +27,26 @@ public class BannerController extends BaseController {
     }
 
     @PostMapping
-    public R addChannel(@Validated @RequestBody Banner banner) {
+    public R addBanner(@Validated @RequestBody Banner banner) {
         banner.setCreateBy(SecurityUtils.getUsername());
         banner.setCreateTime(new Date());
         return R.result(iBannerService.save(banner));
     }
 
     @PutMapping
-    public R updateChannel(@Validated @RequestBody Banner banner) {
+    public R updateBanner(@Validated @RequestBody Banner banner) {
         banner.setUpdateBy(SecurityUtils.getUsername());
         banner.setUpdateTime(new Date());
         return R.result(iBannerService.updateById(banner));
     }
 
     @GetMapping("{bannerId}")
-    public R getChannel(@PathVariable Long bannerId) {
+    public R getBanner(@PathVariable Long bannerId) {
         return R.success().add("data", iBannerService.getById(bannerId));
     }
 
     @DeleteMapping("{bannerId}")
-    public R deleteChannel(@PathVariable Long bannerId) {
+    public R deleteBanner(@PathVariable Long bannerId) {
         return R.result(iBannerService.removeById(bannerId));
     }
 }
