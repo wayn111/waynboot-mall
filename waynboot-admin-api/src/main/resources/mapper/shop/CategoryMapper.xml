@@ -8,7 +8,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="id"         	column="id"   			/>
 		<result property="name"   		column="name"   		/>
 		<result property="keywords" 	column="keywords"  		/>
-		<result property="desc"   		column="desc"			/>
 		<result property="pid"  		column="pid"   			/>
 		<result property="iconUrl" 		column="icon_url"  		/>
 		<result property="picUrl" 		column="pic_url"   		/>
@@ -23,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<sql id="selectCategoryVo">
-        select c.id, c.name, c.keywords, c.desc, c.pid, c.icon_url,
+        select c.id, c.name, c.keywords, c.pid, c.icon_url,
         c.pic_url, c.level,c.sort_order, c.del_flag,
         c.create_by, c.create_time, c.update_by, c.update_time, c.remark
         from shop_category c
@@ -32,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectCategoryList" parameterType="com.wayn.admin.api.domain.shop.Category" resultMap="ShopCategoryResult">
         <include refid="selectCategoryVo"/>
         <where>
+			del_flag = 0
 			<if test="name != null and name != ''">
 				AND name like concat('%', #{name}, '%')
 			</if>

@@ -38,4 +38,21 @@ public class CategoryController extends BaseController {
         category.setCreateTime(new Date());
         return R.result(iCategoryService.save(category));
     }
+
+    @PutMapping
+    public R updateCategory(@Validated @RequestBody Category category) {
+        category.setUpdateBy(SecurityUtils.getUsername());
+        category.setUpdateTime(new Date());
+        return R.result(iCategoryService.updateById(category));
+    }
+
+    @GetMapping("{categoryId}")
+    public R getCategory(@PathVariable Long categoryId) {
+        return R.success().add("data", iCategoryService.getById(categoryId));
+    }
+
+    @DeleteMapping("{categoryId}")
+    public R deleteCategory(@PathVariable Long categoryId) {
+        return R.result(iCategoryService.removeById(categoryId));
+    }
 }
