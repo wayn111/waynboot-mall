@@ -37,10 +37,6 @@ public class Category extends BaseEntity implements Serializable {
      */
     private String keywords;
 
-    /**
-     * 类目广告语介绍
-     */
-    private String desc;
 
     /**
      * 父类目ID
@@ -57,6 +53,9 @@ public class Category extends BaseEntity implements Serializable {
      */
     private String picUrl;
 
+    /**
+     * 类目级别 L1 一级 L2 二级
+     */
     private String level;
 
     /**
