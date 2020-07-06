@@ -5,14 +5,15 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.rules.FileType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.io.File;
+import java.util.*;
 
 public class Gen {
 
@@ -42,15 +43,17 @@ public class Gen {
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath + "/waynboot-generator/src/main/java");
-        gc.setAuthor("jobob");
+        gc.setOutputDir(projectPath + "/waynboot-admin-api/src/main/java");
+        gc.setAuthor("wayn");
+        gc.setBaseColumnList(true);
+        gc.setBaseResultMap(true);
         gc.setOpen(false);
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://192.168.31.49:3306/wayn_vue?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
+        dsc.setUrl("jdbc:mysql://localhost:3306/wayn_vue?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
@@ -59,7 +62,12 @@ public class Gen {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName(scanner("模块名"));
+        pc.setController("controller.shop");
+        pc.setService("service.shop");
+        pc.setServiceImpl("service.impl.shop");
+        pc.setMapper("mapper.shop");
+        pc.setEntity("domain.shop");
+        pc.setModuleName("");
         pc.setParent("com.wayn.admin.api");
         mpg.setPackageInfo(pc);
 
@@ -83,12 +91,12 @@ public class Gen {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-                return projectPath + "/src/main/resources/mapper/" + pc.getModuleName()
+                return projectPath + "/waynboot-admin-api/src/main/resources/mapper/" + pc.getModuleName()
                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
-        /*
-        cfg.setFileCreate(new IFileCreate() {
+
+        /*cfg.setFileCreate(new IFileCreate() {
             @Override
             public boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath) {
                 // 判断自定义文件夹是否需要创建
@@ -100,8 +108,8 @@ public class Gen {
                 // 允许生成模板文件
                 return true;
             }
-        });
-        */
+        });*/
+
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
 
