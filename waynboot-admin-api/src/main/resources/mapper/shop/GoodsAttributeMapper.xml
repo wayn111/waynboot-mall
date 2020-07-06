@@ -8,7 +8,7 @@
         <result column="goods_id" property="goodsId" />
         <result column="attribute" property="attribute" />
         <result column="value" property="value" />
-        <result column="creata_time" property="creataTime" />
+        <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="del_flag" property="delFlag" />
     </resultMap>
@@ -16,7 +16,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id,
-        goods_id, attribute, value, creata_time, update_time, del_flag
+        goods_id, attribute, value, create_time, update_time, del_flag
     </sql>
 
 </mapper>

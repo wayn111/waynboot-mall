@@ -3,7 +3,6 @@ package com.wayn.admin.api.domain.shop;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.wayn.common.base.BaseEntity;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -69,4 +68,9 @@ public class Category extends ShopBaseEntity implements Serializable {
      * banner状态（0启用 1禁用）
      */
     private Integer delFlag;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

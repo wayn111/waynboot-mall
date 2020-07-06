@@ -1,8 +1,10 @@
 package com.wayn.admin.api.domain.shop;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,7 +50,8 @@ public class Goods extends ShopBaseEntity implements Serializable {
     /**
      * 商品宣传图片列表，采用JSON数组格式
      */
-    private String gallery;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private String[] gallery;
 
     /**
      * 商品关键字，采用逗号间隔

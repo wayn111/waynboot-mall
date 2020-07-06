@@ -4,27 +4,27 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="ShopGoodsResult" type="com.wayn.admin.api.domain.shop.Goods">
-        <result column="id" property="id" />
-        <result column="goods_sn" property="goodsSn" />
-        <result column="name" property="name" />
-        <result column="category_id" property="categoryId" />
-        <result column="brand_id" property="brandId" />
-        <result column="gallery" property="gallery" />
-        <result column="keywords" property="keywords" />
-        <result column="brief" property="brief" />
-        <result column="is_on_sale" property="isOnSale" />
-        <result column="sort_order" property="sortOrder" />
-        <result column="pic_url" property="picUrl" />
-        <result column="share_url" property="shareUrl" />
-        <result column="is_new" property="isNew" />
-        <result column="is_hot" property="isHot" />
-        <result column="unit" property="unit" />
-        <result column="counter_price" property="counterPrice" />
-        <result column="retail_price" property="retailPrice" />
-        <result column="detail" property="detail" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="del_flag" property="delFlag" />
+        <result column="id"                 property="id" />
+        <result column="goods_sn"           property="goodsSn" />
+            <result column="name"           property="name" />
+        <result column="category_id"        property="categoryId" />
+        <result column="brand_id"           property="brandId" />
+        <result column="gallery"            property="gallery" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="keywords"           property="keywords" />
+        <result column="brief"              property="brief" />
+        <result column="is_on_sale"         property="isOnSale" />
+        <result column="sort_order"         property="sortOrder" />
+        <result column="pic_url"            property="picUrl" />
+        <result column="share_url"          property="shareUrl" />
+        <result column="is_new"             property="isNew" />
+        <result column="is_hot"             property="isHot" />
+        <result column="unit"               property="unit" />
+        <result column="counter_price"      property="counterPrice" />
+        <result column="retail_price"       property="retailPrice" />
+        <result column="detail"             property="detail" />
+        <result column="create_time"        property="createTime" />
+        <result column="update_time"        property="updateTime" />
+        <result column="del_flag"           property="delFlag" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -44,6 +44,7 @@
             <if test="goods.endTime != null and goods.endTime != ''">
                 and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{goods.endTime},'%Y-%m-%d')
             </if>
+            order by create_time desc
         </where>
     </select>
 </mapper>
