@@ -28,14 +28,12 @@ public class BannerController extends BaseController {
 
     @PostMapping
     public R addBanner(@Validated @RequestBody Banner banner) {
-        banner.setCreateBy(SecurityUtils.getUsername());
         banner.setCreateTime(new Date());
         return R.result(iBannerService.save(banner));
     }
 
     @PutMapping
     public R updateBanner(@Validated @RequestBody Banner banner) {
-        banner.setUpdateBy(SecurityUtils.getUsername());
         banner.setUpdateTime(new Date());
         return R.result(iBannerService.updateById(banner));
     }

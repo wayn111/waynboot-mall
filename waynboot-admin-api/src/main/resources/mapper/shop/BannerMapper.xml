@@ -12,16 +12,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="sort"     	column="sort"   	/>
 		<result property="status"     	column="status"   	/>
 		<result property="delFlag"     	column="del_flag"   	/>
-		<result property="createBy"   	column="create_by"   	/>
 		<result property="createTime" 	column="create_time" 	/>
-		<result property="updateBy"   	column="update_by"   	/>
 		<result property="updateTime" 	column="update_time" 	/>
-		<result property="remark"     	column="remark"      	/>
 	</resultMap>
 
 	<sql id="selectBannerVo">
         select b.id, b.title,b.jump_url, b.img_url, b.sort, b.status,
-        b.del_flag, b.create_time, b.update_by, b.update_time, b.remark
+        b.del_flag, b.create_time, b.update_time
         from shop_banner b
     </sql>
     

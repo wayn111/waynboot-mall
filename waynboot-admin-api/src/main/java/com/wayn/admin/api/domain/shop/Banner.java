@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.BaseEntity;
+import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
 @Data
 @TableName("shop_banner")
 @EqualsAndHashCode(callSuper = true)
-public class Banner extends BaseEntity implements Serializable {
+public class Banner extends ShopBaseEntity implements Serializable {
 
     private static final long serialVersionUID = -6208877431925919530L;
 
