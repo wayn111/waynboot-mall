@@ -31,7 +31,6 @@ public class ChannelController extends BaseController {
         } else if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelCodeUnique(channel))) {
             return R.error("新增编码'" + channel.getCode() + "'失败，栏目编码已存在");
         }
-        channel.setCreateBy(SecurityUtils.getUsername());
         channel.setCreateTime(new Date());
         return R.result(iChannelService.save(channel));
     }
@@ -43,7 +42,6 @@ public class ChannelController extends BaseController {
         } else if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelCodeUnique(channel))) {
             return R.error("更新编码'" + channel.getCode() + "'失败，栏目编码已存在");
         }
-        channel.setUpdateBy(SecurityUtils.getUsername());
         channel.setUpdateTime(new Date());
         return R.result(iChannelService.updateById(channel));
     }

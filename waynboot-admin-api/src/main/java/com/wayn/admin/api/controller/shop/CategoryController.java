@@ -34,14 +34,12 @@ public class CategoryController extends BaseController {
 
     @PostMapping
     public R addCategory(@Validated @RequestBody Category category) {
-        category.setCreateBy(SecurityUtils.getUsername());
         category.setCreateTime(new Date());
         return R.result(iCategoryService.save(category));
     }
 
     @PutMapping
     public R updateCategory(@Validated @RequestBody Category category) {
-        category.setUpdateBy(SecurityUtils.getUsername());
         category.setUpdateTime(new Date());
         return R.result(iCategoryService.updateById(category));
     }

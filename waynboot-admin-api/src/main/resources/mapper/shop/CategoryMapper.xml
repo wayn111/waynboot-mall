@@ -14,17 +14,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="level" 		column="level"   		/>
 		<result property="sortOrder" 	column="sort_order"   	/>
 		<result property="delFlag"     	column="del_flag"   	/>
-		<result property="createBy"   	column="create_by"   	/>
 		<result property="createTime" 	column="create_time" 	/>
-		<result property="updateBy"   	column="update_by"   	/>
 		<result property="updateTime" 	column="update_time" 	/>
-		<result property="remark"     	column="remark"      	/>
 	</resultMap>
 
 	<sql id="selectCategoryVo">
         select c.id, c.name, c.keywords, c.pid, c.icon_url,
         c.pic_url, c.level,c.sort_order, c.del_flag,
-        c.create_by, c.create_time, c.update_by, c.update_time, c.remark
+        c.create_time, c.update_time, c.remark
         from shop_category c
     </sql>
     
