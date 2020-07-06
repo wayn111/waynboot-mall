@@ -10,7 +10,7 @@ import java.util.List;
  * 类目表 服务类
  * </p>
  *
- * @author jobob
+ * @author wayn
  * @since 2020-06-26
  */
 public interface ICategoryService extends IService<Category> {

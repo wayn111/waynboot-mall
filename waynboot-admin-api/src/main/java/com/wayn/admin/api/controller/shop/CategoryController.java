@@ -17,7 +17,7 @@ import java.util.Date;
  * 类目表 前端控制器
  * </p>
  *
- * @author jobob
+ * @author wayn
  * @since 2020-06-26
  */
 @RestController
