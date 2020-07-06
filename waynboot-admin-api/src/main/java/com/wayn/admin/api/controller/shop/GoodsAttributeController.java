@@ -16,6 +16,6 @@ import com.wayn.common.base.BaseController;
  */
 @RestController
 @RequestMapping("/shop-goods-attribute")
-public class ShopGoodsAttributeController extends BaseController {
+public class GoodsAttributeController extends BaseController {
 
 }

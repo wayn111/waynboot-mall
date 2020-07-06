@@ -16,6 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="delFlag"     	column="del_flag"   	/>
 		<result property="createTime" 	column="create_time" 	/>
 		<result property="updateTime" 	column="update_time" 	/>
+		<result property="remark" 		column="remark" 	/>
 	</resultMap>
 
 	<sql id="selectCategoryVo">
