@@ -1,13 +1,12 @@
 package com.wayn.admin.api.domain.shop;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -19,7 +18,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ShopGoodsSpecification extends ShopBaseEntity implements Serializable {
+public class GoodsSpecification extends ShopBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 3623876658189050505L;
     @TableId(type = IdType.AUTO)
