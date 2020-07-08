@@ -1,6 +1,6 @@
 package com.wayn.admin.api.service.shop;
 
-import com.wayn.admin.api.domain.shop.ShopGoodsSpecification;
+import com.wayn.admin.api.domain.shop.GoodsSpecification;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author wayn
  * @since 2020-07-06
  */
-public interface IShopGoodsSpecificationService extends IService<ShopGoodsSpecification> {
+public interface IGoodsSpecificationService extends IService<GoodsSpecification> {
 
 }

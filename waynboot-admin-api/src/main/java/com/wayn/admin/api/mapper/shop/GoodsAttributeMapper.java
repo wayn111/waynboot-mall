@@ -1,6 +1,6 @@
 package com.wayn.admin.api.mapper.shop;
 
-import com.wayn.admin.api.domain.shop.ShopGoodsAttribute;
+import com.wayn.admin.api.domain.shop.GoodsAttribute;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author wayn
  * @since 2020-07-06
  */
-public interface ShopGoodsAttributeMapper extends BaseMapper<ShopGoodsAttribute> {
+public interface GoodsAttributeMapper extends BaseMapper<GoodsAttribute> {
 
 }
