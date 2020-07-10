@@ -7,10 +7,10 @@ import com.wayn.admin.api.service.shop.IGoodsService;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -31,6 +31,18 @@ public class GoodsController extends BaseController {
     public R list(Goods goods) {
         Page<Goods> page = getPage();
         return R.success().add("page", iGoodsService.listPage(page, goods));
+    }
+
+    @PostMapping
+    public R addGoods(@Validated @RequestBody Goods goods) {
+        goods.setCreateTime(new Date());
+        return R.result(iGoodsService.save(goods));
+    }
+
+    @PutMapping
+    public R updateGoods(@Validated @RequestBody Goods goods) {
+        goods.setUpdateTime(new Date());
+        return R.result(iGoodsService.updateById(goods));
     }
 
     @GetMapping("{goodsId}")
