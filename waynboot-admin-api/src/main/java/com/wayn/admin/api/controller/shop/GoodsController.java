@@ -2,13 +2,13 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.shop.Banner;
 import com.wayn.admin.api.domain.shop.Goods;
 import com.wayn.admin.api.service.shop.IGoodsService;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +31,11 @@ public class GoodsController extends BaseController {
     public R list(Goods goods) {
         Page<Goods> page = getPage();
         return R.success().add("page", iGoodsService.listPage(page, goods));
+    }
+
+    @GetMapping("{goodsId}")
+    public R getGoods(@PathVariable Long goodsId) {
+        return R.success().add("data", iGoodsService.getById(goodsId));
     }
 
 }
