@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 09/07/2020 08:31:09
+ Date: 11/07/2020 00:05:57
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `qiniu_config`  (
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
   `enable` tinyint(0) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of qiniu_config
@@ -2013,7 +2013,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2039 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2040 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -2054,8 +2054,9 @@ INSERT INTO `sys_menu` VALUES (2033, '商城管理', 0, 1, 'shop', NULL, 1, 'M',
 INSERT INTO `sys_menu` VALUES (2034, '栏目管理', 2033, 2, 'channel', 'shop/channel/index', 1, 'C', 0, NULL, NULL, 'time-range', 'admin', '2020-06-15 22:40:12', 'admin', '2020-06-26 21:33:56', '');
 INSERT INTO `sys_menu` VALUES (2035, 'banner管理', 2033, 3, 'banner', 'shop/banner/index', 1, 'C', 0, NULL, NULL, 'checkbox', 'admin', '2020-06-15 22:44:20', 'admin', '2020-06-26 21:33:30', '');
 INSERT INTO `sys_menu` VALUES (2036, '分类管理', 2033, 4, 'category', 'shop/category/index', 1, 'C', 0, NULL, NULL, 'checkbox', 'admin', '2020-06-26 21:32:50', 'admin', '2020-07-06 23:09:46', '');
-INSERT INTO `sys_menu` VALUES (2037, '商品管理', 2033, 1, 'goods', 'shop/goods/index', 1, 'C', 0, NULL, NULL, 'exit-fullscreen', 'admin', '2020-07-06 23:09:32', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2038, '添加商品', 2033, 1, 'goods/add', 'shop/goods/add', 1, 'C', 0, NULL, NULL, 'tab', 'admin', '2020-07-08 22:32:04', 'admin', '2020-07-08 22:32:25', '');
+INSERT INTO `sys_menu` VALUES (2037, '商品管理', 2033, 5, 'goods', 'shop/goods/index', 1, 'C', 0, NULL, NULL, 'exit-fullscreen', 'admin', '2020-07-06 23:09:32', 'admin', '2020-07-10 23:50:17', '');
+INSERT INTO `sys_menu` VALUES (2038, '添加商品', 2033, 1, 'goods/add', 'shop/goods/add', 1, 'C', 0, NULL, NULL, 'tab', 'admin', '2020-07-08 22:32:04', 'admin', '2020-07-10 23:50:02', '');
+INSERT INTO `sys_menu` VALUES (2039, '修改商品', 2033, 5, 'goods/edit', 'shop/goods/edit', 1, 'C', 0, 1, NULL, 'dashboard', 'admin', '2020-07-10 23:50:54', 'admin', '2020-07-10 23:52:10', '');
 
 -- ----------------------------
 -- Table structure for sys_role
