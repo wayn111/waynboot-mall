@@ -22,7 +22,7 @@ import java.math.BigDecimal;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("shop_goods")
+@TableName(value = "shop_goods", autoResultMap = true)
 public class Goods extends ShopBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 3591926398371563001L;

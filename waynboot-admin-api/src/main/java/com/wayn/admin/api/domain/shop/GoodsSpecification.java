@@ -2,6 +2,7 @@ package com.wayn.admin.api.domain.shop;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,7 @@ import java.io.Serializable;
  * @since 2020-07-06
  */
 @Data
+@TableName("shop_goods_specification")
 @EqualsAndHashCode(callSuper = false)
 public class GoodsSpecification extends ShopBaseEntity implements Serializable {
 

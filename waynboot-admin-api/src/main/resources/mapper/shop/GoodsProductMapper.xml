@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="com.wayn.admin.api.domain.shop.GoodsProduct">
         <result column="id" property="id" />
         <result column="goods_id" property="goodsId" />
-        <result column="specifications" property="specifications" />
+        <result column="specifications" property="specifications" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
         <result column="price" property="price" />
         <result column="number" property="number" />
         <result column="url" property="url" />
