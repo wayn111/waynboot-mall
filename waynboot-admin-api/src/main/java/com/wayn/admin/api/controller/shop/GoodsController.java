@@ -47,7 +47,7 @@ public class GoodsController extends BaseController {
 
     @GetMapping("{goodsId}")
     public R getGoods(@PathVariable Long goodsId) {
-        return R.success().add("data", iGoodsService.getById(goodsId));
+        return R.success().add("data", iGoodsService.getGoodsInfoById(goodsId));
     }
 
 }

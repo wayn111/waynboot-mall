@@ -1,7 +1,10 @@
 package com.wayn.admin.api.domain.shop;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,6 +21,7 @@ import java.math.BigDecimal;
  * @since 2020-07-06
  */
 @Data
+@TableName(value = "shop_goods_product", autoResultMap = true)
 @EqualsAndHashCode(callSuper = false)
 public class GoodsProduct extends ShopBaseEntity implements Serializable {
 
@@ -33,7 +37,8 @@ public class GoodsProduct extends ShopBaseEntity implements Serializable {
     /**
      * 商品规格值列表，采用JSON数组格式
      */
-    private String specifications;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private String[] specifications;
 
     /**
      * 商品货品价格
