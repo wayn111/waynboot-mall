@@ -32,7 +32,7 @@ public class GoodsProduct extends ShopBaseEntity implements Serializable {
     /**
      * 商品表的商品ID
      */
-    private Integer goodsId;
+    private Long goodsId;
 
     /**
      * 商品规格值列表，采用JSON数组格式

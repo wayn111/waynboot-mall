@@ -3,14 +3,13 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.api.domain.shop.Goods;
+import com.wayn.admin.api.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.admin.api.service.shop.IGoodsService;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 /**
  * <p>
@@ -34,15 +33,13 @@ public class GoodsController extends BaseController {
     }
 
     @PostMapping
-    public R addGoods(@Validated @RequestBody Goods goods) {
-        goods.setCreateTime(new Date());
-        return R.result(iGoodsService.save(goods));
+    public R addGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
+        return iGoodsService.saveGoodsRelated(goodsSaveRelatedVO);
     }
 
     @PutMapping
-    public R updateGoods(@Validated @RequestBody Goods goods) {
-        goods.setUpdateTime(new Date());
-        return R.result(iGoodsService.updateById(goods));
+    public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
+        return R.result(iGoodsService.updateById(null));
     }
 
     @GetMapping("{goodsId}")

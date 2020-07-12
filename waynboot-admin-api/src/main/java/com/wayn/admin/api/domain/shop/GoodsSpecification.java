@@ -29,7 +29,7 @@ public class GoodsSpecification extends ShopBaseEntity implements Serializable {
     /**
      * 商品表的商品ID
      */
-    private Integer goodsId;
+    private Long goodsId;
 
     /**
      * 商品规格名称

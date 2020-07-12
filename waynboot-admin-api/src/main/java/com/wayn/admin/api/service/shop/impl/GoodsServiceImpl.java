@@ -5,15 +5,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.admin.api.domain.shop.*;
+import com.wayn.admin.api.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.admin.api.mapper.shop.GoodsMapper;
 import com.wayn.admin.api.service.shop.*;
+import com.wayn.common.constant.SysConstants;
+import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * <p>
@@ -67,5 +69,55 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         data.put("attributes", goodsAttributes);
         data.put("categoryIds", categoryIds);
         return data;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
+        Goods goods = goodsSaveRelatedVO.getGoods();
+        GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
+        GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
+        GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
+        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
+            return R.error("添加商品'" + goods.getName() + "'失败，商品名称已存在");
+        }
+        // 商品表里面有一个字段retailPrice记录当前商品的最低价
+        BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
+        for (GoodsProduct product : products) {
+            BigDecimal productPrice = product.getPrice();
+            if(retailPrice.compareTo(productPrice) == 1){
+                retailPrice = productPrice;
+            }
+        }
+        // 保存商品
+        goods.setRetailPrice(retailPrice);
+        save(goods);
+        for (GoodsSpecification specification : specifications) {
+            specification.setGoodsId(goods.getId());
+        }
+        iGoodsSpecificationService.saveBatch(Arrays.asList(specifications));
+        for (GoodsAttribute goodsAttribute: attributes) {
+            goodsAttribute.setGoodsId(goods.getId());
+        }
+        for (GoodsProduct goodsProduct: products) {
+            goodsProduct.setGoodsId(goods.getId());
+        }
+        // 保存商品规格
+        iGoodsSpecificationService.saveBatch(Arrays.asList(specifications));
+        // 保存商品属性
+        iGoodsAttributeService.saveBatch(Arrays.asList(attributes));
+        // 保存商品货品
+        iGoodsProductService.saveBatch(Arrays.asList(products));
+        return R.success();
+    }
+
+    @Override
+    public String checkGoodsNameUnique(Goods goods) {
+        long goodsId = Objects.isNull(goods.getId()) ? -1L : goods.getId();
+        Goods shopGoods = getOne(new QueryWrapper<Goods>().eq("name", goods.getName()));
+        if (shopGoods != null && shopGoods.getId() != goodsId) {
+            return SysConstants.NOT_UNIQUE;
+        }
+        return SysConstants.UNIQUE;
     }
 }
