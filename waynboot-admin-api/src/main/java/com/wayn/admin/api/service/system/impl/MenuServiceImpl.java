@@ -57,7 +57,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         List<RouterVo> routers = new LinkedList<>();
         for (Menu menu : menus) {
             RouterVo router = new RouterVo();
-            router.setHidden(1 == menu.getMenuStatus());
+            router.setHidden(1 == menu.getVisible());
             router.setName(StringUtils.capitalize(menu.getPath()));
             router.setPath(getRouterPath(menu));
             router.setComponent(StringUtils.isEmpty(menu.getComponent()) ? "Layout" : menu.getComponent());
