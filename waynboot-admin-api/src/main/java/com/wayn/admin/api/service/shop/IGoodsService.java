@@ -51,4 +51,13 @@ public interface IGoodsService extends IService<Goods> {
      * @return 状态码 0 唯一 1 不唯一
      */
     String checkGoodsNameUnique(Goods goods);
+
+    /**
+     * 删除商品相关对象
+     * @param goodsId 商品ID
+     * @return boolean
+     */
+    boolean deleteGoodsRelatedByGoodsId(Long goodsId);
+
+    R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO);
 }
