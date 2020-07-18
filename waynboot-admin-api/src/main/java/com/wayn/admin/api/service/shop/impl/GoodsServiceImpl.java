@@ -85,22 +85,28 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
         for (GoodsProduct product : products) {
             BigDecimal productPrice = product.getPrice();
-            if(retailPrice.compareTo(productPrice) == 1){
+            if (retailPrice.compareTo(productPrice) == 1) {
                 retailPrice = productPrice;
             }
         }
         // 保存商品
         goods.setRetailPrice(retailPrice);
+        goods.setCreateTime(new Date());
         save(goods);
+        goods.setGoodsSn(goods.getId().toString());
+        updateById(goods);
         for (GoodsSpecification specification : specifications) {
             specification.setGoodsId(goods.getId());
+            specification.setCreateTime(new Date());
         }
         iGoodsSpecificationService.saveBatch(Arrays.asList(specifications));
-        for (GoodsAttribute goodsAttribute: attributes) {
+        for (GoodsAttribute goodsAttribute : attributes) {
             goodsAttribute.setGoodsId(goods.getId());
+            goodsAttribute.setCreateTime(new Date());
         }
-        for (GoodsProduct goodsProduct: products) {
+        for (GoodsProduct goodsProduct : products) {
             goodsProduct.setGoodsId(goods.getId());
+            goodsProduct.setCreateTime(new Date());
         }
         // 保存商品规格
         iGoodsSpecificationService.saveBatch(Arrays.asList(specifications));
@@ -119,5 +125,55 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             return SysConstants.NOT_UNIQUE;
         }
         return SysConstants.UNIQUE;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean deleteGoodsRelatedByGoodsId(Long goodsId) {
+        removeById(goodsId);
+        iGoodsSpecificationService.remove(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
+        iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
+        iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
+        return true;
+    }
+
+    @Override
+    public R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
+        Goods goods = goodsSaveRelatedVO.getGoods();
+        GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
+        GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
+        GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
+        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
+            return R.error("更新商品'" + goods.getName() + "'失败，商品名称已存在");
+        }
+        // 商品表里面有一个字段retailPrice记录当前商品的最低价
+        BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
+        for (GoodsProduct product : products) {
+            BigDecimal productPrice = product.getPrice();
+            if (retailPrice.compareTo(productPrice) == 1) {
+                retailPrice = productPrice;
+            }
+        }
+        // 保存商品
+        goods.setRetailPrice(retailPrice);
+        goods.setUpdateTime(new Date());
+        updateById(goods);
+        for (GoodsSpecification specification : specifications) {
+            specification.setUpdateTime(new Date());
+        }
+        iGoodsSpecificationService.updateBatchById(Arrays.asList(specifications));
+        for (GoodsAttribute goodsAttribute : attributes) {
+            goodsAttribute.setUpdateTime(new Date());
+        }
+        for (GoodsProduct goodsProduct : products) {
+            goodsProduct.setUpdateTime(new Date());
+        }
+        // 更新商品规格
+        iGoodsSpecificationService.updateBatchById(Arrays.asList(specifications));
+        // 更新商品属性
+        iGoodsAttributeService.updateBatchById(Arrays.asList(attributes));
+        // 更新商品货品
+        iGoodsProductService.updateBatchById(Arrays.asList(products));
+        return R.success();
     }
 }

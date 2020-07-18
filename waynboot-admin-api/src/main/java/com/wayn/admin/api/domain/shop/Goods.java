@@ -9,6 +9,7 @@ import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -38,6 +39,7 @@ public class Goods extends ShopBaseEntity implements Serializable {
     /**
      * 商品名称
      */
+    @NotBlank(message = "商品名不能为空")
     private String name;
 
     /**

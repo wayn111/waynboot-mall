@@ -39,7 +39,7 @@ public class GoodsController extends BaseController {
 
     @PutMapping
     public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
-        return R.result(iGoodsService.updateById(null));
+        return iGoodsService.updateGoodsRelated(goodsSaveRelatedVO);
     }
 
     @GetMapping("{goodsId}")
@@ -47,4 +47,8 @@ public class GoodsController extends BaseController {
         return R.success().add("data", iGoodsService.getGoodsInfoById(goodsId));
     }
 
+    @DeleteMapping("{goodsId}")
+    public R deleteGoods(@PathVariable Long goodsId) {
+        return R.result(iGoodsService.deleteGoodsRelatedByGoodsId(goodsId));
+    }
 }
