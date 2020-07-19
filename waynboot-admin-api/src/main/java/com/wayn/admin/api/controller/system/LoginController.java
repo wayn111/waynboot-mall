@@ -51,7 +51,7 @@ public class LoginController {
         // 删除验证码
         redisCache.deleteObject(loginObj.getKey());
         // 生成令牌
-        String token = loginService.login(loginObj.getUsername(), loginObj.getPassword(), loginObj.getCode());
+        String token = loginService.login(loginObj.getUsername(), loginObj.getPassword());
         return R.success().add(SysConstants.TOKEN, token);
     }
 

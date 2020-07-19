@@ -9,6 +9,7 @@ import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -45,6 +46,7 @@ public class Goods extends ShopBaseEntity implements Serializable {
     /**
      * 商品所属类目ID
      */
+    @Min(value = 0, message = "商品所属类目不能为空")
     private Long categoryId;
 
     private Long brandId;
@@ -98,6 +100,7 @@ public class Goods extends ShopBaseEntity implements Serializable {
     /**
      * 商品单位，例如件、盒
      */
+    @NotBlank(message = "商品所属类目不能为空")
     private String unit;
 
     /**

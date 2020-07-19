@@ -23,9 +23,9 @@ public class LoginService {
 
 
     @SneakyThrows
-    public String login(String username, String password, String code) {
+    public String login(String username, String password) {
         // 用户验证
-        Authentication authentication = null;
+        Authentication authentication;
         try {
             // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
             authentication = authenticationManager
