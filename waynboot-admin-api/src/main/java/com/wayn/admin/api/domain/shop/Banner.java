@@ -3,7 +3,6 @@ package com.wayn.admin.api.domain.shop;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.wayn.common.base.BaseEntity;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +28,7 @@ public class Banner extends ShopBaseEntity implements Serializable {
 
     private String jumpUrl;
 
-    private Integer sort;
+    private Integer sortOrder;
 
     private Integer status;
 

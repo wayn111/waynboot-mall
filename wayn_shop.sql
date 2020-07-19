@@ -3,15 +3,15 @@
 
  Source Server         : 192.168.31.49
  Source Server Type    : MySQL
- Source Server Version : 80019
+ Source Server Version : 80012
  Source Host           : 192.168.31.49:3306
- Source Schema         : wayn_vue
+ Source Schema         : wayn_shop
 
  Target Server Type    : MySQL
- Target Server Version : 80019
+ Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 11/07/2020 00:05:57
+ Date: 19/07/2020 15:40:41
 */
 
 SET NAMES utf8mb4;
@@ -22,14 +22,14 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `qiniu_config`;
 CREATE TABLE `qiniu_config`  (
-  `id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `access_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'accessKey',
   `bucket` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Bucket 识别符',
   `host` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '外链域名',
   `secret_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'secretKey',
-  `type` tinyint(0) NULL DEFAULT NULL COMMENT '空间类型 0 公开 1 私有',
+  `type` tinyint(4) NULL DEFAULT NULL COMMENT '空间类型 0 公开 1 私有',
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
-  `enable` tinyint(0) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
+  `enable` tinyint(4) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
 
@@ -39,23 +39,46 @@ CREATE TABLE `qiniu_config`  (
 INSERT INTO `qiniu_config` VALUES (1, NULL, NULL, 'http://cdn.wayn.xin', NULL, NULL, NULL, NULL);
 
 -- ----------------------------
+-- Table structure for shop_address
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_address`;
+CREATE TABLE `shop_address`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '收货人名称',
+  `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户表的用户ID',
+  `province` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '行政区域表的省ID',
+  `city` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '行政区域表的市ID',
+  `county` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '行政区域表的区县ID',
+  `address_detail` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '详细收货地址',
+  `area_code` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '地区编码',
+  `postal_code` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '邮政编码',
+  `tel` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '手机号码',
+  `is_default` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否默认地址',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for shop_banner
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_banner`;
 CREATE TABLE `shop_banner`  (
-  `id` bigint(0) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建人',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间/注册时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '最后更新人',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '最后更新时间',
-  `sort` int(0) NULL DEFAULT NULL COMMENT '显示顺序',
+  `sort_order` int(11) NULL DEFAULT NULL COMMENT '显示顺序',
   `img_url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'banner图url',
   `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题',
   `type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '栏目类型',
   `jump_url` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '点击banner跳转到url',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(0) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
-  `status` tinyint(0) NULL DEFAULT 0 COMMENT 'banner状态（0启用 1禁用）',
+  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `status` tinyint(4) NULL DEFAULT 0 COMMENT 'banner状态（0启用 1禁用）',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
 
@@ -65,19 +88,89 @@ CREATE TABLE `shop_banner`  (
 INSERT INTO `shop_banner` VALUES (14, 'admin', '2020-06-26 19:56:03', NULL, '2020-07-06 22:58:45', NULL, 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', 'hh', NULL, 'rrr', NULL, 0, 0);
 
 -- ----------------------------
+-- Table structure for shop_brand
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_brand`;
+CREATE TABLE `shop_brand`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '品牌商名称',
+  `desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '品牌商简介',
+  `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '品牌商页的品牌商图片',
+  `sort_order` int(11) NULL DEFAULT 50,
+  `floor_price` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '品牌商的商品低价，仅用于页面展示',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1046003 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '品牌商表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of shop_brand
+-- ----------------------------
+INSERT INTO `shop_brand` VALUES (1001000, 'MUJI制造商', '严选精选了MUJI制造商和生产原料，\n用几乎零利润的价格，剔除品牌溢价，\n让用户享受原品牌的品质生活。', 'http://yanxuan.nosdn.127.net/1541445967645114dd75f6b0edc4762d.png', 2, 12.90, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001002, '内野制造商', '严选从世界各地挑选毛巾，最终选择了为日本内野代工的工厂，追求毛巾的柔软度与功能性。品质比肩商场几百元的毛巾。', 'http://yanxuan.nosdn.127.net/8ca3ce091504f8aa1fba3fdbb7a6e351.png', 10, 29.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001003, 'Adidas制造商', '严选找到为Adidas等品牌制造商，\n选取优质原材料，与厂方一起设计，\n为你提供好的理想的运动装备。', 'http://yanxuan.nosdn.127.net/335334d0deaff6dc3376334822ab3a2f.png', 30, 49.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001007, '优衣库制造商', '严选找到日本知名服装UNIQLO的制造商，\n选取优质长绒棉和精梳工艺，\n与厂方一起设计，为你提供理想的棉袜。', 'http://yanxuan.nosdn.127.net/0d72832e37e7e3ea391b519abbbc95a3.png', 12, 29.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001008, '膳魔师制造商', '严选深入保温行业内部，\n找到德国膳魔师制造商的代工厂。\n同样的品质，却有更优的价格。', 'http://yanxuan.nosdn.127.net/5fd51e29b9459dae7df8040c8219f241.png', 40, 45.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001010, '星巴克制造商', '严选寻访全国保温杯制造企业，\n最终找到高端咖啡品牌星巴克的制造商，\n专注保温杯生产20年，品质与颜值兼备。', 'http://yanxuan.nosdn.127.net/5668bc50f2f2e551891044525710dc84.png', 34, 39.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001012, 'Wedgwood制造商', '严选寻访英国皇室御用陶瓷Wedgwood制造商，\n制模到成品，历经25道工序、7次检验、3次烧制，\n你看不见的地方，我们也在坚持。', 'http://yanxuan.nosdn.127.net/68940e8e23f96dbeb3548d943d83d5e4.png', 21, 39.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001013, 'Royal Doulton制造商', '严选深入英国最大骨瓷品牌Royal Doulton制造商， \n顶级英国瓷器的代名词，广受世界皇室喜爱。\n每件瓷器，都有自己的故事。', 'http://yanxuan.nosdn.127.net/0de643a02043fd9680b11e21c452adaa.png', 47, 24.90, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001015, '日本KEYUCA制造商', 'KEYUCA是日本餐具及料理用具品牌，\n遵循极简原木风，高端餐具体验。\n严选的餐具正是来自这一品牌制造商。', 'http://yanxuan.nosdn.127.net/9b85b45f23da558be101dbcc273b1d6d.png', 49, 14.90, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001016, '爱慕制造商', '150家样品比对筛选，20家工厂深入走访，\n严选最终选定高端内衣爱慕制造商，\n20年品质保证，为你打造天然舒适的衣物。', 'http://yanxuan.nosdn.127.net/5104f84110eac111968c63c18ebd62c0.png', 9, 35.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001020, 'Ralph Lauren制造商', '我们与Ralph Lauren Home的制造商成功接洽，掌握先进的生产设备，传承品牌工艺和工序。追求生活品质的你，值得拥有。', 'http://yanxuan.nosdn.127.net/9df78eb751eae2546bd3ee7e61c9b854.png', 20, 29.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001037, '新秀丽制造商', '严选为制作品质与颜值兼具的箱包，\n选定新秀丽、CK、Ricardo等品牌合作的制造商，\n拥有国内先进流水线20余条，实力保障品质。', 'http://yanxuan.nosdn.127.net/80dce660938931956ee9a3a2b111bd37.jpg', 5, 59.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001038, 'Coach制造商', '严选为制作高品质高颜值皮具配件，\n由Coach、MK等品牌制造商生产，\n由严选360度全程监制，给你带来优质皮具。', 'http://yanxuan.nosdn.127.net/1b1cc16135fd8467d40983f75f644127.png', 3, 49.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001039, 'MK制造商', '严选为制造高品质的皮具，\n选择Michael Kors品牌合作的制造工厂，\n18年专业皮具生产经验，手工至美，品质保证。', 'http://yanxuan.nosdn.127.net/fc9cd1309374f7707855de80522fb310.jpg', 17, 79.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1001045, '罗莱制造商', '严选团队为打造吸湿透气柔软的蚕丝被，\n从蚕茧原材到温感性能，多次甄选测试\n选择罗莱制造商工厂，手工处理，优质舒适。', 'http://yanxuan.nosdn.127.net/14122a41a4985d23e1a172302ee818e9.png', 45, 699.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1003000, 'Carters制造商', '来自Carters大牌代工厂生产，\n严选纯天然材料，无荧光不添加，\nITS安心标志权威检测，安全护航。', 'http://yanxuan.nosdn.127.net/efe9131599ced0297213e6ec67eb2174.png', 41, 19.90, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1005001, 'Goody制造商', '严选深入美国百年发饰品牌Goody制造商，\n确保每把梳子做工精湛，养护头皮。\n戴安娜王妃的最爱，你也能拥有。', 'http://yanxuan.nosdn.127.net/7c918f37de108f3687d69b39daab34eb.png', 48, 39.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1006000, '范思哲制造商', '严选找寻意大利奢侈品牌范思哲Versace的制造商，\n致力于为用户带来精致、优雅、时尚的皮包，\n传承独特美感，体验品质生活。', 'http://yanxuan.nosdn.127.net/c80ae035387495a61a4515906205efff.png', 18, 99.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1008000, 'WPC制造商', '严选寻找日本雨伞品牌W.P.C制造商，\n采用严谨工艺以及环保材料，\n沉淀15年行业经验，打造精致雨具。', 'http://yanxuan.nosdn.127.net/c4e97cc87186ce17f9316f3ba39e220c.png', 22, 59.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1010001, '竹宝堂制造商', '严选走访河北、安徽等制刷基地，\n选定竹宝堂、丝芙兰等品牌的制造商，\n严格把关生产与质检，与您一同追求美的生活。', 'http://yanxuan.nosdn.127.net/61b0b7ae4f0163422009defbceaa41ad.jpg', 39, 29.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1010002, '资生堂制造商', '发现美，成为美，是女性一生的追求。\n严选找寻资生堂代工厂，打造天然美妆产品，\n致力于带来更多美的体验和享受。', 'http://yanxuan.nosdn.127.net/5449236b80d1e678dedee2f626cd67c4.png', 19, 29.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1015000, 'NITORI制造商', '宠物是人类最温情的陪伴，\n严选找寻日本最大家居品牌NITORI制造商，\n每一个脚印，都是为了更好地关怀你的TA', 'http://yanxuan.nosdn.127.net/6f3d310601b18610553c675e0e14d107.png', 43, 69.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1016002, 'HUGO BOSS制造商', '严选深入德国知名奢侈品HUGO BOSS的制造商，\n开发睡衣、睡袍、休闲裤等轻奢品质家居服，\n希望你在家的每一天都优雅精致。', 'http://yanxuan.nosdn.127.net/70ada9877b2efa82227437af3231fe50.png', 11, 45.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1018000, 'Sperry制造商', '严选团队对比多家硫化鞋制造商产品质量，\n走访多个制鞋工厂，最终选定Sperry品牌制造商，\n为你提供一双舒适有型的高品质帆布鞋。', 'http://yanxuan.nosdn.127.net/2eb12d84037346441088267432da31c4.png', 32, 199.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1021000, 'Marc Jacobs制造商', '严选寻访独立设计品牌Marc Jacobs的制造商，\n严格选材，细究纺织与生产的细节，多次打磨，\n初心不忘，为你带来优雅高档的服饰配件。', 'http://yanxuan.nosdn.127.net/c8dac4eb1a458d778420ba520edab3d0.png', 24, 69.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1022000, 'UGG制造商', '为寻找优质的皮毛一体雪地靴，\n严选走访多家雪地靴制造商，对比工艺，\n甄选UGG认可的代工厂，只为足下的优雅舒适。', 'http://yanxuan.nosdn.127.net/4d2a3dea7e0172ae48e8161f04cfa045.jpg', 29, 59.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1022001, 'Palladium制造商', '严选探访多个制鞋大厂，选定Palladium制造商，\n对比工艺选材，找到传承多年的制鞋配方，\n只为制作一款高品质休闲鞋。', 'http://yanxuan.nosdn.127.net/3480f2a4026c60eb4921f0aa3facbde8.png', 31, 249.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1023000, 'PetitBateau小帆船制造商', '为打造适合宝宝的婴童服装，\n严选团队寻找PetitBateau小帆船的品牌制造商，\n无荧光剂，国家A类标准，让宝宝穿的放心。', 'http://yanxuan.nosdn.127.net/1a11438598f1bb52b1741e123b523cb5.jpg', 25, 36.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1024000, 'WMF制造商', '严选找寻德国百年高端厨具WMF的制造商，\n选择拥有14年经验的不锈钢生产工厂，\n为你甄选事半功倍的优质厨具。', 'http://yanxuan.nosdn.127.net/2018e9ac91ec37d9aaf437a1fd5d7070.png', 8, 9.90, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1024001, 'OBH制造商', '严选寻找OBH品牌的制造商，打造精致厨具，\n韩国独资工厂制造，严格质检，品质雕琢\n力求为消费者带来全新的烹饪体验。', 'http://yanxuan.nosdn.127.net/bf3499ac17a11ffb9bb7caa47ebef2dd.png', 42, 39.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1024003, 'Stoneline制造商', '严选找寻德国经典品牌Stoneline的制造商，\n追踪工艺，考量细节，亲自试用，\n为你甄选出最合心意的锅具和陶瓷刀，下厨如神。', 'http://yanxuan.nosdn.127.net/3a44ae7db86f3f9b6e542720c54cc349.png', 28, 9.90, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1024006, 'KitchenAid制造商', '严选寻访KitchenAid品牌的制造商，\n采用德国LFGB认证食品级专用不锈钢，\n欧式简约设计，可靠安心，尽享下厨乐趣。', 'http://yanxuan.nosdn.127.net/e11385bf29d1b3949435b80fcd000948.png', 46, 98.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1025000, 'Timberland制造商', '为制作优质时尚的工装鞋靴，\n严选团队深入探访国内外制靴大厂，选择Timberland制造商，\n工厂拥有15年制鞋历史，专业品质有保证。', 'http://yanxuan.nosdn.127.net/6dcadb0791b33aa9fd00380b44fa6645.png', 37, 359.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1025001, 'Kenneth Cole制造商', '为出品优质格调的商务鞋靴，\n严选团队选择Kenneth Cole品牌合作的制造商，\n一切努力，只为打造高品质鞋靴。', 'http://yanxuan.nosdn.127.net/236322546c6860e1662ab147d6b0ba2f.jpg', 7, 349.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1026000, 'CK制造商', '严选寻访Calvin Klein品牌的制造商，\n深入世界领带第一生产地，设计与品质并重，\n致力于给消费者带来优质典雅的服饰用品。', 'http://yanxuan.nosdn.127.net/658f09b7ec522d31742b47b914d64338.png', 1, 39.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1026001, 'Under Armour制造商', '严选为甄选优质好袜，走访东北、新疆等产袜基地，\n最终选定Under Armour品牌的合作制造商，\n从原料、工艺、品质多维度筛选监制，保证好品质。', 'http://yanxuan.nosdn.127.net/4e93ea29b1d06fabfd24ba68a9b20a34.jpg', 35, 39.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1028000, 'Gucci制造商', '严选为设计一款优雅时尚的品质礼帽，\n找寻拥有10来年经验的大型毛毡帽厂商合作，\n坚持打造好设计、好工艺、好材质的潮流礼帽。', 'http://yanxuan.nosdn.127.net/278869cad9bf5411ffc18982686b88fb.jpg', 23, 59.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1028003, 'Burberry制造商', '为打造时尚舒适的童装系列，\n严选选择Burberry制造商，优化版型配色\n英伦风情融入经典格纹，百搭优雅气质款。', 'http://yanxuan.nosdn.127.net/07af01e281c7e0b912d162d611e22c32.jpg', 4, 99.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1033003, 'Armani制造商', '严选团队携手国际标准化专业生产厂家，\n厂家长期为Armani、Alexander wang等知名品牌代工，\n专业进口设备，精密质量把控，精于品质居家体验。', 'http://yanxuan.nosdn.127.net/981e06f0f46f5f1f041d7de3dd3202e6.jpg', 26, 199.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1033004, '爱马仕集团制造商', '严选采用欧洲一线品牌爱马仕的御用香料供应商，\n经过反复配比改良、试香调香、选品定样，\n为你带来独特馥郁的散香体验。', 'http://yanxuan.nosdn.127.net/d98470dd728fb5a91f7aceade07572b5.png', 33, 19.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1034001, 'Alexander McQueen制造商', '为制造精致实用的高品质包包，\n严选团队选择Alexander McQueen制造商，\n严格筛选，带来轻奢优雅体验。', 'http://yanxuan.nosdn.127.net/db7ee9667d84cbce573688297586699c.jpg', 16, 69.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1037000, '厚木ATSUGI制造商', '严选考究袜子品质，层层把关原料生产，\n携手12年行业生产资质的厚木品牌制造商，\n带来轻盈优雅，舒适显瘦的袜子系列。', 'http://yanxuan.nosdn.127.net/7df55c408dbac6085ed6c30836c828ac.jpg', 27, 29.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1038000, 'Birkenstock集团制造商', '为打造一双舒适的软木拖鞋，\n严选团队寻找BIRKENSTOCK集团旗下产品制造商，\n360度全程监制，舒适随脚，百搭文艺。', 'http://yanxuan.nosdn.127.net/05a2ecffb60b77e4c165bd8492e5c22a.jpg', 14, 59.90, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1038001, 'Nine West制造商', '为打造一双优雅舒适的高跟鞋，\n严选选择美国Nine West玖熙品牌的制造商，\n让美丽绽放在足尖。', 'http://yanxuan.nosdn.127.net/ad4df7848ce450f00483c2d5e9f2bfa7.png', 13, 219.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1039000, 'TEFAL制造商', '严选对标国际品质，致力于高品质生活好物，\n执着寻求优质厨房电器供应商，\n携手WMF、Tefal制造商，打造高品质厨具。', 'http://yanxuan.nosdn.127.net/2b7a07e25a3f3be886a7fb90ba975bb7.png', 44, 259.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1039001, '京瓷制造商', '严选想为你的厨房生活，带来新鲜感和活力，\n深入全国各地，选择日本京瓷等品牌代工厂，\n打造钻石系列厨具，颜值与品质兼具。', 'http://yanxuan.nosdn.127.net/3dda530605e3ab1c82d5ed30f2489473.png', 38, 89.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1040000, 'Tescom制造商', '严选为打造时尚健康的个护电器，\n选择Tescom品牌制造商，全球最大个护电器工厂之一，\n拥有20年经验，出口180多个国家，品质有保障。', 'http://yanxuan.nosdn.127.net/c17cd65971189fdc28f5bd6b78f657a7.png', 15, 59.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1041000, 'BCBG制造商', '严选从产品源头开始，每道工序质量把关，\n选择美国知名品牌BCBG的制造商合作，\n严谨匠心，致力于优质柔滑的睡衣穿搭产品。', 'http://yanxuan.nosdn.127.net/b9072023afd3621714fd5c49f140fca8.png', 36, 99.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_brand` VALUES (1046000, 'Police制造商', '严选团队选定Police品牌制造商合作，\n有11年眼镜生产资质，兼顾品质与品味，\n为你带来专业时尚的墨镜。', 'http://yanxuan.nosdn.127.net/66e2cb956a9dd1efc7732bea278e901e.png', 6, 109.00, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+
+-- ----------------------------
 -- Table structure for shop_category
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_category`;
 CREATE TABLE `shop_category`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '类目名称',
   `keywords` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '类目关键字，以JSON数组格式',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '类目广告语介绍',
-  `pid` int(0) NOT NULL DEFAULT 0 COMMENT '父类目ID',
+  `pid` int(11) NOT NULL DEFAULT 0 COMMENT '父类目ID',
   `icon_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '类目图标',
   `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '类目图片',
   `level` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'L1',
-  `sort_order` tinyint(0) NULL DEFAULT 50 COMMENT '排序',
+  `sort_order` int(11) NULL DEFAULT 50 COMMENT '排序',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '删除标志（0代表存在 1代表删除）',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
@@ -187,7 +280,7 @@ INSERT INTO `shop_category` VALUES (1036004, '大话西游', '', '大话西游�
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_channel`;
 CREATE TABLE `shop_channel`  (
-  `id` bigint(0) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `create_by` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建人',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间/注册时间',
   `update_by` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '最后更新人',
@@ -208,16 +301,16 @@ INSERT INTO `shop_channel` VALUES (5, 'admin', '2020-06-26 19:32:35', NULL, NULL
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_goods`;
 CREATE TABLE `shop_goods`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `goods_sn` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '商品编号',
   `name` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '商品名称',
-  `category_id` int(0) NULL DEFAULT 0 COMMENT '商品所属类目ID',
-  `brand_id` int(0) NULL DEFAULT 0,
+  `category_id` int(11) NULL DEFAULT 0 COMMENT '商品所属类目ID',
+  `brand_id` int(11) NULL DEFAULT 0,
   `gallery` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品宣传图片列表，采用JSON数组格式',
   `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '商品关键字，采用逗号间隔',
   `brief` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '商品简介',
   `is_on_sale` tinyint(1) NULL DEFAULT 1 COMMENT '是否上架',
-  `sort_order` smallint(0) NULL DEFAULT 100,
+  `sort_order` int(11) NULL DEFAULT 100 COMMENT '排序',
   `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品页面商品图片',
   `share_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品分享海报',
   `is_new` tinyint(1) NULL DEFAULT 0 COMMENT '是否新品首发，如果设置则可以在新品首发页面展示',
@@ -484,8 +577,8 @@ INSERT INTO `shop_goods` VALUES (1181000, '1181000', '母亲节礼物-舒适安�
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_goods_attribute`;
 CREATE TABLE `shop_goods_attribute`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
-  `goods_id` int(0) NOT NULL DEFAULT 0 COMMENT '商品表的商品ID',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `goods_id` int(11) NOT NULL DEFAULT 0 COMMENT '商品表的商品ID',
   `attribute` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '商品参数名称',
   `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '商品参数值',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
@@ -1380,11 +1473,11 @@ INSERT INTO `shop_goods_attribute` VALUES (876, 1006014, '温馨提示', '天然
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_goods_product`;
 CREATE TABLE `shop_goods_product`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
-  `goods_id` int(0) NOT NULL DEFAULT 0 COMMENT '商品表的商品ID',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `goods_id` int(11) NOT NULL DEFAULT 0 COMMENT '商品表的商品ID',
   `specifications` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '商品规格值列表，采用JSON数组格式',
   `price` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品货品价格',
-  `number` int(0) NOT NULL DEFAULT 0 COMMENT '商品货品数量',
+  `number` int(11) NOT NULL DEFAULT 0 COMMENT '商品货品数量',
   `url` varchar(125) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品货品图片',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
@@ -1646,8 +1739,8 @@ INSERT INTO `shop_goods_product` VALUES (244, 1166008, '[\"标准\"]', 459.00, 9
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_goods_specification`;
 CREATE TABLE `shop_goods_specification`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
-  `goods_id` int(0) NOT NULL DEFAULT 0 COMMENT '商品表的商品ID',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `goods_id` int(11) NOT NULL DEFAULT 0 COMMENT '商品表的商品ID',
   `specification` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '商品规格名称',
   `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '商品规格值',
   `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '商品规格图片',
@@ -1906,25 +1999,56 @@ INSERT INTO `shop_goods_specification` VALUES (242, 1156006, '规格', '标准',
 INSERT INTO `shop_goods_specification` VALUES (243, 1166008, '规格', '标准', '', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 
 -- ----------------------------
+-- Table structure for shop_user
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_user`;
+CREATE TABLE `shop_user`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名称',
+  `password` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '用户密码',
+  `gender` tinyint(3) NOT NULL DEFAULT 0 COMMENT '性别：0 未知， 1男， 1 女',
+  `birthday` date NULL DEFAULT NULL COMMENT '生日',
+  `last_login_time` datetime(0) NULL DEFAULT NULL COMMENT '最近一次登录时间',
+  `last_login_ip` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '最近一次登录IP地址',
+  `user_level` tinyint(3) NULL DEFAULT 0 COMMENT '0 普通用户，1 VIP用户，2 高级VIP用户',
+  `nickname` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '用户昵称或网络名称',
+  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '用户手机号码',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '用户头像图片',
+  `weixin_openid` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '微信登录openid',
+  `session_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '微信登录会话KEY',
+  `status` tinyint(3) NOT NULL DEFAULT 0 COMMENT '0 可用, 1 禁用, 2 注销',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `user_name`(`username`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of shop_user
+-- ----------------------------
+INSERT INTO `shop_user` VALUES (1, 'user123', '$2a$10$lTu9qi0hr19OC800Db.eludFr0AXuJUSrMHi/iPYhKRlPFeqJxlye', 1, NULL, '2019-04-20 22:17:43', '0:0:0:0:0:0:0:1', 0, 'user123', '', '', '', '', 0, '2019-04-20 22:17:43', '2019-04-20 22:17:43', 0);
+
+-- ----------------------------
 -- Table structure for sys_dept
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dept`;
 CREATE TABLE `sys_dept`  (
-  `dept_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '部门id',
-  `parent_id` bigint(0) NULL DEFAULT 0 COMMENT '父部门id',
+  `dept_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '部门id',
+  `parent_id` bigint(20) NULL DEFAULT 0 COMMENT '父部门id',
   `ancestors` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '祖级列表',
   `dept_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '部门名称',
-  `sort` int(0) NULL DEFAULT 0 COMMENT '显示顺序',
+  `sort` int(11) NULL DEFAULT 0 COMMENT '显示顺序',
   `leader` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '负责人',
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '联系电话',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '邮箱',
-  `dept_status` tinyint(0) NULL DEFAULT 0 COMMENT '部门状态（0正常 1停用）',
+  `dept_status` tinyint(4) NULL DEFAULT 0 COMMENT '部门状态（0正常 1停用）',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(0) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`dept_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
@@ -1950,19 +2074,19 @@ INSERT INTO `sys_dept` VALUES (205, 204, '0,100,102,204', 'test', 3, NULL, NULL,
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict`;
 CREATE TABLE `sys_dict`  (
-  `dict_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `dict_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '标签名',
   `value` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '数据值',
-  `dict_status` tinyint(0) NULL DEFAULT NULL COMMENT '部门状态（0启用  1禁用）',
-  `type` tinyint(0) NULL DEFAULT NULL COMMENT '字典类型（1字典类型  2字典数据）',
-  `sort` int(0) NULL DEFAULT NULL COMMENT '排序',
+  `dict_status` tinyint(4) NULL DEFAULT NULL COMMENT '部门状态（0启用  1禁用）',
+  `type` tinyint(4) NULL DEFAULT NULL COMMENT '字典类型（1字典类型  2字典数据）',
+  `sort` int(11) NULL DEFAULT NULL COMMENT '排序',
   `parent_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '0' COMMENT '字典类型的父类型',
   `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '备注信息',
-  `del_flag` tinyint(0) NULL DEFAULT 0 COMMENT '删除标记（0存在 1删除）',
+  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标记（0存在 1删除）',
   PRIMARY KEY (`dict_id`) USING BTREE,
   INDEX `sys_dict_value`(`value`) USING BTREE,
   INDEX `sys_dict_label`(`name`) USING BTREE,
@@ -1995,16 +2119,16 @@ INSERT INTO `sys_dict` VALUES (161, '跑步', 'run', 1, 2, 2, 'hobby', 'admin', 
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu`  (
-  `menu_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+  `menu_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
   `menu_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '菜单名称',
-  `parent_id` bigint(0) NULL DEFAULT 0 COMMENT '父菜单ID',
-  `sort` int(0) NULL DEFAULT 0 COMMENT '显示顺序',
+  `parent_id` bigint(20) NULL DEFAULT 0 COMMENT '父菜单ID',
+  `sort` int(11) NULL DEFAULT 0 COMMENT '显示顺序',
   `path` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '路由地址',
   `component` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '组件路径',
-  `is_frame` tinyint(0) NULL DEFAULT 1 COMMENT '是否为外链（0是 1否）',
+  `is_frame` tinyint(4) NULL DEFAULT 1 COMMENT '是否为外链（0是 1否）',
   `menu_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
-  `menu_status` tinyint(0) NULL DEFAULT NULL COMMENT '菜单状态（0启用 1禁用）',
-  `visible` tinyint(0) NULL DEFAULT NULL COMMENT '显示状态（0显示 1隐藏）',
+  `menu_status` tinyint(4) NULL DEFAULT NULL COMMENT '菜单状态（0启用 1禁用）',
+  `visible` tinyint(4) NULL DEFAULT 0 COMMENT '显示状态（0显示 1隐藏）',
   `perms` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '权限标识',
   `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '#' COMMENT '菜单图标',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
@@ -2018,62 +2142,65 @@ CREATE TABLE `sys_menu`  (
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
-INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 1, 'system', NULL, 1, 'M', 0, NULL, '', 'system', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统管理目录');
-INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 2, 'monitor', NULL, 1, 'M', 0, NULL, '', 'monitor', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统监控目录');
-INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 3, 'tool', NULL, 1, 'M', 0, NULL, '', 'tool', 'admin', '2018-03-16 11:33:00', 'admin', '2020-05-31 21:43:31', '系统工具目录');
-INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', 1, 'C', 0, NULL, 'system:user:list', 'user', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:24', '用户管理菜单');
-INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', 1, 'C', 0, NULL, 'system:role:list', 'peoples', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:38', '角色管理菜单');
-INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', 1, 'C', 0, NULL, 'system:menu:list', 'tree-table', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:18:46', '菜单管理菜单');
-INSERT INTO `sys_menu` VALUES (115, '系统接口', 3, 3, 'swagger', 'tool/swagger/index', 1, 'C', 0, NULL, '', 'swagger', 'admin', '2018-03-16 11:33:00', 'admin', '2020-05-31 19:54:54', '系统接口菜单');
-INSERT INTO `sys_menu` VALUES (1008, '角色查询', 101, 1, '', '', 1, 'F', 0, NULL, 'system:role:query', '#', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-22 17:21:06', '');
-INSERT INTO `sys_menu` VALUES (2006, '部门管理', 1, 4, 'dept', 'system/dept/index', 1, 'C', 0, NULL, 'system:dept:list', 'tree', 'admin', '2020-04-22 19:08:31', 'admin', '2020-04-26 10:19:53', '');
-INSERT INTO `sys_menu` VALUES (2010, '数据监控', 2, 1, 'druid', 'monitor/druid/index', 1, 'C', 0, NULL, NULL, 'bug', 'admin', '2020-04-25 15:59:10', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2011, '用户查询', 100, 1, '', NULL, 1, 'F', 0, NULL, 'system:user:query', '#', '张三', '2020-04-26 10:12:47', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2012, '用户新增', 100, 2, '', NULL, 1, 'F', 0, NULL, 'system:user:add', '#', 'admin', '2020-04-26 10:16:04', 'admin', '2020-04-26 10:16:12', '');
-INSERT INTO `sys_menu` VALUES (2013, '用户修改', 100, 3, '', NULL, 1, 'F', 0, NULL, 'system:user:update', '#', 'admin', '2020-04-26 10:16:39', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2014, '用户删除', 100, 4, '', NULL, 1, 'F', 0, NULL, 'system:user:delete', '#', 'admin', '2020-04-26 10:17:16', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2015, '用户导出', 100, 5, '', NULL, 1, 'F', 0, NULL, 'system:user:export', '#', 'admin', '2020-04-26 10:17:35', 'admin', '2020-05-31 22:04:39', '');
-INSERT INTO `sys_menu` VALUES (2016, '用户导入', 100, 6, '', NULL, 1, 'F', 0, NULL, 'system:user:import', '#', 'admin', '2020-04-26 10:17:48', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2017, '角色新增', 101, 2, '', NULL, 1, 'F', 0, NULL, 'system:role:add', '#', 'admin', '2020-04-26 10:21:31', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2018, '角色修改', 101, 3, '', NULL, 1, 'F', 0, NULL, 'system:role:update', '#', 'admin', '2020-04-26 10:21:47', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2019, '角色删除', 101, 4, '', NULL, 1, 'F', 0, NULL, 'system:role:delete', '#', 'admin', '2020-04-26 10:22:01', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2020, '角色导出', 101, 5, '', NULL, 1, 'F', 0, NULL, 'system:role:export', '#', 'admin', '2020-04-26 10:23:21', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2021, '菜单新增', 102, 2, '', NULL, 1, 'F', 0, NULL, 'system:menu:add', '#', 'admin', '2020-04-26 10:23:50', 'admin', '2020-04-26 10:24:59', '');
-INSERT INTO `sys_menu` VALUES (2022, '菜单修改', 102, 3, '', NULL, 1, 'F', 0, NULL, 'system:menu:update', '#', 'admin', '2020-04-26 10:24:05', 'admin', '2020-04-26 10:25:07', '');
-INSERT INTO `sys_menu` VALUES (2023, '部门修改', 2006, 3, '', NULL, 1, 'F', 0, NULL, 'system:dept:update', '#', 'admin', '2020-04-26 10:24:18', 'admin', '2020-04-26 10:26:49', '');
-INSERT INTO `sys_menu` VALUES (2024, '菜单查询', 102, 1, '', NULL, 1, 'F', 0, NULL, 'system:menu:query', '#', 'admin', '2020-04-26 10:24:47', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2025, '部门查询', 2006, 1, '', NULL, 1, 'F', 0, NULL, 'system:dept:query', '#', 'admin', '2020-04-26 10:26:25', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2026, '部门新增', 2006, 2, '', NULL, 1, 'F', 0, NULL, 'system:dept:add', '#', 'admin', '2020-04-26 10:27:19', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2027, '部门删除', 2006, 4, '', NULL, 1, 'F', 0, NULL, 'system:dept:delete', '#', 'admin', '2020-04-26 10:27:34', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2028, '字典管理', 1, 5, 'dict/type', 'system/dict/index', 1, 'C', 0, NULL, 'system:dcit:list', 'dict', 'admin', '2020-05-31 16:21:28', 'admin', '2020-05-31 16:24:08', '');
-INSERT INTO `sys_menu` VALUES (2029, '字典新增', 2028, 2, '', NULL, 1, 'F', 0, NULL, 'system:dict:add', '#', 'admin', '2020-05-31 21:56:20', 'admin', '2020-05-31 21:57:44', '');
-INSERT INTO `sys_menu` VALUES (2030, '字典修改', 2028, 3, '', NULL, 1, 'F', 0, NULL, 'system:dict:update', '#', 'admin', '2020-05-31 21:57:13', 'admin', '2020-05-31 21:57:58', '');
-INSERT INTO `sys_menu` VALUES (2031, '字典查询', 2028, 1, '', NULL, 1, 'F', 0, NULL, 'system:dict:query', '#', 'admin', '2020-05-31 21:57:36', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2032, '字典删除', 2028, 4, '', NULL, 1, 'F', 0, NULL, 'system:dict:delete', '#', 'admin', '2020-05-31 22:11:36', 'admin', '2020-05-31 22:12:05', '');
-INSERT INTO `sys_menu` VALUES (2033, '商城管理', 0, 1, 'shop', NULL, 1, 'M', 0, NULL, NULL, 'shopping', 'admin', '2020-06-14 11:43:25', 'admin', '2020-07-08 22:35:55', '');
-INSERT INTO `sys_menu` VALUES (2034, '栏目管理', 2033, 2, 'channel', 'shop/channel/index', 1, 'C', 0, NULL, NULL, 'time-range', 'admin', '2020-06-15 22:40:12', 'admin', '2020-06-26 21:33:56', '');
-INSERT INTO `sys_menu` VALUES (2035, 'banner管理', 2033, 3, 'banner', 'shop/banner/index', 1, 'C', 0, NULL, NULL, 'checkbox', 'admin', '2020-06-15 22:44:20', 'admin', '2020-06-26 21:33:30', '');
-INSERT INTO `sys_menu` VALUES (2036, '分类管理', 2033, 4, 'category', 'shop/category/index', 1, 'C', 0, NULL, NULL, 'checkbox', 'admin', '2020-06-26 21:32:50', 'admin', '2020-07-06 23:09:46', '');
-INSERT INTO `sys_menu` VALUES (2037, '商品管理', 2033, 5, 'goods', 'shop/goods/index', 1, 'C', 0, NULL, NULL, 'exit-fullscreen', 'admin', '2020-07-06 23:09:32', 'admin', '2020-07-10 23:50:17', '');
-INSERT INTO `sys_menu` VALUES (2038, '添加商品', 2033, 1, 'goods/add', 'shop/goods/add', 1, 'C', 0, NULL, NULL, 'tab', 'admin', '2020-07-08 22:32:04', 'admin', '2020-07-10 23:50:02', '');
-INSERT INTO `sys_menu` VALUES (2039, '修改商品', 2033, 5, 'goods/edit', 'shop/goods/edit', 1, 'C', 0, 1, NULL, 'dashboard', 'admin', '2020-07-10 23:50:54', 'admin', '2020-07-10 23:52:10', '');
+INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 3, 'system', NULL, 1, 'M', 0, 0, '', 'system', 'admin', '2018-03-16 11:33:00', 'admin', '2020-07-19 15:01:11', '系统管理目录');
+INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 4, 'monitor', NULL, 1, 'M', 0, 0, '', 'monitor', 'admin', '2018-03-16 11:33:00', 'admin', '2020-07-19 15:02:56', '系统监控目录');
+INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 5, 'tool', NULL, 1, 'M', 0, 0, '', 'tool', 'admin', '2018-03-16 11:33:00', 'admin', '2020-07-19 15:03:05', '系统工具目录');
+INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', 1, 'C', 0, 0, 'system:user:list', 'user', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:24', '用户管理菜单');
+INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', 1, 'C', 0, 0, 'system:role:list', 'peoples', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:38', '角色管理菜单');
+INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', 1, 'C', 0, 0, 'system:menu:list', 'tree-table', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:18:46', '菜单管理菜单');
+INSERT INTO `sys_menu` VALUES (115, '系统接口', 3, 3, 'swagger', 'tool/swagger/index', 1, 'C', 0, 0, '', 'swagger', 'admin', '2018-03-16 11:33:00', 'admin', '2020-05-31 19:54:54', '系统接口菜单');
+INSERT INTO `sys_menu` VALUES (1008, '角色查询', 101, 1, '', '', 1, 'F', 0, 0, 'system:role:query', '#', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-22 17:21:06', '');
+INSERT INTO `sys_menu` VALUES (2006, '部门管理', 1, 4, 'dept', 'system/dept/index', 1, 'C', 0, 0, 'system:dept:list', 'tree', 'admin', '2020-04-22 19:08:31', 'admin', '2020-04-26 10:19:53', '');
+INSERT INTO `sys_menu` VALUES (2010, '数据监控', 2, 1, 'druid', 'monitor/druid/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-04-25 15:59:10', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2011, '用户查询', 100, 1, '', NULL, 1, 'F', 0, 0, 'system:user:query', '#', '张三', '2020-04-26 10:12:47', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2012, '用户新增', 100, 2, '', NULL, 1, 'F', 0, 0, 'system:user:add', '#', 'admin', '2020-04-26 10:16:04', 'admin', '2020-04-26 10:16:12', '');
+INSERT INTO `sys_menu` VALUES (2013, '用户修改', 100, 3, '', NULL, 1, 'F', 0, 0, 'system:user:update', '#', 'admin', '2020-04-26 10:16:39', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2014, '用户删除', 100, 4, '', NULL, 1, 'F', 0, 0, 'system:user:delete', '#', 'admin', '2020-04-26 10:17:16', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2015, '用户导出', 100, 5, '', NULL, 1, 'F', 0, 0, 'system:user:export', '#', 'admin', '2020-04-26 10:17:35', 'admin', '2020-05-31 22:04:39', '');
+INSERT INTO `sys_menu` VALUES (2016, '用户导入', 100, 6, '', NULL, 1, 'F', 0, 0, 'system:user:import', '#', 'admin', '2020-04-26 10:17:48', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2017, '角色新增', 101, 2, '', NULL, 1, 'F', 0, 0, 'system:role:add', '#', 'admin', '2020-04-26 10:21:31', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2018, '角色修改', 101, 3, '', NULL, 1, 'F', 0, 0, 'system:role:update', '#', 'admin', '2020-04-26 10:21:47', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2019, '角色删除', 101, 4, '', NULL, 1, 'F', 0, 0, 'system:role:delete', '#', 'admin', '2020-04-26 10:22:01', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2020, '角色导出', 101, 5, '', NULL, 1, 'F', 0, 0, 'system:role:export', '#', 'admin', '2020-04-26 10:23:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2021, '菜单新增', 102, 2, '', NULL, 1, 'F', 0, 0, 'system:menu:add', '#', 'admin', '2020-04-26 10:23:50', 'admin', '2020-04-26 10:24:59', '');
+INSERT INTO `sys_menu` VALUES (2022, '菜单修改', 102, 3, '', NULL, 1, 'F', 0, 0, 'system:menu:update', '#', 'admin', '2020-04-26 10:24:05', 'admin', '2020-04-26 10:25:07', '');
+INSERT INTO `sys_menu` VALUES (2023, '部门修改', 2006, 3, '', NULL, 1, 'F', 0, 0, 'system:dept:update', '#', 'admin', '2020-04-26 10:24:18', 'admin', '2020-04-26 10:26:49', '');
+INSERT INTO `sys_menu` VALUES (2024, '菜单查询', 102, 1, '', NULL, 1, 'F', 0, 0, 'system:menu:query', '#', 'admin', '2020-04-26 10:24:47', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2025, '部门查询', 2006, 1, '', NULL, 1, 'F', 0, 0, 'system:dept:query', '#', 'admin', '2020-04-26 10:26:25', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2026, '部门新增', 2006, 2, '', NULL, 1, 'F', 0, 0, 'system:dept:add', '#', 'admin', '2020-04-26 10:27:19', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2027, '部门删除', 2006, 4, '', NULL, 1, 'F', 0, 0, 'system:dept:delete', '#', 'admin', '2020-04-26 10:27:34', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2028, '字典管理', 1, 5, 'dict/type', 'system/dict/index', 1, 'C', 0, 0, 'system:dcit:list', 'dict', 'admin', '2020-05-31 16:21:28', 'admin', '2020-05-31 16:24:08', '');
+INSERT INTO `sys_menu` VALUES (2029, '字典新增', 2028, 2, '', NULL, 1, 'F', 0, 0, 'system:dict:add', '#', 'admin', '2020-05-31 21:56:20', 'admin', '2020-05-31 21:57:44', '');
+INSERT INTO `sys_menu` VALUES (2030, '字典修改', 2028, 3, '', NULL, 1, 'F', 0, 0, 'system:dict:update', '#', 'admin', '2020-05-31 21:57:13', 'admin', '2020-05-31 21:57:58', '');
+INSERT INTO `sys_menu` VALUES (2031, '字典查询', 2028, 1, '', NULL, 1, 'F', 0, 0, 'system:dict:query', '#', 'admin', '2020-05-31 21:57:36', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2032, '字典删除', 2028, 4, '', NULL, 1, 'F', 0, 0, 'system:dict:delete', '#', 'admin', '2020-05-31 22:11:36', 'admin', '2020-05-31 22:12:05', '');
+INSERT INTO `sys_menu` VALUES (2033, '商城管理', 0, 2, 'shop', NULL, 1, 'M', 0, 0, NULL, 'shopping', 'admin', '2020-06-14 11:43:25', 'admin', '2020-07-19 15:02:51', '');
+INSERT INTO `sys_menu` VALUES (2034, '栏目管理', 2033, 2, 'channel', 'shop/channel/index', 1, 'C', 0, 0, NULL, 'time-range', 'admin', '2020-06-15 22:40:12', 'admin', '2020-06-26 21:33:56', '');
+INSERT INTO `sys_menu` VALUES (2035, 'banner管理', 2033, 3, 'banner', 'shop/banner/index', 1, 'C', 0, 0, NULL, 'checkbox', 'admin', '2020-06-15 22:44:20', 'admin', '2020-06-26 21:33:30', '');
+INSERT INTO `sys_menu` VALUES (2036, '分类管理', 2033, 4, 'category', 'shop/category/index', 1, 'C', 0, 0, NULL, 'checkbox', 'admin', '2020-06-26 21:32:50', 'admin', '2020-07-06 23:09:46', '');
+INSERT INTO `sys_menu` VALUES (2037, '商品管理', 2033, 5, 'goods', 'shop/goods/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-07-06 23:09:32', 'admin', '2020-07-10 23:50:17', '');
+INSERT INTO `sys_menu` VALUES (2038, '添加商品', 2033, 1, 'goods/add', 'shop/goods/add', 1, 'C', 0, 0, NULL, 'tab', 'admin', '2020-07-08 22:32:04', 'admin', '2020-07-10 23:50:02', '');
+INSERT INTO `sys_menu` VALUES (2039, '修改商品', 2033, 5, 'goods/edit', 'shop/goods/edit', 1, 'C', 0, 1, NULL, 'dashboard', 'admin', '2020-07-10 23:50:54', 'admin', '2020-07-18 12:58:49', '');
+INSERT INTO `sys_menu` VALUES (2040, '用户管理', 0, 1, 'user', NULL, 1, 'M', 0, 0, NULL, 'color', 'admin', '2020-07-19 15:02:34', 'admin', '2020-07-19 15:06:44', '');
+INSERT INTO `sys_menu` VALUES (2041, '会员管理', 2040, 1, 'member', 'user/member/index', 1, 'C', 0, 0, NULL, 'dict', 'admin', '2020-07-19 15:03:43', 'admin', '2020-07-19 15:04:35', '');
+INSERT INTO `sys_menu` VALUES (2042, '地址管理', 2040, 2, 'address', 'user/adress/index', 1, 'C', 0, 0, NULL, 'example', 'admin', '2020-07-19 15:05:48', '', NULL, '');
 
 -- ----------------------------
 -- Table structure for sys_role
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role`  (
-  `role_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+  `role_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
   `role_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '角色名称',
   `role_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '角色权限字符串',
-  `sort` int(0) NOT NULL COMMENT '显示顺序',
-  `role_status` tinyint(0) NOT NULL COMMENT '角色状态（0正常 1停用）',
+  `sort` int(11) NOT NULL COMMENT '显示顺序',
+  `role_status` tinyint(4) NOT NULL COMMENT '角色状态（0正常 1停用）',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(0) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`role_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3421 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = Dynamic;
 
@@ -2091,8 +2218,8 @@ INSERT INTO `sys_role` VALUES (3420, 'ttt', 'ttt', 0, 0, 'admin', '2020-06-26 19
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_menu`;
 CREATE TABLE `sys_role_menu`  (
-  `role_id` bigint(0) NOT NULL COMMENT '角色ID',
-  `menu_id` bigint(0) NOT NULL COMMENT '菜单ID',
+  `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+  `menu_id` bigint(20) NOT NULL COMMENT '菜单ID',
   PRIMARY KEY (`role_id`, `menu_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = Dynamic;
 
@@ -2136,22 +2263,22 @@ INSERT INTO `sys_role_menu` VALUES (3347, 1008);
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user`  (
-  `user_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `dept_id` bigint(0) NULL DEFAULT NULL COMMENT '部门ID',
+  `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `dept_id` bigint(20) NULL DEFAULT NULL COMMENT '部门ID',
   `user_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户账号',
   `nick_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户昵称',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '用户邮箱',
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '手机号码',
-  `sex` tinyint(0) NULL DEFAULT 0 COMMENT '用户性别（0男 1女 2未知）',
+  `sex` tinyint(4) NULL DEFAULT 0 COMMENT '用户性别（0男 1女 2未知）',
   `avatar` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '头像地址',
   `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '密码',
-  `user_status` tinyint(0) NULL DEFAULT 0 COMMENT '帐号状态（0正常 1停用）',
+  `user_status` tinyint(4) NULL DEFAULT 0 COMMENT '帐号状态（0正常 1停用）',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(0) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
@@ -2170,8 +2297,8 @@ INSERT INTO `sys_user` VALUES (107, 101, 'wayn', 'erwe', '23424@qq.com', '123423
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user_role`;
 CREATE TABLE `sys_user_role`  (
-  `user_id` bigint(0) NOT NULL COMMENT '用户ID',
-  `role_id` bigint(0) NOT NULL COMMENT '角色ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `role_id` bigint(20) NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`user_id`, `role_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户和角色关联表' ROW_FORMAT = Dynamic;
 

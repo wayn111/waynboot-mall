@@ -26,7 +26,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public List<Category> list(Category category) {
-        List<Category> categories = categoryMapper.selectCategoryList(category);
-        return categories;
+        return categoryMapper.selectCategoryList(category);
     }
 }
