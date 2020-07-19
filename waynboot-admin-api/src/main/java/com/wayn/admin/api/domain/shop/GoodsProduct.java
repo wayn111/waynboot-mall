@@ -9,6 +9,9 @@ import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -38,16 +41,19 @@ public class GoodsProduct extends ShopBaseEntity implements Serializable {
      * 商品规格值列表，采用JSON数组格式
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
+    @Size(min = 1, message = "商品规格值列表不能小于1")
     private String[] specifications;
 
     /**
      * 商品货品价格
      */
+    @DecimalMin(value = "0.0001", message = "货品售价不能小于0")
     private BigDecimal price;
 
     /**
      * 商品货品数量
      */
+    @Min(value = 0, message = "商品货品数量不能小于0")
     private Integer number;
 
     /**

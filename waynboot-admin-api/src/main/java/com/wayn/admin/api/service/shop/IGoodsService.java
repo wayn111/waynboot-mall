@@ -39,6 +39,7 @@ public interface IGoodsService extends IService<Goods> {
 
     /**
      * 保存商品相关对象
+     *
      * @param goodsSaveRelatedVO 商品保存关联VO对象
      * @return R
      */
@@ -54,10 +55,16 @@ public interface IGoodsService extends IService<Goods> {
 
     /**
      * 删除商品相关对象
+     *
      * @param goodsId 商品ID
      * @return boolean
      */
     boolean deleteGoodsRelatedByGoodsId(Long goodsId);
 
+    /**
+     * 更新商品相关对象
+     * @param goodsSaveRelatedVO 商品保存关联VO对象
+     * @return R
+     */
     R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO);
 }

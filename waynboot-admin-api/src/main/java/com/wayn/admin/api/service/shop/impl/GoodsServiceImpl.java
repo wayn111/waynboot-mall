@@ -99,7 +99,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             specification.setGoodsId(goods.getId());
             specification.setCreateTime(new Date());
         }
-        iGoodsSpecificationService.saveBatch(Arrays.asList(specifications));
         for (GoodsAttribute goodsAttribute : attributes) {
             goodsAttribute.setGoodsId(goods.getId());
             goodsAttribute.setCreateTime(new Date());
@@ -161,7 +160,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         for (GoodsSpecification specification : specifications) {
             specification.setUpdateTime(new Date());
         }
-        iGoodsSpecificationService.updateBatchById(Arrays.asList(specifications));
         for (GoodsAttribute goodsAttribute : attributes) {
             goodsAttribute.setUpdateTime(new Date());
         }

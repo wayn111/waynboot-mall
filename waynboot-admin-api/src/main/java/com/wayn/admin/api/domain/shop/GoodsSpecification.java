@@ -7,6 +7,7 @@ import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -39,6 +40,7 @@ public class GoodsSpecification extends ShopBaseEntity implements Serializable {
     /**
      * 商品规格值
      */
+    @NotBlank(message = "商品规格值不能为空")
     private String value;
 
     /**
