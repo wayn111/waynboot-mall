@@ -36,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="id != null">
 				AND id = #{id}
 			</if>
+			order by pid asc, sort_order asc
 		</where>
     </select>
 
