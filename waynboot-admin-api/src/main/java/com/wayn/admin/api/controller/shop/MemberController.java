@@ -2,17 +2,18 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.admin.api.domain.shop.Banner;
 import com.wayn.admin.api.domain.shop.Goods;
 import com.wayn.admin.api.domain.shop.Member;
 import com.wayn.admin.api.service.shop.IMemberService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
 import com.wayn.common.base.BaseController;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -38,5 +39,11 @@ public class MemberController extends BaseController {
     @GetMapping("{memberId}")
     public R getMember(@PathVariable Long memberId) {
         return R.success().add("data", iMemberService.getById(memberId));
+    }
+
+    @PutMapping
+    public R updateMember(@Validated @RequestBody Member member) {
+        member.setUpdateTime(new Date());
+        return R.result(iMemberService.updateById(member));
     }
 }

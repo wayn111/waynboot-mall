@@ -40,6 +40,9 @@
             <if test="member.username != null and member.username != ''">
                 AND username like concat('%', #{member.username}, '%')
             </if>
+            <if test="member.status != null">
+                AND status = #{member.status}
+            </if>
             <if test="member.startTime != null and member.startTime != ''">
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{member.startTime},'%Y-%m-%d')
             </if>
