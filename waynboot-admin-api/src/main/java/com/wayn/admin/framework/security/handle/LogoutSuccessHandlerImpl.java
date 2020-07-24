@@ -1,7 +1,7 @@
 package com.wayn.admin.framework.security.handle;
 
-import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
+import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.util.R;
 import com.wayn.common.util.json.JsonUtil;
 import lombok.SneakyThrows;

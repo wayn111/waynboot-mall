@@ -2,10 +2,10 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.shop.Goods;
-import com.wayn.admin.api.domain.vo.GoodsSaveRelatedVO;
-import com.wayn.admin.api.service.shop.IGoodsService;
 import com.wayn.common.base.BaseController;
+import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
+import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

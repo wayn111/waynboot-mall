@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.system.MenuMapper">
+
+	<resultMap type="com.wayn.common.core.domain.system.Menu" id="SysMenuResult">
+		<id     property="menuId"         column="menu_id"        />
+		<result property="menuName"       column="menu_name"      />
+		<result property="parentId"       column="parent_id"      />
+		<result property="sort"           column="sort"      	  />
+		<result property="path"           column="path"           />
+		<result property="component"      column="component"      />
+		<result property="isFrame"        column="is_frame"       />
+		<result property="menuType"       column="menu_type"      />
+		<result property="menuStatus"     column="menu_status"    />
+		<result property="visible"        column="visible"	      />
+		<result property="perms"          column="perms"          />
+		<result property="icon"           column="icon"           />
+		<result property="createTime"     column="create_time"    />
+		<result property="remark"         column="remark"         />
+	</resultMap>
+
+    <sql id="selectMenuVo">
+        select menu_id, menu_name, parent_id, sort, path, component, is_frame, menu_type, menu_status, visible, ifnull(perms,'') as perms, icon, create_time
+		from sys_menu m
+    </sql>
+
+    <select id="selectMenuList" parameterType="com.wayn.common.core.domain.system.Menu" resultMap="SysMenuResult">
+        <include refid="selectMenuVo"></include>
+        <where>
+			<if test="menuName != null  and menuName != '' ">
+				and m.menu_name like CONCAT('%',#{menuName},'%')
+			</if>
+            <if test="menuStatus != null">and m.menu_status = #{menuStatus}</if>
+        </where>
+		order by m.parent_id, m.sort
+    </select>
+
+    <select id="selectMenuTreeAll" resultMap="SysMenuResult">
+		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.menu_status, m.visible, ifnull(m.perms,'') as perms, m.visible, m.is_frame, m.menu_type, m.icon, m.sort, m.create_time
+		from sys_menu m where m.menu_type in ('M', 'C') and m.menu_status = 0
+		order by m.parent_id, m.sort
+	</select>
+
+    <select id="selectMenuTreeByUserId" parameterType="Long" resultMap="SysMenuResult">
+		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.menu_status, m.visible, ifnull(m.perms,'') as perms, m.is_frame, m.menu_type, m.icon, m.sort, m.create_time
+		from sys_menu m
+			 left join sys_role_menu rm on m.menu_id = rm.menu_id
+			 left join sys_user_role ur on rm.role_id = ur.role_id
+			 left join sys_role ro on ur.role_id = ro.role_id
+			 left join sys_user u on ur.user_id = u.user_id
+		where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.menu_status = 0  AND ro.role_status = 0
+		order by m.parent_id, m.sort
+	</select>
+
+    <select id="selectMenuPermsByUserId" parameterType="Long" resultType="String">
+		select distinct m.perms
+		from sys_menu m
+			 left join sys_role_menu rm on m.menu_id = rm.menu_id
+			 left join sys_user_role ur on rm.role_id = ur.role_id
+			 left join sys_role r on r.role_id = ur.role_id
+		where m.menu_status = '0' and r.role_status = '0' and ur.user_id = #{userId}
+	</select>
+
+    <select id="selectMenuListByUserId" resultMap="SysMenuResult">
+		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.visible, m.menu_status, ifnull(m.perms,'') as perms, m.is_frame, m.menu_type, m.icon, m.sort, m.create_time
+		from sys_menu m
+		left join sys_role_menu rm on m.menu_id = rm.menu_id
+		left join sys_user_role ur on rm.role_id = ur.role_id
+		left join sys_role ro on ur.role_id = ro.role_id
+		<where>
+			ur.user_id = #{userId}
+			<if test="menu.menuName != null and menu.menuName != '' ">
+				and m.menu_name like CONCAT('%',#{menu.menuName},'%')
+			</if>
+			<if test="menu.menuStatus != null">and menu_status = #{menu.menuStatus}</if>
+		</where>
+		order by m.parent_id, m.sort
+	</select>
+</mapper>

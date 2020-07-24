@@ -1,15 +1,15 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.User;
-import com.wayn.admin.api.service.system.IUserService;
 import com.wayn.admin.framework.config.WaynConfig;
 import com.wayn.admin.framework.manager.upload.service.UploadService;
-import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
-import com.wayn.admin.framework.util.SecurityUtils;
+import com.wayn.common.core.domain.system.User;
+import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUploadUtil;
+import com.wayn.common.util.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

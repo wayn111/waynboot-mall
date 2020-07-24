@@ -1,14 +1,14 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.Menu;
-import com.wayn.admin.api.service.system.IMenuService;
-import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
-import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.constant.SysConstants;
+import com.wayn.common.core.domain.system.Menu;
+import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
+import com.wayn.common.util.security.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

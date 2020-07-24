@@ -1,8 +1,8 @@
 package com.wayn.admin.framework.security.service;
 
-import com.wayn.admin.api.domain.system.User;
-import com.wayn.admin.api.service.system.IMenuService;
-import com.wayn.admin.api.service.system.IRoleService;
+import com.wayn.common.core.domain.system.User;
+import com.wayn.common.core.service.system.IMenuService;
+import com.wayn.common.core.service.system.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.system.RoleMapper">
+
+    <resultMap type="com.wayn.common.core.domain.system.Role" id="SysRoleResult">
+        <id     property="roleId"       column="role_id"        />
+        <result property="roleName"     column="role_name"      />
+        <result property="roleKey"      column="role_key"       />
+        <result property="sort"         column="sort"           />
+        <result property="roleStatus"   column="role_status"    />
+        <result property="delFlag"      column="del_flag"       />
+        <result property="createTime"   column="create_time"    />
+        <result property="remark"       column="remark"         />
+    </resultMap>
+
+    <sql id="selectRoleVo">
+	    select distinct r.role_id, r.role_name, r.role_key, r.sort,
+            r.role_status, r.del_flag, r.create_time, r.remark
+        from sys_role r
+	        left join sys_user_role ur on ur.role_id = r.role_id
+	        left join sys_user u on u.user_id = ur.user_id
+    </sql>
+
+
+    <select id="selectRoleByUserId" parameterType="Long" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = 0 and ur.user_id = #{userId}
+    </select>
+
+    <select id="selectRoleListByUserId" parameterType="Long" resultType="Integer">
+		select r.role_id
+        from sys_role r
+	        left join sys_user_role ur on ur.role_id = r.role_id
+	        left join sys_user u on u.user_id = ur.user_id
+	    where u.user_id = #{userId}
+	</select>
+
+    <select id="selectRoleListPage" parameterType="com.wayn.common.core.domain.system.Role" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        <where>
+            <if test="role.roleId != null ">and r.role_id = #{role.roleId}</if>
+            <if test="role.roleName != null  and role.roleName != '' ">and r.role_name like
+                CONCAT('%',#{role.roleName},'%')
+            </if>
+            <if test="role.roleKey != null  and role.roleKey != '' ">and r.role_key like
+                CONCAT('%',#{role.roleKey},'%')
+            </if>
+            <if test="role.roleStatus != null ">and r.role_status = #{role.roleStatus}</if>
+            <if test="role.startTime != null and role.startTime != ''">
+                and DATE_FORMAT(r.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{role.startTime},'%Y-%m-%d')
+            </if>
+            <if test="role.endTime != null and role.endTime != ''">
+                and DATE_FORMAT(r.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{role.endTime},'%Y-%m-%d')
+            </if>
+            and r.del_flag = 0
+        </where>
+    </select>
+    <select id="selectRoleList" parameterType="com.wayn.common.core.domain.system.Role" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        <where>
+            <if test="roleId != null ">and r.role_id = #{roleId}</if>
+            <if test="roleName != null  and roleName != '' ">and r.role_name like
+                CONCAT('%',#{roleName},'%')
+            </if>
+            <if test="roleKey != null  and roleKey != '' ">and r.role_key like
+                CONCAT('%',#{roleKey},'%')
+            </if>
+            <if test="roleStatus != null">and r.role_status = #{roleStatus}</if>
+            <if test="startTime != null and startTime != ''">
+                and DATE_FORMAT(r.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and DATE_FORMAT(r.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endTime},'%Y-%m-%d')
+            </if>
+            and r.del_flag = 0
+        </where>
+    </select>
+    <select id="selectRolesByUserName" parameterType="string" resultMap="SysRoleResult">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = 0 and u.user_name = #{userName}
+    </select>
+</mapper>

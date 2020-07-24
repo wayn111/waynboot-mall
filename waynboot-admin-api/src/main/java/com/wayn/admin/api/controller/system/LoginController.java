@@ -1,15 +1,15 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.Menu;
-import com.wayn.admin.api.domain.system.User;
-import com.wayn.admin.api.service.system.IMenuService;
 import com.wayn.admin.framework.redis.RedisCache;
-import com.wayn.admin.framework.security.LoginObj;
-import com.wayn.admin.framework.security.LoginUserDetail;
 import com.wayn.admin.framework.security.service.LoginService;
 import com.wayn.admin.framework.security.service.SysPermissionService;
 import com.wayn.admin.framework.security.service.TokenService;
 import com.wayn.common.constant.SysConstants;
+import com.wayn.common.core.domain.system.Menu;
+import com.wayn.common.core.domain.system.User;
+import com.wayn.common.core.model.LoginObj;
+import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wf.captcha.SpecCaptcha;

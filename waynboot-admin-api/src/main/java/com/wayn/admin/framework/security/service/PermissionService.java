@@ -1,7 +1,7 @@
 package com.wayn.admin.framework.security.service;
 
-import com.wayn.admin.api.domain.system.Role;
-import com.wayn.admin.framework.security.LoginUserDetail;
+import com.wayn.common.core.domain.system.Role;
+import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.util.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.system.UserMapper">
+
+	<resultMap type="com.wayn.common.core.domain.system.User" id="SysUserResult">
+		<id     property="userId"       column="user_id"      />
+		<result property="deptId"       column="dept_id"      />
+		<result property="userName"     column="user_name"    />
+		<result property="nickName"     column="nick_name"    />
+		<result property="email"        column="email"        />
+		<result property="phone"  	    column="phone"        />
+		<result property="sex"          column="sex"          />
+		<result property="avatar"       column="avatar"       />
+		<result property="password"     column="password"     />
+		<result property="userStatus"   column="user_status"  />
+		<result property="delFlag"      column="del_flag"     />
+		<result property="createBy"     column="create_by"    />
+		<result property="createTime"   column="create_time"  />
+		<result property="updateBy"     column="update_by"    />
+		<result property="updateTime"   column="update_time"  />
+		<result property="remark"       column="remark"       />
+		<association property="dept" javaType="com.wayn.common.core.domain.system.Dept" resultMap="deptResult" />
+	</resultMap>
+	
+	<resultMap id="deptResult" type="com.wayn.common.core.domain.system.Dept">
+		<id     property="deptId"       column="dept_id"     />
+		<result property="parentId" 	column="parent_id"   />
+		<result property="deptName" 	column="dept_name"   />
+		<result property="sort" 	    column="sort"        />
+		<result property="leader"   	column="leader"      />
+		<result property="deptStatus"   column="dept_status" />
+	</resultMap>
+	
+	<sql id="selectUserVo">
+        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phone, u.password, u.sex, u.user_status, u.del_flag, u.create_by, u.create_time, u.remark,
+        d.dept_id, d.parent_id, d.dept_name, d.sort, d.leader, d.dept_status
+        from sys_user u
+		    left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+    
+    <select id="selectUserListPage" parameterType="com.wayn.common.core.domain.system.User" resultMap="SysUserResult">
+		<include refid="selectUserVo"></include>
+		where u.del_flag = 0
+		<if test="user.userName != null and user.userName != ''">
+			AND u.user_name like concat('%', #{user.userName}, '%')
+		</if>
+		<if test="user.userStatus != null">
+			AND u.user_status = #{user.userStatus}
+		</if>
+		<if test="user.phone != null and user.phone != ''">
+			AND u.phone like concat('%', #{user.phone}, '%')
+		</if>
+		<if test="user.startTime != null and user.startTime != ''"><!-- 开始时间检索 -->
+			AND date_format(u.create_time,'%y%m%d') &gt;= date_format(#{user.startTime},'%y%m%d')
+		</if>
+		<if test="user.endTime != null and user.endTime != ''"><!-- 结束时间检索 -->
+			AND date_format(u.create_time,'%y%m%d') &lt;= date_format(#{user.endTime},'%y%m%d')
+		</if>
+		<if test="user.deptId != null and user.deptId != 0">
+			AND (u.dept_id = #{user.deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{user.deptId},ancestors) ))
+		</if>
+	</select>
+
+	<select id="selectUserList" parameterType="com.wayn.common.core.domain.system.User" resultMap="SysUserResult">
+		<include refid="selectUserVo"></include>
+		where u.del_flag = 0
+		<if test="userName != null and userName != ''">
+			AND u.user_name like concat('%', #{userName}, '%')
+		</if>
+		<if test="userStatus != null">
+			AND u.user_status = #{userStatus}
+		</if>
+		<if test="phone != null and phone != ''">
+			AND u.phone like concat('%', #{phone}, '%')
+		</if>
+		<if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+			AND date_format(u.create_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+		</if>
+		<if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+			AND date_format(u.create_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+		</if>
+		<if test="deptId != null and deptId != 0">
+			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+		</if>
+	</select>
+
+</mapper> 

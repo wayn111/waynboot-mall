@@ -1,10 +1,9 @@
 package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.shop.Banner;
-import com.wayn.admin.api.service.shop.IBannerService;
-import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.base.BaseController;
+import com.wayn.common.core.domain.shop.Banner;
+import com.wayn.common.core.service.shop.IBannerService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
