@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.system.DictMapper">
+
+	<resultMap type="com.wayn.common.core.domain.system.Dict" id="SysDictResult">
+		<id     property="dictId"     	 column="dict_id"     />
+		<result property="name"       	 column="name"        />
+		<result property="value"   		 column="value"       />
+		<result property="type"   		 column="type"        />
+		<result property="sort"      	 column="sort"        />
+		<result property="dictStatus" 	 column="dict_status"  />
+		<result property="parentType"    column="parent_type"  />
+		<result property="delFlag"       column="del_flag"    />
+		<result property="createBy"      column="create_by"   />
+		<result property="createTime"    column="create_time" />
+		<result property="updateBy"      column="update_by"   />
+		<result property="updateTime"    column="update_time" />
+		<result property="remark"        column="remark"      />
+	</resultMap>
+
+	<sql id="selectDictVo">
+        select d.dict_id, d.name, d.value, d.type, d.sort, d.dict_status, d.parent_type,
+        d.del_flag, d.create_by, d.create_time, d.update_by, d.update_time, d.remark
+        from sys_dict d
+    </sql>
+
+	<select id="selectDictTypeListPage" parameterType="com.wayn.common.core.domain.system.Dict" resultMap="SysDictResult">
+		<include refid="selectDictVo"/>
+		where d.del_flag = 0
+		and d.type = 1
+		<if test="dict.name != null and dict.name != ''">
+			AND d.name like concat('%', #{dict.name}, '%')
+		</if>
+		<if test="dict.value != null and dict.value != ''">
+			AND d.value like concat('%', #{dict.value}, '%')
+		</if>
+		<if test="dict.dictStatus != null">
+			AND dict_status = #{dict.dictStatus}
+		</if>
+		<if test="dict.startTime != null and dict.startTime != ''">
+			and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{dict.startTime},'%Y-%m-%d')
+		</if>
+		<if test="dict.endTime != null and dict.endTime != ''">
+			and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{dict.endTime},'%Y-%m-%d')
+		</if>
+		order by d.sort
+	</select>
+
+	<select id="selectDictDataListPage" parameterType="com.wayn.common.core.domain.system.Dict" resultMap="SysDictResult">
+		<include refid="selectDictVo"/>
+		where d.del_flag = 0
+		and d.type = 2
+		and d.parent_type = #{dict.parentType}
+		<if test="dict.name != null and dict.name != ''">
+			AND d.name like concat('%', #{dict.name}, '%')
+		</if>
+		<if test="dict.value != null and dict.value != ''">
+			AND d.value like concat('%', #{dict.value}, '%')
+		</if>
+		<if test="dict.dictStatus != null">
+			AND dict_status = #{dict.dictStatus}
+		</if>
+		<if test="dict.startTime != null and dict.startTime != ''">
+			and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{dict.startTime},'%Y-%m-%d')
+		</if>
+		<if test="dict.endTime != null and dict.endTime != ''">
+			and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{dict.endTime},'%Y-%m-%d')
+		</if>
+		order by d.sort
+	</select>
+
+	<select id="selectDictTypeList" parameterType="com.wayn.common.core.domain.system.Dict" resultMap="SysDictResult">
+		<include refid="selectDictVo"/>
+		where d.del_flag = 0
+		and d.type = 1
+		<if test="name != null and name != ''">
+			AND d.name like concat('%', #{name}, '%')
+		</if>
+		<if test="value != null and value != ''">
+			AND d.value like concat('%', #{value}, '%')
+		</if>
+		<if test="dictStatus != null">
+			AND dict_status = #{dictStatus}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endTime},'%Y-%m-%d')
+		</if>
+		order by d.sort
+	</select>
+
+</mapper>

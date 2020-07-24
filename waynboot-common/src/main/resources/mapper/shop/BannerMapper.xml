@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.shop.BannerMapper">
+
+	<resultMap type="com.wayn.common.core.domain.shop.Banner" id="ShopBannerResult">
+		<result property="id"         	column="id"   			/>
+		<result property="title"     	column="title"   	/>
+		<result property="jumpUrl"     	column="jump_url"   	/>
+		<result property="imgUrl"     	column="img_url"   	/>
+		<result property="sortOrder"     	column="sort_order"   	/>
+		<result property="status"     	column="status"   	/>
+		<result property="delFlag"     	column="del_flag"   	/>
+		<result property="createTime" 	column="create_time" 	/>
+		<result property="updateTime" 	column="update_time" 	/>
+	</resultMap>
+
+	<sql id="selectBannerVo">
+        select b.id, b.title,b.jump_url, b.img_url, b.sort_order, b.status,
+        b.del_flag, b.create_time, b.update_time
+        from shop_banner b
+    </sql>
+    
+	<select id="selectBannerList" parameterType="com.wayn.common.core.domain.shop.Banner" resultMap="ShopBannerResult">
+        <include refid="selectBannerVo"/>
+        <where>
+			<if test="title != null and title != ''">
+				AND title like concat('%', #{title}, '%')
+			</if>
+		</where>
+    </select>
+
+	<select id="selectBannerListPage" resultMap="ShopBannerResult">
+		<include refid="selectBannerVo"/>
+		<where>
+			del_flag = 0
+			<if test="banner.title != null and banner.title != ''">
+				AND title like concat('%', #{banner.title}, '%')
+			</if>
+			<if test="banner.status != null">
+				AND status = #{banner.status}
+			</if>
+			<if test="banner.startTime != null and banner.startTime != ''">
+				and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{banner.startTime},'%Y-%m-%d')
+			</if>
+			<if test="banner.endTime != null and banner.endTime != ''">
+				and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{banner.endTime},'%Y-%m-%d')
+			</if>
+		</where>
+	</select>
+
+</mapper>

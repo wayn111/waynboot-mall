@@ -1,10 +1,9 @@
 package com.wayn.admin.api.controller.shop;
 
-import com.wayn.admin.api.domain.shop.Channel;
-import com.wayn.admin.api.service.shop.IChannelService;
-import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.constant.SysConstants;
+import com.wayn.common.core.domain.shop.Channel;
+import com.wayn.common.core.service.shop.IChannelService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

@@ -2,12 +2,12 @@ package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.api.domain.system.Dict;
-import com.wayn.admin.api.service.system.IDictService;
-import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.constant.SysConstants;
+import com.wayn.common.core.domain.system.Dict;
+import com.wayn.common.core.service.system.IDictService;
 import com.wayn.common.util.R;
+import com.wayn.common.util.security.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

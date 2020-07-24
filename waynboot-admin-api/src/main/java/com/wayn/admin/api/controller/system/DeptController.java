@@ -1,10 +1,10 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.api.domain.system.Dept;
-import com.wayn.admin.api.service.system.IDeptService;
-import com.wayn.admin.framework.util.SecurityUtils;
 import com.wayn.common.constant.SysConstants;
+import com.wayn.common.core.domain.system.Dept;
+import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.util.R;
+import com.wayn.common.util.security.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
