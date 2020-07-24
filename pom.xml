@@ -6,6 +6,7 @@
         <module>waynboot-common</module>
         <module>waynboot-admin-api</module>
         <module>waynboot-generator</module>
+        <module>waynboot-mobile</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
