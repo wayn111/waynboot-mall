@@ -8,12 +8,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="id"         	column="id"   			/>
 		<result property="name"       	column="name"   		/>
 		<result property="code"       	column="code"   		/>
+		<result property="remark"      	column="remark"   		/>
 		<result property="createTime" 	column="create_time" 	/>
 		<result property="updateTime" 	column="update_time" 	/>
 	</resultMap>
 
 	<sql id="selectChannelVo">
-        select c.id, c.name, c.code,
+        select c.id, c.name, c.code, c.remark,
         c.create_time, c.update_time
         from shop_channel c
     </sql>

@@ -24,4 +24,6 @@ public class Channel extends ShopBaseEntity implements Serializable {
 
     @NotBlank(message = "名称不能为空")
     private String name;
+
+    private String remark;
 }
