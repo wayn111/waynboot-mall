@@ -1,8 +1,10 @@
 package com.wayn.mobile.framework.security.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.enums.UserStatus;
@@ -21,16 +23,7 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private IUserService iUserService;
-
-    @Autowired
-    private IDeptService iDeptService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private SysPermissionService permissionService;
+    private IMemberService iMemberService;
 
     public static void main(String[] args) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -39,17 +32,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = iUserService.getOne(new QueryWrapper<User>().eq("user_name", username));
-        if (user == null) {
+        Member member = iMemberService.getOne(new QueryWrapper<Member>().eq("username", username));
+        if (member == null) {
             log.info("登录用户：{} 不存在.", username);
             throw new UsernameNotFoundException("登录用户：" + username + " 不存在");
         }
-        if (UserStatus.DISABLE.getCode().equals(user.getUserStatus())) {
+        if (UserStatus.DISABLE.getCode().equals(member.getStatus())) {
             log.info("登录用户：{} 已经被停用.", username);
             throw new DisabledException("登录用户：" + username + " 不存在");
         }
-        user.setDept(iDeptService.getById(user.getDeptId()));
-        return new LoginUserDetail(user, permissionService.getMenuPermission(user));
+        return new LoginUserDetail(null, null);
     }
 
 }
