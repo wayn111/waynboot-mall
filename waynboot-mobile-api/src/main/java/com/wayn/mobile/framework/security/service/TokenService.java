@@ -2,10 +2,10 @@ package com.wayn.mobile.framework.security.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.util.jwt.JwtUtil;
 import com.wayn.mobile.framework.redis.RedisCache;
+import com.wayn.mobile.framework.security.LoginUserDetail;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,8 @@ public class TokenService {
 
     protected static final long MILLIS_SECOND = 1000;
     protected static final long MILLIS_MINUTE = 60 * MILLIS_SECOND;
-    private static final Long MILLIS_MINUTE_TEN = 20 * 60 * MILLIS_SECOND;
+    protected static final long MILLIS_DAY = 24 * 60 * MILLIS_MINUTE;
+    private static final Long MILLIS_DAY_FIVE = 5 * 24 * 60 * MILLIS_MINUTE;
     // 令牌自定义标识
     @Value("${token.header}")
     private String header;
@@ -64,16 +65,16 @@ public class TokenService {
 
     public void refreshToken(LoginUserDetail loginUser) {
         loginUser.setLoginTime(System.currentTimeMillis());
-        loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_MINUTE);
+        loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_DAY);
         // 根据uuid将loginUser缓存
         String userKey = SysConstants.LOGIN_TOKEN_KEY + loginUser.getToken();
-        redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);
+        redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.DAYS);
     }
 
     public void verifyToken(LoginUserDetail loginUser) {
         long expireTime = loginUser.getExpireTime();
         long currentTime = System.currentTimeMillis();
-        if (expireTime - currentTime <= MILLIS_MINUTE_TEN) {
+        if (expireTime - currentTime <= MILLIS_DAY_FIVE) {
             refreshToken(loginUser);
         }
     }

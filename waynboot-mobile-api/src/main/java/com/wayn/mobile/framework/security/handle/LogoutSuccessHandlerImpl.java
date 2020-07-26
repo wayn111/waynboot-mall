@@ -1,8 +1,8 @@
 package com.wayn.mobile.framework.security.handle;
 
-import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.util.R;
 import com.wayn.common.util.json.JsonUtil;
+import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.service.TokenService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -19,7 +19,7 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
 
     @SneakyThrows
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.info("登录失败");
         //设置状态码
         response.setStatus(500);

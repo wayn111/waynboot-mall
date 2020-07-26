@@ -1,5 +1,5 @@
 server:
-  port: 81
+  port: 82
 
 spring:
   profiles:
@@ -22,8 +22,8 @@ token:
   header: Authorization
   # 令牌秘钥
   secret: abcdefghijklmnopqrstuvwxyz
-  # 令牌有效期（默认30分钟）
-  expireTime: 120
+  # 令牌有效期（默认30天）
+  expireTime: 30
 
 # 日志配置
 logging:
