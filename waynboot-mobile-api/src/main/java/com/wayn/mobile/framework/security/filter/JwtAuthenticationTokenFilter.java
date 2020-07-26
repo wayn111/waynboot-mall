@@ -1,6 +1,6 @@
 package com.wayn.mobile.framework.security.filter;
 
-import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
