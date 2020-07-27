@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.31.49
+ Source Server         : localhost
  Source Server Type    : MySQL
  Source Server Version : 80012
- Source Host           : 192.168.31.49:3306
+ Source Host           : localhost:3306
  Source Schema         : wayn_shop
 
  Target Server Type    : MySQL
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 19/07/2020 15:40:41
+ Date: 27/07/2020 09:22:55
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `qiniu_config`  (
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
   `enable` tinyint(4) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of qiniu_config
@@ -59,7 +59,7 @@ CREATE TABLE `shop_address`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_banner
@@ -80,12 +80,12 @@ CREATE TABLE `shop_banner`  (
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   `status` tinyint(4) NULL DEFAULT 0 COMMENT 'banner状态（0启用 1禁用）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_banner
 -- ----------------------------
-INSERT INTO `shop_banner` VALUES (14, 'admin', '2020-06-26 19:56:03', NULL, '2020-07-06 22:58:45', NULL, 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', 'hh', NULL, 'rrr', NULL, 0, 0);
+INSERT INTO `shop_banner` VALUES (14, 'admin', '2020-06-26 19:56:03', NULL, '2020-07-24 16:57:48', 0, 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', 'hh', NULL, '###', NULL, 0, 0);
 
 -- ----------------------------
 -- Table structure for shop_brand
@@ -102,7 +102,7 @@ CREATE TABLE `shop_brand`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1046003 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '品牌商表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1046000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '品牌商表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_brand
@@ -176,12 +176,12 @@ CREATE TABLE `shop_category`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `parent_id`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1036007 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1036004 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_category
 -- ----------------------------
-INSERT INTO `shop_category` VALUES (1005000, '居家', '', '回家，放松身心', 0, 'http://yanxuan.nosdn.127.net/a45c2c262a476fea0b9fc684fed91ef5.png', 'http://yanxuan.nosdn.127.net/e8bf0cf08cf7eda21606ab191762e35c.png', 'L1', 2, '2018-02-01 00:00:00', '2020-07-06 23:05:35', 0);
+INSERT INTO `shop_category` VALUES (1005000, '居家', '', '回家，放松身心', 0, 'http://yanxuan.nosdn.127.net/a45c2c262a476fea0b9fc684fed91ef5.png', 'http://yanxuan.nosdn.127.net/e8bf0cf08cf7eda21606ab191762e35c.png', 'L1', 2, '2018-02-01 00:00:00', '2020-07-24 16:58:03', 0);
 INSERT INTO `shop_category` VALUES (1005001, '餐厨', '', '爱，囿于厨房', 0, 'http://yanxuan.nosdn.127.net/ad8b00d084cb7d0958998edb5fee9c0a.png', 'http://yanxuan.nosdn.127.net/3708dbcb35ad5abf9e001500f73db615.png', 'L1', 3, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_category` VALUES (1005002, '饮食', '', '好吃，高颜值美食', 0, 'http://yanxuan.nosdn.127.net/c9280327a3fd2374c000f6bf52dff6eb.png', 'http://yanxuan.nosdn.127.net/fb670ff3511182833e5b035275e4ac09.png', 'L1', 9, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_category` VALUES (1005007, '锅具', '', '一口好锅，炖煮生活一日三餐', 1005001, 'http://yanxuan.nosdn.127.net/4aab4598017b5749e3b63309d25e9f6b.png', 'http://yanxuan.nosdn.127.net/d2db0d1d0622c621a8aa5a7c06b0fc6d.png', 'L2', 1, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -289,12 +289,12 @@ CREATE TABLE `shop_channel`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '名称',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_channel
 -- ----------------------------
-INSERT INTO `shop_channel` VALUES (5, 'admin', '2020-06-26 19:32:35', NULL, NULL, 'news', '新品', '等到');
+INSERT INTO `shop_channel` VALUES (5, 'admin', '2020-06-26 19:32:35', NULL, '2020-07-24 17:07:57', 'news', '新品', 'new');
 
 -- ----------------------------
 -- Table structure for shop_goods
@@ -327,7 +327,7 @@ CREATE TABLE `shop_goods`  (
   INDEX `cat_id`(`category_id`) USING BTREE,
   INDEX `brand_id`(`brand_id`) USING BTREE,
   INDEX `sort_order`(`sort_order`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1181004 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1181000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods
@@ -586,7 +586,7 @@ CREATE TABLE `shop_goods_attribute`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 877 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 876 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_attribute
@@ -1484,7 +1484,7 @@ CREATE TABLE `shop_goods_product`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 251 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 244 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_product
@@ -1749,7 +1749,7 @@ CREATE TABLE `shop_goods_specification`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 250 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 243 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_specification
@@ -1999,14 +1999,14 @@ INSERT INTO `shop_goods_specification` VALUES (242, 1156006, '规格', '标准',
 INSERT INTO `shop_goods_specification` VALUES (243, 1166008, '规格', '标准', '', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 
 -- ----------------------------
--- Table structure for shop_user
+-- Table structure for shop_member
 -- ----------------------------
-DROP TABLE IF EXISTS `shop_user`;
-CREATE TABLE `shop_user`  (
+DROP TABLE IF EXISTS `shop_member`;
+CREATE TABLE `shop_member`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名称',
   `password` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '用户密码',
-  `gender` tinyint(3) NOT NULL DEFAULT 0 COMMENT '性别：0 未知， 1男， 1 女',
+  `gender` tinyint(3) NOT NULL DEFAULT 0 COMMENT '性别：0 未知， 1男， 2 女',
   `birthday` date NULL DEFAULT NULL COMMENT '生日',
   `last_login_time` datetime(0) NULL DEFAULT NULL COMMENT '最近一次登录时间',
   `last_login_ip` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '最近一次登录IP地址',
@@ -2022,12 +2022,12 @@ CREATE TABLE `shop_user`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_name`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of shop_user
+-- Records of shop_member
 -- ----------------------------
-INSERT INTO `shop_user` VALUES (1, 'user123', '$2a$10$lTu9qi0hr19OC800Db.eludFr0AXuJUSrMHi/iPYhKRlPFeqJxlye', 1, NULL, '2019-04-20 22:17:43', '0:0:0:0:0:0:0:1', 0, 'user123', '', '', '', '', 0, '2019-04-20 22:17:43', '2019-04-20 22:17:43', 0);
+INSERT INTO `shop_member` VALUES (1, 'user123', '$2a$10$gh0Y7vkIxs6SJkQHz3drk.NQAaLYw0mGmkKpZbRdCwZ10iR8eDF8a', 1, NULL, '2019-04-20 22:17:43', '0:0:0:0:0:0:0:1', 0, 'wayn', '13617159841', 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', '', '', 0, '2019-04-20 22:17:43', '2020-07-24 16:57:24', 0);
 
 -- ----------------------------
 -- Table structure for sys_dept
@@ -2050,7 +2050,7 @@ CREATE TABLE `sys_dept`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dept
@@ -2091,7 +2091,7 @@ CREATE TABLE `sys_dict`  (
   INDEX `sys_dict_value`(`value`) USING BTREE,
   INDEX `sys_dict_label`(`name`) USING BTREE,
   INDEX `sys_dict_del_flag`(`del_flag`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 162 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 161 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict
@@ -2108,7 +2108,7 @@ INSERT INTO `sys_dict` VALUES (141, '按钮', '3', 0, 2, 3, 'menuType', 'admin',
 INSERT INTO `sys_dict` VALUES (142, '游泳', 'swim', 0, 2, 1, 'hobby', 'admin', '2019-07-08 07:01:25', 'admin', '2019-07-19 03:35:44', 'swim 游泳 playball 打球。。。', 0);
 INSERT INTO `sys_dict` VALUES (145, '跑步', 'run', 0, 2, 2, 'hobby', 'admin', '2019-08-22 07:11:35', NULL, NULL, '', 0);
 INSERT INTO `sys_dict` VALUES (146, '洗澡', 'bathing', 0, 2, 3, 'hobby', 'admin', '2019-08-22 07:11:55', 'admin', '2020-06-04 22:58:26', '', 0);
-INSERT INTO `sys_dict` VALUES (148, '执行策略', 'misfirePolicy', 0, 1, 3, NULL, 'admin', '2019-09-05 11:30:06', 'admin', '2020-06-03 22:37:39', '定时任务调度 ”失火策略“', 0);
+INSERT INTO `sys_dict` VALUES (148, '执行策略', 'misfirePolicy', 0, 1, 4, NULL, 'admin', '2019-09-05 11:30:06', 'admin', '2020-07-24 16:58:22', '定时任务调度 ”失火策略“', 0);
 INSERT INTO `sys_dict` VALUES (149, '立即执行', '1', 0, 2, 1, 'misfirePolicy', 'admin', '2019-09-05 11:30:31', NULL, NULL, '', 0);
 INSERT INTO `sys_dict` VALUES (152, '执行一次', '2', 0, 2, 2, 'misfirePolicy', 'admin', '2019-09-05 12:12:55', NULL, NULL, '', 0);
 INSERT INTO `sys_dict` VALUES (155, '放弃执行', '3', 0, 2, 3, 'misfirePolicy', 'admin', '2019-09-05 12:13:43', NULL, NULL, '', 0);
@@ -2137,7 +2137,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2040 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2043 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -2181,9 +2181,9 @@ INSERT INTO `sys_menu` VALUES (2036, '分类管理', 2033, 4, 'category', 'shop/
 INSERT INTO `sys_menu` VALUES (2037, '商品管理', 2033, 5, 'goods', 'shop/goods/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-07-06 23:09:32', 'admin', '2020-07-10 23:50:17', '');
 INSERT INTO `sys_menu` VALUES (2038, '添加商品', 2033, 1, 'goods/add', 'shop/goods/add', 1, 'C', 0, 0, NULL, 'tab', 'admin', '2020-07-08 22:32:04', 'admin', '2020-07-10 23:50:02', '');
 INSERT INTO `sys_menu` VALUES (2039, '修改商品', 2033, 5, 'goods/edit', 'shop/goods/edit', 1, 'C', 0, 1, NULL, 'dashboard', 'admin', '2020-07-10 23:50:54', 'admin', '2020-07-18 12:58:49', '');
-INSERT INTO `sys_menu` VALUES (2040, '用户管理', 0, 1, 'user', NULL, 1, 'M', 0, 0, NULL, 'color', 'admin', '2020-07-19 15:02:34', 'admin', '2020-07-19 15:06:44', '');
-INSERT INTO `sys_menu` VALUES (2041, '会员管理', 2040, 1, 'member', 'user/member/index', 1, 'C', 0, 0, NULL, 'dict', 'admin', '2020-07-19 15:03:43', 'admin', '2020-07-19 15:04:35', '');
-INSERT INTO `sys_menu` VALUES (2042, '地址管理', 2040, 2, 'address', 'user/adress/index', 1, 'C', 0, 0, NULL, 'example', 'admin', '2020-07-19 15:05:48', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2040, '用户管理', 0, 1, 'user', NULL, 1, 'M', 0, 0, NULL, 'color', 'admin', '2020-07-19 15:02:34', 'admin', '2020-07-23 16:12:45', '');
+INSERT INTO `sys_menu` VALUES (2041, '会员管理', 2040, 1, 'member', 'shop/user/member/index', 1, 'C', 0, 0, NULL, 'dict', 'admin', '2020-07-19 15:03:43', 'admin', '2020-07-23 16:12:23', '');
+INSERT INTO `sys_menu` VALUES (2042, '地址管理', 2040, 2, 'address', 'shop/user/adress/index', 1, 'C', 0, 0, NULL, 'example', 'admin', '2020-07-19 15:05:48', 'admin', '2020-07-23 16:12:28', '');
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -2202,7 +2202,7 @@ CREATE TABLE `sys_role`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`role_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3421 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3420 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role
@@ -2280,7 +2280,7 @@ CREATE TABLE `sys_user`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
