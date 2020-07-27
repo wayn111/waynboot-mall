@@ -23,13 +23,13 @@ public class LoginService {
 
 
     @SneakyThrows
-    public String login(String username, String password) {
+    public String login(String mobile, String password) {
         // 用户验证
         Authentication authentication;
         try {
             // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
             authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+                    .authenticate(new UsernamePasswordAuthenticationToken(mobile, password));
         } catch (Exception e) {
             if (e instanceof BadCredentialsException) {
                 throw new BadCredentialsException(e.getMessage(), e);

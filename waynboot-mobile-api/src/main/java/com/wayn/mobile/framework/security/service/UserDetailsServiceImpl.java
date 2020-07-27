@@ -23,15 +23,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private IMemberService iMemberService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = iMemberService.getOne(new QueryWrapper<Member>().eq("username", username));
+    public UserDetails loadUserByUsername(String mobile) throws UsernameNotFoundException {
+        Member member = iMemberService.getOne(new QueryWrapper<Member>().eq("mobile", mobile));
         if (member == null) {
-            log.info("登录用户：{} 不存在.", username);
-            throw new UsernameNotFoundException("登录用户：" + username + " 不存在");
+            log.info("登录用户：{} 不存在.", mobile);
+            throw new UsernameNotFoundException("登录用户：" + mobile + " 不存在");
         }
         if (UserStatus.DISABLE.getCode() == member.getStatus()) {
-            log.info("登录用户：{} 已经被停用.", username);
-            throw new DisabledException("登录用户：" + username + " 不存在");
+            log.info("登录用户：{} 已经被停用.", mobile);
+            throw new DisabledException("登录用户：" + mobile + " 不存在");
         }
         return new LoginUserDetail(member, Collections.emptySet());
     }

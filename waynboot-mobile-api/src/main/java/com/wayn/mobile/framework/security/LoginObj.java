@@ -11,6 +11,11 @@ public class LoginObj {
     private String username;
 
     /**
+     * 手机号
+     */
+    private String mobile;
+
+    /**
      * 用户密码
      */
     private String password;
