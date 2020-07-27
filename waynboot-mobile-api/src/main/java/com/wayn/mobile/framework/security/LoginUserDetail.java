@@ -103,7 +103,7 @@ public class LoginUserDetail implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.member.getUsername();
+        return this.member.getMobile();
     }
 
     @JsonIgnore
