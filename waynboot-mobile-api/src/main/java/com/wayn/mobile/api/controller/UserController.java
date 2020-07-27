@@ -1,6 +1,5 @@
 package com.wayn.mobile.api.controller;
 
-import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.mobile.framework.security.LoginUserDetail;
