@@ -2,6 +2,7 @@ package com.wayn.common.core.service.shop;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Category;
+import com.wayn.common.core.domain.vo.VanTreeSelectVo;
 
 import java.util.List;
 
@@ -21,4 +22,8 @@ public interface ICategoryService extends IService<Category> {
      * @return 分类列表
      */
     List<Category> list(Category category);
+
+    List<VanTreeSelectVo> selectL1Category();
+
+    List<VanTreeSelectVo> selectCategoryByPid(Long id);
 }
