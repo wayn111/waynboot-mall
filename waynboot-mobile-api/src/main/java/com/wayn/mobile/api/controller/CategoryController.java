@@ -38,4 +38,14 @@ public class CategoryController {
         success.add("subCategoryList", subCategoryList);
         return success;
     }
+
+    @GetMapping("content")
+    public R content(Long id) {
+        R success = R.success();
+        Category currentCategory = iCategoryService.getById(id);
+        List<VanTreeSelectVo> subCategoryList = iCategoryService.selectCategoryByPid(id);
+        success.add("currentCategory", currentCategory);
+        success.add("subCategoryList", subCategoryList);
+        return success;
+    }
 }
