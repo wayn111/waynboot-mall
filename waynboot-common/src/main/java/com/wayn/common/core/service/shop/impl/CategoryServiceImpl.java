@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -35,27 +36,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Override
     public List<VanTreeSelectVo> selectL1Category() {
         List<Category> categoryList = list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort_order"));
-        List<VanTreeSelectVo> vanTreeSelectVos = new ArrayList<>();
-        categoryList.forEach(category -> {
-            VanTreeSelectVo vanTreeSelectVo = new VanTreeSelectVo();
-            vanTreeSelectVo.setId(category.getId());
-            vanTreeSelectVo.setText(category.getName());
-            vanTreeSelectVos.add(vanTreeSelectVo);
-        });
+        List<VanTreeSelectVo> vanTreeSelectVos = categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
         return vanTreeSelectVos;
     }
 
     @Override
     public List<VanTreeSelectVo> selectCategoryByPid(Long id) {
         List<Category> categoryList = list(new QueryWrapper<Category>().eq("pid", id).orderByAsc("sort_order"));
-        List<VanTreeSelectVo> vanTreeSelectVos = new ArrayList<>();
-        categoryList.forEach(category -> {
-            VanTreeSelectVo vanTreeSelectVo = new VanTreeSelectVo();
-            vanTreeSelectVo.setId(category.getId());
-            vanTreeSelectVo.setIcon(category.getIconUrl());
-            vanTreeSelectVo.setText(category.getName());
-            vanTreeSelectVos.add(vanTreeSelectVo);
-        });
+        List<VanTreeSelectVo> vanTreeSelectVos = categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
         return vanTreeSelectVos;
     }
 }
