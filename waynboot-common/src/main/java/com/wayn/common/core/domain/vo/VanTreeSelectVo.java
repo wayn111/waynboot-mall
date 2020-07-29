@@ -1,9 +1,10 @@
 package com.wayn.common.core.domain.vo;
 
+import com.wayn.common.core.domain.shop.Category;
 import lombok.Data;
 
 /**
- * 路由显示信息
+ * vant 树形选择组件所需实体
  */
 @Data
 public class VanTreeSelectVo {
@@ -14,9 +15,9 @@ public class VanTreeSelectVo {
     public VanTreeSelectVo() {
     }
 
-    public VanTreeSelectVo(Long id, String text, String icon) {
-        this.id = id;
-        this.text = text;
-        this.icon = icon;
+    public VanTreeSelectVo(Category category) {
+        this.id = category.getId();
+        this.text = category.getName();
+        this.icon = category.getIconUrl();
     }
 }
