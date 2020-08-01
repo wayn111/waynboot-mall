@@ -10,7 +10,7 @@ import com.wayn.common.core.service.shop.IBannerService;
 import com.wayn.common.core.service.shop.ICategoryService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
-import com.wayn.mobile.api.service.HomeService;
+import com.wayn.mobile.api.service.IHomeService;
 import com.wayn.mobile.framework.redis.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 @Service
-public class HomeServiceImpl implements HomeService {
+public class IHomeServiceImpl implements IHomeService {
 
     private static final String INDEX_DATA = "index_data";
 
