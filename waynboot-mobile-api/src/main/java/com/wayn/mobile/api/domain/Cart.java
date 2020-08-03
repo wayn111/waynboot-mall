@@ -5,7 +5,10 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,6 +21,7 @@ import lombok.EqualsAndHashCode;
  * @since 2020-08-03
  */
 @Data
+@TableName(value = "shop_cart", autoResultMap = true)
 @EqualsAndHashCode(callSuper = false)
 public class Cart implements Serializable {
 
@@ -64,7 +68,8 @@ public class Cart implements Serializable {
     /**
      * 商品规格值列表，采用JSON数组格式
      */
-    private String specifications;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private String[] specifications;
 
     /**
      * 购物车中商品是否选择状态

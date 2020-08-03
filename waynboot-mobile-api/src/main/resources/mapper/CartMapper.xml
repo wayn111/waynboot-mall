@@ -12,7 +12,7 @@
         <result column="product_id"         property="productId" />
         <result column="price"              property="price" />
         <result column="number"             property="number" />
-        <result column="specifications"     property="specifications" />
+        <result column="specifications"     property="specifications"  typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
         <result column="checked"            property="checked" />
         <result column="pic_url"            property="picUrl" />
         <result column="create_time"        property="createTime" />
