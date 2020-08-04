@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.mobile.api.mapper.SeckillMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wayn.mobile.api.domain.Seckill">
+        <id column="seckill_id" property="seckillId" />
+        <result column="name" property="name" />
+        <result column="number" property="number" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        seckill_id, name, number, start_time, end_time, create_time
+    </sql>
+    <update id="updateSec">
+        update seckill set number = #{newNum} , version = #{newVersion} where  seckill_id = #{id} and version = #{oldVersion}
+    </update>
+
+    <update id="updateSec1">
+        update seckill set number = #{newNum} where  seckill_id = #{id} and number = #{oldNum}
+    </update>
+
+    <update id="updateSec2">
+        update seckill set number = number - 1 where  seckill_id = #{id} and number - 1 >= 0
+    </update>
+</mapper>
