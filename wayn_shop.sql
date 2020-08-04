@@ -1,5 +1,4 @@
 /*
-/*
  Navicat Premium Data Transfer
 
  Source Server         : localhost
@@ -12,7 +11,7 @@
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 03/08/2020 19:14:19
+ Date: 04/08/2020 15:08:30
 */
 
 SET NAMES utf8mb4;
@@ -65,6 +64,32 @@ CREATE TABLE `qiniu_config`  (
 -- Records of qiniu_config
 -- ----------------------------
 INSERT INTO `qiniu_config` VALUES (1, NULL, NULL, 'http://cdn.wayn.xin', NULL, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for seckill
+-- ----------------------------
+DROP TABLE IF EXISTS `seckill`;
+CREATE TABLE `seckill`  (
+  `seckill_id` bigint(20) NOT NULL COMMENT '商品库存id',
+  `name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '商品名称',
+  `number` int(11) NOT NULL COMMENT '库存数量',
+  `start_time` timestamp(0) NOT NULL COMMENT '秒杀开始时间',
+  `end_time` timestamp(0) NOT NULL COMMENT '秒杀结束时间',
+  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '秒杀创建时间',
+  `version` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '版本',
+  PRIMARY KEY (`seckill_id`) USING BTREE,
+  INDEX `idx_start_time`(`start_time`) USING BTREE,
+  INDEX `idx_end_time`(`end_time`) USING BTREE,
+  INDEX `idx_create_time`(`create_time`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1004 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '秒杀库存表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of seckill
+-- ----------------------------
+INSERT INTO `seckill` VALUES (1000, '1000元秒杀iphone6', 0, '2015-11-01 00:00:00', '2015-11-02 00:00:00', '2020-08-04 11:00:19', 40);
+INSERT INTO `seckill` VALUES (1001, '500元秒杀ipad2', 200, '2015-11-01 00:00:00', '2015-11-02 00:00:00', '2020-08-04 11:00:19', 0);
+INSERT INTO `seckill` VALUES (1002, '300元秒杀小米4', 300, '2015-11-01 00:00:00', '2015-11-02 00:00:00', '2020-08-04 11:00:19', 0);
+INSERT INTO `seckill` VALUES (1003, '200元秒杀红米note', 400, '2015-11-01 00:00:00', '2015-11-02 00:00:00', '2020-08-04 11:00:19', 0);
 
 -- ----------------------------
 -- Table structure for shop_address
