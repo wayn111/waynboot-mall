@@ -13,4 +13,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICartService extends IService<Cart> {
 
+    /**
+     * 检查用户购物车中是否有商品货品
+     * @param userId
+     * @param goodsId
+     * @param productId
+     * @return
+     */
+    boolean checkExistsGoods(Long userId, Integer goodsId, Integer productId);
 }
