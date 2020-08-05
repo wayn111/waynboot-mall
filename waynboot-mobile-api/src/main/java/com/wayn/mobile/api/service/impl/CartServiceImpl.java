@@ -79,6 +79,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             cart.setSpecifications((product.getSpecifications()));
             cart.setUserId(Math.toIntExact(userId));
             cart.setChecked(true);
+            cart.setRemark(goods.getBrief());
             cart.setCreateTime(LocalDateTime.now());
             save(cart);
         } else {
@@ -101,5 +102,12 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         List<Cart> cartList = list(new QueryWrapper<Cart>()
                 .eq("user_id", userId));
         return R.success().add("count", cartList.size());
+    }
+
+    @Override
+    public R list(Long userId) {
+        List<Cart> cartList = list(new QueryWrapper<Cart>()
+                .eq("user_id", userId));
+        return R.success().add("data", cartList);
     }
 }

@@ -39,4 +39,11 @@ public interface ICartService extends IService<Cart> {
      * @return R
      */
     R goodsCount();
+
+    /**
+     * 查询用户购物车商品
+     * @param userId 用户ID
+     * @return R
+     */
+    R list(Long userId);
 }
