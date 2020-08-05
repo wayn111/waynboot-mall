@@ -82,6 +82,11 @@ public class Cart implements Serializable {
     private String picUrl;
 
     /**
+     * 备注
+     */
+    private String remark;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

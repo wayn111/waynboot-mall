@@ -36,6 +36,12 @@ public class CartController extends BaseController {
     @Autowired
     private ICartService iCartService;
 
+    @GetMapping("list")
+    public R list() {
+        Long userId = SecurityUtils.getLoginUser().getMember().getId();
+        return iCartService.list(userId);
+    }
+
     @PostMapping("add")
     public R add(@RequestBody Cart cart) {
         return iCartService.addCart(cart);
