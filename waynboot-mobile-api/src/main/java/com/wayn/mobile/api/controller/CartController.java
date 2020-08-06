@@ -47,6 +47,11 @@ public class CartController extends BaseController {
         return iCartService.addCart(cart);
     }
 
+    @DeleteMapping("{cartId}")
+    public R delete(@PathVariable Long cartId) {
+        return R.result(iCartService.removeById(cartId));
+    }
+
     @GetMapping("goodsCount")
     public R goodsCount() {
         return iCartService.goodsCount();
