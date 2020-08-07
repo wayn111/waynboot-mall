@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.shop.AddressMapper">
+
+	<resultMap type="com.wayn.common.core.domain.shop.Address" id="ShopAddressResult">
+		<result property="id"         		column="id"   				/>
+		<result property="name"   			column="name"   			/>
+		<result property="memberId" 		column="memberId"  			/>
+		<result property="province"  		column="province"   		/>
+		<result property="city" 			column="city"  				/>
+		<result property="county" 			column="county"   			/>
+		<result property="addressDetail" 	column="address_detail" 	/>
+		<result property="areaCode" 		column="areaCode"   		/>
+		<result property="postalCode" 		column="postal_code"   		/>
+		<result property="tel" 				column="tel"   				/>
+		<result property="isDefault"     	column="is_default"   		/>
+		<result property="delFlag"     		column="del_flag"   		/>
+		<result property="createTime" 		column="create_time" 		/>
+		<result property="updateTime" 		column="update_time" 		/>
+	</resultMap>
+
+	<sql id="selectAddressVo">
+        select a.id, a.name, a.memberId, a.province, a.city,
+        a.county, a.address_detail, a.area_code, a.postal_code, a.tel,
+        a.is_default, a.del_flag, a.create_time, a.update_time
+        from shop_adress a
+    </sql>
+    
+</mapper>
