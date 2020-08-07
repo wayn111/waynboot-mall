@@ -110,4 +110,14 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 .eq("user_id", userId));
         return R.success().add("data", cartList);
     }
+
+    @Override
+    public R addNum(Long cartId, Integer number) {
+        return R.result(update().setSql("number = number + 1").eq("id", cartId).update(), "添加失败");
+    }
+
+    @Override
+    public R minusNum(Long cartId, Integer number) {
+        return R.result(update().setSql("number = number - 1").eq("id", cartId).last("and number > 1").update(), "最少购买一件");
+    }
 }

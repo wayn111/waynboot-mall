@@ -46,4 +46,8 @@ public interface ICartService extends IService<Cart> {
      * @return R
      */
     R list(Long userId);
+
+    R addNum(Long cartId, Integer number);
+
+    R minusNum(Long cartId, Integer number);
 }

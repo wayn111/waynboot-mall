@@ -1,25 +1,13 @@
 package com.wayn.mobile.api.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.base.BaseController;
-import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.core.domain.shop.GoodsProduct;
-import com.wayn.common.core.domain.system.User;
-import com.wayn.common.core.service.shop.IGoodsProductService;
-import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * <p>
@@ -42,9 +30,24 @@ public class CartController extends BaseController {
         return iCartService.list(userId);
     }
 
-    @PostMapping("add")
+    @PostMapping
     public R add(@RequestBody Cart cart) {
         return iCartService.addCart(cart);
+    }
+
+    @PutMapping
+    public R update(@RequestBody Cart cart) {
+        return R.result(iCartService.updateById(cart));
+    }
+
+    @PostMapping("addNum/{cartId}/{number}")
+    public R addNum(@PathVariable Long cartId, @PathVariable Integer number) {
+        return iCartService.addNum(cartId, number);
+    }
+
+    @PostMapping("minusNum/{cartId}/{number}")
+    public R minusNum(@PathVariable Long cartId, @PathVariable Integer number) {
+        return iCartService.minusNum(cartId, number);
     }
 
     @DeleteMapping("{cartId}")

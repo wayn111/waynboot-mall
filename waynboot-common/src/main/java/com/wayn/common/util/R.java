@@ -37,6 +37,11 @@ public class R {
         return R.error();
     }
 
+    public static R result(boolean b, String msg) {
+        if (b) return R.success();
+        return R.error(msg);
+    }
+
     public static R error(String msg) {
         R r = new R();
         r.code = 500;
