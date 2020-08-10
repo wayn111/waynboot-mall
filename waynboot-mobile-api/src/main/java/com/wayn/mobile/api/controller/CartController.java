@@ -1,6 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
@@ -8,6 +9,9 @@ import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * <p>
@@ -58,5 +62,17 @@ public class CartController extends BaseController {
     @GetMapping("goodsCount")
     public R goodsCount() {
         return iCartService.goodsCount();
+    }
+
+    @PostMapping("getCheckedGoods")
+    public R getCheckedGoods() {
+        Long userId = SecurityUtils.getLoginUser().getMember().getId();
+        List<Cart> cartList = iCartService.list(new QueryWrapper<Cart>()
+                .eq("user_id", userId).eq("checked", true));
+        BigDecimal amount = new BigDecimal(0.00);
+        for (Cart cart : cartList) {
+            amount = amount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
+        }
+        return R.success().add("data", cartList).add("amount", amount);
     }
 }
