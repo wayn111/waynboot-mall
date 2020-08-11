@@ -13,4 +13,11 @@ import com.wayn.common.core.domain.shop.GoodsProduct;
  */
 public interface IGoodsProductService extends IService<GoodsProduct> {
 
+    /**
+     * 减少库存
+     * @param productId 商品货品ID
+     * @param number 减少数量
+     * @return boolean
+     */
+    boolean reduceStock(Integer productId, Integer number);
 }

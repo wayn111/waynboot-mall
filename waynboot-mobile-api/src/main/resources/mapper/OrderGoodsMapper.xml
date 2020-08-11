@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.mobile.api.mapper.OrderGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wayn.mobile.api.domain.OrderGoods">
+        <result column="id"                 property="id" />
+        <result column="order_id"           property="orderId" />
+        <result column="goods_id"           property="goodsId" />
+        <result column="goods_name"         property="goodsName" />
+        <result column="goods_sn"           property="goodsSn" />
+        <result column="product_id"         property="productId" />
+        <result column="number"             property="number" />
+        <result column="price"              property="price" />
+        <result column="specifications"     property="specifications" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="pic_url"            property="picUrl" />
+        <result column="comment"            property="comment" />
+        <result column="create_time"        property="createTime" />
+        <result column="update_time"        property="updateTime" />
+        <result column="del_flag"           property="delFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select id,
+        order_id, goods_id, goods_name, goods_sn, product_id, number, price, specifications, pic_url, comment, create_time, update_time, del_flag
+        from shop_order_goods
+    </sql>
+
+</mapper>
