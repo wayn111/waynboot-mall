@@ -30,7 +30,7 @@ public class CartController extends BaseController {
 
     @GetMapping("list")
     public R list() {
-        Long userId = SecurityUtils.getLoginUser().getMember().getId();
+        Long userId = SecurityUtils.getUserId();
         return iCartService.list(userId);
     }
 
@@ -66,10 +66,11 @@ public class CartController extends BaseController {
 
     @PostMapping("getCheckedGoods")
     public R getCheckedGoods() {
-        Long userId = SecurityUtils.getLoginUser().getMember().getId();
+        Long userId = SecurityUtils.getUserId();
         List<Cart> cartList = iCartService.list(new QueryWrapper<Cart>()
                 .eq("user_id", userId).eq("checked", true));
         BigDecimal amount = new BigDecimal(0.00);
+        // 计算总价
         for (Cart cart : cartList) {
             amount = amount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
         }

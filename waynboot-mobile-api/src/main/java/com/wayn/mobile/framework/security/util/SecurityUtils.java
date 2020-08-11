@@ -24,6 +24,14 @@ public class SecurityUtils {
         }
     }
 
+    public static Long getUserId() {
+        try {
+            return getLoginUser().getMember().getId();
+        } catch (Exception e) {
+            throw new BusinessException("获取用户ID异常", HttpStatus.UNAUTHORIZED.value());
+        }
+    }
+
     /**
      * 获取用户
      **/

@@ -20,13 +20,13 @@ public class AddressController {
 
     @GetMapping("list")
     public R list() {
-        Long memberId = SecurityUtils.getLoginUser().getMember().getId();
+        Long memberId = SecurityUtils.getUserId();
         return R.success().add("data", iAddressService.list(new QueryWrapper<Address>().eq("member_id", memberId)));
     }
 
     @PostMapping
     public R add(@RequestBody Address address) {
-        Long memberId = SecurityUtils.getLoginUser().getMember().getId();
+        Long memberId = SecurityUtils.getUserId();
         if (address.getIsDefault()) {
             iAddressService.update().eq("member_id", memberId).set("is_default", false).update();
         }
