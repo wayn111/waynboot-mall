@@ -13,4 +13,5 @@ import com.wayn.common.core.domain.shop.GoodsProduct;
  */
 public interface GoodsProductMapper extends BaseMapper<GoodsProduct> {
 
+    boolean reduceStock(Integer productId, Integer number);
 }
