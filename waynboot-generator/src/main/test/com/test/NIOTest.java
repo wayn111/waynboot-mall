@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class Test {
+public class NIOTest {
 
     private static String name = "E:/data.txt";
     private static final int BSIZE = 1024;
@@ -27,6 +27,7 @@ public class Test {
         buff.flip();
         while (buff.hasRemaining())
             System.out.write(buff.get());
+        System.out.println();
         System.out.flush();
     }
 }
