@@ -1,12 +1,20 @@
 package com.wayn.mobile.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
+import com.github.binarywang.wxpay.bean.order.WxPayMwebOrderResult;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.domain.shop.GoodsProduct;
+import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
+import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
+import com.wayn.common.util.ip.IpUtils;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.domain.Order;
 import com.wayn.mobile.api.domain.OrderGoods;
@@ -15,7 +23,7 @@ import com.wayn.mobile.api.mapper.OrderMapper;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderGoodsService;
 import com.wayn.mobile.api.service.IOrderService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wayn.mobile.api.util.OrderHandleOption;
 import com.wayn.mobile.api.util.OrderUtil;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -23,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +58,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Autowired
     private IGoodsProductService iGoodsProductService;
+
+    @Autowired
+    private WxPayService wxPayService;
+
+    @Autowired
+    private IMemberService iMemberService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -158,12 +173,86 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     throw new BusinessException("商品货品库存减少失败");
                 }
             }
-
-
-
             return R.success().add("orderId", order.getId());
         } else {
             return R.error("订单创建失败");
         }
     }
+
+    @Override
+    @Transactional
+    public R prepay(Long orderId, HttpServletRequest request) {
+        // 获取订单详情
+        Order order = getById(orderId);
+        if (Objects.isNull(order)) {
+            return R.error();
+        }
+
+        // 检测是否能够取消
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isPay()) {
+            return R.error("订单不能支付");
+        }
+        Member member = iMemberService.getById(SecurityUtils.getUserId());
+        String openid = member.getWeixinOpenid();
+        if (openid == null) {
+            return R.error("订单不能支付");
+        }
+        WxPayMpOrderResult result = null;
+        try {
+            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+            orderRequest.setOutTradeNo(order.getOrderSn());
+            orderRequest.setOpenid(openid);
+            orderRequest.setBody("订单：" + order.getOrderSn());
+            // 元转成分
+            int fee = 0;
+            BigDecimal actualPrice = order.getActualPrice();
+            fee = actualPrice.multiply(new BigDecimal(100)).intValue();
+            orderRequest.setTotalFee(fee);
+            orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
+
+            result = wxPayService.createOrder(orderRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error("订单不能支付");
+        }
+        return R.success().add("result", result);
+    }
+
+
+    @Override
+    @Transactional
+    public R h5pay(Long orderId, HttpServletRequest request) {
+        // 获取订单详情
+        Order order = getById(orderId);
+        if (Objects.isNull(order)) {
+            return R.error();
+        }
+
+        // 检测是否能够取消
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isPay()) {
+            return R.error("订单不能支付");
+        }
+
+        WxPayMwebOrderResult result = null;
+        try {
+            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+            orderRequest.setOutTradeNo(order.getOrderSn());
+            orderRequest.setTradeType("MWEB");
+            orderRequest.setBody("订单：" + order.getOrderSn());
+            // 元转成分
+            int fee = 0;
+            BigDecimal actualPrice = order.getActualPrice();
+            fee = actualPrice.multiply(new BigDecimal(100)).intValue();
+            orderRequest.setTotalFee(fee);
+            orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
+            result = wxPayService.createOrder(orderRequest);
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return R.success().add("result", result);
+    }
+
 }
