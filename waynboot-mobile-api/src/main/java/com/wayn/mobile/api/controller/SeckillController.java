@@ -1,16 +1,13 @@
 package com.wayn.mobile.api.controller;
 
 
+import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
-import com.wayn.mobile.api.domain.Seckill;
 import com.wayn.mobile.api.service.ISeckillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
-import com.wayn.common.base.BaseController;
 
 /**
  * <p>

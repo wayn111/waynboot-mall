@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.service;
 
-import com.wayn.mobile.api.domain.OrderGoods;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wayn.mobile.api.domain.OrderGoods;
 
 /**
  * <p>
