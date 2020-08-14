@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.mapper;
 
-import com.wayn.mobile.api.domain.Seckill;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wayn.mobile.api.domain.Seckill;
 import org.apache.ibatis.annotations.Param;
 
 /**

@@ -2,14 +2,13 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.common.base.BaseController;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import com.wayn.common.base.BaseController;
 
 import java.util.Date;
 

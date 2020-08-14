@@ -1,10 +1,10 @@
 package com.wayn.mobile.api.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Seckill;
 import com.wayn.mobile.api.mapper.SeckillMapper;
 import com.wayn.mobile.api.service.ISeckillService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
