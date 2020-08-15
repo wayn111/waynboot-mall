@@ -1,7 +1,10 @@
 package com.wayn.mobile.api.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wayn.mobile.api.domain.Order;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.wayn.mobile.api.domain.Order;
  */
 public interface OrderMapper extends BaseMapper<Order> {
 
+    IPage<Order> selectOrderListPage(IPage<Order> page, Order order, List<Short> orderStatusList);
 }

@@ -62,12 +62,17 @@ public class BaseController {
             String sortOrder = ServletUtils.getParameter(Constants.SORT_ORDER);
             Page<T> tPage = new Page<>(pageNumber, pageSize);
             if (StringUtils.isNotEmpty(sortName)) {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setColumn(sortName.replaceAll("[A-Z]", "_$0").toLowerCase());
-                if (sortOrder.startsWith(Constants.ORDER_DESC)) {
-                    orderItem.setAsc(false);
+                String[] split = sortName.split(",");
+                for (int i = 0; i < split.length; i++) {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setColumn(split[i].replaceAll("[A-Z]", "_$0").toLowerCase());
+                    if (sortOrder != null && sortOrder.startsWith(Constants.ORDER_DESC)) {
+                        orderItem.setAsc(false);
+                    } else {
+                        orderItem.setAsc(false);
+                    }
+                    tPage.addOrder(orderItem);
                 }
-                tPage.addOrder(orderItem);
             }
             return tPage;
         } catch (Exception e) {

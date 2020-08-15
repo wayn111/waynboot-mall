@@ -1,5 +1,6 @@
 package com.wayn.mobile.api.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Order;
@@ -27,6 +28,7 @@ public interface IOrderService extends IService<Order> {
 
     /**
      * 微信H5支付
+     *
      * @param orderId 订单ID
      * @param request 请求
      * @return r
@@ -45,5 +47,13 @@ public interface IOrderService extends IService<Order> {
      * @return r
      */
     R prepay(Long orderId, HttpServletRequest request);
+
+    /**
+     *
+     * @param page 分页对象
+     * @param showType 展示类型
+     * @return r
+     */
+    R selectListPage(IPage<Order> page, Integer showType);
 
 }

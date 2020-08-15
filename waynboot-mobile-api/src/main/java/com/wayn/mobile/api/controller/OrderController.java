@@ -1,15 +1,14 @@
 package com.wayn.mobile.api.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.util.R;
+import com.wayn.mobile.api.domain.Order;
 import com.wayn.mobile.api.domain.vo.OrderVO;
 import com.wayn.mobile.api.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("order")
@@ -17,6 +16,12 @@ public class OrderController extends BaseController {
 
     @Autowired
     private IOrderService iOrderService;
+
+    @GetMapping("list")
+    public R list(@RequestParam(defaultValue = "0") Integer showType) {
+        Page<Order> page = getPage();
+        return iOrderService.selectListPage(page, showType);
+    }
 
     @PostMapping("submit")
     public R submit(@RequestBody OrderVO orderVO) {

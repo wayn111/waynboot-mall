@@ -1,6 +1,7 @@
 package com.wayn.mobile.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMwebOrderResult;
@@ -34,8 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <p>
@@ -65,11 +65,50 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Autowired
     private IMemberService iMemberService;
 
-    @Transactional(rollbackFor = Exception.class)
+    @Autowired
+    private OrderMapper orderMapper;
+
+
     @Override
+    public R selectListPage(IPage<Order> page, Integer showType) {
+        List<Short> orderStatus = OrderUtil.orderStatus(showType);
+        IPage<Order> orderIPage = orderMapper.selectOrderListPage(page, new Order(), orderStatus);
+        List<Order> orderList = orderIPage.getRecords();
+        List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
+        for (Order o : orderList) {
+            Map<String, Object> orderVo = new HashMap<>();
+            orderVo.put("id", o.getId());
+            orderVo.put("orderSn", o.getOrderSn());
+            orderVo.put("actualPrice", o.getActualPrice());
+            orderVo.put("orderStatusText", OrderUtil.orderStatusText(o));
+            orderVo.put("handleOption", OrderUtil.build(o));
+            orderVo.put("aftersaleStatus", o.getAftersaleStatus());
+
+            List<OrderGoods> orderGoodsList = iOrderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", o.getId()));
+            List<Map<String, Object>> orderGoodsVoList = new ArrayList<>(orderGoodsList.size());
+            for (OrderGoods orderGoods : orderGoodsList) {
+                Map<String, Object> orderGoodsVo = new HashMap<>();
+                orderGoodsVo.put("id", orderGoods.getId());
+                orderGoodsVo.put("goodsName", orderGoods.getGoodsName());
+                orderGoodsVo.put("number", orderGoods.getNumber());
+                orderGoodsVo.put("picUrl", orderGoods.getPicUrl());
+                orderGoodsVo.put("specifications", orderGoods.getSpecifications());
+                orderGoodsVo.put("price", orderGoods.getPrice());
+                orderGoodsVoList.add(orderGoodsVo);
+            }
+            orderVo.put("goodsList", orderGoodsVoList);
+            orderVoList.add(orderVo);
+        }
+        return R.success().add("data", orderVoList).add("pages", orderIPage.getPages()).add("page", orderIPage.getCurrent());
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public R addOrder(OrderVO orderVO) {
         // 验证用户ID，防止用户不一致
         Long userId = orderVO.getUserId();
+
         if (Objects.isNull(userId) || !userId.equals(SecurityUtils.getUserId())) {
             return R.error("用户ID不一致");
         }
@@ -252,7 +291,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return R.success().add("result", result);
+        return R.success().add("data", result);
     }
 
 }
