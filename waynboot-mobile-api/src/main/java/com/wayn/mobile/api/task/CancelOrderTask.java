@@ -40,6 +40,7 @@ public class CancelOrderTask extends TimerTask {
         Set<Long> zset = redisCache.getCacheZset("order_zset", 0, System.currentTimeMillis() / 1000);
         if (CollectionUtils.isNotEmpty(zset) && zset.contains(this.orderId)) {
             for (Long orderId : zset) {
+                log.info("系统开始处理延时任务---redis内超时未付款---" + orderId);
                 final Long num = redisCache.deleteZsetObject("order_zset", orderId);
                 if (num != null && num > 0) {
                     Order order = orderService.getOne(new QueryWrapper<Order>().eq("order_status", OrderUtil.STATUS_AUTO_CANCEL).eq("id", orderId));
@@ -65,6 +66,7 @@ public class CancelOrderTask extends TimerTask {
                         }
                     }
                 }
+                log.info("系统结束处理延时任务---redis内超时未付款---" + orderId);
             }
         }
         log.info("系统结束处理延时任务---订单超时未付款---" + this.orderId);
