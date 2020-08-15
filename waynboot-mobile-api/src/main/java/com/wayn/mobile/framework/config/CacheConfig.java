@@ -23,8 +23,6 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import java.time.Duration;
 
-import static java.util.Collections.singletonMap;
-
 @EnableCaching
 @Configuration
 public class CacheConfig extends CachingConfigurerSupport {
@@ -83,11 +81,6 @@ public class CacheConfig extends CachingConfigurerSupport {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultCacheConfig())
-                .withInitialCacheConfigurations(singletonMap("menuCache", defaultCacheConfig()))
-                .withInitialCacheConfigurations(singletonMap("deptCache", defaultCacheConfig()))
-                .withInitialCacheConfigurations(singletonMap("permissionCache", defaultCacheConfig()))
-                .withInitialCacheConfigurations(singletonMap("dictCache", defaultCacheConfig()))
-                .withInitialCacheConfigurations(singletonMap("timerTaskCache", defaultCacheConfig()))
                 .transactionAware()
                 .build();
     }

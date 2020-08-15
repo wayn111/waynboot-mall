@@ -178,6 +178,43 @@ public class RedisCache {
     }
 
     /**
+     * 缓存zset
+     * @param key 缓存键名
+     * @param value 缓存键值
+     * @param score 分数
+     * @return 缓存数据的对象
+     */
+    public <T> ZSetOperations<String, T> setCacheZset(String key, T value, double score) {
+        ZSetOperations operations = redisTemplate.opsForZSet();
+        operations.add(key, value, score);
+        return operations;
+    }
+
+    /**
+     * 删除zset
+     * @param key 缓存键名
+     * @param value 缓存键值
+     * @return 删除个数
+     */
+    public <T> Long deleteZsetObject(String key, T value) {
+        ZSetOperations operations = redisTemplate.opsForZSet();
+        return operations.remove(key, value);
+    }
+
+    /**
+     * 获得缓存的set
+     *
+     * @param key 缓存键名
+     * @param min
+     * @param max
+     * @return 满足分数区间的键值
+     */
+    public <T> Set<T> getCacheZset(String key, double min, double max) {
+        ZSetOperations operations = redisTemplate.opsForZSet();
+        return operations.rangeByScore(key, min, max);
+    }
+
+    /**
      * 获得缓存的基本对象列表
      *
      * @param pattern 字符串前缀
