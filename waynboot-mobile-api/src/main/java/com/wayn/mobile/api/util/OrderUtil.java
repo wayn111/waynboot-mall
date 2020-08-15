@@ -128,7 +128,7 @@ public class OrderUtil {
             return null;
         }
 
-        List<Short> status = new ArrayList<Short>(2);
+        List<Short> status = new ArrayList<>(2);
 
         if (showType.equals(1)) {
             // 待付款订单
@@ -201,8 +201,8 @@ public class OrderUtil {
      * @return 订单编号
      */
     public static String generateOrderSn(Long userId) {
-        Long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
-        return now.toString() + encryptUserId(userId.toString(), 6) + countByOrderSn(userId);
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
+        return now + encryptUserId(userId.toString()) + countByOrderSn(userId);
     }
 
     /**
@@ -218,12 +218,11 @@ public class OrderUtil {
     /**
      * 加密用户ID，返回num位字符串
      * @param userId 用户ID
-     * @param num    补零个数
      * @return num位加密字符串
      */
-    private static String encryptUserId(String userId, int num) {
+    private static String encryptUserId(String userId) {
         String result;
-        result = String.format("%0" + num + "d", Integer.parseInt(userId) + 1);
+        result = String.format("%0" + 6 + "d", Integer.parseInt(userId) + 1);
         return result;
     }
 }

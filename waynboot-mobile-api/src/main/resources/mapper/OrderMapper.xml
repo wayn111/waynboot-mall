@@ -3,7 +3,7 @@
 <mapper namespace="com.wayn.mobile.api.mapper.OrderMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.wayn.mobile.api.domain.Order">
+    <resultMap id="ShopOrderResult" type="com.wayn.mobile.api.domain.Order">
         <result column="id"                     property="id" />
         <result column="user_id"                property="userId" />
         <result column="order_sn"               property="orderSn" />
@@ -38,10 +38,26 @@
     </resultMap>
 
     <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
+    <sql id="selectOrderVo">
         select id,
         user_id, order_sn, order_status, aftersale_status, consignee, mobile, address, message, goods_price, freight_price, coupon_price, integral_price, groupon_price, order_price, actual_price, pay_id, pay_time, ship_sn, ship_channel, ship_time, refund_amount, refund_type, refund_content, refund_time, confirm_time, comments, end_time, create_time, update_time, del_flag
         from shop_order
     </sql>
+
+    <select id="selectOrderListPage" resultMap="ShopOrderResult">
+        <include refid="selectOrderVo"/>
+        <where>
+            del_flag = 0
+            <if test="order.orderStatus != null">
+                AND order_status = #{order.orderStatus}
+            </if>
+            <if test="orderStatusList != null and orderStatusList.size() > 0" >
+                and order_status in
+                <foreach collection="orderStatusList" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                </foreach>
+            </if>
+        </where>
+    </select>
 
 </mapper>
