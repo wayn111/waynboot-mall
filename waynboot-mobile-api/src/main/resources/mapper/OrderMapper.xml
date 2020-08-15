@@ -51,6 +51,9 @@
             <if test="order.orderStatus != null">
                 AND order_status = #{order.orderStatus}
             </if>
+            <if test="order.userId != null">
+                AND user_id = #{order.userId}
+            </if>
             <if test="orderStatusList != null and orderStatusList.size() > 0" >
                 and order_status in
                 <foreach collection="orderStatusList" item="listItem" open="(" close=")" separator="," >

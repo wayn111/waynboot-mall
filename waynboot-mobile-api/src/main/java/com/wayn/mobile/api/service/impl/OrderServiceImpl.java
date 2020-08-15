@@ -24,8 +24,11 @@ import com.wayn.mobile.api.mapper.OrderMapper;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderGoodsService;
 import com.wayn.mobile.api.service.IOrderService;
+import com.wayn.mobile.api.task.CancelOrderTask;
 import com.wayn.mobile.api.util.OrderHandleOption;
 import com.wayn.mobile.api.util.OrderUtil;
+import com.wayn.mobile.framework.manager.thread.AsyncManager;
+import com.wayn.mobile.framework.redis.RedisCache;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -47,6 +51,10 @@ import java.util.*;
  */
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
+
+    @Autowired
+    private RedisCache redisCache;
+
     @Autowired
     private IAddressService iAddressService;
 
@@ -72,7 +80,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
         List<Short> orderStatus = OrderUtil.orderStatus(showType);
-        IPage<Order> orderIPage = orderMapper.selectOrderListPage(page, new Order(), orderStatus);
+        Order order = new Order();
+        order.setUserId(SecurityUtils.getUserId());
+        IPage<Order> orderIPage = orderMapper.selectOrderListPage(page, order, orderStatus);
         List<Order> orderList = orderIPage.getRecords();
         List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
         for (Order o : orderList) {
@@ -88,7 +98,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             List<Map<String, Object>> orderGoodsVoList = new ArrayList<>(orderGoodsList.size());
             for (OrderGoods orderGoods : orderGoodsList) {
                 Map<String, Object> orderGoodsVo = new HashMap<>();
-                orderGoodsVo.put("id", orderGoods.getId());
+                orderGoodsVo.put("id", orderGoods.getGoodsId());
                 orderGoodsVo.put("goodsName", orderGoods.getGoodsName());
                 orderGoodsVo.put("number", orderGoods.getNumber());
                 orderGoodsVo.put("picUrl", orderGoods.getPicUrl());
@@ -211,6 +221,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
                     throw new BusinessException("商品货品库存减少失败");
                 }
+                long delay = 5;
+                redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() / 1000 + 60 * delay);
+                AsyncManager.me().execute(new CancelOrderTask(order.getId()), delay, TimeUnit.MINUTES);
             }
             return R.success().add("orderId", order.getId());
         } else {
@@ -237,14 +250,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (openid == null) {
             return R.error("订单不能支付");
         }
-        WxPayMpOrderResult result = null;
+        WxPayMpOrderResult result;
         try {
             WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
             orderRequest.setOutTradeNo(order.getOrderSn());
             orderRequest.setOpenid(openid);
             orderRequest.setBody("订单：" + order.getOrderSn());
             // 元转成分
-            int fee = 0;
+            int fee;
             BigDecimal actualPrice = order.getActualPrice();
             fee = actualPrice.multiply(new BigDecimal(100)).intValue();
             orderRequest.setTotalFee(fee);
@@ -281,7 +294,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderRequest.setTradeType("MWEB");
             orderRequest.setBody("订单：" + order.getOrderSn());
             // 元转成分
-            int fee = 0;
+            int fee;
             BigDecimal actualPrice = order.getActualPrice();
             fee = actualPrice.multiply(new BigDecimal(100)).intValue();
             orderRequest.setTotalFee(fee);
