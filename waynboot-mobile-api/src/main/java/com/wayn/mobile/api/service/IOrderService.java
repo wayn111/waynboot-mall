@@ -7,6 +7,7 @@ import com.wayn.mobile.api.domain.Order;
 import com.wayn.mobile.api.domain.vo.OrderVO;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -49,11 +50,18 @@ public interface IOrderService extends IService<Order> {
     R prepay(Long orderId, HttpServletRequest request);
 
     /**
-     *
-     * @param page 分页对象
-     * @param showType 展示类型
+     * 获取订单列表
+     * @param page      分页对象
+     * @param showType  展示类型
      * @return r
      */
     R selectListPage(IPage<Order> page, Integer showType);
 
+    /**
+     * 支付成功回调处理
+     * @param request  请求
+     * @param response 响应
+     * @return r
+     */
+    R payNotify(HttpServletRequest request, HttpServletResponse response);
 }

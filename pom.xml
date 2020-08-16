@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.4.RELEASE</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modules>
         <module>waynboot-common</module>
@@ -42,6 +42,7 @@
         <easypoi.version>4.1.0</easypoi.version>
         <jwt.version>3.9.0</jwt.version>
         <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
+        <mail.version>1.4.7</mail.version>
     </properties>
 
     <dependencyManagement>
@@ -196,6 +197,11 @@
                 <version>${swagger.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>${mail.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

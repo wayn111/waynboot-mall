@@ -10,6 +10,9 @@ import com.wayn.mobile.api.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("order")
 public class OrderController extends BaseController {
@@ -42,4 +45,10 @@ public class OrderController extends BaseController {
     public R h5pay(@RequestBody OrderVO orderVO) {
         return iOrderService.h5pay(orderVO.getOrderId(), request);
     }
+
+    @PostMapping("payNotify")
+    public R payNotify(HttpServletRequest request, HttpServletResponse response) {
+        return iOrderService.payNotify(request, response);
+    }
+
 }
