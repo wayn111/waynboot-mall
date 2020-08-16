@@ -2,6 +2,7 @@ package com.wayn.mobile.api.task;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.core.service.shop.IGoodsProductService;
+import com.wayn.common.task.Task;
 import com.wayn.common.util.spring.SpringContextUtil;
 import com.wayn.mobile.api.domain.Order;
 import com.wayn.mobile.api.domain.OrderGoods;
@@ -16,17 +17,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimerTask;
 
 /**
  * 未支付订单超时自动取消任务
  */
 @Slf4j
-public class CancelOrderTask extends TimerTask {
+public class CancelOrderTask extends Task {
 
+    /**
+     * 默认延迟时间，单位毫秒
+     */
+    private static final long DELAY_TIME = 30 * 60 * 1000;
+
+    /**
+     * 订单id
+     */
     private final Long orderId;
 
+    public CancelOrderTask(Long orderId, long delayInMilliseconds) {
+        super("CancelOrderTask-" + orderId, delayInMilliseconds);
+        this.orderId = orderId;
+    }
+
     public CancelOrderTask(Long orderId) {
+        super("CancelOrderTask-" + orderId, DELAY_TIME);
         this.orderId = orderId;
     }
 
@@ -37,13 +51,13 @@ public class CancelOrderTask extends TimerTask {
         IOrderGoodsService orderGoodsService = SpringContextUtil.getBean(IOrderGoodsService.class);
         IGoodsProductService productService = SpringContextUtil.getBean(IGoodsProductService.class);
         RedisCache redisCache = SpringContextUtil.getBean(RedisCache.class);
-        Set<Long> zset = redisCache.getCacheZset("order_zset", 0, System.currentTimeMillis() / 1000);
+        Set<Long> zset = redisCache.getCacheZset("order_zset", 0, System.currentTimeMillis());
         if (CollectionUtils.isNotEmpty(zset) && zset.contains(this.orderId)) {
             for (Long orderId : zset) {
-                log.info("系统开始处理延时任务---redis内超时未付款---" + orderId);
+                log.info("redis内未付款---" + orderId);
                 final Long num = redisCache.deleteZsetObject("order_zset", orderId);
                 if (num != null && num > 0) {
-                    Order order = orderService.getOne(new QueryWrapper<Order>().eq("order_status", OrderUtil.STATUS_AUTO_CANCEL).eq("id", orderId));
+                    Order order = orderService.getOne(new QueryWrapper<Order>().eq("order_status", OrderUtil.STATUS_CREATE).eq("id", orderId));
                     if (Objects.isNull(order) || !OrderUtil.isCreateStatus(order)) {
                         return;
                     }
@@ -66,7 +80,7 @@ public class CancelOrderTask extends TimerTask {
                         }
                     }
                 }
-                log.info("系统结束处理延时任务---redis内超时未付款---" + orderId);
+                log.info("redis内未付款---" + orderId);
             }
         }
         log.info("系统结束处理延时任务---订单超时未付款---" + this.orderId);

@@ -3,19 +3,29 @@ package com.wayn.mobile.api.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMwebOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.github.binarywang.wxpay.constant.WxPayConstants;
+import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.domain.shop.Member;
+import com.wayn.common.core.domain.tool.MailConfig;
+import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IMemberService;
+import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.exception.BusinessException;
+import com.wayn.common.task.TaskService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ip.IpUtils;
+import com.wayn.common.util.mail.MailUtil;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.domain.Order;
 import com.wayn.mobile.api.domain.OrderGoods;
@@ -27,19 +37,21 @@ import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.CancelOrderTask;
 import com.wayn.mobile.api.util.OrderHandleOption;
 import com.wayn.mobile.api.util.OrderUtil;
-import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.redis.RedisCache;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -49,6 +61,7 @@ import java.util.concurrent.TimeUnit;
  * @author wayn
  * @since 2020-08-11
  */
+@Slf4j
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
 
@@ -74,8 +87,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private IMemberService iMemberService;
 
     @Autowired
+    private IMailConfigService mailConfigService;
+
+    @Autowired
     private OrderMapper orderMapper;
 
+    @Autowired
+    private TaskService taskService;
 
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
@@ -111,7 +129,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         return R.success().add("data", orderVoList).add("pages", orderIPage.getPages()).add("page", orderIPage.getCurrent());
     }
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -221,9 +238,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
                     throw new BusinessException("商品货品库存减少失败");
                 }
-                long delay = 5;
-                redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() / 1000 + 60 * delay);
-                AsyncManager.me().execute(new CancelOrderTask(order.getId()), delay, TimeUnit.MINUTES);
+                long delay = 1000;
+                redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
+                taskService.addTask(new CancelOrderTask(order.getId(), delay * 60));
+//                AsyncManager.me().execute(new CancelOrderTask(order.getId()), delay, TimeUnit.MINUTES);
             }
             return R.success().add("orderId", order.getId());
         } else {
@@ -287,7 +305,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.error("订单不能支付");
         }
 
-        WxPayMwebOrderResult result = null;
+        WxPayMwebOrderResult result;
         try {
             WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
             orderRequest.setOutTradeNo(order.getOrderSn());
@@ -300,11 +318,81 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderRequest.setTotalFee(fee);
             orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
             result = wxPayService.createOrder(orderRequest);
-
+            return R.success().add("data", result);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            return R.error("支付失败");
         }
-        return R.success().add("data", result);
     }
+
+    @Override
+    public R payNotify(HttpServletRequest request, HttpServletResponse response) {
+        String xmlResult;
+        try {
+            xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
+        }
+
+        WxPayOrderNotifyResult result;
+        try {
+            result = wxPayService.parseOrderNotifyResult(xmlResult);
+
+            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getResultCode())) {
+                log.error(xmlResult);
+                throw new WxPayException("微信通知支付失败！");
+            }
+        } catch (WxPayException e) {
+            e.printStackTrace();
+            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
+        }
+
+        log.info("处理腾讯支付平台的订单支付");
+        log.info(result.getReturnMsg());
+
+        String orderSn = result.getOutTradeNo();
+        String payId = result.getTransactionId();
+
+        // 分转化成元
+        String totalFee = BaseWxPayResult.fenToYuan(result.getTotalFee());
+        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
+        if (order == null) {
+            return R.error(WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn));
+        }
+
+        // 检查这个订单是否已经处理过
+        if (OrderUtil.hasPayed(order)) {
+            return R.error(WxPayNotifyResponse.success("订单已经处理成功!"));
+        }
+
+        // 检查支付订单金额
+        if (!totalFee.equals(order.getActualPrice().toString())) {
+            return R.error(WxPayNotifyResponse.fail(order.getOrderSn() + " : 支付金额不符合 totalFee=" + totalFee));
+        }
+
+        order.setPayId(payId);
+        order.setPayTime(LocalDateTime.now());
+        order.setOrderStatus(OrderUtil.STATUS_PAY);
+        order.setUpdateTime(LocalDateTime.now());
+        if (!updateById(order)) {
+            return R.error(WxPayNotifyResponse.fail("更新数据已失效"));
+        }
+
+        //TODO 发送邮件和短信通知，这里采用异步发送
+        // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
+        MailConfig mailConfig = mailConfigService.getById(1L);
+        SendMailVO sendMailVO = new SendMailVO();
+        sendMailVO.setTitle("新订单通知");
+        sendMailVO.setContent(order.toString());
+        sendMailVO.setSendMail("1669738430@qq.com");
+        MailUtil.sendMail(mailConfig, sendMailVO, false);
+        // 删除redis中订单id
+        redisCache.deleteZsetObject("order_zset", order.getId());
+        // 取消订单超时未支付任务
+        taskService.removeTask(new CancelOrderTask(order.getId()));
+        return R.error(WxPayNotifyResponse.success("处理成功!"));
+    }
+
 
 }
