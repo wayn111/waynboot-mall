@@ -132,7 +132,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R addOrder(OrderVO orderVO) {
+    public R submit(OrderVO orderVO) {
         // 验证用户ID，防止用户不一致
         Long userId = orderVO.getUserId();
 
