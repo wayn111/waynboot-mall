@@ -16,6 +16,7 @@ public interface ICartService extends IService<Cart> {
 
     /**
      * 检查用户购物车中是否有商品货品
+     *
      * @param userId
      * @param goodsId
      * @param productId
@@ -36,18 +37,43 @@ public interface ICartService extends IService<Cart> {
 
     /**
      * 计算购物车中商品数量
+     *
      * @return R
      */
     R goodsCount();
 
     /**
      * 查询用户购物车商品
+     *
      * @param userId 用户ID
      * @return R
      */
     R list(Long userId);
 
+    /**
+     * 改变购物车商品数量
+     *
+     * @param cartId 购物车商品ID
+     * @param number 商品数量
+     * @return r
+     */
+    R changeNum(Long cartId, Integer number);
+
+    /**
+     * 添加购物车商品数量
+     *
+     * @param cartId 购物车商品ID
+     * @param number 商品数量
+     * @return r
+     */
     R addNum(Long cartId, Integer number);
 
+    /**
+     * 减少购物车商品数量
+     *
+     * @param cartId 购物车商品ID
+     * @param number 商品数量
+     * @return r
+     */
     R minusNum(Long cartId, Integer number);
 }
