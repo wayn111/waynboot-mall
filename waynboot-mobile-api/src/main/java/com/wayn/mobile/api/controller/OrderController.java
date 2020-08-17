@@ -26,6 +26,12 @@ public class OrderController extends BaseController {
         return iOrderService.selectListPage(page, showType);
     }
 
+    @PostMapping("statusCount")
+    public R statusCount() {
+        return iOrderService.statusCount();
+    }
+
+
     @PostMapping("submit")
     public R submit(@RequestBody OrderVO orderVO) {
         return iOrderService.submit(orderVO);
