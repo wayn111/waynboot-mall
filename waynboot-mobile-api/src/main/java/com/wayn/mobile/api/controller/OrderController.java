@@ -28,7 +28,7 @@ public class OrderController extends BaseController {
 
     @PostMapping("submit")
     public R submit(@RequestBody OrderVO orderVO) {
-        return iOrderService.addOrder(orderVO);
+        return iOrderService.submit(orderVO);
     }
 
     @PostMapping("info")

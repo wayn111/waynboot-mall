@@ -25,7 +25,7 @@ public interface IOrderService extends IService<Order> {
      * @param orderVO 订单VO
      * @return R
      */
-    R addOrder(OrderVO orderVO);
+    R submit(OrderVO orderVO);
 
     /**
      * 微信H5支付
