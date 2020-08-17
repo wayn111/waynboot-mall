@@ -64,4 +64,10 @@ public interface IOrderService extends IService<Order> {
      * @return r
      */
     R payNotify(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 查询用户订单各状态数量（包含待支付、代发货、待收货、待评价）
+     * @return r
+     */
+    R statusCount();
 }

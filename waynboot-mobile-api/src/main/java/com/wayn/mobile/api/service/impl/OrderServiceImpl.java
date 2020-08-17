@@ -131,6 +131,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
+    public R statusCount() {
+        R success = R.success();
+        Long userId = SecurityUtils.getUserId();
+        List<Order> orderList = list(new QueryWrapper<Order>().select("order_status", "comments").eq("user_id", userId));
+        int unpaid = 0;
+        int unship = 0;
+        int unrecv = 0;
+        int uncomment = 0;
+        for (Order order : orderList) {
+            if (OrderUtil.isCreateStatus(order)) {
+                unpaid++;
+            } else if (OrderUtil.isPayStatus(order)) {
+                unship++;
+            } else if (OrderUtil.isShipStatus(order)) {
+                unrecv++;
+            } else if (OrderUtil.isConfirmStatus(order) || OrderUtil.isAutoConfirmStatus(order)) {
+                uncomment += order.getComments();
+            } else {
+                // todo
+            }
+        }
+        success.add("unpaid", unpaid);
+        success.add("unship", unship);
+        success.add("unrecv", unrecv);
+        success.add("uncomment", uncomment);
+        return success;
+    }
+
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public R submit(OrderVO orderVO) {
         // 验证用户ID，防止用户不一致
@@ -158,28 +188,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
 
         // 商品费用
-        BigDecimal checkedGoodsPrice = new BigDecimal(0.00);
+        BigDecimal checkedGoodsPrice = new BigDecimal("0.00");
         for (Cart checkGoods : checkedGoodsList) {
             checkedGoodsPrice = checkedGoodsPrice.add(checkGoods.getPrice().multiply(new BigDecimal(checkGoods.getNumber())));
         }
 
         // 根据订单商品总价计算运费，满足条件（例如88元）则免运费，否则需要支付运费（例如8元）；
-        BigDecimal freightPrice = new BigDecimal(0.00);
+        BigDecimal freightPrice = new BigDecimal("0.00");
         /*if (checkedGoodsPrice.compareTo(SystemConfig.getFreightLimit()) < 0) {
             freightPrice = SystemConfig.getFreight();
         }*/
 
         // 可以使用的其他钱，例如用户积分
-        BigDecimal integralPrice = new BigDecimal(0.00);
+        BigDecimal integralPrice = new BigDecimal("0.00");
 
         // 优惠卷抵扣费用
-        BigDecimal couponPrice = new BigDecimal(0.00);
+        BigDecimal couponPrice = new BigDecimal("0.00");
 
         // 团购抵扣费用
-        BigDecimal grouponPrice = new BigDecimal(0.00);
+        BigDecimal grouponPrice = new BigDecimal("0.00");
 
         // 订单费用
-        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal(0.00));
+        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal("0.00"));
 
         // 最终支付费用
         BigDecimal actualPrice = orderTotalPrice.subtract(integralPrice);
@@ -393,6 +423,5 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         taskService.removeTask(new CancelOrderTask(order.getId()));
         return R.error(WxPayNotifyResponse.success("处理成功!"));
     }
-
 
 }
