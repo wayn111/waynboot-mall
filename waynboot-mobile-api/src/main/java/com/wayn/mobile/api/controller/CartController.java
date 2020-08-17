@@ -44,6 +44,11 @@ public class CartController extends BaseController {
         return R.result(iCartService.updateById(cart));
     }
 
+    @PostMapping("changeNum/{cartId}/{number}")
+    public R changeNum(@PathVariable Long cartId, @PathVariable Integer number) {
+        return iCartService.changeNum(cartId, number);
+    }
+
     @PostMapping("addNum/{cartId}/{number}")
     public R addNum(@PathVariable Long cartId, @PathVariable Integer number) {
         return iCartService.addNum(cartId, number);

@@ -112,6 +112,11 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     }
 
     @Override
+    public R changeNum(Long cartId, Integer number) {
+        return R.result(update().setSql("number = " + number).eq("id", cartId).update(), "修改失败");
+    }
+
+    @Override
     public R addNum(Long cartId, Integer number) {
         return R.result(update().setSql("number = number + 1").eq("id", cartId).update(), "添加失败");
     }
