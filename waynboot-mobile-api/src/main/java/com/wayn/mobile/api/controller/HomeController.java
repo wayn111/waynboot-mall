@@ -23,6 +23,11 @@ public class HomeController extends BaseController {
         return IHomeService.getHomeIndexData();
     }
 
+    @PostMapping("index1")
+    public R index1() {
+        return IHomeService.getHomeIndexDataCompletableFuture();
+    }
+
     @GetMapping("goodsList")
     public R getGoodsList() {
         Page<Goods> page = getPage();
