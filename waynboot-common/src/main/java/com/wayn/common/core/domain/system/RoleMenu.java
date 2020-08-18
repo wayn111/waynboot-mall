@@ -14,7 +14,6 @@ public class RoleMenu {
     /**
      * 角色ID
      */
-    @TableId(type = IdType.AUTO)
     private Long roleId;
 
     /**

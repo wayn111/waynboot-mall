@@ -16,6 +16,7 @@ import com.wayn.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -83,6 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateUserAndRole(User user) {
         updateById(user);
         iUserRoleService.remove(new QueryWrapper<UserRole>().eq("user_id", user.getUserId()));
