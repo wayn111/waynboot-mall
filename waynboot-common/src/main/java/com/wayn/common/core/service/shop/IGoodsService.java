@@ -7,6 +7,7 @@ import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.util.R;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,4 +68,12 @@ public interface IGoodsService extends IService<Goods> {
      * @return R
      */
     R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO);
+
+    /**
+     * 根据二级分类Id集合获取对应商品
+     * @param page 分页对象
+     * @param l2cateList 二级分类Id集合
+     * @return r
+     */
+    R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList);
 }
