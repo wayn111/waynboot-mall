@@ -1,8 +1,13 @@
 package com.wayn.mobile.api.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.common.base.BaseController;
 import com.wayn.common.core.domain.shop.Category;
+import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.VanTreeSelectVo;
 import com.wayn.common.core.service.shop.ICategoryService;
+import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("category")
-public class CategoryController {
+public class CategoryController extends BaseController {
 
     @Autowired
     private ICategoryService iCategoryService;
+
+    @Autowired
+    private IGoodsService iGoodsService;
 
     @GetMapping("index")
     public R index(@RequestParam(required = false) Long id) {
@@ -48,4 +57,14 @@ public class CategoryController {
         success.add("subCategoryList", subCategoryList);
         return success;
     }
+
+    @GetMapping("goods")
+    public R listGoodsByFirstCate(@RequestParam(defaultValue = "0") Long cateId) {
+        Page<Goods> page = getPage();
+        List<Category> categoryList = iCategoryService.list(new QueryWrapper<Category>().select("id").eq("pid", cateId));
+        List<Long> cateList = categoryList.stream().map(Category::getId).collect(Collectors.toList());
+        return iGoodsService.selectListPageByCateIds(page, cateList);
+    }
+
+
 }

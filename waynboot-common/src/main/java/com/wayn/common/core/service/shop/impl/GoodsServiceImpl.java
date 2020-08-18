@@ -174,4 +174,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsProductService.updateBatchById(Arrays.asList(products));
         return R.success();
     }
+
+    @Override
+    public R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList) {
+        return R.success().add("data", goodsMapper.selectGoodsListPageByl2CateId(page, l2cateList).getRecords());
+    }
 }

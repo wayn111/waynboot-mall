@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Goods;
 
+import java.util.List;
+
 /**
  * <p>
  * 商品基本信息表 Mapper 接口
@@ -16,4 +18,6 @@ import com.wayn.common.core.domain.shop.Goods;
 public interface GoodsMapper extends BaseMapper<Goods> {
 
     IPage<Goods> selectGoodsListPage(Page<Goods> page,Goods goods);
+
+    IPage<Goods> selectGoodsListPageByl2CateId(Page<Goods> page, List<Long> cateList);
 }

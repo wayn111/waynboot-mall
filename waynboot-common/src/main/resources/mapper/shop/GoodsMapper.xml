@@ -56,4 +56,18 @@
             order by create_time desc
         </where>
     </select>
+
+    <select id="selectGoodsListPageByl2CateId" resultMap="ShopGoodsResult">
+        <include refid="selectGoodsVo"/>
+        <where>
+            del_flag = 0
+            <if test="cateList != null and cateList.size() > 0" >
+                and category_id in
+                <foreach collection="cateList" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                </foreach>
+            </if>
+            order by create_time desc
+        </where>
+    </select>
 </mapper>
