@@ -4,20 +4,21 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.wayn.common.core.domain.shop.GoodsSpecification">
-        <result column="id" property="id" />
-        <result column="goods_id" property="goodsId" />
-        <result column="specification" property="specification" />
-        <result column="value" property="value" />
-        <result column="pic_url" property="picUrl" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
-        <result column="del_flag" property="delFlag" />
+        <result column="id"                     property="id" />
+        <result column="goods_id"               property="goodsId" />
+        <result column="specification"          property="specification" />
+        <result column="value"                  property="value" />
+        <result column="pic_url"                property="picUrl" />
+        <result column="create_time"            property="createTime" />
+        <result column="update_time"            property="updateTime" />
+        <result column="default_selected"       property="defaultSelected" />
+        <result column="del_flag"               property="delFlag" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id,
-        goods_id, specification, value, pic_url, create_time, update_time, del_flag
+        goods_id, specification, value, pic_url, create_time, update_time, default_selected, del_flag
     </sql>
 
 </mapper>

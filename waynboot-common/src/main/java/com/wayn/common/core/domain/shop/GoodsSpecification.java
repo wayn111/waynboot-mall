@@ -24,6 +24,7 @@ import java.io.Serializable;
 public class GoodsSpecification extends ShopBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 3623876658189050505L;
+
     @TableId(type = IdType.AUTO)
     private Long id;
 
@@ -47,6 +48,11 @@ public class GoodsSpecification extends ShopBaseEntity implements Serializable {
      * 商品规格图片
      */
     private String picUrl;
+
+    /**
+     * 是否默认选中（0代表选中 1代表未选中）
+     */
+    private Boolean defaultSelected;
 
     /**
      * 逻辑删除
