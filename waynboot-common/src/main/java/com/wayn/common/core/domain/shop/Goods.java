@@ -100,7 +100,7 @@ public class Goods extends ShopBaseEntity implements Serializable {
     /**
      * 商品单位，例如件、盒
      */
-    @NotBlank(message = "商品所属类目不能为空")
+    @NotBlank(message = "商品单位不能为空")
     private String unit;
 
     /**
