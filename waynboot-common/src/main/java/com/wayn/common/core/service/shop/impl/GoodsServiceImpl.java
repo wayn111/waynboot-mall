@@ -163,8 +163,14 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goods.setRetailPrice(retailPrice);
         goods.setUpdateTime(new Date());
         updateById(goods);
+        List<Boolean> defaultSelectList = new ArrayList<>();
         for (GoodsSpecification specification : specifications) {
             specification.setUpdateTime(new Date());
+            defaultSelectList.add(specification.getDefaultSelected());
+        }
+        // 判断启用默认选中的规格是否超过一个
+        if (defaultSelectList.size() > 1) {
+            return R.error("商品规格只能选择一个启用默认选中");
         }
         for (GoodsAttribute goodsAttribute : attributes) {
             goodsAttribute.setUpdateTime(new Date());
