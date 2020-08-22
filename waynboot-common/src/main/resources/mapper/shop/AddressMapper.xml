@@ -7,12 +7,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<resultMap type="com.wayn.common.core.domain.shop.Address" id="ShopAddressResult">
 		<result property="id"         		column="id"   				/>
 		<result property="name"   			column="name"   			/>
-		<result property="memberId" 		column="memberId"  			/>
+		<result property="memberId" 		column="member_id"  			/>
 		<result property="province"  		column="province"   		/>
 		<result property="city" 			column="city"  				/>
 		<result property="county" 			column="county"   			/>
 		<result property="addressDetail" 	column="address_detail" 	/>
-		<result property="areaCode" 		column="areaCode"   		/>
+		<result property="areaCode" 		column="area_code"   		/>
 		<result property="postalCode" 		column="postal_code"   		/>
 		<result property="tel" 				column="tel"   				/>
 		<result property="isDefault"     	column="is_default"   		/>
@@ -22,10 +22,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<sql id="selectAddressVo">
-        select a.id, a.name, a.memberId, a.province, a.city,
+        select a.id, a.name, a.member_id, a.province, a.city,
         a.county, a.address_detail, a.area_code, a.postal_code, a.tel,
         a.is_default, a.del_flag, a.create_time, a.update_time
-        from shop_adress a
+        from shop_address a
     </sql>
-    
+
+
+	<select id="selectListPage" resultMap="ShopAddressResult">
+		<include refid="selectAddressVo"/>
+		<where>
+			del_flag = 0
+			<if test="address.id != null">
+				AND id = #{address.id}
+			</if>
+			<if test="address.memberId != null">
+				AND member_id = #{address.memberId}
+			</if>
+			<if test="address.name != null and address.name != ''">
+				AND name like concat('%', #{address.name}, '%')
+			</if>
+			<if test="address.tel != null and address.tel != ''">
+				AND tel = #{address.tel}
+			</if>
+			<if test="address.startTime != null and address.startTime != ''">
+				AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{address.startTime},'%Y-%m-%d')
+			</if>
+			<if test="address.endTime != null and address.endTime != ''">
+				AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{address.endTime},'%Y-%m-%d')
+			</if>
+			order by create_time desc
+		</where>
+	</select>
+
 </mapper>
