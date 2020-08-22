@@ -7,7 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<resultMap type="com.wayn.common.core.domain.shop.Address" id="ShopAddressResult">
 		<result property="id"         		column="id"   				/>
 		<result property="name"   			column="name"   			/>
-		<result property="memberId" 		column="member_id"  			/>
+		<result property="memberId" 		column="member_id"  		/>
 		<result property="province"  		column="province"   		/>
 		<result property="city" 			column="city"  				/>
 		<result property="county" 			column="county"   			/>
