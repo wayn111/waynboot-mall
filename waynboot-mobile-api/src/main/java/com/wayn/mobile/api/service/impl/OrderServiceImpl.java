@@ -259,7 +259,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             }
             // 商品货品数量减少
             for (Cart checkGoods : checkedGoodsList) {
-                Integer productId = checkGoods.getProductId();
+                Long productId = checkGoods.getProductId();
                 GoodsProduct product = iGoodsProductService.getById(productId);
                 int remainNumber = product.getNumber() - checkGoods.getNumber();
                 if (remainNumber < 0) {
@@ -268,7 +268,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
                     throw new BusinessException("商品货品库存减少失败");
                 }
-                long delay = 1000;
+                long delay = 1000; // 一秒
                 redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
                 taskService.addTask(new CancelOrderTask(order.getId(), delay * 60));
 //                AsyncManager.me().execute(new CancelOrderTask(order.getId()), delay, TimeUnit.MINUTES);

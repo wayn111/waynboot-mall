@@ -38,7 +38,7 @@ public class OrderGoods implements Serializable {
     /**
      * 商品表的商品ID
      */
-    private Integer goodsId;
+    private Long goodsId;
 
     /**
      * 商品名称
@@ -53,7 +53,7 @@ public class OrderGoods implements Serializable {
     /**
      * 商品货品表的货品ID
      */
-    private Integer productId;
+    private Long productId;
 
     /**
      * 商品货品的购买数量

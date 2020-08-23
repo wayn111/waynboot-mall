@@ -22,7 +22,7 @@ public interface ICartService extends IService<Cart> {
      * @param productId
      * @return
      */
-    Cart checkExistsGoods(Long userId, Integer goodsId, Integer productId);
+    Cart checkExistsGoods(Long userId, Long goodsId, Long productId);
 
     /**
      * 加入商品到购物车
@@ -33,7 +33,7 @@ public interface ICartService extends IService<Cart> {
      * @param cart 购物车商品信息， { goodsId: xxx, productId: xxx, number: xxx }
      * @return R
      */
-    R addCart(Cart cart);
+    R add(Cart cart);
 
     /**
      * 计算购物车中商品数量
@@ -76,4 +76,11 @@ public interface ICartService extends IService<Cart> {
      * @return r
      */
     R minusNum(Long cartId, Integer number);
+
+    /**
+     * 添加商品的默认选中货品至购物车
+     * @param cart 购物车对象
+     * @return r
+     */
+    R addDefaultGoodsProduct(Cart cart);
 }

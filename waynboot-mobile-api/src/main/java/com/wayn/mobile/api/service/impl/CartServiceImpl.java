@@ -11,6 +11,7 @@ import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.CartMapper;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,7 +43,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     private IGoodsProductService iGoodsProductService;
 
     @Override
-    public Cart checkExistsGoods(Long userId, Integer goodsId, Integer productId) {
+    public Cart checkExistsGoods(Long userId, Long goodsId, Long productId) {
         return cartMapper.selectOne(new QueryWrapper<Cart>()
                 .eq("user_id", userId)
                 .eq("goods_id", goodsId)
@@ -49,9 +51,9 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     }
 
     @Override
-    public R addCart(Cart cart) {
-        Integer goodsId = cart.getGoodsId();
-        Integer productId = cart.getProductId();
+    public R add(Cart cart) {
+        Long goodsId = cart.getGoodsId();
+        Long productId = cart.getProductId();
         Integer number = cart.getNumber();
         if (!ObjectUtils.allNotNull(goodsId, productId, number) || number <= 0) {
             return R.error("参数错误");
@@ -124,5 +126,21 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     @Override
     public R minusNum(Long cartId, Integer number) {
         return R.result(update().setSql("number = number - 1").eq("id", cartId).last("and number > 1").update(), "最少购买一件");
+    }
+
+    @Override
+    public R addDefaultGoodsProduct(Cart cart) {
+        Long goodsId = cart.getGoodsId();
+        List<GoodsProduct> products = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
+        List<GoodsProduct> goodsProducts = products.stream().filter(goodsProduct -> goodsProduct.getDefaultSelected()).collect(Collectors.toList());
+        GoodsProduct defaultProduct;
+        // 如果默认选中货品不为空则取默认选中货品，否则取第一个货品
+        if (CollectionUtils.isNotEmpty(goodsProducts)) {
+            defaultProduct = goodsProducts.get(0);
+        } else {
+            defaultProduct = products.get(0);
+        }
+        cart.setProductId(defaultProduct.getId());
+        return add(cart);
     }
 }
