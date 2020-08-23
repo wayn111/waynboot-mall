@@ -50,11 +50,6 @@ public class GoodsSpecification extends ShopBaseEntity implements Serializable {
     private String picUrl;
 
     /**
-     * 是否默认选中（0代表选中 1代表未选中）
-     */
-    private Boolean defaultSelected;
-
-    /**
      * 逻辑删除
      */
     private Boolean delFlag;
