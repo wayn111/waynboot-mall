@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -95,15 +96,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         save(goods);
         goods.setGoodsSn(goods.getId().toString());
         updateById(goods);
-        List<Boolean> defaultSelectList = new ArrayList<>();
         for (GoodsSpecification specification : specifications) {
             specification.setGoodsId(goods.getId());
             specification.setCreateTime(new Date());
-            defaultSelectList.add(specification.getDefaultSelected());
-        }
-        // 判断启用默认选中的规格是否超过一个
-        if (defaultSelectList.size() > 1) {
-            return R.error("商品规格只能选择一个启用默认选中");
         }
         for (GoodsAttribute goodsAttribute : attributes) {
             goodsAttribute.setGoodsId(goods.getId());
@@ -113,6 +108,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             goodsProduct.setGoodsId(goods.getId());
             goodsProduct.setCreateTime(new Date());
         }
+        // 判断启用默认选中的规格是否超过一个
+        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).collect(Collectors.toList()).size() > 1) {
+            return R.error("商品规格只能选择一个启用默认选中");
+        }
+
         // 保存商品规格
         iGoodsSpecificationService.saveBatch(Arrays.asList(specifications));
         // 保存商品属性
@@ -163,21 +163,22 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goods.setRetailPrice(retailPrice);
         goods.setUpdateTime(new Date());
         updateById(goods);
-        List<Boolean> defaultSelectList = new ArrayList<>();
         for (GoodsSpecification specification : specifications) {
             specification.setUpdateTime(new Date());
-            defaultSelectList.add(specification.getDefaultSelected());
         }
-        // 判断启用默认选中的规格是否超过一个
-        if (defaultSelectList.size() > 1) {
-            return R.error("商品规格只能选择一个启用默认选中");
-        }
+
         for (GoodsAttribute goodsAttribute : attributes) {
             goodsAttribute.setUpdateTime(new Date());
         }
+
         for (GoodsProduct goodsProduct : products) {
             goodsProduct.setUpdateTime(new Date());
         }
+        // 判断启用默认选中的规格是否超过一个
+        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).collect(Collectors.toList()).size() > 1) {
+            return R.error("商品规格只能选择一个启用默认选中");
+        }
+
         // 更新商品规格
         iGoodsSpecificationService.updateBatchById(Arrays.asList(specifications));
         // 更新商品属性

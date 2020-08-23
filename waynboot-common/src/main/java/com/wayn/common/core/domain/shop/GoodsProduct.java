@@ -51,6 +51,11 @@ public class GoodsProduct extends ShopBaseEntity implements Serializable {
     private BigDecimal price;
 
     /**
+     * 是否默认选中（0代表选中 1代表未选中）
+     */
+    private Boolean defaultSelected;
+
+    /**
      * 商品货品数量
      */
     @Min(value = 0, message = "商品货品数量不能小于0")

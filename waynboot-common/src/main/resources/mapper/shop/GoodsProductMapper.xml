@@ -10,6 +10,7 @@
                 typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
         <result column="price" property="price"/>
         <result column="number" property="number"/>
+        <result column="default_selected" property="defaultSelected"/>
         <result column="url" property="url"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -19,7 +20,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         select id,
-        goods_id, specifications, price, number, url, create_time, update_time, del_flag
+        goods_id, specifications, price, number, default_selected, url, create_time, update_time, del_flag
         from shop_goods_product
     </sql>
 
