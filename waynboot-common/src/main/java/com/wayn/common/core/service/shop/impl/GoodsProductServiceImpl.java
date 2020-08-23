@@ -22,12 +22,12 @@ public class GoodsProductServiceImpl extends ServiceImpl<GoodsProductMapper, Goo
     private GoodsProductMapper goodsProductMapper;
 
     @Override
-    public boolean addStock(Integer productId, Integer number) {
+    public boolean addStock(Long productId, Integer number) {
         return goodsProductMapper.addStock(productId, number);
     }
 
     @Override
-    public boolean reduceStock(Integer productId, Integer number) {
+    public boolean reduceStock(Long productId, Integer number) {
         return goodsProductMapper.reduceStock(productId, number);
     }
 

@@ -25,7 +25,7 @@ import java.util.Set;
 public class CancelOrderTask extends Task {
 
     /**
-     * 默认延迟时间，单位毫秒
+     * 默认延迟时间30分钟，单位毫秒
      */
     private static final long DELAY_TIME = 30 * 60 * 1000;
 
@@ -73,7 +73,7 @@ public class CancelOrderTask extends Task {
                     Long orderId1 = order.getId();
                     List<OrderGoods> orderGoodsList = orderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId1));
                     for (OrderGoods orderGoods : orderGoodsList) {
-                        Integer productId = orderGoods.getProductId();
+                        Long productId = orderGoods.getProductId();
                         Integer number = orderGoods.getNumber();
                         if (!productService.addStock(productId, number)) {
                             throw new RuntimeException("商品货品库存增加失败");

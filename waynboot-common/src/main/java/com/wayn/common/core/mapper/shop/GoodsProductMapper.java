@@ -13,7 +13,7 @@ import com.wayn.common.core.domain.shop.GoodsProduct;
  */
 public interface GoodsProductMapper extends BaseMapper<GoodsProduct> {
 
-    boolean addStock(Integer productId, Integer number);
+    boolean addStock(Long productId, Integer number);
 
-    boolean reduceStock(Integer productId, Integer number);
+    boolean reduceStock(Long productId, Integer number);
 }

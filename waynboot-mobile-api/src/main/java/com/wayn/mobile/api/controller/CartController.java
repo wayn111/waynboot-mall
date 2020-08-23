@@ -36,7 +36,12 @@ public class CartController extends BaseController {
 
     @PostMapping
     public R add(@RequestBody Cart cart) {
-        return iCartService.addCart(cart);
+        return iCartService.add(cart);
+    }
+
+    @PostMapping("addDefaultGoodsProduct")
+    public R addDefaultGoodsProduct(@RequestBody Cart cart) {
+        return iCartService.addDefaultGoodsProduct(cart);
     }
 
     @PutMapping
