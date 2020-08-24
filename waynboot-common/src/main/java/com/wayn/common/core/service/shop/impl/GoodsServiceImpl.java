@@ -190,6 +190,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Override
     public R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList) {
-        return R.success().add("data", goodsMapper.selectGoodsListPageByl2CateId(page, l2cateList).getRecords());
+        return R.success().add("goods", goodsMapper.selectGoodsListPageByl2CateId(page, l2cateList).getRecords());
     }
 }
