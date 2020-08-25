@@ -51,9 +51,9 @@ public class CancelOrderTask extends Task {
         IOrderGoodsService orderGoodsService = SpringContextUtil.getBean(IOrderGoodsService.class);
         IGoodsProductService productService = SpringContextUtil.getBean(IGoodsProductService.class);
         RedisCache redisCache = SpringContextUtil.getBean(RedisCache.class);
-        Set<Long> zset = redisCache.getCacheZset("order_zset", 0, System.currentTimeMillis());
-        if (CollectionUtils.isNotEmpty(zset) && zset.contains(this.orderId)) {
-            for (Long orderId : zset) {
+        Set<Long> zSet = redisCache.getCacheZset("order_zset", 0, System.currentTimeMillis());
+        if (CollectionUtils.isNotEmpty(zSet) && zSet.contains(this.orderId)) {
+            for (Long orderId : zSet) {
                 log.info("redis内未付款---" + orderId);
                 final Long num = redisCache.deleteZsetObject("order_zset", orderId);
                 if (num != null && num > 0) {

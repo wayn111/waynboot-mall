@@ -148,9 +148,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 unrecv++;
             } else if (OrderUtil.isConfirmStatus(order) || OrderUtil.isAutoConfirmStatus(order)) {
                 uncomment += order.getComments();
-            } else {
-                // todo
-            }
+            }  // todo
+
         }
         success.add("unpaid", unpaid);
         success.add("unship", unship);
