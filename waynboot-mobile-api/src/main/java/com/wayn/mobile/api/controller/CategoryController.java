@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -58,12 +59,23 @@ public class CategoryController extends BaseController {
         return success;
     }
 
-    @GetMapping("goods")
-    public R listGoodsByFirstCate(@RequestParam(defaultValue = "0") Long cateId) {
+    @GetMapping("firstCategoryGoods")
+    public R firstCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
         Page<Goods> page = getPage();
         List<Category> categoryList = iCategoryService.list(new QueryWrapper<Category>().select("id").eq("pid", cateId));
         List<Long> cateList = categoryList.stream().map(Category::getId).collect(Collectors.toList());
-        return iGoodsService.selectListPageByCateIds(page, cateList);
+        R success = iGoodsService.selectListPageByCateIds(page, cateList);
+        success.add("category", iCategoryService.getById(cateId));
+        return success;
+    }
+
+    @GetMapping("secondCategoryGoods")
+    public R secondCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
+        Page<Goods> page = getPage();
+        List<Long> cateList = Arrays.asList(cateId);
+        R success = iGoodsService.selectListPageByCateIds(page, cateList);
+        success.add("category", iCategoryService.getById(cateId));
+        return success;
     }
 
 
