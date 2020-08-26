@@ -267,10 +267,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
                     throw new BusinessException("商品货品库存减少失败");
                 }
-                long delay = 1000; // 一秒
+                // 一秒
+                long delay = 1000;
                 redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
                 taskService.addTask(new CancelOrderTask(order.getId(), delay * 60));
-//                AsyncManager.me().execute(new CancelOrderTask(order.getId()), delay, TimeUnit.MINUTES);
             }
             return R.success().add("orderId", order.getId());
         } else {
