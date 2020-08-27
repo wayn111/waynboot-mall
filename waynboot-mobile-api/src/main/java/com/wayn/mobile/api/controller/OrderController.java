@@ -57,4 +57,24 @@ public class OrderController extends BaseController {
         return iOrderService.payNotify(request, response);
     }
 
+    @GetMapping("testPayNotify/{orderId}")
+    public R payNotify(@PathVariable Long orderId) {
+        return iOrderService.testPayNotify(orderId);
+    }
+
+    @PostMapping("cancel/{orderId}")
+    public R cancel(@PathVariable Long orderId) {
+        return iOrderService.cancel(orderId);
+    }
+
+    @PostMapping("confirm/{orderId}")
+    public R confirm(@PathVariable Long orderId) {
+        return iOrderService.confirm(orderId);
+    }
+
+    @PostMapping("delete/{orderId}")
+    public R delete(@PathVariable Long orderId) {
+        return iOrderService.delete(orderId);
+    }
+
 }

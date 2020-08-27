@@ -43,6 +43,7 @@ import com.wayn.mobile.framework.security.util.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -365,7 +366,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
-        WxPayOrderNotifyResult result;
+        WxPayOrderNotifyResult result = null;
         try {
             result = wxPayService.parseOrderNotifyResult(xmlResult);
 
@@ -375,7 +376,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             }
         } catch (WxPayException e) {
             e.printStackTrace();
-            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
+//            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
         log.info("处理腾讯支付平台的订单支付");
@@ -422,6 +423,43 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 取消订单超时未支付任务
         taskService.removeTask(new CancelOrderTask(order.getId()));
         return R.error(WxPayNotifyResponse.success("处理成功!"));
+    }
+
+    @Override
+    public R testPayNotify(Long orderId) {
+        Order order = getById(orderId);
+        if (order == null) {
+            return R.error("订单不存在 id =" + orderId);
+        }
+
+        // 检查这个订单是否已经处理过
+        if (OrderUtil.hasPayed(order)) {
+            return R.error("订单已经处理成功!");
+        }
+
+        order.setPayId("xxxxx0987654321-wx");
+        order.setPayTime(LocalDateTime.now());
+        order.setOrderStatus(OrderUtil.STATUS_PAY);
+        order.setUpdateTime(LocalDateTime.now());
+        if (!updateById(order)) {
+            return R.error("更新数据已失效");
+        }
+        //TODO 发送邮件和短信通知，这里采用异步发送
+        // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
+        String email = iMemberService.getById(order.getUserId()).getEmail();
+        if (StringUtils.isNotEmpty(email)) {
+            MailConfig mailConfig = mailConfigService.getById(1L);
+            SendMailVO sendMailVO = new SendMailVO();
+            sendMailVO.setTitle("新订单通知");
+            sendMailVO.setContent(order.toString());
+            sendMailVO.setSendMail(email);
+            MailUtil.sendMail(mailConfig, sendMailVO, false);
+        }
+        // 删除redis中订单id
+        redisCache.deleteZsetObject("order_zset", order.getId());
+        // 取消订单超时未支付任务
+        taskService.removeTask(new CancelOrderTask(order.getId()));
+        return R.error("处理成功!");
     }
 
     @Override
