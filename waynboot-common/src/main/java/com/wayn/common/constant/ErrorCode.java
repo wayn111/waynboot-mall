@@ -5,7 +5,7 @@ package com.wayn.common.constant;
  */
 public class ErrorCode {
     /**
-     * 参数确实
+     * 参数错误
      */
     public static final int PARAMETER_MISS_ERROR = 4001;
 
