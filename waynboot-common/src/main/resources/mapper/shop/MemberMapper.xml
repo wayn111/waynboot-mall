@@ -9,6 +9,7 @@
         <result column="password"           property="password" />
         <result column="gender"             property="gender" />
         <result column="birthday"           property="birthday"/>
+        <result column="email"              property="email"/>
         <result column="last_login_time"    property="lastLoginTime"/>
         <result column="last_login_ip"      property="lastLoginIp" />
         <result column="user_level"         property="userLevel" />
@@ -26,7 +27,7 @@
     <!-- 通用查询结果列 -->
     <sql id="selectMemberVo">
         select id,
-        username, password, gender, birthday, last_login_time, last_login_ip, user_level, nickname, mobile, avatar, weixin_openid, session_key, status, create_time, update_time, del_flag
+        username, password, gender, birthday, email, last_login_time, last_login_ip, user_level, nickname, mobile, avatar, weixin_openid, session_key, status, create_time, update_time, del_flag
         from shop_member
     </sql>
 

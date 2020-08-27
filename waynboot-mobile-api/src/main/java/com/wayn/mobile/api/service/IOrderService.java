@@ -68,6 +68,14 @@ public interface IOrderService extends IService<Order> {
     R payNotify(HttpServletRequest request, HttpServletResponse response);
 
     /**
+     * 测试支付成功回调
+     * @param request
+     * @param response
+     * @return
+     */
+    R testPayNotify(Long orderId);
+
+    /**
      * 取消订单
      * <p>
      * 1. 检测当前订单是否能够取消；

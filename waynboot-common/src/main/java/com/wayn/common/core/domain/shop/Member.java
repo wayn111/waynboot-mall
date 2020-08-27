@@ -53,6 +53,11 @@ public class Member extends ShopBaseEntity implements Serializable {
     private LocalDate birthday;
 
     /**
+     * 邮箱
+     */
+    private String email;
+
+    /**
      * 最近一次登录时间
      */
     private LocalDateTime lastLoginTime;
