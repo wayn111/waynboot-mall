@@ -12,6 +12,7 @@ import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
+import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.domain.shop.Member;
@@ -283,10 +284,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R prepay(Long orderId, HttpServletRequest request) {
         // 获取订单详情
         Order order = getById(orderId);
-        if (Objects.isNull(order)) {
-            return R.error();
+        String checkMsg = checkOrderOperator(order);
+        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
+            return R.error(checkMsg);
         }
-
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isPay()) {
@@ -324,10 +325,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R h5pay(Long orderId, HttpServletRequest request) {
         // 获取订单详情
         Order order = getById(orderId);
-        if (Objects.isNull(order)) {
-            return R.error();
+        String checkMsg = checkOrderOperator(order);
+        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
+            return R.error(checkMsg);
         }
-
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isPay()) {
@@ -423,4 +424,95 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return R.error(WxPayNotifyResponse.success("处理成功!"));
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public R cancel(Long orderId) {
+        Order order = getById(orderId);
+        String checkMsg = checkOrderOperator(order);
+        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
+            return R.error(checkMsg);
+        }
+        // 检测是否能够取消
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isCancel()) {
+            return R.error("订单不能取消");
+        }
+
+        // 设置订单已取消状态
+        order.setOrderStatus(OrderUtil.STATUS_CANCEL);
+        order.setEndTime(LocalDateTime.now());
+        order.setUpdateTime(LocalDateTime.now());
+        if (!updateById(order)) {
+            throw new BusinessException("更新数据已失效");
+        }
+
+        // 商品货品数量增加
+        List<OrderGoods> goodsList = iOrderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
+        for (OrderGoods orderGoods : goodsList) {
+            Long productId = orderGoods.getProductId();
+            Integer number = orderGoods.getNumber();
+            if (!iGoodsProductService.addStock(productId, number)) {
+                throw new BusinessException("商品货品库存增加失败");
+            }
+        }
+        // 返还优惠券
+//        releaseCoupon(orderId);
+        return R.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public R delete(Long orderId) {
+        Order order = getById(orderId);
+        String checkMsg = checkOrderOperator(order);
+        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
+            return R.error(checkMsg);
+        }
+        // 检测是否能够取消
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isDelete()) {
+            return R.error("订单不能删除");
+        }
+        // 删除订单
+        removeById(orderId);
+        // 删除订单商品
+        iOrderGoodsService.remove(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
+        return R.success();
+    }
+
+    @Override
+    public R confirm(Long orderId) {
+        Order order = getById(orderId);
+        String checkMsg = checkOrderOperator(order);
+        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
+            return R.error(checkMsg);
+        }
+        // 检测是否能够取消
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isConfirm()) {
+            return R.error("订单不能确认收货");
+        }
+        // 更改订单状态为已收货
+        order.setOrderStatus(OrderUtil.STATUS_CONFIRM);
+        order.setUpdateTime(LocalDateTime.now());
+        updateById(order);
+        return R.success();
+    }
+
+    /**
+     * 检查订单操作是否合法
+     *
+     * @param order 订单详情
+     * @return 成功返回<code>SysConstants.STRING_TRUE</code>，失败返回<code>SysConstants.STRING_FALSE</code>，或者自定义消息
+     */
+    private String checkOrderOperator(Order order) {
+        Long userId = SecurityUtils.getUserId();
+        if (Objects.isNull(order)) {
+            return SysConstants.STRING_FALSE;
+        }
+        if (!order.getUserId().equals(userId)) {
+            return SysConstants.STRING_FALSE_MSG("用户ID不一致");
+        }
+        return SysConstants.STRING_TRUE;
+    }
 }

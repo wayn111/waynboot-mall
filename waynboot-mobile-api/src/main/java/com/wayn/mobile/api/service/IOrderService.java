@@ -51,14 +51,16 @@ public interface IOrderService extends IService<Order> {
 
     /**
      * 获取订单列表
-     * @param page      分页对象
-     * @param showType  展示类型
+     *
+     * @param page     分页对象
+     * @param showType 展示类型
      * @return r
      */
     R selectListPage(IPage<Order> page, Integer showType);
 
     /**
      * 支付成功回调处理
+     *
      * @param request  请求
      * @param response 响应
      * @return r
@@ -66,7 +68,43 @@ public interface IOrderService extends IService<Order> {
     R payNotify(HttpServletRequest request, HttpServletResponse response);
 
     /**
+     * 取消订单
+     * <p>
+     * 1. 检测当前订单是否能够取消；
+     * 2. 设置订单取消状态；
+     * 3. 商品货品库存恢复；
+     * 4. 返还优惠券；
+     *
+     * @param orderId 订单ID
+     * @return r
+     */
+    R cancel(Long orderId);
+
+    /**
+     * 删除订单
+     * <p>
+     * 1. 检测当前订单是否可以删除；
+     * 2. 删除订单。
+     *
+     * @param orderId 订单ID
+     * @return r
+     */
+    R delete(Long orderId);
+
+    /**
+     * 确认订单
+     * <p>
+     * 1. 检测当前订单是否可以删除；
+     * 2. 更改订单状态为已收货。
+     *
+     * @param orderId 订单ID
+     * @return r
+     */
+    R confirm(Long orderId);
+
+    /**
      * 查询用户订单各状态数量（包含待支付、代发货、待收货、待评价）
+     *
      * @return r
      */
     R statusCount();

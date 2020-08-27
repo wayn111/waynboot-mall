@@ -55,4 +55,22 @@ public class SysConstants {
      * 校验返回结果码 0 不存在 1 已经存在
      */
     public final static String NOT_UNIQUE = "1";
+
+    /**
+     * string类型boolean返回值，成功默认为success
+     */
+    public final static String STRING_TRUE = "true";
+
+    /**
+     * string类型boolean返回值，失败默认为error
+     */
+    public final static String STRING_FALSE = "false";
+
+    /**
+     * string类型boolean返回值，失败后返回自定义错误消息
+     */
+    public static String STRING_FALSE_MSG(String msg) {
+        return msg;
+    }
+
 }
