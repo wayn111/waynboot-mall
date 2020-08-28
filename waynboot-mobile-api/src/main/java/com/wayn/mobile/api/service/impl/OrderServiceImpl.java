@@ -459,7 +459,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
         taskService.removeTask(new CancelOrderTask(order.getId()));
-        return R.error("处理成功!");
+        return R.success("处理成功!");
     }
 
     @Override
@@ -495,6 +495,39 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         // 返还优惠券
 //        releaseCoupon(orderId);
+        return R.success();
+    }
+
+    @Override
+    public R refund(Long orderId) {
+        Order order = getById(orderId);
+        String checkMsg = checkOrderOperator(order);
+        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
+            return R.error(checkMsg);
+        }
+
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isRefund()) {
+            return R.error("订单不能取消");
+        }
+
+        // 设置订单申请退款状态
+        order.setOrderStatus(OrderUtil.STATUS_REFUND);
+        order.setUpdateTime(LocalDateTime.now());
+        updateById(order);
+
+        //TODO 发送邮件和短信通知，这里采用异步发送
+        // 有用户申请退款，邮件通知运营人员
+        String email = iMemberService.getById(order.getUserId()).getEmail();
+        if (StringUtils.isNotEmpty(email)) {
+            MailConfig mailConfig = mailConfigService.getById(1L);
+            SendMailVO sendMailVO = new SendMailVO();
+            sendMailVO.setTitle("订单正在退款");
+            sendMailVO.setContent(order.toString());
+            sendMailVO.setSendMail(email);
+            MailUtil.sendMail(mailConfig, sendMailVO, false);
+        }
+
         return R.success();
     }
 
