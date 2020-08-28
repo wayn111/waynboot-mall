@@ -88,6 +88,9 @@ public interface IOrderService extends IService<Order> {
      */
     R cancel(Long orderId);
 
+
+    R refund(Long orderId);
+
     /**
      * 删除订单
      * <p>
@@ -116,4 +119,5 @@ public interface IOrderService extends IService<Order> {
      * @return r
      */
     R statusCount();
+
 }
