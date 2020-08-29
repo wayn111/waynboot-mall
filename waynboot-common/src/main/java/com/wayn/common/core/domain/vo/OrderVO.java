@@ -1,4 +1,4 @@
-package com.wayn.mobile.api.domain.vo;
+package com.wayn.common.core.domain.vo;
 
 import lombok.Data;
 

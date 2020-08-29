@@ -3,7 +3,7 @@ package com.wayn.mobile.api.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.util.spring.SpringContextUtil;
-import com.wayn.mobile.api.domain.Order;
+import com.wayn.common.core.domain.shop.Order;
 import com.wayn.mobile.api.service.IOrderService;
 
 import java.time.LocalDate;

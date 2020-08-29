@@ -16,7 +16,9 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.domain.shop.Member;
+import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.tool.MailConfig;
+import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
@@ -28,9 +30,7 @@ import com.wayn.common.util.R;
 import com.wayn.common.util.ip.IpUtils;
 import com.wayn.common.util.mail.MailUtil;
 import com.wayn.mobile.api.domain.Cart;
-import com.wayn.mobile.api.domain.Order;
 import com.wayn.mobile.api.domain.OrderGoods;
-import com.wayn.mobile.api.domain.vo.OrderVO;
 import com.wayn.mobile.api.mapper.OrderMapper;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderGoodsService;
@@ -232,7 +232,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setGoodsPrice(checkedGoodsPrice);
         order.setOrderPrice(orderTotalPrice);
         order.setActualPrice(actualPrice);
-        order.setCreateTime(LocalDateTime.now());
+        order.setCreateTime(new Date());
         if (save(order)) {
             Long orderId = order.getId();
             // 添加订单商品表项
@@ -405,7 +405,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setPayId(payId);
         order.setPayTime(LocalDateTime.now());
         order.setOrderStatus(OrderUtil.STATUS_PAY);
-        order.setUpdateTime(LocalDateTime.now());
+        order.setUpdateTime(new Date());
         if (!updateById(order)) {
             return R.error(WxPayNotifyResponse.fail("更新数据已失效"));
         }
@@ -440,7 +440,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setPayId("xxxxx0987654321-wx");
         order.setPayTime(LocalDateTime.now());
         order.setOrderStatus(OrderUtil.STATUS_PAY);
-        order.setUpdateTime(LocalDateTime.now());
+        order.setUpdateTime(new Date());
         if (!updateById(order)) {
             return R.error("更新数据已失效");
         }
@@ -478,8 +478,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 设置订单已取消状态
         order.setOrderStatus(OrderUtil.STATUS_CANCEL);
-        order.setEndTime(LocalDateTime.now());
-        order.setUpdateTime(LocalDateTime.now());
+        order.setOrderEndTime(LocalDateTime.now());
+        order.setUpdateTime(new Date());
         if (!updateById(order)) {
             throw new BusinessException("更新数据已失效");
         }
@@ -513,7 +513,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 设置订单申请退款状态
         order.setOrderStatus(OrderUtil.STATUS_REFUND);
-        order.setUpdateTime(LocalDateTime.now());
+        order.setUpdateTime(new Date());
         updateById(order);
 
         //TODO 发送邮件和短信通知，这里采用异步发送
@@ -565,7 +565,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         // 更改订单状态为已收货
         order.setOrderStatus(OrderUtil.STATUS_CONFIRM);
-        order.setUpdateTime(LocalDateTime.now());
+        order.setUpdateTime(new Date());
         updateById(order);
         return R.success();
     }

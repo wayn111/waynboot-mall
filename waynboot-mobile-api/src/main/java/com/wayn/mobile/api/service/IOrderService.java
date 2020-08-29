@@ -2,9 +2,9 @@ package com.wayn.mobile.api.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wayn.common.core.domain.shop.Order;
+import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.util.R;
-import com.wayn.mobile.api.domain.Order;
-import com.wayn.mobile.api.domain.vo.OrderVO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

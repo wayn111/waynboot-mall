@@ -2,7 +2,7 @@ package com.wayn.mobile.api.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.wayn.mobile.api.domain.Order;
+import com.wayn.common.core.domain.shop.Order;
 
 import java.util.List;
 

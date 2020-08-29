@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.task.Task;
 import com.wayn.common.util.spring.SpringContextUtil;
-import com.wayn.mobile.api.domain.Order;
+import com.wayn.common.core.domain.shop.Order;
 import com.wayn.mobile.api.domain.OrderGoods;
 import com.wayn.mobile.api.service.IOrderGoodsService;
 import com.wayn.mobile.api.service.IOrderService;
@@ -64,7 +64,7 @@ public class CancelOrderTask extends Task {
 
                     // 设置订单已取消状态
                     order.setOrderStatus(OrderUtil.STATUS_AUTO_CANCEL);
-                    order.setEndTime(LocalDateTime.now());
+                    order.setOrderEndTime(LocalDateTime.now());
                     if (!orderService.updateById(order)) {
                         throw new RuntimeException("更新数据已失效");
                     }
