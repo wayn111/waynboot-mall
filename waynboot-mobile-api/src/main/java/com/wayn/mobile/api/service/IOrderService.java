@@ -69,9 +69,8 @@ public interface IOrderService extends IService<Order> {
 
     /**
      * 测试支付成功回调
-     * @param request
-     * @param response
-     * @return
+     * @param orderId 订单ID
+     * @return r
      */
     R testPayNotify(Long orderId);
 
@@ -89,6 +88,15 @@ public interface IOrderService extends IService<Order> {
     R cancel(Long orderId);
 
 
+    /**
+     * 订单退款
+     * <p>
+     * 1. 检测当前订单是否可以退款；
+     * 2. 更改订单状态为已退款。
+     *
+     * @param orderId 订单ID
+     * @return r
+     */
     R refund(Long orderId);
 
     /**
@@ -114,7 +122,7 @@ public interface IOrderService extends IService<Order> {
     R confirm(Long orderId);
 
     /**
-     * 查询用户订单各状态数量（包含待支付、代发货、待收货、待评价）
+     * 查询用户订单各状态数量（包含待支付订单数量、代发货订单数量、待收货订单数量、待评价订单数量）
      *
      * @return r
      */
