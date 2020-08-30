@@ -3,9 +3,6 @@ package com.wayn.common.core.service.shop.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
@@ -24,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +34,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
     @Autowired
     private AdminOrderMapper adminOrderMapper;
 
-    @Autowired
+    //    @Autowired
     private WxPayService wxPayService;
 
     @Autowired
@@ -58,6 +55,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public R refund(Long orderId) {
         Order order = getById(orderId);
         if (order == null) {
@@ -70,29 +68,29 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         }
 
         // 微信退款
-        WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
-        wxPayRefundRequest.setOutTradeNo(order.getOrderSn());
-        wxPayRefundRequest.setOutRefundNo("refund_" + order.getOrderSn());
-        // 元转成分
-        Integer totalFee = order.getActualPrice().multiply(new BigDecimal(100)).intValue();
-        wxPayRefundRequest.setTotalFee(totalFee);
-        wxPayRefundRequest.setRefundFee(totalFee);
-
-        WxPayRefundResult wxPayRefundResult;
-        try {
-            wxPayRefundResult = wxPayService.refund(wxPayRefundRequest);
-        } catch (WxPayException e) {
-            log.error(e.getMessage(), e);
-            return R.error("订单退款失败");
-        }
-        if (!wxPayRefundResult.getReturnCode().equals("SUCCESS")) {
-            log.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return R.error("订单退款失败");
-        }
-        if (!wxPayRefundResult.getResultCode().equals("SUCCESS")) {
-            log.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
-            return R.error("订单退款失败");
-        }
+//        WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
+//        wxPayRefundRequest.setOutTradeNo(order.getOrderSn());
+//        wxPayRefundRequest.setOutRefundNo("refund_" + order.getOrderSn());
+//        // 元转成分
+//        Integer totalFee = order.getActualPrice().multiply(new BigDecimal(100)).intValue();
+//        wxPayRefundRequest.setTotalFee(totalFee);
+//        wxPayRefundRequest.setRefundFee(totalFee);
+//
+//        WxPayRefundResult wxPayRefundResult;
+//        try {
+//            wxPayRefundResult = wxPayService.refund(wxPayRefundRequest);
+//        } catch (WxPayException e) {
+//            log.error(e.getMessage(), e);
+//            return R.error("订单退款失败");
+//        }
+//        if (!wxPayRefundResult.getReturnCode().equals("SUCCESS")) {
+//            log.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
+//            return R.error("订单退款失败");
+//        }
+//        if (!wxPayRefundResult.getResultCode().equals("SUCCESS")) {
+//            log.warn("refund fail: " + wxPayRefundResult.getReturnMsg());
+//            return R.error("订单退款失败");
+//        }
 
         LocalDateTime now = LocalDateTime.now();
         // 设置订单取消状态
@@ -101,7 +99,8 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         // 记录订单退款相关信息
         order.setRefundAmount(order.getActualPrice());
         order.setRefundType("微信退款接口");
-        order.setRefundContent(wxPayRefundResult.getRefundId());
+//        order.setRefundContent(wxPayRefundResult.getRefundId());
+        order.setRefundContent("已退款");
         order.setRefundTime(now);
         order.setUpdateTime(new Date());
         updateById(order);
@@ -110,7 +109,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         for (OrderGoods orderGoods : orderGoodsList) {
             Long productId = orderGoods.getProductId();
             Integer number = orderGoods.getNumber();
-            if (iGoodsProductService.addStock(productId, number)) {
+            if (!iGoodsProductService.addStock(productId, number)) {
                 throw new RuntimeException("商品货品库存增加失败");
             }
         }
@@ -136,8 +135,42 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
             sendMailVO.setSendMail(email);
             MailUtil.sendMail(mailConfig, sendMailVO, false);
         }
-
         // logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
+        return R.success();
+    }
+
+    @Override
+    public R ship(Long orderId) {
+        Order order = getById(orderId);
+        if (order == null) {
+            return R.error();
+        }
+
+        //  如果订单不是退款状态，则不能退款
+        if (!order.getOrderStatus().equals(OrderUtil.STATUS_REFUND)) {
+            return R.error("订单不能确认收货");
+        }
+
+        order.setOrderStatus(OrderUtil.STATUS_SHIP);
+        order.setShipSn("xxxx");
+        order.setShipChannel("申通");
+        order.setShipTime(LocalDateTime.now());
+        order.setUpdateTime(new Date());
+        updateById(order);
+
+        //TODO 发送邮件和短信通知，这里采用异步发送
+        // 发货会发送通知短信给用户:          *
+        // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
+        String email = iMemberService.getById(order.getUserId()).getEmail();
+        if (StringUtils.isNotEmpty(email)) {
+            MailConfig mailConfig = mailConfigService.getById(1L);
+            SendMailVO sendMailVO = new SendMailVO();
+            sendMailVO.setTitle("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收");
+            sendMailVO.setContent(order.getOrderSn().substring(8, 14));
+            sendMailVO.setSendMail(email);
+            MailUtil.sendMail(mailConfig, sendMailVO, false);
+        }
+//        logHelper.logOrderSucceed("发货", "订单编号 " + order.getOrderSn());
         return R.success();
     }
 }

@@ -42,4 +42,14 @@ public interface IAdminOrderService extends IService<Order> {
      */
     R refund(Long orderId);
 
+    /**
+     * 发货
+     * 1. 检测当前订单是否能够发货
+     * 2. 设置订单发货状态
+     *
+     * @param orderId 订单信息，{ orderId：xxx, shipSn: xxx, shipChannel: xxx }
+     * @return r
+     */
+    R ship(Long orderId);
+
 }
