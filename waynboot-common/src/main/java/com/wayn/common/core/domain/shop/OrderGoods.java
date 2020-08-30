@@ -1,4 +1,4 @@
-package com.wayn.mobile.api.domain;
+package com.wayn.common.core.domain.shop;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

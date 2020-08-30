@@ -1,9 +1,9 @@
-package com.wayn.mobile.api.service.impl;
+package com.wayn.common.core.service.shop.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.mobile.api.domain.OrderGoods;
-import com.wayn.mobile.api.mapper.OrderGoodsMapper;
-import com.wayn.mobile.api.service.IOrderGoodsService;
+import com.wayn.common.core.domain.shop.OrderGoods;
+import com.wayn.common.core.mapper.shop.OrderGoodsMapper;
+import com.wayn.common.core.service.shop.IOrderGoodsService;
 import org.springframework.stereotype.Service;
 
 /**
