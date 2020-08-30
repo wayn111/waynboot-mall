@@ -24,6 +24,8 @@ import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.core.service.tool.IMailConfigService;
+import com.wayn.common.core.util.OrderHandleOption;
+import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.task.TaskService;
 import com.wayn.common.util.R;
@@ -36,8 +38,7 @@ import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderGoodsService;
 import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.CancelOrderTask;
-import com.wayn.mobile.api.util.OrderHandleOption;
-import com.wayn.mobile.api.util.OrderUtil;
+import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.redis.RedisCache;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -218,7 +219,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 组装订单数据
         Order order = new Order();
         order.setUserId(userId);
-        order.setOrderSn(OrderUtil.generateOrderSn(userId));
+        order.setOrderSn(OrderSnGenUtil.generateOrderSn(userId));
         order.setOrderStatus(OrderUtil.STATUS_CREATE);
         order.setConsignee(checkedAddress.getName());
         order.setMobile(checkedAddress.getTel());

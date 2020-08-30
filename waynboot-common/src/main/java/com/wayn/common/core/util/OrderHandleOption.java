@@ -1,4 +1,4 @@
-package com.wayn.mobile.api.util;
+package com.wayn.common.core.util;
 
 public class OrderHandleOption {
     private boolean cancel = false;      // 取消操作

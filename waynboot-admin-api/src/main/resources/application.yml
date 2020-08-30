@@ -15,6 +15,9 @@ spring:
       file-size-threshold: 5MB
       max-file-size: 200MB
       max-request-size: 200MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 
 # token配置
 token:
