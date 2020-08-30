@@ -3,6 +3,7 @@ package com.wayn.common.core.domain.shop;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -112,6 +113,7 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 微信付款时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime payTime;
 
     /**
@@ -127,6 +129,7 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 发货开始时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime shipTime;
 
     /**
@@ -147,11 +150,13 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 退款时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime refundTime;
 
     /**
      * 用户确认收货时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime confirmTime;
 
     /**
@@ -162,6 +167,7 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 订单关闭时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderEndTime;
 
     /**
