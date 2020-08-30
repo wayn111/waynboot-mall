@@ -29,8 +29,12 @@ public class AdminOrderController extends BaseController {
 
     @PostMapping("refund/{orderId}")
     public R refund(@PathVariable Long orderId) {
-        return R.result(iAdminOrderService.removeById(orderId));
+        return iAdminOrderService.refund(orderId);
     }
 
+    @PostMapping("ship/{orderId}")
+    public R ship(@PathVariable Long orderId) {
+        return iAdminOrderService.ship(orderId);
+    }
 }
 
