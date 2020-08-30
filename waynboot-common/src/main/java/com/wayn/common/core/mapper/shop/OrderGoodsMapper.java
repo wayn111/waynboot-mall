@@ -1,7 +1,7 @@
-package com.wayn.mobile.api.mapper;
+package com.wayn.common.core.mapper.shop;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wayn.mobile.api.domain.OrderGoods;
+import com.wayn.common.core.domain.shop.OrderGoods;
 
 /**
  * <p>

@@ -22,14 +22,15 @@ public class AdminOrderController extends BaseController {
         return R.success().add("page", iAdminOrderService.selectListPage(page, order));
     }
 
-    @PostMapping("refound/{orderId}")
-    public R refound(@PathVariable Long orderId) {
-        return R.result(iAdminOrderService.removeById(orderId));
-    }
-
     @DeleteMapping("{orderId}")
     public R deleteOrder(@PathVariable Long orderId) {
         return R.result(iAdminOrderService.removeById(orderId));
     }
+
+    @PostMapping("refund/{orderId}")
+    public R refund(@PathVariable Long orderId) {
+        return R.result(iAdminOrderService.removeById(orderId));
+    }
+
 }
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wayn.mobile.api.mapper.OrderGoodsMapper">
+<mapper namespace="com.wayn.common.core.mapper.shop.OrderGoodsMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.wayn.mobile.api.domain.OrderGoods">
+    <resultMap id="BaseResultMap" type="com.wayn.common.core.domain.shop.OrderGoods">
         <result column="id"                 property="id" />
         <result column="order_id"           property="orderId" />
         <result column="goods_id"           property="goodsId" />
