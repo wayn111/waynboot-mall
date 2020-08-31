@@ -22,6 +22,11 @@ public class AdminOrderController extends BaseController {
         return R.success().add("page", iAdminOrderService.selectListPage(page, order));
     }
 
+    @GetMapping("{orderId}")
+    public R info(@PathVariable Long orderId) {
+        return iAdminOrderService.detail(orderId);
+    }
+
     @DeleteMapping("{orderId}")
     public R deleteOrder(@PathVariable Long orderId) {
         return R.result(iAdminOrderService.removeById(orderId));

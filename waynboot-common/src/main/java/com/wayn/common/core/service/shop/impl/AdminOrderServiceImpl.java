@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.binarywang.wxpay.service.WxPayService;
+import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
 import com.wayn.common.core.domain.tool.MailConfig;
@@ -25,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -172,5 +175,20 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         }
 //        logHelper.logOrderSucceed("发货", "订单编号 " + order.getOrderSn());
         return R.success();
+    }
+
+    @Override
+    public R detail(Long orderId) {
+        Order order = getById(orderId);
+        if (order == null) {
+            return R.error();
+        }
+        List<OrderGoods> orderGoodsList = iOrderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
+        Member member = iMemberService.getById(order.getUserId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("order", order);
+        data.put("orderGoods", orderGoodsList);
+        data.put("user", member);
+        return R.success().add("data", data);
     }
 }
