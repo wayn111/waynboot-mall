@@ -52,4 +52,10 @@ public interface IAdminOrderService extends IService<Order> {
      */
     R ship(Long orderId);
 
+    /**
+     * 获取订单详情（包含订单信息，订单商品信息，用户信息）
+     * @param orderId
+     * @return r
+     */
+    R detail(Long orderId);
 }
