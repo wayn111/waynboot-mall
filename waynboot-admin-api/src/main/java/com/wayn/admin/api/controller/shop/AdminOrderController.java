@@ -7,11 +7,13 @@ import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.service.shop.IAdminOrderService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("shop/order")
+@EnableConfigurationProperties(value = ExpressProperties.class)
 public class AdminOrderController extends BaseController {
 
     @Autowired
