@@ -9,6 +9,7 @@ import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
 import com.wayn.common.core.domain.tool.MailConfig;
 import com.wayn.common.core.domain.vo.SendMailVO;
+import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.IAdminOrderService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
@@ -143,9 +144,12 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
     }
 
     @Override
-    public R ship(Long orderId) {
+    public R ship(ShipVO shipVO) {
+        Long orderId = shipVO.getOrderId();
+        String shipChannel = shipVO.getShipChannel();
+        String shipSn = shipVO.getShipSn();
         Order order = getById(orderId);
-        if (order == null) {
+        if (order == null || StringUtils.isEmpty(shipChannel) || StringUtils.isEmpty(shipSn)) {
             return R.error();
         }
 
@@ -155,8 +159,8 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         }
 
         order.setOrderStatus(OrderUtil.STATUS_SHIP);
-        order.setShipSn("xxxx");
-        order.setShipChannel("申通");
+        order.setShipSn(shipSn);
+        order.setShipChannel(shipChannel);
         order.setShipTime(LocalDateTime.now());
         order.setUpdateTime(new Date());
         updateById(order);

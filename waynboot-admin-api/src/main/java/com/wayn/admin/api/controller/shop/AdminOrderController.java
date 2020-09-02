@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.framework.config.properties.ExpressProperties;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.core.domain.shop.Order;
+import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.core.service.shop.IAdminOrderService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,9 @@ public class AdminOrderController extends BaseController {
         return R.success().add("data", expressProperties.getVendors());
     }
 
-    @PostMapping("ship/{orderId}")
-    public R ship(@PathVariable Long orderId) {
-        return iAdminOrderService.ship(orderId);
+    @PostMapping("ship")
+    public R ship(ShipVO shipVO) {
+        return iAdminOrderService.ship(shipVO);
     }
 }
 
