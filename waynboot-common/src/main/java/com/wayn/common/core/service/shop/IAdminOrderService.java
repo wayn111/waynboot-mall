@@ -3,6 +3,7 @@ package com.wayn.common.core.service.shop;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Order;
+import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.util.R;
 
 /**
@@ -47,10 +48,10 @@ public interface IAdminOrderService extends IService<Order> {
      * 1. 检测当前订单是否能够发货
      * 2. 设置订单发货状态
      *
-     * @param orderId 订单信息，{ orderId：xxx, shipSn: xxx, shipChannel: xxx }
+     * @param shipVO 订单信息，{ orderId：xxx, shipSn: xxx, shipChannel: xxx }
      * @return r
      */
-    R ship(Long orderId);
+    R ship(ShipVO shipVO);
 
     /**
      * 获取订单详情（包含订单信息，订单商品信息，用户信息）
