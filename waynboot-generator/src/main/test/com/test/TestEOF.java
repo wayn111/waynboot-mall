@@ -16,5 +16,10 @@ public class TestEOF {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(1000== 1000);
+        Integer i1 = 1000;
+        Integer i2 = 1000;
+        System.out.println(i1== i2);
+
     }
 }
