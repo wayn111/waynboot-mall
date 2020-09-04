@@ -66,7 +66,7 @@
             <if test="order.endTime != null and order.endTime != ''">
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{order.endTime},'%Y-%m-%d')
             </if>
-            order by create_time
+            order by create_time DESC
         </where>
     </select>
 
