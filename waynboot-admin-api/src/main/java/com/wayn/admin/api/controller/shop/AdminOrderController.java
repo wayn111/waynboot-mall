@@ -50,7 +50,7 @@ public class AdminOrderController extends BaseController {
     }
 
     @PostMapping("ship")
-    public R ship(ShipVO shipVO) {
+    public R ship(@RequestBody  ShipVO shipVO) {
         return iAdminOrderService.ship(shipVO);
     }
 }
