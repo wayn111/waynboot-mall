@@ -566,6 +566,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         // 更改订单状态为已收货
         order.setOrderStatus(OrderUtil.STATUS_CONFIRM);
+        order.setConfirmTime(LocalDateTime.now());
         order.setUpdateTime(new Date());
         updateById(order);
         return R.success();
