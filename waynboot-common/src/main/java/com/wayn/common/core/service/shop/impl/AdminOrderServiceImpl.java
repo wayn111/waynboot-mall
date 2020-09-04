@@ -153,7 +153,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
             return R.error();
         }
 
-        //  如果订单不是退款状态，则不能退款
+        // 如果订单不是退款状态，则不能退款
         if (!order.getOrderStatus().equals(OrderUtil.STATUS_REFUND)) {
             return R.error("订单不能确认收货");
         }
