@@ -517,7 +517,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setUpdateTime(new Date());
         updateById(order);
 
-        //TODO 发送邮件和短信通知，这里采用异步发送
+        // TODO 发送邮件和短信通知，这里采用异步发送
         // 有用户申请退款，邮件通知运营人员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
