@@ -24,7 +24,7 @@ import java.util.Map;
 public class GoodsSpecificationServiceImpl extends ServiceImpl<GoodsSpecificationMapper, GoodsSpecification> implements IGoodsSpecificationService {
 
     @Override
-    public List<VO> getSpecificationVoList(Long goodsId) {
+    public List<VO> getSpecificationVOList(Long goodsId) {
         List<GoodsSpecification> specificationList = list(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
 
         Map<String, VO> map = new HashMap<>();
