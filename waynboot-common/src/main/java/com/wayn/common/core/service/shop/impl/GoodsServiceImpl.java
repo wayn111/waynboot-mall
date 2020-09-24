@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
+import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.util.R;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -86,7 +86,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
         for (GoodsProduct product : products) {
             BigDecimal productPrice = product.getPrice();
-            if (retailPrice.compareTo(productPrice) == 1) {
+            if (retailPrice.compareTo(productPrice) > 0) {
                 retailPrice = productPrice;
             }
         }
@@ -109,7 +109,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             goodsProduct.setCreateTime(new Date());
         }
         // 判断启用默认选中的规格是否超过一个
-        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).collect(Collectors.toList()).size() > 1) {
+        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).count() > 1) {
             return R.error("商品规格只能选择一个启用默认选中");
         }
 
@@ -155,7 +155,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
         for (GoodsProduct product : products) {
             BigDecimal productPrice = product.getPrice();
-            if (retailPrice.compareTo(productPrice) == 1) {
+            if (retailPrice.compareTo(productPrice) > 0) {
                 retailPrice = productPrice;
             }
         }
@@ -175,7 +175,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             goodsProduct.setUpdateTime(new Date());
         }
         // 判断启用默认选中的规格是否超过一个
-        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).collect(Collectors.toList()).size() > 1) {
+        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).count() > 1) {
             return R.error("商品规格只能选择一个启用默认选中");
         }
 
@@ -191,5 +191,10 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     @Override
     public R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList) {
         return R.success().add("goods", goodsMapper.selectGoodsListPageByl2CateId(page, l2cateList).getRecords());
+    }
+
+    @Override
+    public List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO) {
+        return goodsMapper.searchResult(page, searchVO);
     }
 }
