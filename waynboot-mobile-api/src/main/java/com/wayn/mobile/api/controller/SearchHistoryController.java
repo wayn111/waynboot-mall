@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2020-09-23
  */
 @RestController
-@RequestMapping("search")
+@RequestMapping("searchHistory")
 public class SearchHistoryController extends BaseController {
 
     @Autowired

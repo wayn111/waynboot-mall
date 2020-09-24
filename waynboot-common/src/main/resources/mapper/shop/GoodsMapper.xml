@@ -70,4 +70,20 @@
             order by create_time desc
         </where>
     </select>
+
+    <select id="searchResult" resultMap="ShopGoodsResult">
+        <include refid="selectGoodsVo"/>
+        <where>
+            del_flag = 0
+            <if test="searchVO.keyword != null and searchVO.keyword != ''">
+                AND name like concat('%', #{searchVO.keyword}, '%')
+            </if>
+            <if test="searchVO.isNew != null and searchVO.isNew == true">
+                order by is_new desc
+            </if>
+            <if test="searchVO.isHot != null and searchVO.isHot == true">
+                order by is_hot desc
+            </if>
+        </where>
+    </select>
 </mapper>

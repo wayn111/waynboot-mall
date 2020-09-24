@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
+import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.util.R;
 
 import java.util.List;
@@ -76,4 +77,6 @@ public interface IGoodsService extends IService<Goods> {
      * @return r
      */
     R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList);
+
+    List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO);
 }
