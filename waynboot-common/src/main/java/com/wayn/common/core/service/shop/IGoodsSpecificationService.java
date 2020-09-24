@@ -14,5 +14,5 @@ import com.wayn.common.core.domain.shop.GoodsSpecification;
 public interface IGoodsSpecificationService extends IService<GoodsSpecification> {
 
 
-   Object  getSpecificationVoList(Long goodsId);
+   Object  getSpecificationVOList(Long goodsId);
 }
