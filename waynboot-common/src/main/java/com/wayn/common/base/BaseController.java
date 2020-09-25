@@ -69,7 +69,7 @@ public class BaseController {
                     if (sortOrder != null && sortOrder.startsWith(Constants.ORDER_DESC)) {
                         orderItem.setAsc(false);
                     } else {
-                        orderItem.setAsc(false);
+                        orderItem.setAsc(true);
                     }
                     tPage.addOrder(orderItem);
                 }
