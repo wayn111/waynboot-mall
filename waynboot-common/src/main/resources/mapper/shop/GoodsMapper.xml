@@ -76,7 +76,7 @@
         <where>
             del_flag = 0
             <if test="searchVO.keyword != null and searchVO.keyword != ''">
-                AND name like concat('%', #{searchVO.keyword}, '%')
+                AND (name like concat('%', #{searchVO.keyword}, '%') OR keywords like concat('%', #{searchVO.keyword}, '%'))
             </if>
             <if test="searchVO.isNew != null and searchVO.isNew == true">
                 order by is_new desc
