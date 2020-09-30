@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * bean帮助类
  */
-public class MyBeanUtil extends BeanUtils{
+public class MyBeanUtil extends BeanUtils {
     /**
      * 将map中的值拷贝到bean中
      *
@@ -43,8 +43,6 @@ public class MyBeanUtil extends BeanUtils{
      * @param target 目标map
      */
     public static void copyProperties2Map(Object source, Map<String, Object> target) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-
-
         //1.获取bean信息
         BeanInfo beanInfo = Introspector.getBeanInfo(source.getClass());
         PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
