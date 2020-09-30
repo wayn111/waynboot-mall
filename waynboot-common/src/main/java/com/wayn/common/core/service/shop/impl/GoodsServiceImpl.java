@@ -146,6 +146,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
         Goods goods = goodsSaveRelatedVO.getGoods();
         GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
+        List<GoodsAttribute> updateAttributes = new ArrayList<>();
+        List<GoodsAttribute> insertAttributes = new ArrayList<>();
         GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
         GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
         if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
@@ -169,6 +171,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
         for (GoodsAttribute goodsAttribute : attributes) {
             goodsAttribute.setUpdateTime(new Date());
+            if (goodsAttribute.getId() != null) {
+                updateAttributes.add(goodsAttribute);
+            } else {
+                goodsAttribute.setGoodsId(goods.getId());
+                insertAttributes.add(goodsAttribute);
+            }
         }
 
         for (GoodsProduct goodsProduct : products) {
@@ -182,7 +190,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 更新商品规格
         iGoodsSpecificationService.updateBatchById(Arrays.asList(specifications));
         // 更新商品属性
-        iGoodsAttributeService.updateBatchById(Arrays.asList(attributes));
+        iGoodsAttributeService.updateBatchById(updateAttributes);
+        // 添加商品属性
+        iGoodsAttributeService.saveBatch(insertAttributes);
         // 更新商品货品
         iGoodsProductService.updateBatchById(Arrays.asList(products));
         return R.success();
