@@ -1,5 +1,7 @@
 package com.wayn.mobile.api.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Goods;
@@ -7,6 +9,7 @@ import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
+import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.CartMapper;
 import com.wayn.mobile.api.service.ICartService;
@@ -17,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -110,7 +115,24 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     public R list(Long userId) {
         List<Cart> cartList = list(new QueryWrapper<Cart>()
                 .eq("user_id", userId));
-        return R.success().add("data", cartList);
+        JSONArray array = new JSONArray();
+        for (Cart cart : cartList) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                MyBeanUtil.copyProperties2Map(cart, jsonObject);
+                Goods goods = iGoodsService.getById(cart.getGoodsId());
+                if (goods.getIsNew()) {
+                    jsonObject.put("tag", "新品");
+                }
+                if (goods.getIsHot()) {
+                    jsonObject.put("tag", "热品");
+                }
+            } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            array.add(jsonObject);
+        }
+        return R.success().add("data", array);
     }
 
     @Override
