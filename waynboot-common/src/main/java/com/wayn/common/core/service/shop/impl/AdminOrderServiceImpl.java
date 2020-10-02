@@ -7,7 +7,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
-import com.wayn.common.core.domain.tool.MailConfig;
+import com.wayn.common.core.domain.tool.EmailConfig;
 import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -132,12 +129,12 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         // 注意订单号只发后6位
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            MailConfig mailConfig = mailConfigService.getById(1L);
+            EmailConfig emailConfig = mailConfigService.getById(1L);
             SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setTitle("订单已经退款");
+            sendMailVO.setSubject("订单已经退款");
             sendMailVO.setContent(order.getOrderSn().substring(8, 14));
-            sendMailVO.setSendMail(email);
-            MailUtil.sendMail(mailConfig, sendMailVO, false);
+            sendMailVO.setTos(Arrays.asList(email));
+            MailUtil.sendMail(emailConfig, sendMailVO, false);
         }
         // logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
         return R.success();
@@ -170,12 +167,12 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            MailConfig mailConfig = mailConfigService.getById(1L);
+            EmailConfig emailConfig = mailConfigService.getById(1L);
             SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setTitle("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收");
+            sendMailVO.setSubject("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收");
             sendMailVO.setContent(order.getOrderSn().substring(8, 14));
-            sendMailVO.setSendMail(email);
-            MailUtil.sendMail(mailConfig, sendMailVO, false);
+            sendMailVO.setTos(Arrays.asList(email));
+            MailUtil.sendMail(emailConfig, sendMailVO, false);
         }
 //        logHelper.logOrderSucceed("发货", "订单编号 " + order.getOrderSn());
         return R.success();

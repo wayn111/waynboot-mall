@@ -2,7 +2,10 @@ package com.wayn.common.core.domain.vo;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 发送邮件VO对象
@@ -12,15 +15,14 @@ public class SendMailVO implements Serializable {
     private static final long serialVersionUID = 3496419936455305502L;
 
     /**
-     * 发送邮箱
+     * 收件人，支持多个收件人
      */
-    private String sendMail;
-    /**
-     * 邮件标题
-     */
-    private String title;
-    /**
-     * 邮件内容
-     */
+    @NotEmpty
+    private List<String> tos;
+
+    @NotBlank
+    private String subject;
+
+    @NotBlank
     private String content;
 }
