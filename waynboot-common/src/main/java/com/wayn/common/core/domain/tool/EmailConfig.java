@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Data
 @TableName("tool_email_config")
-public class MailConfig implements Serializable {
+public class EmailConfig implements Serializable {
 
     private static final long serialVersionUID = -8825288678724602467L;
 
@@ -28,7 +28,10 @@ public class MailConfig implements Serializable {
     @NotBlank
     private String pass;
 
-    /** 发件者用户名，默认为发件人邮箱前缀 */
+    /** 发件人邮箱 */
     @NotBlank
     private String fromUser;
+
+    /** 发件者用户名 */
+    private String user;
 }

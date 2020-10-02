@@ -14,7 +14,7 @@ import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
-import com.wayn.common.core.domain.tool.MailConfig;
+import com.wayn.common.core.domain.tool.EmailConfig;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.shop.IAddressService;
@@ -409,12 +409,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         //TODO 发送邮件和短信通知，这里采用异步发送
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-        MailConfig mailConfig = mailConfigService.getById(1L);
+        EmailConfig emailConfig = mailConfigService.getById(1L);
         SendMailVO sendMailVO = new SendMailVO();
-        sendMailVO.setTitle("新订单通知");
+        sendMailVO.setSubject("新订单通知");
         sendMailVO.setContent(order.toString());
-        sendMailVO.setSendMail("1669738430@qq.com");
-        MailUtil.sendMail(mailConfig, sendMailVO, false);
+        sendMailVO.setTos(Arrays.asList("1669738430@qq.com"));
+        MailUtil.sendMail(emailConfig, sendMailVO, false);
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
@@ -445,12 +445,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            MailConfig mailConfig = mailConfigService.getById(1L);
+            EmailConfig emailConfig = mailConfigService.getById(1L);
             SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setTitle("新订单通知");
+            sendMailVO.setSubject("新订单通知");
             sendMailVO.setContent(order.toString());
-            sendMailVO.setSendMail(email);
-            MailUtil.sendMail(mailConfig, sendMailVO, false);
+            sendMailVO.setTos(Arrays.asList(email));
+            MailUtil.sendMail(emailConfig, sendMailVO, false);
         }
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
@@ -517,12 +517,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 有用户申请退款，邮件通知运营人员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            MailConfig mailConfig = mailConfigService.getById(1L);
+            EmailConfig emailConfig = mailConfigService.getById(1L);
             SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setTitle("订单正在退款");
+            sendMailVO.setSubject("订单正在退款");
             sendMailVO.setContent(order.toString());
-            sendMailVO.setSendMail(email);
-            MailUtil.sendMail(mailConfig, sendMailVO, false);
+            sendMailVO.setTos(Arrays.asList(email));
+            MailUtil.sendMail(emailConfig, sendMailVO, false);
         }
 
         return R.success();
