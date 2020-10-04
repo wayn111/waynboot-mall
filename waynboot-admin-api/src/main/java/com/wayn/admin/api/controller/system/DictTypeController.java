@@ -75,9 +75,9 @@ public class DictTypeController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:dict:delete')")
     @ApiOperation(value = "删除字典类型", notes = "删除字典类型")
-    @DeleteMapping("{dictId}")
-    public R deleteDict(@PathVariable Long dictId) {
-        return R.result(iDictService.deleteDictTypeById(dictId));
+    @DeleteMapping("{dictIds}")
+    public R deleteDict(@PathVariable List<Long> dictIds) {
+        return R.result(iDictService.deleteDictTypeById(dictIds));
     }
 
 

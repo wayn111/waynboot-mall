@@ -88,8 +88,8 @@ public class DictDataController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:delete')")
     @ApiOperation(value = "删除字典数据", notes = "删除字典数据")
     @DeleteMapping("{dictId}")
-    public R deleteDict(@PathVariable Long dictId) {
-        return R.result(iDictService.removeById(dictId));
+    public R deleteDict(@PathVariable List<Long> dictIds) {
+        return R.result(iDictService.removeByIds(dictIds));
     }
 
 }

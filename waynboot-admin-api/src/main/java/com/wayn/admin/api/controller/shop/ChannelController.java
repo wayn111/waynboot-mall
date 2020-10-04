@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("shop/channel")
@@ -51,7 +52,7 @@ public class ChannelController extends BaseController {
     }
 
     @DeleteMapping("{channelId}")
-    public R deleteChannel(@PathVariable Long channelId) {
-        return R.result(iChannelService.removeById(channelId));
+    public R deleteChannel(@PathVariable List<Long> channelIds) {
+        return R.result(iChannelService.removeByIds(channelIds));
     }
 }

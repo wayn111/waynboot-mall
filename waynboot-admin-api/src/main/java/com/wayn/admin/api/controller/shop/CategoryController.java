@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -49,7 +50,7 @@ public class CategoryController extends BaseController {
     }
 
     @DeleteMapping("{categoryId}")
-    public R deleteCategory(@PathVariable Long categoryId) {
-        return R.result(iCategoryService.removeById(categoryId));
+    public R deleteCategory(@PathVariable List<Long> categoryIds) {
+        return R.result(iCategoryService.removeByIds(categoryIds));
     }
 }
