@@ -1,8 +1,10 @@
 package com.wayn.common.core.domain.shop;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.wayn.common.base.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -60,7 +62,8 @@ public class Comment extends ShopBaseEntity implements Serializable {
     /**
      * 图片地址列表，采用JSON数组格式
      */
-    private String picUrls;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private String[] picUrls;
 
     /**
      * 评分， 1-5

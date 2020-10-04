@@ -11,7 +11,7 @@
         <result column="admin_content"      property="adminContent" />
         <result column="user_id"            property="userId" />
         <result column="has_picture"        property="hasPicture" />
-        <result column="pic_urls"           property="picUrls" />
+        <result column="pic_urls"           property="picUrls" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
         <result column="star"               property="star" />
         <result column="create_time"        property="createTime" />
         <result column="update_time"        property="updateTime" />
