@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("shop/banner")
@@ -43,7 +44,7 @@ public class BannerController extends BaseController {
     }
 
     @DeleteMapping("{bannerId}")
-    public R deleteBanner(@PathVariable Long bannerId) {
-        return R.result(iBannerService.removeById(bannerId));
+    public R deleteBanner(@PathVariable List<Long> bannerIds) {
+        return R.result(iBannerService.removeByIds(bannerIds));
     }
 }

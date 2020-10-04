@@ -70,9 +70,11 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
 
     @Transactional
     @Override
-    public boolean deleteDictTypeById(Long dictId) {
-        Dict dict = getById(dictId);
-        remove(new QueryWrapper<Dict>().eq("parent_type", dict.getValue()));
-        return removeById(dictId);
+    public boolean deleteDictTypeById(List<Long> dictIds) {
+        for (Long dictId : dictIds) {
+            Dict dict = getById(dictId);
+            remove(new QueryWrapper<Dict>().eq("parent_type", dict.getValue()));
+        }
+        return removeByIds(dictIds);
     }
 }

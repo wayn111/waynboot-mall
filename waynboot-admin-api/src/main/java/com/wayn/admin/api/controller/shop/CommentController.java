@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * <p>
@@ -40,4 +41,10 @@ public class CommentController extends BaseController {
     public R updateComment(@Valid @RequestBody Comment comment) {
         return R.success().add("data", iCommentService.updateById(comment));
     }
+
+    @DeleteMapping("{commentIds}")
+    public R delComment(@PathVariable List<Long> commentIds) {
+        return R.success().add("data", iCommentService.removeByIds(commentIds));
+    }
+
 }
