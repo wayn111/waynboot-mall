@@ -11,7 +11,7 @@
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 06/10/2020 11:12:40
+ Date: 07/10/2020 13:05:33
 */
 
 SET NAMES utf8mb4;
@@ -23,6 +23,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `column`;
 CREATE TABLE `column`  (
   `id` int(11) NOT NULL COMMENT '自增ID',
+  `sort_order` smallint(6) NULL DEFAULT NULL COMMENT '排序',
   `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '栏目名称',
   `create_time` datetime(0) NULL DEFAULT NULL,
   `update_time` datetime(0) NULL DEFAULT NULL,
@@ -41,15 +42,27 @@ CREATE TABLE `column_goods_relation`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for default_search
+-- ----------------------------
+DROP TABLE IF EXISTS `default_search`;
+CREATE TABLE `default_search`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `keyword` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '关键字',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for diamond
 -- ----------------------------
 DROP TABLE IF EXISTS `diamond`;
 CREATE TABLE `diamond`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
   `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '金刚区名称',
-  `sort` int(10) NULL DEFAULT NULL COMMENT '排序',
+  `sort_order` int(10) NULL DEFAULT NULL COMMENT '排序',
   `jump_type` smallint(6) NULL DEFAULT NULL COMMENT '金刚区跳转类型（0栏目，1分类，2url）',
-  `value_id` int(11) NULL DEFAULT NULL COMMENT '栏目或者分类ID',
+  `value_id` int(11) NULL DEFAULT NULL COMMENT '跳转栏目ID或者分类ID',
   `value_url` varchar(125) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '跳转连接',
   `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '展示图标',
   `image` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '展示banner',
@@ -59,6 +72,35 @@ CREATE TABLE `diamond`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for keyword
+-- ----------------------------
+DROP TABLE IF EXISTS `keyword`;
+CREATE TABLE `keyword`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `keyword` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '关键字',
+  `jump_type` tinyint(1) NULL DEFAULT NULL COMMENT '关键字跳转类型（0关键字跳转，1url跳转）',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '关键字的跳转链接',
+  `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是热门关键字',
+  `is_default` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是默认关键字',
+  `sort_order` int(11) NOT NULL DEFAULT 100 COMMENT '排序',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '关键字表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of keyword
+-- ----------------------------
+INSERT INTO `keyword` VALUES (1, '母亲节', NULL, '', 0, 0, 100, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `keyword` VALUES (2, '日式', NULL, '', 0, 0, 100, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `keyword` VALUES (3, '夏凉被', NULL, '', 0, 0, 100, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `keyword` VALUES (4, '新品上市', NULL, '', 0, 0, 100, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `keyword` VALUES (5, '墨镜', NULL, '', 0, 0, 5, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `keyword` VALUES (6, '520元礼包抢先领', NULL, '', 1, 1, 1, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `keyword` VALUES (7, '单鞋', NULL, '', 0, 0, 8, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 
 -- ----------------------------
 -- Table structure for qiniu_config
@@ -128,7 +170,7 @@ CREATE TABLE `shop_address`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_address
@@ -477,7 +519,7 @@ CREATE TABLE `shop_comment`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id_value`(`value_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1015 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1014 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_comment
@@ -3235,7 +3277,7 @@ CREATE TABLE `shop_member`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_name`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_member
@@ -3454,7 +3496,7 @@ CREATE TABLE `sys_dept`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dept
@@ -3495,7 +3537,7 @@ CREATE TABLE `sys_dict`  (
   INDEX `sys_dict_value`(`value`) USING BTREE,
   INDEX `sys_dict_label`(`name`) USING BTREE,
   INDEX `sys_dict_del_flag`(`del_flag`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 184 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 183 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict
@@ -3563,7 +3605,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2046 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2045 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -3711,7 +3753,7 @@ CREATE TABLE `sys_user`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
