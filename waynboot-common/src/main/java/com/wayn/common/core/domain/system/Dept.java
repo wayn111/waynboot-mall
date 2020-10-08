@@ -25,6 +25,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Dept extends BaseEntity {
 
+    private static final long serialVersionUID = -1284670591734055472L;
     /**
      * 部门ID
      */
