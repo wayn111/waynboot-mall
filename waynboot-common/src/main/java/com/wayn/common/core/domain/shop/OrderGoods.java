@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 public class OrderGoods implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8548938788899621492L;
 
     @TableId(type = IdType.AUTO)
     private Long id;
