@@ -18,7 +18,8 @@ import java.io.Serializable;
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
 public class Dict extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = -7521690041693138642L;
+
+    private static final long serialVersionUID = 2263418671720743896L;
 
     /**
      * 菜单ID

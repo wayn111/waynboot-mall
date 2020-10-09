@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 public class Order extends ShopBaseEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3129813461714576208L;
 
     @TableId(type = IdType.AUTO)
     private Long id;

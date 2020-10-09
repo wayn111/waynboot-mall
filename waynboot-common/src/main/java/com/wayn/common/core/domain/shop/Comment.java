@@ -24,7 +24,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class Comment extends ShopBaseEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2415577057902110771L;
 
     @TableId(type = IdType.AUTO)
     private Long id;
