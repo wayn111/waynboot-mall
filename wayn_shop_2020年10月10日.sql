@@ -1,45 +1,21 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.31.49
+ Source Server         : localhost
  Source Server Type    : MySQL
  Source Server Version : 80012
- Source Host           : 192.168.31.49:3306
+ Source Host           : localhost:3306
  Source Schema         : wayn_shop
 
  Target Server Type    : MySQL
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 07/10/2020 13:05:33
+ Date: 10/10/2020 11:43:42
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for column
--- ----------------------------
-DROP TABLE IF EXISTS `column`;
-CREATE TABLE `column`  (
-  `id` int(11) NOT NULL COMMENT '自增ID',
-  `sort_order` smallint(6) NULL DEFAULT NULL COMMENT '排序',
-  `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '栏目名称',
-  `create_time` datetime(0) NULL DEFAULT NULL,
-  `update_time` datetime(0) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for column_goods_relation
--- ----------------------------
-DROP TABLE IF EXISTS `column_goods_relation`;
-CREATE TABLE `column_goods_relation`  (
-  `id` int(11) NOT NULL COMMENT '自增ID',
-  `column_id` int(11) NOT NULL COMMENT '栏目ID',
-  `goods_id` int(11) NOT NULL COMMENT '商品ID',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for default_search
@@ -48,26 +24,6 @@ DROP TABLE IF EXISTS `default_search`;
 CREATE TABLE `default_search`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `keyword` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '关键字',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for diamond
--- ----------------------------
-DROP TABLE IF EXISTS `diamond`;
-CREATE TABLE `diamond`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '金刚区名称',
-  `sort_order` int(10) NULL DEFAULT NULL COMMENT '排序',
-  `jump_type` smallint(6) NULL DEFAULT NULL COMMENT '金刚区跳转类型（0栏目，1分类，2url）',
-  `value_id` int(11) NULL DEFAULT NULL COMMENT '跳转栏目ID或者分类ID',
-  `value_url` varchar(125) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '跳转连接',
-  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '展示图标',
-  `image` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '展示banner',
-  `status` tinyint(1) NULL DEFAULT NULL COMMENT '是否展示（0不展示，1展示）',
-  `del_flag` tinyint(1) NULL DEFAULT NULL COMMENT '删除标志（0代表存在 1代表删除）',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -103,6 +59,50 @@ INSERT INTO `keyword` VALUES (6, '520元礼包抢先领', NULL, '', 1, 1, 1, '20
 INSERT INTO `keyword` VALUES (7, '单鞋', NULL, '', 0, 0, 8, '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 
 -- ----------------------------
+-- Table structure for platform_coupon
+-- ----------------------------
+DROP TABLE IF EXISTS `platform_coupon`;
+CREATE TABLE `platform_coupon`  (
+  `pc_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pc_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '平台优惠劵名称',
+  `pc_full_amount` int(11) NULL DEFAULT NULL COMMENT '平台优惠劵使用门槛（单位分）',
+  `pc_reduce_amount` int(11) NULL DEFAULT NULL COMMENT '平台优惠劵优惠金额（单位分）',
+  `pc_user_limit` int(11) NULL DEFAULT NULL COMMENT '用户限制领取数量',
+  `pc_total` int(11) NULL DEFAULT NULL COMMENT '平台优惠劵发放总量',
+  `store_ids` varchar(2500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '优惠卷关联店铺ID，字符串形式逗号分割',
+  `pc_create_user_id` int(11) NULL DEFAULT NULL COMMENT '创建人ID',
+  `pc_create_user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建人名称',
+  `pc_shelves_status` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '平台优惠劵上架状态 0 下架 1 下架（默认为0）',
+  `pc_valid_day` smallint(3) NULL DEFAULT NULL COMMENT '平台优惠劵使用有效天数',
+  `pc_create_time` int(11) NULL DEFAULT NULL COMMENT '创建时间',
+  `pc_update_time` int(11) NULL DEFAULT NULL COMMENT '最后更新时间',
+  `is_delete` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '逻辑删除 0 存在 1 删除（默认为0）',
+  PRIMARY KEY (`pc_id`) USING BTREE,
+  INDEX `create_time`(`pc_create_time`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台优惠卷配置' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for platform_coupon_user_receive
+-- ----------------------------
+DROP TABLE IF EXISTS `platform_coupon_user_receive`;
+CREATE TABLE `platform_coupon_user_receive`  (
+  `pcs_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pc_id` int(11) NULL DEFAULT NULL COMMENT '平台优惠卷ID',
+  `user_id` int(11) NULL DEFAULT NULL COMMENT '店铺ID',
+  `receive_num` int(11) NULL DEFAULT NULL COMMENT '用户领取张数',
+  `is_delete` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '逻辑删除 0 存在 1 删除（默认为0）',
+  PRIMARY KEY (`pcs_id`) USING BTREE,
+  INDEX `pc_id`(`pc_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户领取平台优惠卷张数表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of platform_coupon_user_receive
+-- ----------------------------
+INSERT INTO `platform_coupon_user_receive` VALUES (1, 100, 1, 1, 0);
+INSERT INTO `platform_coupon_user_receive` VALUES (2, 100, 1, 1, 0);
+INSERT INTO `platform_coupon_user_receive` VALUES (3, 100, 1, 2, 0);
+
+-- ----------------------------
 -- Table structure for qiniu_config
 -- ----------------------------
 DROP TABLE IF EXISTS `qiniu_config`;
@@ -116,7 +116,7 @@ CREATE TABLE `qiniu_config`  (
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
   `enable` tinyint(4) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of qiniu_config
@@ -133,7 +133,7 @@ CREATE TABLE `seckill`  (
   `number` int(11) NOT NULL COMMENT '库存数量',
   `start_time` timestamp(0) NOT NULL COMMENT '秒杀开始时间',
   `end_time` timestamp(0) NOT NULL COMMENT '秒杀结束时间',
-  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '秒杀创建时间',
+  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '秒杀创建时间',
   `version` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '版本',
   PRIMARY KEY (`seckill_id`) USING BTREE,
   INDEX `idx_start_time`(`start_time`) USING BTREE,
@@ -170,7 +170,7 @@ CREATE TABLE `shop_address`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_address
@@ -198,7 +198,7 @@ CREATE TABLE `shop_banner`  (
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   `status` tinyint(4) NULL DEFAULT 0 COMMENT 'banner状态（0启用 1禁用）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_banner
@@ -221,7 +221,7 @@ CREATE TABLE `shop_brand`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1046000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '品牌商表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1046001 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '品牌商表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_brand
@@ -297,7 +297,7 @@ CREATE TABLE `shop_cart`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 75 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_cart
@@ -380,7 +380,7 @@ CREATE TABLE `shop_category`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `parent_id`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1036004 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1036005 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_category
@@ -493,12 +493,36 @@ CREATE TABLE `shop_channel`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '名称',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_channel
 -- ----------------------------
 INSERT INTO `shop_channel` VALUES (5, 'admin', '2020-06-26 19:32:35', NULL, '2020-08-19 01:05:53', 'news', '新品', 'new');
+
+-- ----------------------------
+-- Table structure for shop_column
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_column`;
+CREATE TABLE `shop_column`  (
+  `id` int(11) NOT NULL COMMENT '自增ID',
+  `sort_order` smallint(6) NULL DEFAULT NULL COMMENT '排序',
+  `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '栏目名称',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页栏目配置' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for shop_column_goods_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_column_goods_relation`;
+CREATE TABLE `shop_column_goods_relation`  (
+  `id` int(11) NOT NULL COMMENT '自增ID',
+  `column_id` int(11) NOT NULL COMMENT '栏目ID',
+  `goods_id` int(11) NOT NULL COMMENT '商品ID',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '栏目商品关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_comment
@@ -519,7 +543,7 @@ CREATE TABLE `shop_comment`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id_value`(`value_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1014 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1015 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_comment
@@ -1530,6 +1554,26 @@ INSERT INTO `shop_comment` VALUES (1013, 1012, 2, 'fffff', '', 0, 0, '[]', 0, '2
 INSERT INTO `shop_comment` VALUES (1014, 1011, 2, 'fffff', '', 0, 0, '[]', 0, '2020-02-10 21:41:25', '2020-02-10 21:41:25', 1);
 
 -- ----------------------------
+-- Table structure for shop_diamond
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_diamond`;
+CREATE TABLE `shop_diamond`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '金刚区名称',
+  `sort_order` int(10) NULL DEFAULT NULL COMMENT '排序',
+  `jump_type` smallint(6) NULL DEFAULT NULL COMMENT '金刚区跳转类型（0栏目，1分类，2url）',
+  `value_id` int(11) NULL DEFAULT NULL COMMENT '跳转栏目ID或者分类ID',
+  `value_url` varchar(125) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '跳转连接',
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '展示图标',
+  `image` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '展示banner',
+  `status` tinyint(1) NULL DEFAULT NULL COMMENT '是否展示（0不展示，1展示）',
+  `del_flag` tinyint(1) NULL DEFAULT NULL COMMENT '删除标志（0代表存在 1代表删除）',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页金刚区配置' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for shop_goods
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_goods`;
@@ -1560,7 +1604,7 @@ CREATE TABLE `shop_goods`  (
   INDEX `cat_id`(`category_id`) USING BTREE,
   INDEX `brand_id`(`brand_id`) USING BTREE,
   INDEX `sort_order`(`sort_order`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1181004 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1181005 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods
@@ -1823,7 +1867,7 @@ CREATE TABLE `shop_goods_attribute`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 878 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 879 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_attribute
@@ -2724,7 +2768,7 @@ CREATE TABLE `shop_goods_product`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 251 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 252 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_product
@@ -2996,7 +3040,7 @@ CREATE TABLE `shop_goods_specification`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 250 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 251 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_specification
@@ -3277,7 +3321,7 @@ CREATE TABLE `shop_member`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_name`(`username`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_member
@@ -3321,7 +3365,7 @@ CREATE TABLE `shop_order`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 60 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order
@@ -3365,7 +3409,7 @@ CREATE TABLE `shop_order_goods`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id`(`order_id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 62 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order_goods
@@ -3402,7 +3446,7 @@ CREATE TABLE `shop_search_history`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_search_history
@@ -3441,7 +3485,7 @@ CREATE TABLE `shop_user`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_name`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_user
@@ -3459,7 +3503,7 @@ CREATE TABLE `success_killed`  (
   `create_time` timestamp(0) NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`seckill_id`, `user_phone`) USING BTREE,
   INDEX `idx_create_time`(`create_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '秒杀库存表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '秒杀库存表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of success_killed
@@ -3496,7 +3540,7 @@ CREATE TABLE `sys_dept`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dept
@@ -3537,7 +3581,7 @@ CREATE TABLE `sys_dict`  (
   INDEX `sys_dict_value`(`value`) USING BTREE,
   INDEX `sys_dict_label`(`name`) USING BTREE,
   INDEX `sys_dict_del_flag`(`del_flag`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 183 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 184 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict
@@ -3605,7 +3649,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2045 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2046 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -3655,6 +3699,9 @@ INSERT INTO `sys_menu` VALUES (2042, '地址管理', 2040, 2, 'address', 'shop/u
 INSERT INTO `sys_menu` VALUES (2043, '订单管理', 2033, 3, 'order', 'shop/order/index', 1, 'C', 0, 0, NULL, 'dashboard', 'admin', '2020-08-29 23:02:39', 'admin', '2020-08-29 23:03:21', '');
 INSERT INTO `sys_menu` VALUES (2044, '邮件配置', 3, 2, 'email', 'tool/email/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-10-02 23:41:41', 'admin', '2020-10-02 23:44:21', '');
 INSERT INTO `sys_menu` VALUES (2045, '评论管理', 2040, 3, 'comment', 'shop/user/comment/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-10-04 09:50:44', 'admin', '2020-10-04 09:51:10', '');
+INSERT INTO `sys_menu` VALUES (2046, '运营管理', 0, 2, 'operation', NULL, 1, 'M', 0, 0, NULL, 'drag', 'admin', '2020-10-10 11:07:59', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2047, '金刚区管理', 2046, 1, 'diamond', 'operation/diamond/index', 1, 'C', 0, 0, NULL, 'druid', 'admin', '2020-10-10 11:08:48', 'admin', '2020-10-10 11:09:56', '');
+INSERT INTO `sys_menu` VALUES (2048, '栏目管理', 2046, 2, 'column', 'operation/column/index', 1, 'C', 0, 0, NULL, 'color', 'admin', '2020-10-10 11:17:54', '', NULL, '');
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -3673,7 +3720,7 @@ CREATE TABLE `sys_role`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`role_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3420 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3421 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role
@@ -3753,7 +3800,7 @@ CREATE TABLE `sys_user`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
