@@ -69,3 +69,8 @@ spring:
         max-idle: 100
         min-idle: 10
         max-wait: 2000
+es:
+  host: 192.168.147.132
+  port: 9200
+  scheme: http
+
