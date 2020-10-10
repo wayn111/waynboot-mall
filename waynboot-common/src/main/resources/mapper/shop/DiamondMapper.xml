@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.shop.DiamondMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wayn.common.core.domain.shop.Diamond">
+        <result column="id"             property="id" />
+        <result column="name"           property="name" />
+        <result column="sort_order"     property="sortOrder" />
+        <result column="jump_type"      property="jumpType" />
+        <result column="value_id"       property="valueId" />
+        <result column="value_url"      property="valueUrl" />
+        <result column="icon"           property="icon" />
+        <result column="image"          property="image" />
+        <result column="status"         property="status" />
+        <result column="del_flag"       property="delFlag" />
+        <result column="create_time"    property="createTime" />
+        <result column="update_time"    property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select id,
+        name, sort_order, jump_type, value_id, value_url, icon, image, status, del_flag, create_time, update_time from diamond
+    </sql>
+
+</mapper>
