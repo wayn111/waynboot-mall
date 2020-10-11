@@ -1,6 +1,7 @@
-package com.wayn.common.base;
+package com.wayn.admin.framework.manager.elastic.service;
 
 import com.alibaba.fastjson.JSON;
+import com.wayn.common.base.ElasticEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -35,18 +36,14 @@ public class BaseElasticService {
     RestHighLevelClient restHighLevelClient;
 
     /**
-     * @param idxName 索引名称
-     * @param idxSQL  索引描述
-     * @return void
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:30
-     * @since
+     * 创建索引
+     *
+     * @param idxName 缩影名称
+     * @param idxSQL  缩影定义
      */
     public void createIndex(String idxName, String idxSQL) {
         try {
-            if (!this.indexExist(idxName)) {
+            if (this.indexExist(idxName)) {
                 log.error(" idxName={} 已经存在,idxSql={}", idxName, idxSQL);
                 return;
             }
@@ -67,13 +64,9 @@ public class BaseElasticService {
     /**
      * 断某个index是否存在
      *
-     * @param idxName index名
+     * @param idxName 索引名称
      * @return boolean
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:27
-     * @since
+     * @throws Exception 异常
      */
     public boolean indexExist(String idxName) throws Exception {
         GetIndexRequest request = new GetIndexRequest(idxName);
@@ -81,7 +74,7 @@ public class BaseElasticService {
         request.humanReadable(true);
         request.includeDefaults(false);
         request.indicesOptions(IndicesOptions.lenientExpandOpen());
-        return restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
+        return !restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
     }
 
     /**
@@ -89,11 +82,6 @@ public class BaseElasticService {
      *
      * @param idxName index名
      * @return boolean
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:27
-     * @since
      */
     public boolean isExistsIndex(String idxName) throws Exception {
         return restHighLevelClient.indices().exists(new GetIndexRequest(idxName), RequestOptions.DEFAULT);
@@ -103,12 +91,6 @@ public class BaseElasticService {
      * 设置分片
      *
      * @param request
-     * @return void
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 19:27
-     * @since
      */
     public void buildSetting(CreateIndexRequest request) {
         request.settings(Settings.builder().put("index.number_of_shards", 3)
@@ -118,12 +100,6 @@ public class BaseElasticService {
     /**
      * @param idxName index
      * @param entity  对象
-     * @return void
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:27
-     * @since
      */
     public void insertOrUpdateOne(String idxName, ElasticEntity entity) {
         IndexRequest request = new IndexRequest(idxName);
@@ -144,12 +120,6 @@ public class BaseElasticService {
      *
      * @param idxName index
      * @param list    带插入列表
-     * @return void
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:26
-     * @since
      */
     public void insertBatch(String idxName, List<ElasticEntity> list) {
         BulkRequest request = new BulkRequest();
@@ -167,12 +137,6 @@ public class BaseElasticService {
      *
      * @param idxName index
      * @param idList  待删除列表
-     * @return void
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:14
-     * @since
      */
     public <T> void deleteBatch(String idxName, Collection<T> idList) {
         BulkRequest request = new BulkRequest();
@@ -189,11 +153,6 @@ public class BaseElasticService {
      * @param builder 查询参数
      * @param c       结果类对象
      * @return java.util.List<T>
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:14
-     * @since
      */
     public <T> List<T> search(String idxName, SearchSourceBuilder builder, Class<T> c) {
         SearchRequest request = new SearchRequest(idxName);
@@ -214,17 +173,11 @@ public class BaseElasticService {
     /**
      * 删除index
      *
-     * @param idxName
-     * @return void
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:13
-     * @since
+     * @param idxName 索引名称
      */
     public void deleteIndex(String idxName) {
         try {
-            if (!this.indexExist(idxName)) {
+            if (this.indexExist(idxName)) {
                 log.error(" idxName={} 已经存在", idxName);
                 return;
             }
@@ -236,14 +189,10 @@ public class BaseElasticService {
 
 
     /**
-     * @param idxName
-     * @param builder
-     * @return void
-     * @throws
-     * @author WCNGS@QQ.COM
-     * @See
-     * @date 2019/10/17 17:13
-     * @since
+     * 根据查询条件删除文档
+     *
+     * @param idxName 缩影名称
+     * @param builder 查询条件
      */
     public void deleteByQuery(String idxName, QueryBuilder builder) {
 
