@@ -6,7 +6,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://192.168.31.49:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:mysql://localhost:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
         password: admin123
       # 从库数据源
@@ -19,9 +19,9 @@ spring:
       # 初始连接数
       initialSize: 20
       # 最小连接池数量
-      minIdle: 10
+      minIdle: 40
       # 最大连接池数量
-      maxActive: 40
+      maxActive: 80
       # 配置获取连接等待超时的时间
       maxWait: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -56,7 +56,7 @@ spring:
           config:
             multi-statement-allow: true
   redis:
-    host: 192.168.31.49
+    host: localhost
     port: 6379
     timeout: 5000
     password:
@@ -69,3 +69,7 @@ spring:
         max-idle: 100
         min-idle: 10
         max-wait: 2000
+es:
+  host: 192.168.147.132
+  port: 9200
+  scheme: http
