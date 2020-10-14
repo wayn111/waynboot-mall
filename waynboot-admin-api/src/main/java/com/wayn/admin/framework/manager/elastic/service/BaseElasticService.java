@@ -5,8 +5,11 @@ import com.wayn.common.base.ElasticEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.IndicesOptions;
@@ -20,6 +23,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -126,7 +130,7 @@ public class BaseElasticService {
         list.forEach(item -> request.add(new IndexRequest(idxName).id(item.getId())
                 .source(item.getData(), XContentType.JSON)));
         try {
-            restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+            BulkResponse bulk = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -165,6 +169,26 @@ public class BaseElasticService {
                 res.add(JSON.parseObject(hit.getSourceAsString(), c));
             }
             return res;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public <T> List<T> search(MultiSearchRequest request, Class<T> c) {
+        try {
+            MultiSearchResponse response = restHighLevelClient.msearch(request, RequestOptions.DEFAULT);
+            MultiSearchResponse.Item[] responseResponses = response.getResponses();
+            List<T> all = new ArrayList<>();
+            for (MultiSearchResponse.Item item : responseResponses) {
+                SearchHits hits = item.getResponse().getHits();
+                List<T> res = new ArrayList<>();
+                for (SearchHit hit : hits) {
+                    res.add(JSON.parseObject(hit.getSourceAsString(), c));
+                }
+                all.addAll(res);
+            }
+            return all;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
