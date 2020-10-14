@@ -70,7 +70,7 @@ spring:
         min-idle: 10
         max-wait: 2000
 es:
-  host: 192.168.147.132
+  host: localhost
   port: 9200
   scheme: http
 
