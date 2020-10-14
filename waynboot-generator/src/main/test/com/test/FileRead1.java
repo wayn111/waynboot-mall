@@ -14,14 +14,26 @@ public class FileRead1 {
         File file1 = new File("E:\\扫黑办聚合码\\打印一张");
         File file2 = new File("E:\\扫黑办聚合码\\打印两张");
         File file3 = new File("E:\\扫黑办聚合码\\打印三张");
+        File file4 = new File("E:\\扫黑办聚合码\\打印一张\\1组");
+        File file5 = new File("E:\\扫黑办聚合码\\打印一张\\3组");
+        File file6 = new File("E:\\扫黑办聚合码\\打印一张\\4组");
+        File file7 = new File("E:\\扫黑办聚合码\\打印一张\\5组");
         List<String> all = new ArrayList<>();
         List<String> list1 = Arrays.asList(file1.list());
-        System.out.println(list1.size());
-        all.addAll(list1);
         List<String> list2 = Arrays.asList(file2.list());
-        all.addAll(list2);
         List<String> list3 = Arrays.asList(file3.list());
+        List<String> list4 = Arrays.asList(file4.list());
+        List<String> list5 = Arrays.asList(file5.list());
+        List<String> list6 = Arrays.asList(file6.list());
+        List<String> list7 = Arrays.asList(file7.list());
+        all.addAll(list1);
+        all.addAll(list2);
         all.addAll(list3);
+        all.addAll(list4);
+        all.addAll(list5);
+        all.addAll(list6);
+        all.addAll(list7);
+
         System.out.println(all.size());
 
         List<Integer> names = new ArrayList<>();
@@ -31,18 +43,26 @@ public class FileRead1 {
             }
             System.out.println(s);
             String[] split = s.split("-", -1);
+            if (split.length == 1) {
+                String s1 = split[0].trim().split(".png", -1)[0];
+                if (s1.contains(" (") || s1.contains("组")) {
+                    continue;
+                }
+                names.add(Integer.parseInt(s1));
+            }
             if (split.length == 2) {
                 if (Integer.parseInt(split[0].trim()) < 16) {
-                    if (split[1].trim().contains("-")) {
-                        names.add(Integer.parseInt(split[1].trim().split("-.png", -1)[0]));
-                    } else {
+//                    if (split[1].trim().contains("-")) {
+//                        names.add(Integer.parseInt(split[1].trim().split("-.png", -1)[0]));
+//                    } else {
+//                    }
                         names.add(Integer.parseInt(split[1].trim().split(".png", -1)[0]));
-                    }
+//                    names.add(Integer.parseInt(split[1].trim()));
                 } else {
                     names.add(Integer.parseInt(split[0].trim()));
                 }
             }
-            if (split.length == 3) {
+            if (split.length >= 3) {
                 names.add(Integer.parseInt(split[1].trim()));
             }
         }
