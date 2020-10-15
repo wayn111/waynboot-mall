@@ -86,6 +86,7 @@ public class ElasticController {
 //        request.add(firstSearchRequest);
 //        request.add(secondSearchRequest);
 //        List<Object> list = baseElasticService.search(request, Object.class);
+        // 查询
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("name", "手机");
