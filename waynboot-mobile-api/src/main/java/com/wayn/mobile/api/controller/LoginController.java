@@ -15,8 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -70,7 +68,7 @@ public class LoginController {
 
     @ResponseBody
     @RequestMapping("/captcha")
-    public R captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public R captcha() {
         SpecCaptcha specCaptcha = new SpecCaptcha(80, 32, 4);
         String verCode = specCaptcha.text().toLowerCase();
         String key = IdUtil.getUid();
