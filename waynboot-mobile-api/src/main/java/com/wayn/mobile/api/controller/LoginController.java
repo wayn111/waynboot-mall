@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -43,10 +42,12 @@ public class LoginController {
     @PostMapping("/registry")
     public R registry(@RequestBody RegistryObj registryObj) {
         if (!StringUtils.equalsIgnoreCase(registryObj.getPassword(), registryObj.getConfirmPassword())) {
-            return R.error("两次密码输入有误");
+            return R.error("两次密码输入不相符");
         }
-        List<Member> members = iMemberService.list(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
-        if (members.size() > 0) {
+        // 验证手机号是否唯一
+        int count = iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
+        iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
+        if (count > 0) {
             return R.error("手机号已注册，请更换手机号");
         }
         // 获取redis中的验证码
@@ -59,6 +60,7 @@ public class LoginController {
         redisCache.deleteObject(registryObj.getKey());
         Member member = new Member();
         member.setUsername("新用户" + new Date().getTime());
+        member.setNickname("用户昵称" + new Date().getTime());
         member.setMobile(registryObj.getMobile());
         member.setEmail(registryObj.getEmail());
         member.setPassword(registryObj.getPassword());
