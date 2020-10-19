@@ -36,9 +36,18 @@ public class ElasticController {
     public R index() {
         String indexSql = "{\n" +
                 "    \"properties\": {\n" +
+                "            \"id\": {\n" +
+                "                \"type\": \"integer\"\n" +
+                "            },\n" +
                 "            \"name\": {\n" +
                 "                \"type\": \"text\",\n" +
                 "                \"analyzer\": \"ik_max_word\"\n" +
+                "            },\n" +
+                "            \"countPrice\": {\n" +
+                "                \"type\": \"float\"\n" +
+                "            },\n" +
+                "            \"retailPrice\": {\n" +
+                "                \"type\": \"float\"\n" +
                 "            },\n" +
                 "            \"keyword\": {\n" +
                 "                \"type\": \"keyword\"\n" +
@@ -60,7 +69,10 @@ public class ElasticController {
             ElasticEntity elasticEntity = new ElasticEntity();
             Map<String, Object> map = new HashMap<>();
             elasticEntity.setId(goods.getId().toString());
+            map.put("id", goods.getId());
             map.put("name", goods.getName());
+            map.put("countPrice", goods.getCounterPrice());
+            map.put("retailPrice", goods.getRetailPrice());
             map.put("keyword", goods.getKeywords());
             map.put("isOnSale", goods.getIsOnSale());
             elasticEntity.setData(map);
@@ -71,7 +83,7 @@ public class ElasticController {
     }
 
     @GetMapping("search")
-    public R search() {
+    public R search(String keyword) {
 //        MultiSearchRequest request = new MultiSearchRequest();
 //        SearchRequest firstSearchRequest = new SearchRequest("goods");
 //        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -89,10 +101,10 @@ public class ElasticController {
         // 查询代码
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("name", "手机");
-        MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", "手机");
-        boolQueryBuilder.should(matchQuery);
-        boolQueryBuilder.should(matchPhraseQueryBuilder);
+        MatchQueryBuilder matchQuery1 = QueryBuilders.matchQuery("name", keyword);
+        MatchQueryBuilder matchQuery2 = QueryBuilders.matchQuery("isOnSale", true);
+        MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
+        boolQueryBuilder.must(matchQuery2).should(matchQuery1).should(matchPhraseQueryBuilder);
         searchSourceBuilder.query(boolQueryBuilder);
         List<Object> list = baseElasticService.search("goods", searchSourceBuilder, Object.class);
         return R.success().add("data", list);
