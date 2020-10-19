@@ -1,6 +1,7 @@
 package com.wayn.admin.api.controller.shop;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.wayn.admin.framework.manager.elastic.service.BaseElasticService;
 import com.wayn.common.base.ElasticEntity;
 import com.wayn.common.core.domain.shop.Goods;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("elastic")
@@ -102,11 +104,12 @@ public class ElasticController {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         MatchQueryBuilder matchQuery1 = QueryBuilders.matchQuery("name", keyword);
-        MatchQueryBuilder matchQuery2 = QueryBuilders.matchQuery("isOnSale", true);
+//        MatchQueryBuilder matchQuery2 = QueryBuilders.matchQuery("isOnSale", true);
         MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
-        boolQueryBuilder.must(matchQuery2).should(matchQuery1).should(matchPhraseQueryBuilder);
+        boolQueryBuilder.should(matchQuery1).should(matchPhraseQueryBuilder);
         searchSourceBuilder.query(boolQueryBuilder);
-        List<Object> list = baseElasticService.search("goods", searchSourceBuilder, Object.class);
+        List<JSONObject> list = baseElasticService.search("goods", searchSourceBuilder, JSONObject.class);
+        list = list.stream().filter(jsonObject -> (boolean) jsonObject.get("isOnSale")).collect(Collectors.toList());
         return R.success().add("data", list);
     }
 }
