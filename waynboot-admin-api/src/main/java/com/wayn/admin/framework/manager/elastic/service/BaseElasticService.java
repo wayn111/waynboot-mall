@@ -4,15 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.wayn.common.base.ElasticEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.IndicesOptions;
+import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
@@ -105,17 +108,27 @@ public class BaseElasticService {
      * @param idxName index
      * @param entity  对象
      */
-    public void insertOrUpdateOne(String idxName, ElasticEntity entity) {
+    public String insertOrUpdateOne(String idxName, ElasticEntity entity) {
         IndexRequest request = new IndexRequest(idxName);
         log.error("Data : id={},entity={}", entity.getId(), JSON.toJSONString(entity.getData()));
         request.id(entity.getId());
         request.source(entity.getData(), XContentType.JSON);
 //        request.source(JSON.toJSONString(entity.getData()), XContentType.JSON);
+        String result = null;
         try {
-            restHighLevelClient.index(request, RequestOptions.DEFAULT);
+            IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+            ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
+            if (shardInfo.getFailed() > 0) {
+                for (ReplicationResponse.ShardInfo.Failure failure :
+                        shardInfo.getFailures()) {
+                    return failure.reason();
+                }
+            }
+            result = indexResponse.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return result;
     }
 
 
@@ -125,15 +138,21 @@ public class BaseElasticService {
      * @param idxName index
      * @param list    带插入列表
      */
-    public void insertBatch(String idxName, List<ElasticEntity> list) {
+    public boolean insertBatch(String idxName, List<ElasticEntity> list) {
         BulkRequest request = new BulkRequest();
         list.forEach(item -> request.add(new IndexRequest(idxName).id(item.getId())
                 .source(item.getData(), XContentType.JSON)));
         try {
-            BulkResponse bulk = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+            BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+            for (BulkItemResponse bulkItemResponse : bulkResponse) {
+                if (bulkResponse.hasFailures()) {
+                    return false;
+                }
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
     /**

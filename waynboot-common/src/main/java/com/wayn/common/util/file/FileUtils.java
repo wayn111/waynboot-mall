@@ -21,7 +21,6 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      *
      * @param filePath 文件路径
      * @param os       输出流
-     * @return
      */
     public static void writeBytes(String filePath, OutputStream os) throws IOException {
         FileInputStream fis = null;
@@ -36,8 +35,6 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             while ((length = fis.read(b)) > 0) {
                 os.write(b, 0, length);
             }
-        } catch (IOException e) {
-            throw e;
         } finally {
             if (os != null) {
                 try {
@@ -111,10 +108,37 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
         return filename;
     }
 
+    /**
+     * 文件名重新命名
+     *
+     * @param fileName 文件名
+     * @return 重命名后名称
+     */
     public static String encodingFilename(String fileName) {
         fileName = fileName.replace("_", " ");
         fileName = Md5Utils.hash(fileName + System.nanoTime() + counter++);
         return fileName;
+    }
+
+    /**
+     * 获取resources目录下指定文件输入流内容
+     *
+     * @param inputStream is
+     * @return 文件内容
+     */
+    public static String getContent(InputStream inputStream) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder content = new StringBuilder();
+        String temp = null;
+        while (true) {
+            try {
+                if (!((temp = br.readLine()) != null)) break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            content.append(temp);
+        }
+        return content.toString();
     }
 }
 
