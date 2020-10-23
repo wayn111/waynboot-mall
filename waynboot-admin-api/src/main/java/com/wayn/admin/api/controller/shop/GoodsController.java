@@ -3,6 +3,7 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.framework.manager.elastic.service.BaseElasticService;
+import com.wayn.admin.framework.redis.RedisCache;
 import com.wayn.common.base.BaseController;
 import com.wayn.common.base.ElasticEntity;
 import com.wayn.common.constant.SysConstants;
@@ -38,6 +39,9 @@ public class GoodsController extends BaseController {
     @Autowired
     private BaseElasticService baseElasticService;
 
+    @Autowired
+    private RedisCache redisCache;
+
     @GetMapping("/list")
     public R list(Goods goods) {
         Page<Goods> page = getPage();
@@ -66,6 +70,10 @@ public class GoodsController extends BaseController {
 
     @PostMapping("syncEs")
     public R syncEs() {
+        if (redisCache.getCacheObject("syncEs")) {
+            return R.error("任务还在执行，请过一会再点");
+        }
+        redisCache.setCacheObject("syncEs", true);
         baseElasticService.deleteIndex("goods");
         baseElasticService.createIndex("goos", FileUtils.getContent(this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME)));
         List<Goods> list = iGoodsService.list();
@@ -83,6 +91,8 @@ public class GoodsController extends BaseController {
             elasticEntity.setData(map);
             entities.add(elasticEntity);
         }
-        return R.result(baseElasticService.insertBatch("goods", entities));
+        boolean insertBatch = baseElasticService.insertBatch("goods", entities);
+        redisCache.deleteObject("syncEs");
+        return R.result(insertBatch);
     }
 }
