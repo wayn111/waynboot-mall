@@ -1,0 +1,23 @@
+{
+    "properties": {
+            "id": {
+                "type": "integer"
+            },
+            "name": {
+                "type": "text",
+                "analyzer": "ik_max_word"
+            },
+            "countPrice": {
+                "type": "float"
+            },
+            "retailPrice": {
+                "type": "float"
+            },
+            "keyword": {
+                "type": "keyword"
+            },
+            "isOnSale": {
+                "type": "boolean"
+            }
+        }
+}

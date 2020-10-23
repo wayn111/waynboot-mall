@@ -7,6 +7,7 @@ import com.wayn.common.base.ElasticEntity;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
+import com.wayn.common.util.file.FileUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,32 +38,12 @@ public class ElasticController {
 
 
     @GetMapping("index")
-    public R index() {
-        String indexSql = "{\n" +
-                "    \"properties\": {\n" +
-                "            \"id\": {\n" +
-                "                \"type\": \"integer\"\n" +
-                "            },\n" +
-                "            \"name\": {\n" +
-                "                \"type\": \"text\",\n" +
-                "                \"analyzer\": \"ik_max_word\"\n" +
-                "            },\n" +
-                "            \"countPrice\": {\n" +
-                "                \"type\": \"float\"\n" +
-                "            },\n" +
-                "            \"retailPrice\": {\n" +
-                "                \"type\": \"float\"\n" +
-                "            },\n" +
-                "            \"keyword\": {\n" +
-                "                \"type\": \"keyword\"\n" +
-                "            },\n" +
-                "            \"isOnSale\": {\n" +
-                "                \"type\": \"boolean\"\n" +
-                "            }\n" +
-                "        }\n" +
-                "}";
-        baseElasticService.createIndex("goods", indexSql);
+    public R index() throws IOException {
+        InputStream is = this.getClass().getResourceAsStream("/es/index/goods");
+        System.out.println(FileUtils.getContent(is));
+//        baseElasticService.createIndex("goods", indexSql);
         return R.success();
+
     }
 
     @GetMapping("insert")
