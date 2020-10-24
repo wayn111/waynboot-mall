@@ -3,7 +3,7 @@ package com.wayn.mobile.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.service.shop.IGoodsService;

@@ -1,6 +1,6 @@
 package com.wayn.admin.api.controller.shop;
 
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Channel;
 import com.wayn.common.core.service.shop.IChannelService;

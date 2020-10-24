@@ -4,7 +4,7 @@ import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.imports.ExcelImportService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.framework.config.WaynConfig;
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.service.system.IRoleService;

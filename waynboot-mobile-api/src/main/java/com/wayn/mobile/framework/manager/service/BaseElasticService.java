@@ -1,7 +1,7 @@
 package com.wayn.mobile.framework.manager.service;
 
 import com.alibaba.fastjson.JSON;
-import com.wayn.common.base.ElasticEntity;
+import com.wayn.common.base.entity.ElasticEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;

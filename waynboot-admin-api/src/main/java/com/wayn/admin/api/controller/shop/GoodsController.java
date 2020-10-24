@@ -2,10 +2,10 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.framework.manager.elastic.service.BaseElasticService;
 import com.wayn.admin.framework.redis.RedisCache;
-import com.wayn.common.base.BaseController;
-import com.wayn.common.base.ElasticEntity;
+import com.wayn.common.base.controller.BaseController;
+import com.wayn.common.base.entity.ElasticEntity;
+import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
@@ -35,8 +35,6 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/shop/goods")
 public class GoodsController extends BaseController {
 
-    private static final String GOODS_INDEX = "goods";
-    private static final String REDIS_GOODS_INDEX = "es_goods";
     @Autowired
     private IGoodsService iGoodsService;
     @Autowired
@@ -72,14 +70,14 @@ public class GoodsController extends BaseController {
 
     @PostMapping("syncEs")
     public R syncEs() {
-        if (redisCache.getCacheObject(REDIS_GOODS_INDEX) != null) {
+        if (redisCache.getCacheObject(SysConstants.REDIS_GOODS_INDEX) != null) {
             return R.error("正在同步，请稍等");
         }
         boolean flag = false;
-        redisCache.setCacheObject(REDIS_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
-        baseElasticService.deleteIndex(GOODS_INDEX);
+        redisCache.setCacheObject(SysConstants.REDIS_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
+        baseElasticService.deleteIndex(SysConstants.GOODS_INDEX);
         InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
-        if (baseElasticService.createIndex(GOODS_INDEX, FileUtils.getContent(inputStream))) {
+        if (baseElasticService.createIndex(SysConstants.GOODS_INDEX, FileUtils.getContent(inputStream))) {
             List<Goods> list = iGoodsService.list();
             List<ElasticEntity> entities = new ArrayList<>();
             for (Goods goods : list) {
@@ -96,7 +94,7 @@ public class GoodsController extends BaseController {
                 entities.add(elasticEntity);
             }
             flag = baseElasticService.insertBatch("goods", entities);
-            redisCache.deleteObject(REDIS_GOODS_INDEX);
+            redisCache.deleteObject(SysConstants.REDIS_GOODS_INDEX);
         }
         return R.result(flag);
     }

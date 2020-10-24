@@ -1,4 +1,4 @@
-package com.wayn.common.base;
+package com.wayn.common.base.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;

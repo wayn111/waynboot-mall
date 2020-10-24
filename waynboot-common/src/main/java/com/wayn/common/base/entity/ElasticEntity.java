@@ -1,4 +1,4 @@
-package com.wayn.common.base;
+package com.wayn.common.base.entity;
 
 import lombok.Data;
 
