@@ -20,6 +20,8 @@ import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,9 +58,9 @@ public class SearchController extends BaseController {
     public R list(SearchVO searchVO) {
         Long memberId = SecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();
-//        Integer categoryId = searchVO.getCategoryId();
-//        Boolean isHot = searchVO.getIsHot();
-//        Boolean isNew = searchVO.getIsNew();
+        Integer categoryId = searchVO.getCategoryId();
+        Boolean isHot = searchVO.getIsHot();
+        Boolean isNew = searchVO.getIsNew();
         if (memberId != null && StringUtils.isNotEmpty(keyword)) {
             SearchHistory searchHistory = new SearchHistory();
             searchHistory.setCreateTime(LocalDateTime.now());
@@ -77,6 +79,7 @@ public class SearchController extends BaseController {
         searchSourceBuilder.from((int) (page.getCurrent() - 1));
         searchSourceBuilder.size((int) page.getSize());
         searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
+        searchSourceBuilder.sort(new FieldSortBuilder("countPrice").order(SortOrder.ASC));
         List<JSONObject> list = baseElasticService.search("goods", searchSourceBuilder, JSONObject.class);
         List<Integer> goodsIdList = list.stream().filter(jsonObject -> (boolean) jsonObject.get("isOnSale")).map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
         if (goodsIdList.size() == 0) {
