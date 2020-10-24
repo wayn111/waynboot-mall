@@ -14,7 +14,7 @@ import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.support.IndicesOptions;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -48,11 +48,11 @@ public class BaseElasticService {
      * @param idxName 缩影名称
      * @param idxSQL  缩影定义
      */
-    public void createIndex(String idxName, String idxSQL) {
+    public boolean createIndex(String idxName, String idxSQL) {
         try {
             if (this.indexExist(idxName)) {
                 log.error(" idxName={} 已经存在,idxSql={}", idxName, idxSQL);
-                return;
+                return false;
             }
             CreateIndexRequest request = new CreateIndexRequest(idxName);
             buildSetting(request);
@@ -60,12 +60,12 @@ public class BaseElasticService {
 //            request.settings() 手工指定Setting
             CreateIndexResponse res = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
             if (!res.isAcknowledged()) {
-                throw new RuntimeException("初始化失败");
+                return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(0);
         }
+        return true;
     }
 
     /**
@@ -80,8 +80,8 @@ public class BaseElasticService {
         request.local(false);
         request.humanReadable(true);
         request.includeDefaults(false);
-        request.indicesOptions(IndicesOptions.lenientExpandOpen());
-        return !restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
+//        request.indicesOptions(IndicesOptions.lenientExpandOpen());
+        return restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
     }
 
     /**
@@ -218,16 +218,20 @@ public class BaseElasticService {
      *
      * @param idxName 索引名称
      */
-    public void deleteIndex(String idxName) {
+    public boolean deleteIndex(String idxName) {
         try {
-            if (this.indexExist(idxName)) {
-                log.error(" idxName={} 已经存在", idxName);
-                return;
+            if (!this.indexExist(idxName)) {
+                log.error(" idxName={} 不存在,idxSql={}", idxName);
+                return false;
             }
-            restHighLevelClient.indices().delete(new DeleteIndexRequest(idxName), RequestOptions.DEFAULT);
+            AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(new DeleteIndexRequest(idxName), RequestOptions.DEFAULT);
+            if (!acknowledgedResponse.isAcknowledged()) {
+                return false;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
 
