@@ -8,6 +8,7 @@ import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUtils;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -68,7 +70,7 @@ public class ElasticController {
     }
 
     @GetMapping("search")
-    public R search(String keyword) {
+    public R search(String keyword, int page, int pageSize) {
 //        MultiSearchRequest request = new MultiSearchRequest();
 //        SearchRequest firstSearchRequest = new SearchRequest("goods");
 //        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -91,6 +93,9 @@ public class ElasticController {
         MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
         boolQueryBuilder.should(matchQuery1).should(matchPhraseQueryBuilder);
         searchSourceBuilder.query(boolQueryBuilder);
+        searchSourceBuilder.from(page);
+        searchSourceBuilder.size(pageSize);
+        searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
         List<JSONObject> list = baseElasticService.search("goods", searchSourceBuilder, JSONObject.class);
         list = list.stream().filter(jsonObject -> (boolean) jsonObject.get("isOnSale")).collect(Collectors.toList());
         return R.success().add("data", list);

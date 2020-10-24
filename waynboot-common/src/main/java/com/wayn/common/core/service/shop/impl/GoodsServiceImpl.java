@@ -235,7 +235,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("name", goods.getName());
         map.put("countPrice", goods.getCounterPrice());
         map.put("retailPrice", goods.getRetailPrice());
-        map.put("keyword", goods.getKeywords());
+        map.put("keyword", goods.getKeywords().split(","));
         map.put("isOnSale", goods.getIsOnSale());
         elasticEntity.setData(map);
         boolean one = baseElasticService.insertOrUpdateOne(SysConstants.GOODS_INDEX, elasticEntity);
