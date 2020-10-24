@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wayn.common.base.entity.ElasticEntity;
+import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.core.service.shop.*;
+import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Autowired
     private ICategoryService iCategoryService;
+
+    @Autowired
+    private BaseElasticService baseElasticService;
 
     @Override
     public IPage<Goods> listPage(Page<Goods> page, Goods goods) {
@@ -109,7 +115,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             goodsProduct.setCreateTime(new Date());
         }
         // 判断启用默认选中的规格是否超过一个
-        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).count() > 1) {
+        if (Arrays.stream(products).filter(goodsProduct -> {
+            if (goodsProduct.getDefaultSelected() == null) {
+                return false;
+            }
+            return goodsProduct.getDefaultSelected();
+        }).count() > 1) {
             return R.error("商品规格只能选择一个启用默认选中");
         }
 
@@ -119,6 +130,22 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsAttributeService.saveBatch(Arrays.asList(attributes));
         // 保存商品货品
         iGoodsProductService.saveBatch(Arrays.asList(products));
+
+        // 同步es
+        ElasticEntity elasticEntity = new ElasticEntity();
+        elasticEntity.setId(goods.getId().toString());
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", goods.getId());
+        map.put("name", goods.getName());
+        map.put("countPrice", goods.getCounterPrice());
+        map.put("retailPrice", goods.getRetailPrice());
+        map.put("keyword", goods.getKeywords());
+        map.put("isOnSale", goods.getIsOnSale());
+        elasticEntity.setData(map);
+        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.GOODS_INDEX, elasticEntity);
+        if (!one) {
+            throw new BusinessException("创建商品，同步es失败");
+        }
         return R.success();
     }
 
@@ -139,6 +166,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsSpecificationService.remove(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
         iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
         iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
+        // 同步es
+        boolean one = baseElasticService.delete(SysConstants.GOODS_INDEX, goodsId.toString());
+        if (!one) {
+            throw new BusinessException("删除商品，同步es失败");
+        }
         return true;
     }
 
@@ -195,6 +227,21 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsAttributeService.saveBatch(insertAttributes);
         // 更新商品货品
         iGoodsProductService.updateBatchById(Arrays.asList(products));
+        // 同步es
+        ElasticEntity elasticEntity = new ElasticEntity();
+        elasticEntity.setId(goods.getId().toString());
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", goods.getId());
+        map.put("name", goods.getName());
+        map.put("countPrice", goods.getCounterPrice());
+        map.put("retailPrice", goods.getRetailPrice());
+        map.put("keyword", goods.getKeywords());
+        map.put("isOnSale", goods.getIsOnSale());
+        elasticEntity.setData(map);
+        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.GOODS_INDEX, elasticEntity);
+        if (!one) {
+            throw new BusinessException("创建商品，同步es失败");
+        }
         return R.success();
     }
 

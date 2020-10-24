@@ -1,13 +1,13 @@
-package com.wayn.admin.framework.manager.elastic.service;
+package com.wayn.common.base.service;
 
 import com.alibaba.fastjson.JSON;
-import com.wayn.common.base.ElasticEntity;
+import com.wayn.common.base.entity.ElasticEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
@@ -108,27 +108,26 @@ public class BaseElasticService {
      * @param idxName index
      * @param entity  对象
      */
-    public String insertOrUpdateOne(String idxName, ElasticEntity entity) {
+    public boolean insertOrUpdateOne(String idxName, ElasticEntity entity) {
         IndexRequest request = new IndexRequest(idxName);
         log.error("Data : id={},entity={}", entity.getId(), JSON.toJSONString(entity.getData()));
         request.id(entity.getId());
         request.source(entity.getData(), XContentType.JSON);
 //        request.source(JSON.toJSONString(entity.getData()), XContentType.JSON);
-        String result = null;
         try {
             IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
             ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
             if (shardInfo.getFailed() > 0) {
                 for (ReplicationResponse.ShardInfo.Failure failure :
                         shardInfo.getFailures()) {
-                    return failure.reason();
+                    log.error(failure.reason());
                 }
+                return false;
             }
-            result = indexResponse.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return result;
+        return true;
     }
 
 
@@ -144,10 +143,8 @@ public class BaseElasticService {
                 .source(item.getData(), XContentType.JSON)));
         try {
             BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
-            for (BulkItemResponse bulkItemResponse : bulkResponse) {
-                if (bulkResponse.hasFailures()) {
-                    return false;
-                }
+            if (bulkResponse.hasFailures()) {
+                return false;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -169,6 +166,32 @@ public class BaseElasticService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 删除文档
+     * @param idxName 索引名称
+     * @param id 文档ID
+     * @return boolean
+     */
+    public boolean delete(String idxName, String id) {
+        DeleteRequest request = new DeleteRequest(
+                idxName, id);
+        try {
+            DeleteResponse deleteResponse = restHighLevelClient.delete(
+                    request, RequestOptions.DEFAULT);
+            ReplicationResponse.ShardInfo shardInfo = deleteResponse.getShardInfo();
+            if (shardInfo.getFailed() > 0) {
+                for (ReplicationResponse.ShardInfo.Failure failure :
+                        shardInfo.getFailures()) {
+                    log.error(failure.reason());
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 
     /**

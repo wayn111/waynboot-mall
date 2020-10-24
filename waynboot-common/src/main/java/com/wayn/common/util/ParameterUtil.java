@@ -1,7 +1,7 @@
 package com.wayn.common.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wayn.common.base.BaseEntity;
+import com.wayn.common.base.entity.BaseEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;

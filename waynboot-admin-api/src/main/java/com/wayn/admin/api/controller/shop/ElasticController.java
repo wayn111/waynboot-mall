@@ -2,8 +2,8 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.wayn.admin.framework.manager.elastic.service.BaseElasticService;
-import com.wayn.common.base.ElasticEntity;
+import com.wayn.common.base.entity.ElasticEntity;
+import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;

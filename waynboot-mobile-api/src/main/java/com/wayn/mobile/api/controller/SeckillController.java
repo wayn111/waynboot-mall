@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.ISeckillService;
 import org.springframework.beans.factory.annotation.Autowired;
