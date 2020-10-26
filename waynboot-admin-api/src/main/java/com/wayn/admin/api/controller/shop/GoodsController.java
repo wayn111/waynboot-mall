@@ -70,14 +70,14 @@ public class GoodsController extends BaseController {
 
     @PostMapping("syncEs")
     public R syncEs() {
-        if (redisCache.getCacheObject(SysConstants.REDIS_GOODS_INDEX) != null) {
+        if (redisCache.getCacheObject(SysConstants.REDIS_ES_GOODS_INDEX) != null) {
             return R.error("正在同步，请稍等");
         }
         boolean flag = false;
-        redisCache.setCacheObject(SysConstants.REDIS_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
-        baseElasticService.deleteIndex(SysConstants.GOODS_INDEX);
+        redisCache.setCacheObject(SysConstants.REDIS_ES_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
+        baseElasticService.deleteIndex(SysConstants.ES_GOODS_INDEX);
         InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
-        if (baseElasticService.createIndex(SysConstants.GOODS_INDEX, FileUtils.getContent(inputStream))) {
+        if (baseElasticService.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
             List<Goods> list = iGoodsService.list();
             List<ElasticEntity> entities = new ArrayList<>();
             for (Goods goods : list) {
@@ -94,7 +94,7 @@ public class GoodsController extends BaseController {
                 entities.add(elasticEntity);
             }
             flag = baseElasticService.insertBatch("goods", entities);
-            redisCache.deleteObject(SysConstants.REDIS_GOODS_INDEX);
+            redisCache.deleteObject(SysConstants.REDIS_ES_GOODS_INDEX);
         }
         return R.result(flag);
     }
