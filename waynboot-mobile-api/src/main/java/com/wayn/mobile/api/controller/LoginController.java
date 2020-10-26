@@ -10,6 +10,7 @@ import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
+import com.wayn.common.util.security.SecurityUtils;
 import com.wayn.mobile.framework.redis.RedisCache;
 import com.wayn.mobile.framework.security.LoginObj;
 import com.wayn.mobile.framework.security.RegistryObj;
@@ -77,7 +78,7 @@ public class LoginController {
         member.setNickname("用户昵称" + new Date().getTime());
         member.setMobile(registryObj.getMobile());
         member.setEmail(registryObj.getEmail());
-        member.setPassword(registryObj.getPassword());
+        member.setPassword(SecurityUtils.encryptPassword(registryObj.getPassword()));
         member.setCreateTime(new Date());
         return R.result(iMemberService.save(member));
     }
