@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IHomeService;

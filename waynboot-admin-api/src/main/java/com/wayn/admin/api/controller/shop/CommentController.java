@@ -2,7 +2,7 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Comment;
 import com.wayn.common.core.service.shop.ICommentService;
 import com.wayn.common.util.R;

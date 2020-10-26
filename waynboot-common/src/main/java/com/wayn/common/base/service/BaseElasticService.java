@@ -1,15 +1,21 @@
-package com.wayn.mobile.framework.manager.service;
+package com.wayn.common.base.service;
 
 import com.alibaba.fastjson.JSON;
-import com.wayn.common.base.ElasticEntity;
+import com.wayn.common.base.entity.ElasticEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.support.IndicesOptions;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
@@ -20,6 +26,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,11 +48,11 @@ public class BaseElasticService {
      * @param idxName 缩影名称
      * @param idxSQL  缩影定义
      */
-    public void createIndex(String idxName, String idxSQL) {
+    public boolean createIndex(String idxName, String idxSQL) {
         try {
             if (this.indexExist(idxName)) {
                 log.error(" idxName={} 已经存在,idxSql={}", idxName, idxSQL);
-                return;
+                return false;
             }
             CreateIndexRequest request = new CreateIndexRequest(idxName);
             buildSetting(request);
@@ -53,12 +60,12 @@ public class BaseElasticService {
 //            request.settings() 手工指定Setting
             CreateIndexResponse res = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
             if (!res.isAcknowledged()) {
-                throw new RuntimeException("初始化失败");
+                return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(0);
         }
+        return true;
     }
 
     /**
@@ -73,8 +80,8 @@ public class BaseElasticService {
         request.local(false);
         request.humanReadable(true);
         request.includeDefaults(false);
-        request.indicesOptions(IndicesOptions.lenientExpandOpen());
-        return !restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
+//        request.indicesOptions(IndicesOptions.lenientExpandOpen());
+        return restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
     }
 
     /**
@@ -101,17 +108,26 @@ public class BaseElasticService {
      * @param idxName index
      * @param entity  对象
      */
-    public void insertOrUpdateOne(String idxName, ElasticEntity entity) {
+    public boolean insertOrUpdateOne(String idxName, ElasticEntity entity) {
         IndexRequest request = new IndexRequest(idxName);
         log.error("Data : id={},entity={}", entity.getId(), JSON.toJSONString(entity.getData()));
         request.id(entity.getId());
         request.source(entity.getData(), XContentType.JSON);
 //        request.source(JSON.toJSONString(entity.getData()), XContentType.JSON);
         try {
-            restHighLevelClient.index(request, RequestOptions.DEFAULT);
+            IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+            ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
+            if (shardInfo.getFailed() > 0) {
+                for (ReplicationResponse.ShardInfo.Failure failure :
+                        shardInfo.getFailures()) {
+                    log.error(failure.reason());
+                }
+                return false;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
 
@@ -121,15 +137,19 @@ public class BaseElasticService {
      * @param idxName index
      * @param list    带插入列表
      */
-    public void insertBatch(String idxName, List<ElasticEntity> list) {
+    public boolean insertBatch(String idxName, List<ElasticEntity> list) {
         BulkRequest request = new BulkRequest();
         list.forEach(item -> request.add(new IndexRequest(idxName).id(item.getId())
                 .source(item.getData(), XContentType.JSON)));
         try {
-            restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+            BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+            if (bulkResponse.hasFailures()) {
+                return false;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
     /**
@@ -146,6 +166,32 @@ public class BaseElasticService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 删除文档
+     * @param idxName 索引名称
+     * @param id 文档ID
+     * @return boolean
+     */
+    public boolean delete(String idxName, String id) {
+        DeleteRequest request = new DeleteRequest(
+                idxName, id);
+        try {
+            DeleteResponse deleteResponse = restHighLevelClient.delete(
+                    request, RequestOptions.DEFAULT);
+            ReplicationResponse.ShardInfo shardInfo = deleteResponse.getShardInfo();
+            if (shardInfo.getFailed() > 0) {
+                for (ReplicationResponse.ShardInfo.Failure failure :
+                        shardInfo.getFailures()) {
+                    log.error(failure.reason());
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 
     /**
@@ -170,21 +216,45 @@ public class BaseElasticService {
         }
     }
 
+
+    public <T> List<T> search(MultiSearchRequest request, Class<T> c) {
+        try {
+            MultiSearchResponse response = restHighLevelClient.msearch(request, RequestOptions.DEFAULT);
+            MultiSearchResponse.Item[] responseResponses = response.getResponses();
+            List<T> all = new ArrayList<>();
+            for (MultiSearchResponse.Item item : responseResponses) {
+                SearchHits hits = item.getResponse().getHits();
+                List<T> res = new ArrayList<>();
+                for (SearchHit hit : hits) {
+                    res.add(JSON.parseObject(hit.getSourceAsString(), c));
+                }
+                all.addAll(res);
+            }
+            return all;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * 删除index
      *
      * @param idxName 索引名称
      */
-    public void deleteIndex(String idxName) {
+    public boolean deleteIndex(String idxName) {
         try {
-            if (this.indexExist(idxName)) {
-                log.error(" idxName={} 已经存在", idxName);
-                return;
+            if (!this.indexExist(idxName)) {
+                log.error(" idxName={} 不存在,idxSql={}", idxName);
+                return false;
             }
-            restHighLevelClient.indices().delete(new DeleteIndexRequest(idxName), RequestOptions.DEFAULT);
+            AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(new DeleteIndexRequest(idxName), RequestOptions.DEFAULT);
+            if (!acknowledgedResponse.isAcknowledged()) {
+                return false;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
 
