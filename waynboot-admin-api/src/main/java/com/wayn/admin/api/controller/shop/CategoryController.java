@@ -1,7 +1,7 @@
 package com.wayn.admin.api.controller.shop;
 
 
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Category;
 import com.wayn.common.core.service.shop.ICategoryService;
 import com.wayn.common.util.R;

@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

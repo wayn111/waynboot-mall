@@ -2,10 +2,10 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.framework.manager.elastic.service.BaseElasticService;
 import com.wayn.admin.framework.redis.RedisCache;
-import com.wayn.common.base.BaseController;
-import com.wayn.common.base.ElasticEntity;
+import com.wayn.common.base.controller.BaseController;
+import com.wayn.common.base.entity.ElasticEntity;
+import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
@@ -16,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -35,10 +37,8 @@ public class GoodsController extends BaseController {
 
     @Autowired
     private IGoodsService iGoodsService;
-
     @Autowired
     private BaseElasticService baseElasticService;
-
     @Autowired
     private RedisCache redisCache;
 
@@ -70,29 +70,32 @@ public class GoodsController extends BaseController {
 
     @PostMapping("syncEs")
     public R syncEs() {
-        if (redisCache.getCacheObject("syncEs")) {
-            return R.error("任务还在执行，请过一会再点");
+        if (redisCache.getCacheObject(SysConstants.REDIS_GOODS_INDEX) != null) {
+            return R.error("正在同步，请稍等");
         }
-        redisCache.setCacheObject("syncEs", true);
-        baseElasticService.deleteIndex("goods");
-        baseElasticService.createIndex("goos", FileUtils.getContent(this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME)));
-        List<Goods> list = iGoodsService.list();
-        List<ElasticEntity> entities = new ArrayList<>();
-        for (Goods goods : list) {
-            ElasticEntity elasticEntity = new ElasticEntity();
-            Map<String, Object> map = new HashMap<>();
-            elasticEntity.setId(goods.getId().toString());
-            map.put("id", goods.getId());
-            map.put("name", goods.getName());
-            map.put("countPrice", goods.getCounterPrice());
-            map.put("retailPrice", goods.getRetailPrice());
-            map.put("keyword", goods.getKeywords());
-            map.put("isOnSale", goods.getIsOnSale());
-            elasticEntity.setData(map);
-            entities.add(elasticEntity);
+        boolean flag = false;
+        redisCache.setCacheObject(SysConstants.REDIS_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
+        baseElasticService.deleteIndex(SysConstants.GOODS_INDEX);
+        InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
+        if (baseElasticService.createIndex(SysConstants.GOODS_INDEX, FileUtils.getContent(inputStream))) {
+            List<Goods> list = iGoodsService.list();
+            List<ElasticEntity> entities = new ArrayList<>();
+            for (Goods goods : list) {
+                ElasticEntity elasticEntity = new ElasticEntity();
+                Map<String, Object> map = new HashMap<>();
+                elasticEntity.setId(goods.getId().toString());
+                map.put("id", goods.getId());
+                map.put("name", goods.getName());
+                map.put("countPrice", goods.getCounterPrice());
+                map.put("retailPrice", goods.getRetailPrice());
+                map.put("keyword", goods.getKeywords().split(","));
+                map.put("isOnSale", goods.getIsOnSale());
+                elasticEntity.setData(map);
+                entities.add(elasticEntity);
+            }
+            flag = baseElasticService.insertBatch("goods", entities);
+            redisCache.deleteObject(SysConstants.REDIS_GOODS_INDEX);
         }
-        boolean insertBatch = baseElasticService.insertBatch("goods", entities);
-        redisCache.deleteObject("syncEs");
-        return R.result(insertBatch);
+        return R.result(flag);
     }
 }

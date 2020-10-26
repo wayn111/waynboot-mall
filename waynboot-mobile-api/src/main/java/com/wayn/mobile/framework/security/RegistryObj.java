@@ -36,8 +36,18 @@ public class RegistryObj {
     private String code;
 
     /**
+     * 邮箱验证码
+     */
+    private String emailCode;
+
+    /**
      * 验证码 key
      */
     private String key;
+
+    /**
+     * 邮箱验证码 key
+     */
+    private String emailKey;
 
 }

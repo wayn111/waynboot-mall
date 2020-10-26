@@ -2,7 +2,7 @@ package com.wayn.mobile.api.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.util.R;

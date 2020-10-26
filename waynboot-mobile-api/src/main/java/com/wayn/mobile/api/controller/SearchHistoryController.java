@@ -2,7 +2,7 @@ package com.wayn.mobile.api.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;

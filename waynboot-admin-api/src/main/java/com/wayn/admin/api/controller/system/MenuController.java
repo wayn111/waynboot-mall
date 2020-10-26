@@ -1,7 +1,7 @@
 package com.wayn.admin.api.controller.system;
 
 import com.wayn.admin.framework.security.service.TokenService;
-import com.wayn.common.base.BaseController;
+import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Menu;
 import com.wayn.common.core.model.LoginUserDetail;
