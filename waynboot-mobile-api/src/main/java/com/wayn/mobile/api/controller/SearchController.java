@@ -61,12 +61,11 @@ public class SearchController extends BaseController {
         Integer categoryId = searchVO.getCategoryId();
         Boolean isHot = searchVO.getIsHot();
         Boolean isNew = searchVO.getIsNew();
+        SearchHistory searchHistory = new SearchHistory();
         if (memberId != null && StringUtils.isNotEmpty(keyword)) {
-            SearchHistory searchHistory = new SearchHistory();
             searchHistory.setCreateTime(LocalDateTime.now());
             searchHistory.setUserId(memberId);
             searchHistory.setKeyword(keyword);
-            iSearchHistoryService.save(searchHistory);
         }
         Page<SearchVO> page = getPage();
         // 查询
@@ -86,7 +85,18 @@ public class SearchController extends BaseController {
             return R.success().add("goods", Collections.emptyList());
         }
         List<Goods> goodsList = iGoodsService.list(new QueryWrapper<Goods>().in("id", goodsIdList));
+        if (goodsList.size() > 0) {
+            searchHistory.setHasGoods(true);
+            iSearchHistoryService.save(searchHistory);
+        }
         return R.success().add("goods", goodsList);
+    }
+
+    @GetMapping("hotList")
+    public R hotList() {
+        List<SearchHistory> historyList = iSearchHistoryService.selectHostList();
+        List<String> keywordList = historyList.stream().map(SearchHistory::getKeyword).collect(Collectors.toList());
+        return R.success().add("data", keywordList);
     }
 
 }

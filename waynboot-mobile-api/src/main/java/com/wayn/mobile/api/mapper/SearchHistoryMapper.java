@@ -16,4 +16,6 @@ import java.util.List;
 public interface SearchHistoryMapper extends BaseMapper<SearchHistory> {
 
     List<SearchHistory> selectSeachHistoryList(Long memberId);
+
+    List<SearchHistory> selectHostList();
 }

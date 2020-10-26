@@ -8,6 +8,7 @@
         <result column="user_id"            property="userId" />
         <result column="keyword"            property="keyword" />
         <result column="from"               property="from" />
+        <result column="has_goods"          property="hasGoods" />
         <result column="create_time"        property="createTime" />
         <result column="update_time"        property="updateTime" />
         <result column="del_flag"           property="delFlag" />
@@ -16,7 +17,7 @@
     <!-- 通用查询结果列 -->
     <sql id="selectSerchHistoryVo">
         select id,
-        user_id, keyword, from, create_time, update_time, del_flag
+        user_id, keyword, from, create_time, has_goods,  update_time, del_flag
         from search_history s
     </sql>
 
@@ -28,4 +29,18 @@
         </where>
     </select>
 
+    <select id="selectHostList" resultMap="SearchHistoryResult">
+        SELECT
+            keyword,
+            COUNT( keyword ) AS num
+        FROM
+            shop_search_history
+        WHERE
+            has_goods = 1
+        GROUP BY
+            keyword
+        ORDER BY
+            num DESC
+            LIMIT 10
+    </select>
 </mapper>

@@ -43,6 +43,11 @@ public class SearchHistory implements Serializable {
     private String from;
 
     /**
+     * 搜索记录是否有商品结果（0没有 1有）
+     */
+    private Boolean hasGoods;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

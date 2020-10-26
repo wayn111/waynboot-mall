@@ -15,5 +15,15 @@ import java.util.List;
  */
 public interface ISearchHistoryService extends IService<SearchHistory> {
 
+    /**
+     * 分页查询搜索历史
+     * @return 分页列表
+     */
     List<SearchHistory> selectList();
+
+    /**
+     * 查询热搜列表
+     * @return 热搜列表
+     */
+    List<SearchHistory> selectHostList();
 }
