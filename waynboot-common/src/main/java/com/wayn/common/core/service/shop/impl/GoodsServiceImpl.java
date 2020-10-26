@@ -142,7 +142,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("keyword", goods.getKeywords().split(","));
         map.put("isOnSale", goods.getIsOnSale());
         elasticEntity.setData(map);
-        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.GOODS_INDEX, elasticEntity);
+        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
         if (!one) {
             throw new BusinessException("创建商品，同步es失败");
         }
@@ -167,7 +167,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
         iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
         // 同步es
-        boolean one = baseElasticService.delete(SysConstants.GOODS_INDEX, goodsId.toString());
+        boolean one = baseElasticService.delete(SysConstants.ES_GOODS_INDEX, goodsId.toString());
         if (!one) {
             throw new BusinessException("删除商品，同步es失败");
         }
@@ -238,7 +238,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("keyword", goods.getKeywords().split(","));
         map.put("isOnSale", goods.getIsOnSale());
         elasticEntity.setData(map);
-        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.GOODS_INDEX, elasticEntity);
+        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
         if (!one) {
             throw new BusinessException("创建商品，同步es失败");
         }

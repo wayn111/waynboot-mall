@@ -78,7 +78,7 @@ public class SysConstants {
      */
     public static String ES_INDEX_GOODS_FILENAME = "/es/index/goods";
 
-    public static final String GOODS_INDEX = "goods";
-    public static final String REDIS_GOODS_INDEX = "es_goods";
+    public static final String ES_GOODS_INDEX = "goods";
+    public static final String REDIS_ES_GOODS_INDEX = "es_goods";
 
 }
