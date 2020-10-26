@@ -29,4 +29,9 @@ public class SearchHistoryServiceImpl extends ServiceImpl<SearchHistoryMapper, S
         Long memberId = SecurityUtils.getUserId();
         return searchHistoryMapper.selectSeachHistoryList(memberId);
     }
+
+    @Override
+    public List<SearchHistory> selectHostList() {
+        return searchHistoryMapper.selectHostList();
+    }
 }
