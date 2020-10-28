@@ -61,6 +61,8 @@ public class SearchController extends BaseController {
         Integer categoryId = searchVO.getCategoryId();
         Boolean isHot = searchVO.getIsHot();
         Boolean isNew = searchVO.getIsNew();
+        Boolean isPrice = searchVO.getIsPrice();
+        String orderBy = searchVO.getOrderBy();
         SearchHistory searchHistory = new SearchHistory();
         if (memberId != null && StringUtils.isNotEmpty(keyword)) {
             searchHistory.setCreateTime(LocalDateTime.now());
@@ -78,13 +80,16 @@ public class SearchController extends BaseController {
         searchSourceBuilder.from((int) (page.getCurrent() - 1));
         searchSourceBuilder.size((int) page.getSize());
         searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
-        searchSourceBuilder.sort(new FieldSortBuilder("countPrice").order(SortOrder.ASC));
+        if (isPrice) {
+            searchSourceBuilder.sort(new FieldSortBuilder("retailPrice").order("asc".equals(orderBy) ? SortOrder.ASC : SortOrder.DESC));
+        }
         List<JSONObject> list = baseElasticService.search("goods", searchSourceBuilder, JSONObject.class);
-        List<Integer> goodsIdList = list.stream().filter(jsonObject -> (boolean) jsonObject.get("isOnSale")).map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
+        List<Integer> goodsIdList = list.stream().map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
         if (goodsIdList.size() == 0) {
             return R.success().add("goods", Collections.emptyList());
         }
-        List<Goods> goodsList = iGoodsService.list(new QueryWrapper<Goods>().in("id", goodsIdList));
+        List<Goods> goodsList = iGoodsService.list(new QueryWrapper<Goods>().in("id", goodsIdList)
+                .last("order by FIELD(id," + StringUtils.join(goodsIdList, ",") + ") asc"));
         if (goodsList.size() > 0) {
             searchHistory.setHasGoods(true);
             iSearchHistoryService.save(searchHistory);
