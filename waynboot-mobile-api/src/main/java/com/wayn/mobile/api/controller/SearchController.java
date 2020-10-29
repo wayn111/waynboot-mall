@@ -70,14 +70,16 @@ public class SearchController extends BaseController {
             searchHistory.setKeyword(keyword);
         }
         Page<SearchVO> page = getPage();
-        // 查询
+        // 查询包含关键字、已上架商品
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        MatchQueryBuilder matchQuery1 = QueryBuilders.matchQuery("name", keyword);
+        MatchQueryBuilder matchQuery1 = QueryBuilders.matchQuery("isOnSale", true);
+        MatchQueryBuilder matchQuery2 = QueryBuilders.matchQuery("name", keyword);
         MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
-        boolQueryBuilder.should(matchQuery1).should(matchPhraseQueryBuilder);
+        boolQueryBuilder.must(matchQuery1).must(matchQuery2).should(matchPhraseQueryBuilder);
+//        boolQueryBuilder.should(matchQuery1).should(matchPhraseQueryBuilder);
         searchSourceBuilder.query(boolQueryBuilder);
-        searchSourceBuilder.from((int) (page.getCurrent() - 1));
+        searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
         searchSourceBuilder.size((int) page.getSize());
         searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
         if (isPrice) {
