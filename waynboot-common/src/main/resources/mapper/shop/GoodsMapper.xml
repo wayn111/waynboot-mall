@@ -6,7 +6,7 @@
     <resultMap id="ShopGoodsResult" type="com.wayn.common.core.domain.shop.Goods">
         <result column="id"                 property="id" />
         <result column="goods_sn"           property="goodsSn" />
-            <result column="name"           property="name" />
+        <result column="name"               property="name" />
         <result column="category_id"        property="categoryId" />
         <result column="brand_id"           property="brandId" />
         <result column="gallery"            property="gallery" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
@@ -21,6 +21,8 @@
         <result column="unit"               property="unit" />
         <result column="counter_price"      property="counterPrice" />
         <result column="retail_price"       property="retailPrice" />
+        <result column="actual_sales"       property="actualSales" />
+        <result column="virtual_sales"      property="virtualSales" />
         <result column="detail"             property="detail" />
         <result column="create_time"        property="createTime" />
         <result column="update_time"        property="updateTime" />
@@ -30,7 +32,9 @@
     <!-- 通用查询结果列 -->
     <sql id="selectGoodsVo">
         select id,
-        goods_sn, name, category_id, brand_id, gallery, keywords, brief, is_on_sale, sort_order, pic_url, share_url, is_new, is_hot, unit, counter_price, retail_price, detail, create_time, update_time, del_flag
+        goods_sn, name, category_id, brand_id, gallery, keywords, brief, is_on_sale, sort_order, pic_url,
+        share_url, is_new, is_hot, unit, counter_price, retail_price, detail, actual_sales, virtual_sales,
+        create_time, update_time, del_flag
         from shop_goods
     </sql>
 

@@ -7,6 +7,15 @@
                 "type": "text",
                 "analyzer": "ik_max_word"
             },
+            "sales": {
+              "type": "integer"
+            },
+            "isHot": {
+              "type": "boolean"
+            },
+            "isNew": {
+              "type": "boolean"
+            },
             "countPrice": {
                 "type": "float"
             },

@@ -114,6 +114,16 @@ public class Goods extends ShopBaseEntity implements Serializable {
     private BigDecimal retailPrice;
 
     /**
+     * 实际销量
+     */
+    private Integer actualSales;
+
+    /**
+     * 虚拟销量
+     */
+    private Integer virtualSales;
+
+    /**
      * 商品详细介绍，是富文本格式
      */
     private String detail;
