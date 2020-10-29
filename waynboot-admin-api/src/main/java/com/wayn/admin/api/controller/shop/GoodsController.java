@@ -86,6 +86,9 @@ public class GoodsController extends BaseController {
                 elasticEntity.setId(goods.getId().toString());
                 map.put("id", goods.getId());
                 map.put("name", goods.getName());
+                map.put("sales", goods.getActualSales() + goods.getVirtualSales());
+                map.put("isHot", goods.getIsHot());
+                map.put("isNew", goods.getIsNew());
                 map.put("countPrice", goods.getCounterPrice());
                 map.put("retailPrice", goods.getRetailPrice());
                 map.put("keyword", goods.getKeywords().split(","));

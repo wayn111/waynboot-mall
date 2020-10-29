@@ -62,6 +62,7 @@ public class SearchController extends BaseController {
         Boolean isHot = searchVO.getIsHot();
         Boolean isNew = searchVO.getIsNew();
         Boolean isPrice = searchVO.getIsPrice();
+        Boolean isSales = searchVO.getIsSales();
         String orderBy = searchVO.getOrderBy();
         SearchHistory searchHistory = new SearchHistory();
         if (memberId != null && StringUtils.isNotEmpty(keyword)) {
@@ -82,8 +83,21 @@ public class SearchController extends BaseController {
         searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
         searchSourceBuilder.size((int) page.getSize());
         searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
+        // 按价格高低排序
         if (isPrice) {
             searchSourceBuilder.sort(new FieldSortBuilder("retailPrice").order("asc".equals(orderBy) ? SortOrder.ASC : SortOrder.DESC));
+        }
+        // 按销量排序
+        if (isSales) {
+            searchSourceBuilder.sort(new FieldSortBuilder("sales").order(SortOrder.DESC));
+        }
+        // 按热门商品
+        if (isHot) {
+            searchSourceBuilder.sort(new FieldSortBuilder("isHot").order(SortOrder.DESC));
+        }
+        // 按新品
+        if (isNew) {
+            searchSourceBuilder.sort(new FieldSortBuilder("isNew").order(SortOrder.DESC));
         }
         List<JSONObject> list = baseElasticService.search("goods", searchSourceBuilder, JSONObject.class);
         List<Integer> goodsIdList = list.stream().map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());

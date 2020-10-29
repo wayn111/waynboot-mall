@@ -41,7 +41,7 @@ public class ElasticController {
 
     @GetMapping("index")
     public R index() throws IOException {
-        InputStream is = this.getClass().getResourceAsStream("/es/index/goods");
+        InputStream is = this.getClass().getResourceAsStream("/es/index/goods.json");
         System.out.println(FileUtils.getContent(is));
 //        baseElasticService.createIndex("goods", indexSql);
         return R.success();

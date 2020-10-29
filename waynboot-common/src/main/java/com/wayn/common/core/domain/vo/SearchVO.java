@@ -18,6 +18,8 @@ public class SearchVO {
 
     private Boolean isHot;
 
+    private Boolean isSales;
+
     private Boolean isPrice;
 
     private String orderBy;

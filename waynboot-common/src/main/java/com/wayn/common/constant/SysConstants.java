@@ -76,7 +76,7 @@ public class SysConstants {
     /**
      * es商品索引的创建语句所在文件位置
      */
-    public static String ES_INDEX_GOODS_FILENAME = "/es/index/goods";
+    public static String ES_INDEX_GOODS_FILENAME = "/es/index/goods.json";
 
     public static final String ES_GOODS_INDEX = "goods";
     public static final String REDIS_ES_GOODS_INDEX = "es_goods";
