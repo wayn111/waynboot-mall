@@ -58,7 +58,7 @@ public class SearchController extends BaseController {
     public R list(SearchVO searchVO) {
         Long memberId = SecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();
-        Integer categoryId = searchVO.getCategoryId();
+        // Integer categoryId = searchVO.getCategoryId();
         Boolean isHot = searchVO.getIsHot();
         Boolean isNew = searchVO.getIsNew();
         Boolean isPrice = searchVO.getIsPrice();
@@ -78,7 +78,7 @@ public class SearchController extends BaseController {
         MatchQueryBuilder matchQuery2 = QueryBuilders.matchQuery("name", keyword);
         MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
         boolQueryBuilder.must(matchQuery1).must(matchQuery2).should(matchPhraseQueryBuilder);
-//        boolQueryBuilder.should(matchQuery1).should(matchPhraseQueryBuilder);
+        // boolQueryBuilder.should(matchQuery1).should(matchPhraseQueryBuilder);
         searchSourceBuilder.query(boolQueryBuilder);
         searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
         searchSourceBuilder.size((int) page.getSize());
