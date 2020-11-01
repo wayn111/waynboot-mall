@@ -12,6 +12,7 @@ import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  * @author wayn
  * @since 2020-07-06
  */
+@Slf4j
 @RestController
 @RequestMapping("/shop/goods")
 public class GoodsController extends BaseController {
@@ -75,28 +77,34 @@ public class GoodsController extends BaseController {
         }
         boolean flag = false;
         redisCache.setCacheObject(SysConstants.REDIS_ES_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
-        baseElasticService.deleteIndex(SysConstants.ES_GOODS_INDEX);
-        InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
-        if (baseElasticService.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
-            List<Goods> list = iGoodsService.list();
-            List<ElasticEntity> entities = new ArrayList<>();
-            for (Goods goods : list) {
-                ElasticEntity elasticEntity = new ElasticEntity();
-                Map<String, Object> map = new HashMap<>();
-                elasticEntity.setId(goods.getId().toString());
-                map.put("id", goods.getId());
-                map.put("name", goods.getName());
-                map.put("sales", goods.getActualSales() + goods.getVirtualSales());
-                map.put("isHot", goods.getIsHot());
-                map.put("isNew", goods.getIsNew());
-                map.put("countPrice", goods.getCounterPrice());
-                map.put("retailPrice", goods.getRetailPrice());
-                map.put("keyword", goods.getKeywords().split(","));
-                map.put("isOnSale", goods.getIsOnSale());
-                elasticEntity.setData(map);
-                entities.add(elasticEntity);
+        try {
+            baseElasticService.deleteIndex(SysConstants.ES_GOODS_INDEX);
+            InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
+            if (baseElasticService.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
+                List<Goods> list = iGoodsService.list();
+                List<ElasticEntity> entities = new ArrayList<>();
+                for (Goods goods : list) {
+                    ElasticEntity elasticEntity = new ElasticEntity();
+                    Map<String, Object> map = new HashMap<>();
+                    elasticEntity.setId(goods.getId().toString());
+                    map.put("id", goods.getId());
+                    map.put("name", goods.getName());
+                    map.put("sales", goods.getActualSales() + goods.getVirtualSales());
+                    map.put("isHot", goods.getIsHot());
+                    map.put("isNew", goods.getIsNew());
+                    map.put("countPrice", goods.getCounterPrice());
+                    map.put("retailPrice", goods.getRetailPrice());
+                    map.put("keyword", goods.getKeywords().split(","));
+                    map.put("isOnSale", goods.getIsOnSale());
+                    map.put("createTime", goods.getCreateTime());
+                    elasticEntity.setData(map);
+                    entities.add(elasticEntity);
+                }
+                flag = baseElasticService.insertBatch("goods", entities);
             }
-            flag = baseElasticService.insertBatch("goods", entities);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        } finally {
             redisCache.deleteObject(SysConstants.REDIS_ES_GOODS_INDEX);
         }
         return R.result(flag);

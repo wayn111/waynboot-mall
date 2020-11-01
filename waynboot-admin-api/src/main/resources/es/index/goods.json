@@ -27,6 +27,9 @@
             },
             "isOnSale": {
                 "type": "boolean"
+            },
+            "createTime": {
+              "type": "date"
             }
         }
 }
