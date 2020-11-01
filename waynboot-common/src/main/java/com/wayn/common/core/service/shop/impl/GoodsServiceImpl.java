@@ -141,6 +141,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("retailPrice", goods.getRetailPrice());
         map.put("keyword", goods.getKeywords().split(","));
         map.put("isOnSale", goods.getIsOnSale());
+        map.put("createTime", goods.getCreateTime());
         elasticEntity.setData(map);
         boolean one = baseElasticService.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
         if (!one) {
@@ -237,6 +238,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("retailPrice", goods.getRetailPrice());
         map.put("keyword", Objects.isNull(goods.getKeywords()) ? Collections.emptyList() : goods.getKeywords().split(","));
         map.put("isOnSale", goods.getIsOnSale());
+        map.put("createTime", goods.getCreateTime());
         elasticEntity.setData(map);
         boolean one = baseElasticService.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
         if (!one) {
