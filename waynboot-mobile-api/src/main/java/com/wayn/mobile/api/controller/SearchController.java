@@ -93,7 +93,9 @@ public class SearchController extends BaseController {
         }
         // 按热门商品
         if (isHot) {
-            searchSourceBuilder.sort(new FieldSortBuilder("isHot").order(SortOrder.DESC));
+            // searchSourceBuilder.sort(new FieldSortBuilder("isHot").order(SortOrder.DESC));
+            MatchQueryBuilder filterQuery1 = QueryBuilders.matchQuery("isHot", true);
+            searchSourceBuilder.postFilter(filterQuery1);
         }
         // 按新品
         if (isNew) {

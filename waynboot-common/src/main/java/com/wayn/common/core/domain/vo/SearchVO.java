@@ -15,8 +15,12 @@ public class SearchVO {
     private Integer brandId;
 
     private Boolean isNew;
-
+    
     private Boolean isHot;
+
+    private Boolean filterNew;
+
+    private Boolean filterHot;
 
     private Boolean isSales;
 
