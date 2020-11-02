@@ -26,7 +26,7 @@ public class AdminOrderController extends BaseController {
     @GetMapping("list")
     public R list(Order order) {
         Page<Order> page = getPage();
-        return R.success().add("page", iAdminOrderService.selectListPage(page, order));
+        return R.success().add("page", iAdminOrderService.listPage(page, order));
     }
 
     @GetMapping("{orderId}")

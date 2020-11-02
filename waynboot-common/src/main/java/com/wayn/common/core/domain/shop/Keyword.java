@@ -2,6 +2,7 @@ package com.wayn.common.core.domain.shop;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
  * @since 2020-11-02
  */
 @Data
+@TableName("shop_keyword")
 @EqualsAndHashCode(callSuper = false)
 public class Keyword implements Serializable {
 

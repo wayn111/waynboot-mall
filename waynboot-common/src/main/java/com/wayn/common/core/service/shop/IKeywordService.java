@@ -1,7 +1,9 @@
 package com.wayn.common.core.service.shop;
 
-import com.wayn.common.core.domain.shop.Keyword;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wayn.common.core.domain.shop.Keyword;
 
 /**
  * <p>
@@ -13,4 +15,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IKeywordService extends IService<Keyword> {
 
+    /**
+     * 查询关键字分页列表
+     *
+     * @param page    分页对象
+     * @param keyword 查询参数
+     * @return 键字分页列表
+     */
+    IPage<Keyword> listPage(Page<Keyword> page, Keyword keyword);
 }

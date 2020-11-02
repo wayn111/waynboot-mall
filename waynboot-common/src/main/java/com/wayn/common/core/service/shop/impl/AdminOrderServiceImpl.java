@@ -51,7 +51,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
     private IMailConfigService mailConfigService;
 
     @Override
-    public IPage<Order> selectListPage(IPage<Order> page, Order order) {
+    public IPage<Order> listPage(IPage<Order> page, Order order) {
         return adminOrderMapper.selectOrderListPage(page, order);
     }
 
