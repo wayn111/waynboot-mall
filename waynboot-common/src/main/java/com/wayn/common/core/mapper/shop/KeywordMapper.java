@@ -1,5 +1,7 @@
 package com.wayn.common.core.mapper.shop;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Keyword;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface KeywordMapper extends BaseMapper<Keyword> {
 
+    IPage<Keyword> selectKeywordListPage(Page<Keyword> page, Keyword keyword);
 }

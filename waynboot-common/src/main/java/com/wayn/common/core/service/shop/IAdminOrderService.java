@@ -23,7 +23,7 @@ public interface IAdminOrderService extends IService<Order> {
      * @param order 订单对象
      * @return r
      */
-    IPage<Order> selectListPage(IPage<Order> page, Order order);
+    IPage<Order> listPage(IPage<Order> page, Order order);
 
     /**
      * 订单退款
