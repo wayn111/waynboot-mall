@@ -1,0 +1,20 @@
+package com.wayn.common.core.service.shop.impl;
+
+import com.wayn.common.core.domain.shop.Keyword;
+import com.wayn.common.core.mapper.shop.KeywordMapper;
+import com.wayn.common.core.service.shop.IKeywordService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p>
+ * 关键字表 服务实现类
+ * </p>
+ *
+ * @author wayn
+ * @since 2020-11-02
+ */
+@Service
+public class KeywordServiceImpl extends ServiceImpl<KeywordMapper, Keyword> implements IKeywordService {
+
+}
