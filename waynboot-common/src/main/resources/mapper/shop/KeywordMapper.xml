@@ -22,21 +22,22 @@
         keyword, jump_type, url, is_hot, is_default, sort_order, create_time, update_time, del_flag
         from shop_keyword
     </sql>
+
     <select id="selectKeywordListPage" resultType="com.wayn.common.core.domain.shop.Keyword">
         <include refid="selectKeywordVo"/>
         <where>
             del_flag = 0
-            <if test="keyword != null and keyword != ''">
-                AND keyword like concat('%', #{keyword}, '%')
+            <if test="keyword.keyword != null and keyword.keyword != ''">
+                AND keyword like concat('%', #{keyword.keyword}, '%')
             </if>
-            <if test="is_hot != null">
-                AND is_hot = #{isHot}
+            <if test="keyword.isHot != null">
+                AND is_hot = #{keyword.isHot}
             </if>
-            <if test="is_default != null">
-                AND is_default = #{isDefault}
+            <if test="keyword.isDefault != null">
+                AND is_default = #{keyword.isDefault}
             </if>
         </where>
-        order by sort_order desc, create_time desc
+        order by sort_order, create_time desc
 
     </select>
 

@@ -3,15 +3,15 @@ package com.wayn.common.core.domain.shop;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
- * 关键字表
+ * 关键字表`
  * </p>
  *
  * @author wayn
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("shop_keyword")
 @EqualsAndHashCode(callSuper = false)
-public class Keyword implements Serializable {
+public class Keyword extends ShopBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,16 +56,6 @@ public class Keyword implements Serializable {
      * 排序
      */
     private Integer sortOrder;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
 
     /**
      * 删除标志（0代表存在 1代表删除）
