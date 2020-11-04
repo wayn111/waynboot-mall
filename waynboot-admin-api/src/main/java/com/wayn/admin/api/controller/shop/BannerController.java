@@ -43,7 +43,7 @@ public class BannerController extends BaseController {
         return R.success().add("data", iBannerService.getById(bannerId));
     }
 
-    @DeleteMapping("{bannerId}")
+    @DeleteMapping("{bannerIds}")
     public R deleteBanner(@PathVariable List<Long> bannerIds) {
         return R.result(iBannerService.removeByIds(bannerIds));
     }
