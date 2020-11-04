@@ -6,9 +6,11 @@ import com.wayn.common.core.domain.shop.Keyword;
 import com.wayn.common.core.service.shop.IKeywordService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -29,5 +31,27 @@ public class KeywordController extends BaseController {
     public R list(Keyword keyword) {
         Page<Keyword> page = getPage();
         return R.success().add("page", iKeywordService.listPage(page, keyword));
+    }
+
+    @PostMapping
+    public R addKeyword(@Validated @RequestBody Keyword keyword) {
+        keyword.setCreateTime(new Date());
+        return R.result(iKeywordService.save(keyword));
+    }
+
+    @PutMapping
+    public R updateKeyword(@Validated @RequestBody Keyword keyword) {
+        keyword.setUpdateTime(new Date());
+        return R.result(iKeywordService.updateById(keyword));
+    }
+
+    @GetMapping("{keywordId}")
+    public R getKeyword(@PathVariable Long keywordId) {
+        return R.success().add("data", iKeywordService.getById(keywordId));
+    }
+
+    @DeleteMapping("{keywordIds}")
+    public R deleteKeyword(@PathVariable List<Long> keywordIds) {
+        return R.result(iKeywordService.removeByIds(keywordIds));
     }
 }

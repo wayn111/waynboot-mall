@@ -51,7 +51,7 @@ public class ChannelController extends BaseController {
         return R.success().add("data", iChannelService.getById(channelId));
     }
 
-    @DeleteMapping("{channelId}")
+    @DeleteMapping("{channelIds}")
     public R deleteChannel(@PathVariable List<Long> channelIds) {
         return R.result(iChannelService.removeByIds(channelIds));
     }

@@ -49,7 +49,7 @@ public class CategoryController extends BaseController {
         return R.success().add("data", iCategoryService.getById(categoryId));
     }
 
-    @DeleteMapping("{categoryId}")
+    @DeleteMapping("{categoryIds}")
     public R deleteCategory(@PathVariable List<Long> categoryIds) {
         return R.result(iCategoryService.removeByIds(categoryIds));
     }
