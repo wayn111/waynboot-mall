@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.domain.shop.Keyword;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.service.shop.IGoodsService;
+import com.wayn.common.core.service.shop.IKeywordService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
@@ -50,6 +52,9 @@ public class SearchController extends BaseController {
 
     @Autowired
     private ISearchHistoryService iSearchHistoryService;
+
+    @Autowired
+    private IKeywordService iKeywordService;
 
     @Autowired
     private BaseElasticService baseElasticService;
@@ -128,6 +133,15 @@ public class SearchController extends BaseController {
         List<SearchHistory> historyList = iSearchHistoryService.selectHostList();
         List<String> keywordList = historyList.stream().map(SearchHistory::getKeyword).collect(Collectors.toList());
         return R.success().add("data", keywordList);
+    }
+
+    @GetMapping("hotKeywords")
+    public R hotKeywords() {
+        List<Keyword> keywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByDesc("sort_order"));
+        List<String> strings = keywords.stream().map(Keyword::getKeyword).collect(Collectors.toList());
+        // List<SearchHistory> historyList = iSearchHistoryService.selectHostList();
+        // List<String> keywordList = historyList.stream().map(SearchHistory::getKeyword).collect(Collectors.toList());
+        return R.success().add("data", strings);
     }
 
 }
