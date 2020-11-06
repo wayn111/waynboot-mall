@@ -86,9 +86,11 @@ public class SearchController extends BaseController {
         MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
         boolQueryBuilder.filter(matchFiler).should(matchQuery).should(matchPhraseQueryBuilder).minimumShouldMatch(1);
         searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
+        // 按是否新品排序
         if (isNew) {
             searchSourceBuilder.sort(new FieldSortBuilder("isNew").order(SortOrder.DESC));
         }
+        // 按是否热品排序
         if (isHot) {
             searchSourceBuilder.sort(new FieldSortBuilder("isHot").order(SortOrder.DESC));
         }
