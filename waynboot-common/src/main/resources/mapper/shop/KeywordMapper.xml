@@ -36,6 +36,12 @@
             <if test="keyword.isDefault != null">
                 AND is_default = #{keyword.isDefault}
             </if>
+            <if test="keyword.startTime != null and keyword.startTime != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{keyword.startTime},'%Y-%m-%d')
+            </if>
+            <if test="keyword.endTime != null and keyword.endTime != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{keyword.endTime},'%Y-%m-%d')
+            </if>
         </where>
         order by sort_order, create_time desc
 
