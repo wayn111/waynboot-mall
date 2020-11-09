@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 搜索历史表 前端控制器
+ * 搜索历史表  前端控制器
  * </p>
  *
  * @author wayn
