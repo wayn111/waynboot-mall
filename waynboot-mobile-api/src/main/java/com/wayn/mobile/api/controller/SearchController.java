@@ -63,7 +63,6 @@ public class SearchController extends BaseController {
     public R list(SearchVO searchVO) {
         Long memberId = SecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();
-        // Integer categoryId = searchVO.getCategoryId();
         Boolean filterNew = searchVO.getFilterNew();
         Boolean filterHot = searchVO.getFilterHot();
         Boolean isNew = searchVO.getIsNew();
@@ -141,8 +140,6 @@ public class SearchController extends BaseController {
     public R hotKeywords() {
         List<Keyword> keywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByDesc("sort_order"));
         List<String> strings = keywords.stream().map(Keyword::getKeyword).collect(Collectors.toList());
-        // List<SearchHistory> historyList = iSearchHistoryService.selectHostList();
-        // List<String> keywordList = historyList.stream().map(SearchHistory::getKeyword).collect(Collectors.toList());
         return R.success().add("data", strings);
     }
 
