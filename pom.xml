@@ -34,7 +34,7 @@
         <druid.version>1.2.2</druid.version>
         <commons.io.version>2.5</commons.io.version>
         <commons.collections.version>3.2.2</commons.collections.version>
-        <commons.fileupload.version>1.3.3</commons.fileupload.version>
+        <commons.fileupload.version>1.4</commons.fileupload.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <fastjson.version>1.2.75</fastjson.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
