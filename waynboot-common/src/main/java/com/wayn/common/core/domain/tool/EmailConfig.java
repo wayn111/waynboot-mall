@@ -18,18 +18,18 @@ public class EmailConfig implements Serializable {
     private Long id;
 
     /** 邮件服务器SMTP地址 */
-    @NotBlank
+    @NotBlank(message = "邮件服务器SMTP地址不能为空")
     private String host;
 
     /** 邮件服务器SMTP端口 */
-    @NotBlank
+    @NotBlank(message = "邮件服务器SMTP端口不能为空")
     private String port;
 
-    @NotBlank
+    @NotBlank(message = "邮箱密钥不能为空")
     private String pass;
 
     /** 发件人邮箱 */
-    @NotBlank
+    @NotBlank(message = "发件人邮箱不能为空")
     private String fromUser;
 
     /** 发件者用户名 */

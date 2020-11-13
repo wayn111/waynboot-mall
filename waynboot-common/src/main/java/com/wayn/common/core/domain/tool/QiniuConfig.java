@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -27,21 +28,25 @@ public class QiniuConfig implements Serializable {
     /**
      * accessKey
      */
+    @NotBlank(message = "accessKey不能为空")
     private String accessKey;
 
     /**
      * Bucket 识别符
      */
+    @NotBlank(message = "Bucket不能为空")
     private String bucket;
 
     /**
      * 外链域名
      */
+    @NotBlank(message = "外链域名不能为空")
     private String host;
 
     /**
      * secretKey
      */
+    @NotBlank(message = "secretKey不能为空")
     private String secretKey;
 
     /**
