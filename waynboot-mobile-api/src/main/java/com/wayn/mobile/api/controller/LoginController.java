@@ -21,9 +21,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -118,13 +119,10 @@ public class LoginController {
 
     @GetMapping("test")
     public R test() {
-        String messageId = String.valueOf(UUID.randomUUID());
-        String messageData = "test message, hello!";
-        String createTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Map<String, Object> map = new HashMap<>();
-        map.put("messageId", messageId);
-        map.put("messageData", messageData);
-        map.put("createTime", createTime);
+        map.put("subject", "新订单通知");
+        map.put("content", "hello");
+        map.put("tos", "1669738430@qq.com");
         //将消息携带绑定键值：TestDirectRouting 发送到交换机TestDirectExchange
         rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
         return R.success();

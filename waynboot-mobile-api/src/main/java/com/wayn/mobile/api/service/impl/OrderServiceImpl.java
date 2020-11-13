@@ -41,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,6 +94,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
 
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
@@ -442,16 +446,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.error("更新数据已失效");
         }
         //TODO 发送邮件和短信通知，这里采用异步发送
+
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotEmpty(email)) {
+        /*if (StringUtils.isNotEmpty(email)) {
             EmailConfig emailConfig = mailConfigService.getById(1L);
             SendMailVO sendMailVO = new SendMailVO();
             sendMailVO.setSubject("新订单通知");
             sendMailVO.setContent(order.toString());
             sendMailVO.setTos(Arrays.asList(email));
             MailUtil.sendMail(emailConfig, sendMailVO, false);
-        }
+        }*/
+        Map<String, Object> map = new HashMap<>();
+        map.put("subject", "新订单通知");
+        map.put("content", order.toString());
+        map.put("createTime", Arrays.asList(email));
+        //将消息携带绑定键值：TestDirectRouting 发送到交换机TestDirectExchange
+        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
+
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务

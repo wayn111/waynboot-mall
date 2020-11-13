@@ -42,7 +42,7 @@ public class Gen {
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath + "/waynboot-mobile-api/src/main/java");
+        gc.setOutputDir(projectPath + "/waynboot-common/src/main/java");
         gc.setAuthor("wayn");
         gc.setBaseColumnList(true);
         gc.setBaseResultMap(true);
@@ -61,13 +61,12 @@ public class Gen {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setController("controller");
-        pc.setService("service");
-        pc.setServiceImpl("service.impl");
-        pc.setMapper("mapper");
-        pc.setEntity("domain");
+        pc.setService("service.shop");
+        pc.setServiceImpl("service.shop.impl");
+        pc.setMapper("mapper.shop");
+        pc.setEntity("domain.shop");
         pc.setModuleName("");
-        pc.setParent("com.wayn.mobile.api");
+        pc.setParent("com.wayn.common.core");
         mpg.setPackageInfo(pc);
 
         // 自定义配置
@@ -90,7 +89,7 @@ public class Gen {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-                return projectPath + "/waynboot-mobile-api/src/main/resources/mapper/" + pc.getModuleName()
+                return projectPath + "/waynboot-common/src/main/resources/mapper/" + pc.getModuleName()
                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
