@@ -445,24 +445,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!updateById(order)) {
             return R.error("更新数据已失效");
         }
-        //TODO 发送邮件和短信通知，这里采用异步发送
 
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
-        /*if (StringUtils.isNotEmpty(email)) {
-            EmailConfig emailConfig = mailConfigService.getById(1L);
-            SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setSubject("新订单通知");
-            sendMailVO.setContent(order.toString());
-            sendMailVO.setTos(Arrays.asList(email));
-            MailUtil.sendMail(emailConfig, sendMailVO, false);
-        }*/
-        Map<String, Object> map = new HashMap<>();
-        map.put("subject", "新订单通知");
-        map.put("content", order.toString());
-        map.put("createTime", Arrays.asList(email));
-        //将消息携带绑定键值：TestDirectRouting 发送到交换机TestDirectExchange
-        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
+        if (StringUtils.isNotBlank(email)) {
+            sendEmail("新订单通知", order.toString(), email);
+        }
 
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
@@ -525,16 +513,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setUpdateTime(new Date());
         updateById(order);
 
-        // TODO 发送邮件和短信通知，这里采用异步发送
         // 有用户申请退款，邮件通知运营人员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            EmailConfig emailConfig = mailConfigService.getById(1L);
-            SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setSubject("订单正在退款");
-            sendMailVO.setContent(order.toString());
-            sendMailVO.setTos(Arrays.asList(email));
-            MailUtil.sendMail(emailConfig, sendMailVO, false);
+            if (StringUtils.isNotBlank(email)) {
+                sendEmail("订单正在退款", order.toString(), email);
+            }
         }
 
         return R.success();
@@ -595,5 +579,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return SysConstants.STRING_FALSE_MSG("用户ID不一致");
         }
         return SysConstants.STRING_TRUE;
+    }
+
+    /**
+     * 发送邮件
+     *
+     * @param subject 主题
+     * @param content 内容
+     * @param tos     接收人
+     */
+    private void sendEmail(String subject, String content, String tos) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("subject", subject);
+        map.put("content", content);
+        map.put("tos", tos);
+        // 异步发送邮件
+        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
     }
 }
