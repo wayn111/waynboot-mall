@@ -7,8 +7,6 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
-import com.wayn.common.core.domain.tool.EmailConfig;
-import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.IAdminOrderService;
@@ -18,15 +16,18 @@ import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.util.R;
-import com.wayn.common.util.mail.MailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -49,6 +50,9 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
 
     @Autowired
     private IMailConfigService mailConfigService;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
 
     @Override
     public IPage<Order> listPage(IPage<Order> page, Order order) {
@@ -124,17 +128,11 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
 //            couponUserService.update(couponUser);
 //        }
 
-        //TODO 发送邮件和短信通知，这里采用异步发送
         // 退款成功通知用户, 例如“您申请的订单退款 [ 单号:{1} ] 已成功，请耐心等待到账。”
         // 注意订单号只发后6位
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            EmailConfig emailConfig = mailConfigService.getById(1L);
-            SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setSubject("订单已经退款");
-            sendMailVO.setContent(order.getOrderSn().substring(8, 14));
-            sendMailVO.setTos(Arrays.asList(email));
-            MailUtil.sendMail(emailConfig, sendMailVO, false);
+            sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email);
         }
         // logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
         return R.success();
@@ -162,19 +160,13 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         order.setUpdateTime(new Date());
         updateById(order);
 
-        //TODO 发送邮件和短信通知，这里采用异步发送
         // 发货会发送通知短信给用户:          *
         // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            EmailConfig emailConfig = mailConfigService.getById(1L);
-            SendMailVO sendMailVO = new SendMailVO();
-            sendMailVO.setSubject("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收");
-            sendMailVO.setContent(order.getOrderSn().substring(8, 14));
-            sendMailVO.setTos(Arrays.asList(email));
-            MailUtil.sendMail(emailConfig, sendMailVO, false);
+            sendEmail("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收", order.getOrderSn().substring(8, 14), email);
+
         }
-//        logHelper.logOrderSucceed("发货", "订单编号 " + order.getOrderSn());
         return R.success();
     }
 
@@ -191,5 +183,21 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         data.put("orderGoods", orderGoodsList);
         data.put("user", member);
         return R.success().add("data", data);
+    }
+
+    /**
+     * 发送邮件
+     *
+     * @param subject 主题
+     * @param content 内容
+     * @param tos     接收人
+     */
+    private void sendEmail(String subject, String content, String tos) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("subject", subject);
+        map.put("content", content);
+        map.put("tos", tos);
+        // 异步发送邮件
+        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
     }
 }

@@ -14,9 +14,7 @@ import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
-import com.wayn.common.core.domain.tool.EmailConfig;
 import com.wayn.common.core.domain.vo.OrderVO;
-import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IMemberService;
@@ -28,7 +26,6 @@ import com.wayn.common.exception.BusinessException;
 import com.wayn.common.task.TaskService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ip.IpUtils;
-import com.wayn.common.util.mail.MailUtil;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.OrderMapper;
 import com.wayn.mobile.api.service.ICartService;
@@ -411,14 +408,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.error(WxPayNotifyResponse.fail("更新数据已失效"));
         }
 
-        //TODO 发送邮件和短信通知，这里采用异步发送
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-        EmailConfig emailConfig = mailConfigService.getById(1L);
-        SendMailVO sendMailVO = new SendMailVO();
-        sendMailVO.setSubject("新订单通知");
-        sendMailVO.setContent(order.toString());
-        sendMailVO.setTos(Arrays.asList("1669738430@qq.com"));
-        MailUtil.sendMail(emailConfig, sendMailVO, false);
+        String email = iMemberService.getById(order.getUserId()).getEmail();
+        if (StringUtils.isNotBlank(email)) {
+            sendEmail("新订单通知", order.toString(), email);
+        }
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
