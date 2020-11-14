@@ -21,7 +21,6 @@ public class QiniuConfigController {
         return R.success().add("data", iQiniuConfigService.getById(1));
     }
 
-
     @PutMapping
     public R update(@Valid @RequestBody QiniuConfig qiniuConfig) {
         qiniuConfig.setId(1L);
