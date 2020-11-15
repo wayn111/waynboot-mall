@@ -95,10 +95,52 @@ public class UploadServiceImpl implements UploadService, InitializingBean {
         }
     }
 
+    /**
+     * 七牛云上传文件
+     *
+     * @param fileName 文件名
+     * @return 上传后的文件访问路径
+     * @throws QiniuException 七牛异常
+     */
+    @Override
+    public String qiniuUploadFile(String fileName) {
+        File file = new File(WaynConfig.getUploadDir() + File.separator + fileName);
+        Response response;
+        try {
+            response = this.uploadManager.put(file, file.getName(), getUploadToken());
+            int retry = 0;
+            while (response.needRetry() && retry < 3) {
+                response = this.uploadManager.put(file, file.getName(), getUploadToken());
+                retry++;
+            }
+            if (response.isOK()) {
+                JSONObject jsonObject = JSONObject.parseObject(response.bodyString());
+                String yunFileName = jsonObject.getString("key");
+                String yunFilePath = prefix + "/" + yunFileName;
+                FileUtils.deleteQuietly(file);
+                log.info("【文件上传至七牛云】绝对路径：{}", yunFilePath);
+                return yunFilePath;
+            } else {
+                log.error("【文件上传至七牛云】失败，{}", JSONObject.toJSONString(response));
+                FileUtils.deleteQuietly(file);
+                throw new BusinessException("文件上传至七牛云失败");
+            }
+        } catch (QiniuException e) {
+            FileUtils.deleteQuietly(file);
+            throw new BusinessException("文件上传至七牛云失败");
+        }
+    }
+
     @Override
     public void afterPropertiesSet() {
         this.putPolicy = new StringMap();
         putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"width\":$(imageInfo.width), \"height\":${imageInfo.height}}");
+    }
+
+    @Override
+    public String localUploadFile(String fileName) {
+        String requestUrl = HttpUtil.getRequestContext(ServletUtils.getRequest());
+        return requestUrl + "/upload/" + fileName;
     }
 
     /**
