@@ -16,12 +16,12 @@ public class QiniuConfigController {
     @Autowired
     private IQiniuConfigService iQiniuConfigService;
 
-    @GetMapping
+    @GetMapping("config")
     public R info() {
         return R.success().add("data", iQiniuConfigService.getById(1));
     }
 
-    @PutMapping
+    @PutMapping("config")
     public R update(@Valid @RequestBody QiniuConfig qiniuConfig) {
         qiniuConfig.setId(1L);
         iQiniuConfigService.updateById(qiniuConfig);
