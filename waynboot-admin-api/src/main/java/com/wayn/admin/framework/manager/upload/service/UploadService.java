@@ -18,12 +18,29 @@ import java.io.IOException;
  * @modified: yangkai.shen
  */
 public interface UploadService {
-	/**
-	 * 七牛云上传文件
-	 *
-	 * @param filename 文件名
-	 * @return 上传后的文件访问路径
-	 * @throws QiniuException 七牛异常
-	 */
-	String uploadFile(String filename) throws IOException;
+    /**
+     * 上传文件
+     *
+     * @param filename 文件名
+     * @return 上传后的文件访问路径
+     * @throws QiniuException 七牛异常
+     */
+    String uploadFile(String filename) throws IOException;
+
+    /**
+     * 七牛云上传文件
+     *
+     * @param filename 文件名
+     * @return 上传后的文件访问路径
+     * @throws IOException 七牛异常
+     */
+    String qiniuUploadFile(String filename) throws IOException;
+
+    /**
+     * 本地上传文件
+     *
+     * @param filename 文件名
+     * @return 上传后的文件访问路径
+     */
+    String localUploadFile(String filename);
 }
