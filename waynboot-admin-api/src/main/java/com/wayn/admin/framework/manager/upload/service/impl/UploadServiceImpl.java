@@ -3,19 +3,20 @@ package com.wayn.admin.framework.manager.upload.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
+import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
-import com.qiniu.util.StringMap;
 import com.wayn.admin.framework.config.WaynConfig;
 import com.wayn.admin.framework.manager.upload.service.UploadService;
+import com.wayn.common.core.domain.tool.QiniuConfig;
+import com.wayn.common.core.service.tool.IQiniuConfigService;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUtils;
+import com.wayn.common.util.file.QiniuUtil;
 import com.wayn.common.util.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,24 +36,10 @@ import java.io.File;
  */
 @Service
 @Slf4j
-public class UploadServiceImpl implements UploadService, InitializingBean {
+public class UploadServiceImpl implements UploadService {
 
     @Autowired
-    private UploadManager uploadManager;
-
-    @Autowired
-    private Auth auth;
-
-    @Value("${qiniu.enabled}")
-    private boolean enableQiniu;
-
-    @Value("${qiniu.bucket}")
-    private String bucket;
-
-    @Value("${qiniu.prefix}")
-    private String prefix;
-
-    private StringMap putPolicy;
+    private IQiniuConfigService iQiniuConfigService;
 
     /**
      * 七牛云上传文件
@@ -63,20 +50,25 @@ public class UploadServiceImpl implements UploadService, InitializingBean {
      */
     @Override
     public String uploadFile(String fileName) {
-        if (enableQiniu) {
+        QiniuConfig qiniuConfig = iQiniuConfigService.getById(1);
+        if (qiniuConfig != null && qiniuConfig.getEnable()) {
             File file = new File(WaynConfig.getUploadDir() + File.separator + fileName);
+            Configuration cfg = new Configuration(QiniuUtil.getRegion(qiniuConfig.getRegion()));
+            UploadManager uploadManager = new UploadManager(cfg);
+            Auth auth = Auth.create(qiniuConfig.getAccessKey(), qiniuConfig.getSecretKey());
+            String upToken = auth.uploadToken(qiniuConfig.getBucket());
             Response response;
             try {
-                response = this.uploadManager.put(file, file.getName(), getUploadToken());
+                response = uploadManager.put(file, file.getName(), upToken);
                 int retry = 0;
                 while (response.needRetry() && retry < 3) {
-                    response = this.uploadManager.put(file, file.getName(), getUploadToken());
+                    response = uploadManager.put(file, file.getName(), upToken);
                     retry++;
                 }
                 if (response.isOK()) {
                     JSONObject jsonObject = JSONObject.parseObject(response.bodyString());
                     String yunFileName = jsonObject.getString("key");
-                    String yunFilePath = prefix + "/" + yunFileName;
+                    String yunFilePath = qiniuConfig.getHost() + "/" + yunFileName;
                     FileUtils.deleteQuietly(file);
                     log.info("【文件上传至七牛云】绝对路径：{}", yunFilePath);
                     return yunFilePath;
@@ -95,60 +87,4 @@ public class UploadServiceImpl implements UploadService, InitializingBean {
         }
     }
 
-    /**
-     * 七牛云上传文件
-     *
-     * @param fileName 文件名
-     * @return 上传后的文件访问路径
-     * @throws QiniuException 七牛异常
-     */
-    @Override
-    public String qiniuUploadFile(String fileName) {
-        File file = new File(WaynConfig.getUploadDir() + File.separator + fileName);
-        Response response;
-        try {
-            response = this.uploadManager.put(file, file.getName(), getUploadToken());
-            int retry = 0;
-            while (response.needRetry() && retry < 3) {
-                response = this.uploadManager.put(file, file.getName(), getUploadToken());
-                retry++;
-            }
-            if (response.isOK()) {
-                JSONObject jsonObject = JSONObject.parseObject(response.bodyString());
-                String yunFileName = jsonObject.getString("key");
-                String yunFilePath = prefix + "/" + yunFileName;
-                FileUtils.deleteQuietly(file);
-                log.info("【文件上传至七牛云】绝对路径：{}", yunFilePath);
-                return yunFilePath;
-            } else {
-                log.error("【文件上传至七牛云】失败，{}", JSONObject.toJSONString(response));
-                FileUtils.deleteQuietly(file);
-                throw new BusinessException("文件上传至七牛云失败");
-            }
-        } catch (QiniuException e) {
-            FileUtils.deleteQuietly(file);
-            throw new BusinessException("文件上传至七牛云失败");
-        }
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        this.putPolicy = new StringMap();
-        putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"width\":$(imageInfo.width), \"height\":${imageInfo.height}}");
-    }
-
-    @Override
-    public String localUploadFile(String fileName) {
-        String requestUrl = HttpUtil.getRequestContext(ServletUtils.getRequest());
-        return requestUrl + "/upload/" + fileName;
-    }
-
-    /**
-     * 获取上传凭证
-     *
-     * @return 上传凭证
-     */
-    private String getUploadToken() {
-        return this.auth.uploadToken(bucket, null, 3600, putPolicy);
-    }
 }
