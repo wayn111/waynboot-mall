@@ -1,23 +1,13 @@
 package com.wayn.admin.api.controller.tool;
 
 
-import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.qiniu.http.Response;
-import com.qiniu.storage.Configuration;
-import com.qiniu.storage.UploadManager;
-import com.qiniu.storage.model.DefaultPutRet;
-import com.qiniu.util.Auth;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.tool.QiniuConfig;
 import com.wayn.common.core.domain.tool.QiniuContent;
 import com.wayn.common.core.service.tool.IQiniuConfigService;
 import com.wayn.common.core.service.tool.IQiniuContentService;
 import com.wayn.common.util.R;
-import com.wayn.common.util.file.FileUtils;
-import com.wayn.common.util.file.QiniuUtil;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Date;
 
 @RestController
 @RequestMapping("tool/qiniu")
@@ -64,49 +53,20 @@ public class QiniuController extends BaseController {
         if (StringUtils.isEmpty(qiniuConfig.getAccessKey())) {
             return R.error("七牛云配置错误");
         }
-        // 构造一个带指定Zone对象的配置类
-        Configuration cfg = new Configuration(QiniuUtil.getRegion(qiniuConfig.getRegion()));
-        UploadManager uploadManager = new UploadManager(cfg);
-        Auth auth = Auth.create(qiniuConfig.getAccessKey(), qiniuConfig.getSecretKey());
-        String upToken = auth.uploadToken(qiniuConfig.getBucket());
-        String key = file.getOriginalFilename();
-        if (iQiniuContentService.getOne(new QueryWrapper<QiniuContent>().eq("name", FilenameUtils.getBaseName(key))) != null) {
-            key = QiniuUtil.getKey(key);
-        }
-        Response response = uploadManager.put(file.getBytes(), key, upToken);
-
-        DefaultPutRet putRet = JSON.parseObject(response.bodyString(), DefaultPutRet.class);
-        //存入数据库
-        QiniuContent qiniuContent = new QiniuContent();
-        qiniuContent.setSuffix(FilenameUtils.getExtension(key));
-        qiniuContent.setBucket(qiniuConfig.getBucket());
-        if (qiniuConfig.getType() == 0) {
-            qiniuContent.setType("公开");
-        } else {
-            qiniuContent.setType("私有");
-        }
-        qiniuContent.setName(FilenameUtils.getBaseName(key));
-        qiniuContent.setUrl(qiniuConfig.getHost() + "/" + putRet.key);
-        qiniuContent.setSize(FileUtils.getSize(Integer.parseInt(file.getSize() + "")));
-        qiniuContent.setCreateTime(new Date());
+        QiniuContent qiniuContent = iQiniuContentService.upload(file, qiniuConfig);
         return R.result(iQiniuContentService.save(qiniuContent)).add("id", qiniuContent.getContentId()).add("fileUrl", qiniuContent.getUrl());
     }
 
     @GetMapping("download/{id}")
     public R download(@PathVariable Long id) {
-        QiniuContent content = iQiniuContentService.getById(id);
-        QiniuConfig config = iQiniuConfigService.getById(1L);
-        String finalUrl;
-        String type = "公开";
-        if (type.equals(content.getType())) {
-            finalUrl = content.getUrl();
-        } else {
-            Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
-            // 1小时，可以自定义链接过期时间
-            long expireInSeconds = 3600;
-            finalUrl = auth.privateDownloadUrl(content.getUrl(), expireInSeconds);
+        QiniuConfig qiniuConfig = iQiniuConfigService.getById(1);
+        if (qiniuConfig == null) {
+            return R.error("七牛云配置不存在");
         }
-        return R.success().add("url", finalUrl);
+        if (StringUtils.isEmpty(qiniuConfig.getAccessKey())) {
+            return R.error("七牛云配置错误");
+        }
+        return R.success().add("url", iQiniuContentService.download(id, qiniuConfig));
     }
 
 }
