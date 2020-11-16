@@ -3,11 +3,11 @@ package com.wayn.common.core.domain.tool;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
  * @since 2020-11-15
  */
 @Data
-@TableName("qiniu_content")
+@TableName("tool_qiniu_content")
 @EqualsAndHashCode(callSuper = false)
-public class QiniuContent implements Serializable {
+public class QiniuContent extends ShopBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -60,10 +60,11 @@ public class QiniuContent implements Serializable {
      */
     private String suffix;
 
+
     /**
-     * 上传或同步的时间
+     * 删除标志（0代表存在 1代表删除）
      */
-    private LocalDateTime updateTime;
+    private Boolean delFlag;
 
 
 }

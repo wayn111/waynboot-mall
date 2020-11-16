@@ -1,7 +1,9 @@
 package com.wayn.common.core.mapper.tool;
 
-import com.wayn.common.core.domain.tool.QiniuContent;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.common.core.domain.tool.QiniuContent;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface QiniuContentMapper extends BaseMapper<QiniuContent> {
 
+    IPage<QiniuContent> selectQiniuContentListPage(Page<QiniuContent> page, QiniuContent qiniuContent);
 }
