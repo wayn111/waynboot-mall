@@ -63,15 +63,3 @@ shop:
     # 商户证书文件路径
     # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
     key-path: xxxxx
-
-# 七牛云配置
-qiniu:
-  enabled: true
-  ## 此处填写你自己的七牛云 access key
-  accessKey: 0m7AYz601l-UiO_9uyK0c8TEJqnbdkAPln7dgjVw
-  ## 此处填写你自己的七牛云 secret key
-  secretKey: 0Z0caBUehc7uRhiIwcTjfVxR9MoDJDIDtRaaNP3O
-  ## 此处填写你自己的七牛云 bucket
-  bucket: wayntest
-  ## 此处填写你自己的七牛云 域名
-  prefix: http://cdn.wayn.xin

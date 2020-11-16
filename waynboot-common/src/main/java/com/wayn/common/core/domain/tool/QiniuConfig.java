@@ -60,9 +60,9 @@ public class QiniuConfig implements Serializable {
     private String region;
 
     /**
-     * 是否启用七牛云存储 0 启用 1 禁用
+     * 是否启用七牛云存储 0 禁用 1 启用
      */
-    private Integer enable;
+    private Boolean enable;
 
 
 }
