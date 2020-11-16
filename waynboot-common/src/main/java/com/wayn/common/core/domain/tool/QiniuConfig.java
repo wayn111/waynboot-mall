@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @since 2020-11-13
  */
 @Data
-@TableName("tool_email_config")
+@TableName("tool_qiniu_config")
 public class QiniuConfig implements Serializable {
 
     private static final long serialVersionUID = 1L;

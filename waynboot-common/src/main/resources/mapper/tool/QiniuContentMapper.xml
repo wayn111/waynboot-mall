@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.tool.QiniuContentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ToolQiniucontentResult" type="com.wayn.common.core.domain.tool.QiniuContent">
+        <id column="content_id" property="contentId" />
+        <result column="bucket" property="bucket" />
+        <result column="name" property="name" />
+        <result column="size" property="size" />
+        <result column="type" property="type" />
+        <result column="url" property="url" />
+        <result column="suffix" property="suffix" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="del_flag" property="delFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="selectQiniuContentVo">
+       select content_id, bucket, name, size, type, url, suffix, update_time, del_flag
+        from tool_qiniu_content
+    </sql>
+
+    <select id="selectQiniuContentListPage" resultType="com.wayn.common.core.domain.tool.QiniuContent">
+        <include refid="selectQiniuContentVo"/>
+        where del_flag = 0
+        <if test="qiniuContent.name != null and qiniuContent.name != ''">
+            AND name like concat('%', #{qiniuContent.name}, '%')
+        </if>
+        <if test="qiniuContent.startTime != null and qiniuContent.startTime != ''">
+            and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{qiniuContent.startTime},'%Y-%m-%d')
+        </if>
+        <if test="qiniuContent.endTime != null and qiniuContent.endTime != ''">
+            and DATE_FORMAT(d.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{qiniuContent.endTime},'%Y-%m-%d')
+        </if>
+    </select>
+
+</mapper>
