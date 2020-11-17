@@ -3,6 +3,7 @@ package com.wayn.common.core.service.tool;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qiniu.common.QiniuException;
 import com.wayn.common.core.domain.tool.QiniuConfig;
 import com.wayn.common.core.domain.tool.QiniuContent;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,4 +53,6 @@ public interface IQiniuContentService extends IService<QiniuContent> {
      * @param config
      */
     boolean syncQiniu(QiniuConfig config);
+
+    boolean delete(Long id,QiniuConfig config) throws QiniuException;
 }

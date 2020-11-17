@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
@@ -130,6 +131,22 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
                     save(qiniuContent);
                 }
             }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean delete(Long id, QiniuConfig config) throws QiniuException {
+        QiniuContent content = getById(id);
+        // 构造一个带指定Zone对象的配置类
+        Configuration cfg = new Configuration(QiniuUtil.getRegion(config.getRegion()));
+        Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
+        BucketManager bucketManager = new BucketManager(auth, cfg);
+        Response response = bucketManager.delete(content.getBucket(), content.getName() + "." + content.getSuffix());
+        if (response.isOK()) {
+            removeById(content);
+        } else {
+            return false;
         }
         return true;
     }
