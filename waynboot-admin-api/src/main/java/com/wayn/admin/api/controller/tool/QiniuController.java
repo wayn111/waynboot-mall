@@ -3,17 +3,12 @@ package com.wayn.admin.api.controller.tool;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiniu.common.QiniuException;
-import com.qiniu.http.Response;
-import com.qiniu.storage.BucketManager;
-import com.qiniu.storage.Configuration;
-import com.qiniu.util.Auth;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.tool.QiniuConfig;
 import com.wayn.common.core.domain.tool.QiniuContent;
 import com.wayn.common.core.service.tool.IQiniuConfigService;
 import com.wayn.common.core.service.tool.IQiniuContentService;
 import com.wayn.common.util.R;
-import com.wayn.common.util.file.QiniuUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -90,16 +85,13 @@ public class QiniuController extends BaseController {
 
     @DeleteMapping(value = "{id}")
     public R delete(@PathVariable Long id) throws QiniuException {
-        QiniuContent content = iQiniuContentService.getById(id);
         QiniuConfig config = iQiniuConfigService.getById(1);
-        //构造一个带指定Zone对象的配置类
-        Configuration cfg = new Configuration(QiniuUtil.getRegion(config.getRegion()));
-        Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
-        BucketManager bucketManager = new BucketManager(auth, cfg);
-        Response response = bucketManager.delete(content.getBucket(), content.getName() + "." + content.getSuffix());
-        if (response.isOK()) {
-            iQiniuContentService.removeById(content);
+        if (config == null) {
+            return R.error("七牛云配置不存在");
         }
-        return R.success();
+        if (StringUtils.isEmpty(config.getAccessKey())) {
+            return R.error("七牛云配置错误");
+        }
+        return R.result(iQiniuContentService.delete(id, config));
     }
 }
