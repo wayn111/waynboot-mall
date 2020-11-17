@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qiniu.http.Response;
+import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.storage.model.FileInfo;
 import com.qiniu.util.Auth;
 import com.wayn.common.core.domain.tool.QiniuConfig;
 import com.wayn.common.core.domain.tool.QiniuContent;
@@ -91,5 +93,44 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
             finalUrl = auth.privateDownloadUrl(content.getUrl(), expireInSeconds);
         }
         return finalUrl;
+    }
+
+    @Override
+    public boolean syncQiniu(QiniuConfig config) {
+        // 构造一个带指定Zone对象的配置类
+        Configuration cfg = new Configuration(QiniuUtil.getRegion(config.getRegion()));
+        Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
+        BucketManager bucketManager = new BucketManager(auth, cfg);
+        // 文件名前缀
+        String prefix = "";
+        // 每次迭代的长度限制，最大1000，推荐值 1000
+        int limit = 1000;
+        // 指定目录分隔符，列出所有公共前缀（模拟列出目录效果）。缺省值为空字符串
+        String delimiter = "";
+        // 列举空间文件列表
+        BucketManager.FileListIterator fileListIterator = bucketManager.createFileListIterator(config.getBucket(), prefix, limit, delimiter);
+        while (fileListIterator.hasNext()) {
+            // 处理获取的file list结果
+            QiniuContent qiniuContent;
+            FileInfo[] items = fileListIterator.next();
+            for (FileInfo item : items) {
+                if (getOne(new QueryWrapper<QiniuContent>().eq("name", FilenameUtils.getBaseName(item.key))) == null) {
+                    qiniuContent = new QiniuContent();
+                    qiniuContent.setSize(FileUtils.getSize(Integer.parseInt(item.fsize + "")));
+                    qiniuContent.setSuffix(FilenameUtils.getExtension(item.key));
+                    qiniuContent.setName(FilenameUtils.getBaseName(item.key));
+                    if (config.getType() == 0) {
+                        qiniuContent.setType("公开");
+                    } else {
+                        qiniuContent.setType("私有");
+                    }
+                    qiniuContent.setBucket(config.getBucket());
+                    qiniuContent.setUrl(config.getHost() + "/" + item.key);
+                    qiniuContent.setCreateTime(new Date());
+                    save(qiniuContent);
+                }
+            }
+        }
+        return true;
     }
 }
