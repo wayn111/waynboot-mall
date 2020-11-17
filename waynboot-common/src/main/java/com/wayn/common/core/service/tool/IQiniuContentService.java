@@ -46,4 +46,10 @@ public interface IQiniuContentService extends IService<QiniuContent> {
      * @return 下载链接
      */
     String download(Long contentId, QiniuConfig qiniuConfig);
+
+    /**
+     * 同步七牛云存储文件至qiniuContent表中
+     * @param config
+     */
+    boolean syncQiniu(QiniuConfig config);
 }
