@@ -143,11 +143,10 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
         Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
         BucketManager bucketManager = new BucketManager(auth, cfg);
         Response response = bucketManager.delete(content.getBucket(), content.getName() + "." + content.getSuffix());
-        if (response.isOK()) {
-            removeById(content);
-        } else {
+        if (!response.isOK()) {
             return false;
         }
+        removeById(content);
         return true;
     }
 }
