@@ -6,7 +6,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://localhost:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:mysql://192.168.31.49:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
         password: admin123
       # 从库数据源
@@ -56,7 +56,7 @@ spring:
           config:
             multi-statement-allow: true
   redis:
-    host: localhost
+    host: 182.254.214.165
     port: 6379
     timeout: 5000
     password:
@@ -71,13 +71,13 @@ spring:
         max-wait: 2000
   #配置rabbitMq 服务器
   rabbitmq:
-    host: localhost
+    host: 182.254.214.165
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
 
 es:
-  host: localhost
+  host: 182.254.214.165
   port: 9200
   scheme: http
 

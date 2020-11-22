@@ -11,7 +11,7 @@
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 15/11/2020 12:55:55
+ Date: 22/11/2020 12:48:31
 */
 
 SET NAMES utf8mb4;
@@ -62,44 +62,6 @@ INSERT INTO `platform_coupon_user_receive` VALUES (2, 100, 1, 1, 0);
 INSERT INTO `platform_coupon_user_receive` VALUES (3, 100, 1, 2, 0);
 
 -- ----------------------------
--- Table structure for qiniu_config
--- ----------------------------
-DROP TABLE IF EXISTS `qiniu_config`;
-CREATE TABLE `qiniu_config`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `access_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'accessKey',
-  `bucket` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Bucket 识别符',
-  `host` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '外链域名',
-  `secret_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'secretKey',
-  `type` tinyint(4) NULL DEFAULT NULL COMMENT '空间类型 0 公开 1 私有',
-  `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
-  `enable` tinyint(4) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of qiniu_config
--- ----------------------------
-INSERT INTO `qiniu_config` VALUES (1, NULL, NULL, 'http://cdn.wayn.xin', NULL, NULL, NULL, NULL);
-
--- ----------------------------
--- Table structure for qiniu_content
--- ----------------------------
-DROP TABLE IF EXISTS `qiniu_content`;
-CREATE TABLE `qiniu_content`  (
-  `content_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `bucket` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Bucket 识别符',
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件名称',
-  `size` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件大小',
-  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件类型：私有或公开',
-  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件url',
-  `suffix` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件后缀',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '上传或同步的时间',
-  PRIMARY KEY (`content_id`) USING BTREE,
-  UNIQUE INDEX `uniq_name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云文件存储' ROW_FORMAT = Compact;
-
--- ----------------------------
 -- Table structure for seckill
 -- ----------------------------
 DROP TABLE IF EXISTS `seckill`;
@@ -146,7 +108,7 @@ CREATE TABLE `shop_address`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_address
@@ -175,7 +137,7 @@ CREATE TABLE `shop_banner`  (
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   `status` tinyint(4) NULL DEFAULT 0 COMMENT 'banner状态（0启用 1禁用）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_banner
@@ -274,7 +236,7 @@ CREATE TABLE `shop_cart`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 82 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_cart
@@ -344,6 +306,10 @@ INSERT INTO `shop_cart` VALUES (79, 1, 1113010, '1113010', '男式丝滑莫代�
 INSERT INTO `shop_cart` VALUES (80, 4, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-11-02 11:10:28', NULL, 1);
 INSERT INTO `shop_cart` VALUES (81, 4, 1152009, '1152009', '魔兽世界 联盟 护腕 一只', 233, 29.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', '吸汗、舒适、弹性、防护、耐用', '2020-11-02 11:17:47', NULL, 1);
 INSERT INTO `shop_cart` VALUES (82, 4, 1111007, '1111007', '妙曲奇遇记曲奇礼盒 520克', 154, 78.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/8d228f767b136a67aaf2cbbf6deb46fa.png', '六种口味，酥香脆爽', '2020-11-07 09:45:39', NULL, 1);
+INSERT INTO `shop_cart` VALUES (83, 1, 1181011, '1181011', '红米K30', 254, 1999.00, 2, '[\"白\",\"64g\"]', 1, 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', '红米手机', '2020-11-22 11:41:01', NULL, 1);
+INSERT INTO `shop_cart` VALUES (84, 1, 1181011, '1181011', '红米K30', 254, 1999.00, 1, '[\"白\",\"64g\"]', 1, 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', '红米手机', '2020-11-22 11:44:34', NULL, 1);
+INSERT INTO `shop_cart` VALUES (85, 1, 1135002, '1135002', '宫廷奢华真丝四件套', 204, 2599.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '100%桑蚕丝，丝滑润肤', '2020-11-22 12:02:46', NULL, 1);
+INSERT INTO `shop_cart` VALUES (86, 1, 1085019, '1085019', '20寸 纯PC“铝框”（非全铝）登机箱', 102, 349.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/65c955a7a98e84d44ca30bb88a591eac.png', '铝质包角，牢固抗摔', '2020-11-22 12:11:26', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_category
@@ -364,7 +330,7 @@ CREATE TABLE `shop_category`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `parent_id`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1036004 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1036005 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_category
@@ -477,7 +443,7 @@ CREATE TABLE `shop_channel`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '名称',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_channel
@@ -505,7 +471,8 @@ CREATE TABLE `shop_column_goods_relation`  (
   `id` int(11) NOT NULL COMMENT '自增ID',
   `column_id` int(11) NOT NULL COMMENT '栏目ID',
   `goods_id` int(11) NOT NULL COMMENT '商品ID',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `column_id_index`(`column_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '栏目商品关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -527,7 +494,7 @@ CREATE TABLE `shop_comment`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id_value`(`value_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1014 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1015 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_comment
@@ -1590,7 +1557,7 @@ CREATE TABLE `shop_goods`  (
   INDEX `cat_id`(`category_id`) USING BTREE,
   INDEX `brand_id`(`brand_id`) USING BTREE,
   INDEX `sort_order`(`sort_order`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1181012 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods
@@ -1854,7 +1821,7 @@ CREATE TABLE `shop_goods_attribute`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 880 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 881 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_attribute
@@ -2757,7 +2724,7 @@ CREATE TABLE `shop_goods_product`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 255 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 256 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_product
@@ -2965,7 +2932,7 @@ INSERT INTO `shop_goods_product` VALUES (200, 1134036, '[\"标准\"]', 38.00, 10
 INSERT INTO `shop_goods_product` VALUES (201, 1134056, '[\"标准\"]', 429.00, 100, 0, 'http://yanxuan.nosdn.127.net/c29f47f58ba1e3c2ff5a193eec0b11d6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (202, 1135000, '[\"标准\"]', 359.00, 100, 0, 'http://yanxuan.nosdn.127.net/53d0309471b570a7e12a3f01ba694491.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (203, 1135001, '[\"标准\"]', 459.00, 100, 0, 'http://yanxuan.nosdn.127.net/f82ee85933d6f0cc95382215281d3526.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (204, 1135002, '[\"标准\"]', 2599.00, 100, 0, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '2018-02-01 00:00:00', '2020-08-28 23:15:29', 0);
+INSERT INTO `shop_goods_product` VALUES (204, 1135002, '[\"标准\"]', 2599.00, 99, 0, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '2018-02-01 00:00:00', '2020-08-28 23:15:29', 0);
 INSERT INTO `shop_goods_product` VALUES (205, 1135050, '[\"标准\"]', 179.00, 100, 0, 'http://yanxuan.nosdn.127.net/366f3f3f0e8971c8cf871e2b55b74ff2.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (206, 1135051, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/9126151f028a8804026d530836b481cb.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (207, 1135052, '[\"标准\"]', 259.00, 100, 0, 'http://yanxuan.nosdn.127.net/63f5da1f5363af43aa91864bf66af48e.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -3015,7 +2982,7 @@ INSERT INTO `shop_goods_product` VALUES (250, 1181003, '[\"标准\"]', 1.00, 1, 
 INSERT INTO `shop_goods_product` VALUES (251, 1181004, '[\"标准\"]', 1.00, 1, 0, '', '2020-08-20 23:25:05', '2020-08-20 23:43:22', 1);
 INSERT INTO `shop_goods_product` VALUES (252, 1181011, '[\"红\",\"64g\"]', 1999.00, 1000, 1, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
 INSERT INTO `shop_goods_product` VALUES (253, 1181011, '[\"红\",\"128g\"]', 2299.00, 600, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
-INSERT INTO `shop_goods_product` VALUES (254, 1181011, '[\"白\",\"64g\"]', 1999.00, 2000, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
+INSERT INTO `shop_goods_product` VALUES (254, 1181011, '[\"白\",\"64g\"]', 1999.00, 1997, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
 INSERT INTO `shop_goods_product` VALUES (255, 1181011, '[\"白\",\"128g\"]', 2299.00, 100, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
 
 -- ----------------------------
@@ -3033,7 +3000,7 @@ CREATE TABLE `shop_goods_specification`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 254 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 255 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_specification
@@ -3309,7 +3276,7 @@ CREATE TABLE `shop_keyword`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '关键字表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '关键字表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_keyword
@@ -3349,7 +3316,7 @@ CREATE TABLE `shop_member`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_name`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_member
@@ -3394,7 +3361,7 @@ CREATE TABLE `shop_order`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order
@@ -3411,15 +3378,18 @@ INSERT INTO `shop_order` VALUES (52, 1, '15986274300000020', 203, 0, '河西', '
 INSERT INTO `shop_order` VALUES (53, 1, '15992341900000020', 401, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 36.00, 0.00, 0.00, 0.00, 0.00, 36.00, 36.00, 'xxxxx0987654321-wx', '2020-09-04 23:43:14', '44444tttttt', 'YTO', '2020-09-04 23:47:36', NULL, NULL, NULL, NULL, '2020-09-04 23:53:45', 0, NULL, '2020-09-04 23:43:11', '2020-09-04 23:53:45', 0);
 INSERT INTO `shop_order` VALUES (54, 1, '15992346150000021', 401, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', 'yyyy', 2000.00, 0.00, 0.00, 0.00, 0.00, 2000.00, 2000.00, 'xxxxx0987654321-wx', '2020-09-04 23:50:25', 'jjjj', 'YTO', '2020-09-04 23:50:41', NULL, NULL, NULL, NULL, '2020-09-04 23:53:41', 0, NULL, '2020-09-04 23:50:16', '2020-09-04 23:53:41', 0);
 INSERT INTO `shop_order` VALUES (55, 1, '16016514770000020', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', 'test', 4.90, 0.00, 0.00, 0.00, 0.00, 4.90, 4.90, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-10-02 23:12:18', '2020-10-02 23:11:18', NULL, 1);
-INSERT INTO `shop_order` VALUES (56, 1, '16016519330000020', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', 'test', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-10-02 23:18:58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:18:54', '2020-10-02 23:18:58', 0);
-INSERT INTO `shop_order` VALUES (57, 1, '16016519700000021', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:19:34', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:19:30', '2020-10-02 23:19:34', 0);
-INSERT INTO `shop_order` VALUES (58, 1, '16016520750000022', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:21:26', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:21:16', '2020-10-02 23:21:26', 0);
-INSERT INTO `shop_order` VALUES (59, 1, '16016521700000023', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 39.00, 0.00, 0.00, 0.00, 0.00, 39.00, 39.00, 'xxxxx0987654321-wx', '2020-10-02 23:22:53', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:22:50', '2020-10-02 23:22:53', 0);
-INSERT INTO `shop_order` VALUES (60, 1, '16035926230000020', 201, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '', 294.00, 0.00, 0.00, 0.00, 0.00, 294.00, 294.00, 'xxxxx0987654321-wx', '2020-10-25 10:23:47', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-25 10:23:43', '2020-10-25 10:23:47', 0);
+INSERT INTO `shop_order` VALUES (56, 1, '16016519330000020', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', 'test', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-10-02 23:18:58', 'rrrewr23', 'ZTO', '2020-11-22 11:33:48', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:18:54', '2020-11-22 11:33:48', 0);
+INSERT INTO `shop_order` VALUES (57, 1, '16016519700000021', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:19:34', 'tt3234ss', 'YD', '2020-11-22 11:33:10', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:19:30', '2020-11-22 11:33:10', 0);
+INSERT INTO `shop_order` VALUES (58, 1, '16016520750000022', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:21:26', 'tteeew22', 'EMS', '2020-11-22 11:30:41', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:21:16', '2020-11-22 11:30:41', 0);
+INSERT INTO `shop_order` VALUES (59, 1, '16016521700000023', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 39.00, 0.00, 0.00, 0.00, 0.00, 39.00, 39.00, 'xxxxx0987654321-wx', '2020-10-02 23:22:53', 'ddd333', 'EMS', '2020-11-22 11:27:47', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:22:50', '2020-11-22 11:27:47', 0);
+INSERT INTO `shop_order` VALUES (60, 1, '16035926230000020', 401, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '', 294.00, 0.00, 0.00, 0.00, 0.00, 294.00, 294.00, 'xxxxx0987654321-wx', '2020-10-25 10:23:47', 'tttt', 'YTO', '2020-11-22 11:17:18', NULL, NULL, NULL, NULL, '2020-11-22 12:10:01', 0, NULL, '2020-10-25 10:23:43', '2020-11-22 12:10:01', 1);
 INSERT INTO `shop_order` VALUES (61, 4, '16042866410000050', 203, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '魔兽世界', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-02 11:10:46', NULL, NULL, NULL, 499.00, '微信退款接口', '已退款', '2020-11-02 11:15:03', NULL, 0, '2020-11-02 11:15:03', '2020-11-02 11:10:42', '2020-11-02 11:15:03', 0);
 INSERT INTO `shop_order` VALUES (62, 4, '16042870690000051', 401, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-11-02 11:17:57', 'xxdd133', 'ZTO', '2020-11-02 11:19:49', NULL, NULL, NULL, NULL, '2020-11-02 11:20:13', 0, NULL, '2020-11-02 11:17:50', '2020-11-02 11:20:13', 0);
 INSERT INTO `shop_order` VALUES (63, 4, '16042870690000052', 201, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'xxxxx0987654321-wx', '2020-11-02 11:18:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-02 11:17:50', '2020-11-02 11:18:53', 1);
-INSERT INTO `shop_order` VALUES (64, 4, '16047135430000050', 201, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 78.00, 0.00, 0.00, 0.00, 0.00, 78.00, 78.00, 'xxxxx0987654321-wx', '2020-11-07 09:45:51', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-07 09:45:44', '2020-11-07 09:45:51', 0);
+INSERT INTO `shop_order` VALUES (64, 4, '16047135430000050', 301, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 78.00, 0.00, 0.00, 0.00, 0.00, 78.00, 78.00, 'xxxxx0987654321-wx', '2020-11-07 09:45:51', '12343ddd', 'YTO', '2020-11-22 11:07:13', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-07 09:45:44', '2020-11-22 11:07:13', 0);
+INSERT INTO `shop_order` VALUES (65, 1, '16060164730000020', 301, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '红米手机', 3998.00, 0.00, 0.00, 0.00, 0.00, 3998.00, 3998.00, 'xxxxx0987654321-wx', '2020-11-22 11:41:18', 'rrr', 'YTO', '2020-11-22 11:41:45', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-22 11:41:14', '2020-11-22 11:41:45', 0);
+INSERT INTO `shop_order` VALUES (66, 1, '16060166760000021', 301, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '红米手机', 1999.00, 0.00, 0.00, 0.00, 0.00, 1999.00, 1999.00, 'xxxxx0987654321-wx', '2020-11-22 11:44:40', '555666', 'ZTO', '2020-11-22 12:01:01', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-22 11:44:37', '2020-11-22 12:01:01', 0);
+INSERT INTO `shop_order` VALUES (67, 1, '16060177700000022', 301, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '', 2599.00, 0.00, 0.00, 0.00, 0.00, 2599.00, 2599.00, 'xxxxx0987654321-wx', '2020-11-22 12:02:56', 'iiikkk', 'YTO', '2020-11-22 12:03:37', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-22 12:02:51', '2020-11-22 12:03:37', 0);
 
 -- ----------------------------
 -- Table structure for shop_order_goods
@@ -3443,7 +3413,7 @@ CREATE TABLE `shop_order_goods`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id`(`order_id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 72 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order_goods
@@ -3466,13 +3436,16 @@ INSERT INTO `shop_order_goods` VALUES (58, 56, 1152008, '魔兽世界 部落 护
 INSERT INTO `shop_order_goods` VALUES (59, 57, 1074001, '男式莫代尔无痕内裤', '1074001', 92, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 0, '2020-10-02 23:19:30', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (60, 58, 1056002, '男式玩色内裤', '1056002', 70, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', 0, '2020-10-02 23:21:16', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (61, 59, 1127025, '女式蝶边真丝内裤', '1127025', 179, 1, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/b2fe79c872a8a7f647264b5e51bcc802.png', 0, '2020-10-02 23:22:50', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (62, 60, 1074001, '男式莫代尔无痕内裤', '1074001', 92, 2, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 0, '2020-10-25 10:23:43', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (63, 60, 1127025, '女式蝶边真丝内裤', '1127025', 179, 2, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/b2fe79c872a8a7f647264b5e51bcc802.png', 0, '2020-10-25 10:23:43', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (64, 60, 1127024, '女式无痕真丝内裤', '1127024', 178, 1, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/0a70f12a712e90d7d93beec4f686fe8e.png', 0, '2020-10-25 10:23:43', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (65, 60, 1113010, '男式丝滑莫代尔平角内裤', '1113010', 156, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2d0920b51331bb1636330ad8e07d1b97.png', 0, '2020-10-25 10:23:43', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (62, 60, 1074001, '男式莫代尔无痕内裤', '1074001', 92, 2, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 0, '2020-10-25 10:23:43', NULL, 1);
+INSERT INTO `shop_order_goods` VALUES (63, 60, 1127025, '女式蝶边真丝内裤', '1127025', 179, 2, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/b2fe79c872a8a7f647264b5e51bcc802.png', 0, '2020-10-25 10:23:43', NULL, 1);
+INSERT INTO `shop_order_goods` VALUES (64, 60, 1127024, '女式无痕真丝内裤', '1127024', 178, 1, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/0a70f12a712e90d7d93beec4f686fe8e.png', 0, '2020-10-25 10:23:43', NULL, 1);
+INSERT INTO `shop_order_goods` VALUES (65, 60, 1113010, '男式丝滑莫代尔平角内裤', '1113010', 156, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2d0920b51331bb1636330ad8e07d1b97.png', 0, '2020-10-25 10:23:43', NULL, 1);
 INSERT INTO `shop_order_goods` VALUES (66, 61, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-11-02 11:10:42', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (67, 62, 1152009, '魔兽世界 联盟 护腕 一只', '1152009', 233, 1, 29.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', 0, '2020-11-02 11:17:50', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (68, 64, 1111007, '妙曲奇遇记曲奇礼盒 520克', '1111007', 154, 1, 78.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/8d228f767b136a67aaf2cbbf6deb46fa.png', 0, '2020-11-07 09:45:44', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (69, 65, 1181011, '红米K30', '1181011', 254, 2, 1999.00, '[\"白\",\"64g\"]', 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', 0, '2020-11-22 11:41:14', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (70, 66, 1181011, '红米K30', '1181011', 254, 1, 1999.00, '[\"白\",\"64g\"]', 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', 0, '2020-11-22 11:44:37', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (71, 67, 1135002, '宫廷奢华真丝四件套', '1135002', 204, 1, 2599.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', 0, '2020-11-22 12:02:51', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_search_history
@@ -3488,7 +3461,7 @@ CREATE TABLE `shop_search_history`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 223 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 244 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_search_history
@@ -3716,6 +3689,26 @@ INSERT INTO `shop_search_history` VALUES (220, 1, '宠物', '', 1, '2020-11-07 0
 INSERT INTO `shop_search_history` VALUES (221, 1, '宠物', '', 1, '2020-11-07 09:47:07', NULL, 0);
 INSERT INTO `shop_search_history` VALUES (222, 1, '宠物', '', 1, '2020-11-07 09:47:11', NULL, 0);
 INSERT INTO `shop_search_history` VALUES (223, 1, '宠物', '', 1, '2020-11-07 09:47:11', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (224, 1, '宠物', '', 1, '2020-11-22 12:09:28', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (225, 1, '宠物', '', 1, '2020-11-22 12:09:30', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (226, 1, '床', '', 1, '2020-11-22 12:24:11', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (227, 1, '床', '', 1, '2020-11-22 12:24:12', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (228, 1, '床', '', 1, '2020-11-22 12:24:14', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (229, 1, '床', '', 1, '2020-11-22 12:24:16', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (230, 1, '床', '', 1, '2020-11-22 12:24:18', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (231, 1, '床', '', 1, '2020-11-22 12:24:19', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (232, 1, '床', '', 1, '2020-11-22 12:24:20', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (233, 1, '床', '', 1, '2020-11-22 12:24:21', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (234, 1, '床', '', 1, '2020-11-22 12:24:22', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (235, 1, '床', '', 1, '2020-11-22 12:24:23', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (236, 1, '床', '', 1, '2020-11-22 12:24:24', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (237, 1, '床', '', 1, '2020-11-22 12:24:26', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (238, 1, '床', '', 1, '2020-11-22 12:24:27', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (239, 1, '床', '', 1, '2020-11-22 12:24:29', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (240, 1, '床', '', 1, '2020-11-22 12:24:32', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (241, 1, '床', '', 1, '2020-11-22 12:24:32', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (242, 1, '床', '', 1, '2020-11-22 12:24:33', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (243, 1, '床', '', 1, '2020-11-22 12:24:35', NULL, 0);
 
 -- ----------------------------
 -- Table structure for success_killed
@@ -3765,7 +3758,7 @@ CREATE TABLE `sys_dept`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dept
@@ -3806,7 +3799,7 @@ CREATE TABLE `sys_dict`  (
   INDEX `sys_dict_value`(`value`) USING BTREE,
   INDEX `sys_dict_label`(`name`) USING BTREE,
   INDEX `sys_dict_del_flag`(`del_flag`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 183 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 184 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict
@@ -3874,7 +3867,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2050 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2051 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -3928,7 +3921,7 @@ INSERT INTO `sys_menu` VALUES (2046, '运营管理', 0, 2, 'operation', NULL, 1,
 INSERT INTO `sys_menu` VALUES (2047, '金刚区管理', 2046, 1, 'diamond', 'operation/diamond/index', 1, 'C', 0, 0, NULL, 'druid', 'admin', '2020-10-10 11:08:48', 'admin', '2020-10-10 11:09:56', '');
 INSERT INTO `sys_menu` VALUES (2048, '栏目管理', 2046, 2, 'column', 'operation/column/index', 1, 'C', 0, 0, NULL, 'color', 'admin', '2020-10-10 11:17:54', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2049, '关键字管理', 2046, 3, 'keyword', 'operation/keyword/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-11-02 12:25:06', 'admin', '2020-11-02 12:25:47', '');
-INSERT INTO `sys_menu` VALUES (2050, '七牛云配置', 3, 1, 'qiniu', 'tool/qiniu/index', 1, 'C', 0, 0, NULL, 'log', 'admin', '2020-11-02 12:28:10', 'admin', '2020-11-02 12:28:39', '');
+INSERT INTO `sys_menu` VALUES (2050, '存储配置', 3, 1, 'storage', 'tool/storage/index', 1, 'C', 0, 0, NULL, 'log', 'admin', '2020-11-02 12:28:10', 'admin', '2020-11-16 22:23:50', '');
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -4027,7 +4020,7 @@ CREATE TABLE `sys_user`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
@@ -4081,5 +4074,43 @@ CREATE TABLE `tool_email_config`  (
 -- Records of tool_email_config
 -- ----------------------------
 INSERT INTO `tool_email_config` VALUES (1, '1669738430@qq.com', 'smtp.qq.com', 'ttkbqckbwpwyefca', '587', 'wayn');
+
+-- ----------------------------
+-- Table structure for tool_qiniu_config
+-- ----------------------------
+DROP TABLE IF EXISTS `tool_qiniu_config`;
+CREATE TABLE `tool_qiniu_config`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `access_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'accessKey',
+  `bucket` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Bucket 识别符',
+  `host` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '外链域名',
+  `secret_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'secretKey',
+  `type` tinyint(4) NULL DEFAULT NULL COMMENT '空间类型 0 公开 1 私有',
+  `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
+  `enable` tinyint(4) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of tool_qiniu_config
+-- ----------------------------
+INSERT INTO `tool_qiniu_config` VALUES (1, NULL, NULL, 'http://cdn.wayn.xin', NULL, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for tool_qiniu_content
+-- ----------------------------
+DROP TABLE IF EXISTS `tool_qiniu_content`;
+CREATE TABLE `tool_qiniu_content`  (
+  `content_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `bucket` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Bucket 识别符',
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件名称',
+  `size` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件大小',
+  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件类型：私有或公开',
+  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件url',
+  `suffix` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件后缀',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '上传或同步的时间',
+  PRIMARY KEY (`content_id`) USING BTREE,
+  UNIQUE INDEX `uniq_name`(`name`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云文件存储' ROW_FORMAT = Compact;
 
 SET FOREIGN_KEY_CHECKS = 1;
