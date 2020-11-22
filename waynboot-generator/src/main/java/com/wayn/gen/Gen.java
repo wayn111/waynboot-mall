@@ -52,7 +52,7 @@ public class Gen {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
+        dsc.setUrl("jdbc:mysql://192.168.31.49:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
@@ -61,10 +61,10 @@ public class Gen {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setService("service.shop");
-        pc.setServiceImpl("service.shop.impl");
-        pc.setMapper("mapper.shop");
-        pc.setEntity("domain.shop");
+        pc.setService("service.tool");
+        pc.setServiceImpl("service.tool.impl");
+        pc.setMapper("mapper.tool");
+        pc.setEntity("domain.tool");
         pc.setModuleName("");
         pc.setParent("com.wayn.common.core");
         mpg.setPackageInfo(pc);

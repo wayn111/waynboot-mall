@@ -1,6 +1,7 @@
 package com.wayn.message.reciver;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class DirectReceiver {
     @RabbitHandler
     public void process(Map testMessage) {
         System.out.println("DirectReceiver消费者收到消息  : " + testMessage.toString());
+        String notifyUrl = (String) testMessage.get("notifyUrl");
+        if (StringUtils.isEmpty(notifyUrl)) {
+            log.error("notifyUrl不能为空！，参数：" + testMessage.toString());
+            return;
+        }
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap();
@@ -33,9 +39,8 @@ public class DirectReceiver {
         multiValueMap.add("content", testMessage.get("content"));
         multiValueMap.add("tos", testMessage.get("tos"));
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
-        String url = "http://localhost:82/message/email";
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
             if (response.getStatusCode().value() != 200) {
                 throw new Exception(testMessage.toString() + " 邮件发送失败");
             }

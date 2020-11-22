@@ -24,6 +24,15 @@ public class WaynConfig {
      */
     private static String email;
 
+    /**
+     * 管理后台地址
+     */
+    private static String adminUrl;
+    /**
+     * 商城移动端地址
+     */
+    private static String mobileUrl;
+
     public static String getUploadDir() {
         return uploadDir;
     }
@@ -62,5 +71,21 @@ public class WaynConfig {
 
     public void setEmail(String email) {
         WaynConfig.email = email;
+    }
+
+    public static String getAdminUrl() {
+        return adminUrl;
+    }
+
+    public void setAdminUrl(String adminUrl) {
+        WaynConfig.adminUrl = adminUrl;
+    }
+
+    public static String getMobileUrl() {
+        return mobileUrl;
+    }
+
+    public void setMobileUrl(String mobileUrl) {
+        WaynConfig.mobileUrl = mobileUrl;
     }
 }

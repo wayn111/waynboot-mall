@@ -244,7 +244,7 @@ public class BaseElasticService {
     public boolean deleteIndex(String idxName) {
         try {
             if (!this.indexExist(idxName)) {
-                log.error(" idxName={} 不存在,idxSql={}", idxName);
+                log.error(" idxName={} 不存在", idxName);
                 return false;
             }
             AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(new DeleteIndexRequest(idxName), RequestOptions.DEFAULT);
