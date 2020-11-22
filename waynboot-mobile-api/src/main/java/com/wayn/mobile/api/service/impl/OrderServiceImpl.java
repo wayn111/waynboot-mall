@@ -32,6 +32,7 @@ import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.CancelOrderTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
+import com.wayn.mobile.framework.config.WaynConfig;
 import com.wayn.mobile.framework.redis.RedisCache;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -63,37 +64,27 @@ import java.util.*;
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
 
     @Autowired
+    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
+    @Autowired
     private RedisCache redisCache;
-
     @Autowired
     private IAddressService iAddressService;
-
     @Autowired
     private ICartService iCartService;
-
     @Autowired
     private IOrderGoodsService iOrderGoodsService;
-
     @Autowired
     private IGoodsProductService iGoodsProductService;
-
     @Autowired
     private WxPayService wxPayService;
-
     @Autowired
     private IMemberService iMemberService;
-
     @Autowired
     private IMailConfigService mailConfigService;
-
     @Autowired
     private OrderMapper orderMapper;
-
     @Autowired
     private TaskService taskService;
-
-    @Autowired
-    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
 
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
@@ -411,7 +402,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            sendEmail("新订单通知", order.toString(), email);
+            sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
         }
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
@@ -443,7 +434,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            sendEmail("新订单通知", order.toString(), email);
+            sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
         }
 
         // 删除redis中订单id
@@ -511,7 +502,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
             if (StringUtils.isNotBlank(email)) {
-                sendEmail("订单正在退款", order.toString(), email);
+                sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl());
             }
         }
 
@@ -582,11 +573,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @param content 内容
      * @param tos     接收人
      */
-    private void sendEmail(String subject, String content, String tos) {
+    private void sendEmail(String subject, String content, String tos, String notifyUrl) {
         Map<String, Object> map = new HashMap<>();
         map.put("subject", subject);
         map.put("content", content);
         map.put("tos", tos);
+        map.put("notifyUrl", notifyUrl);
         // 异步发送邮件
         rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
     }

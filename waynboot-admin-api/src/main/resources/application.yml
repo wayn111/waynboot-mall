@@ -53,6 +53,8 @@ wayn:
   version: 1.1.0
   email: 166738430@qq.com
   uploadDir: E:/wayn/upload
+  adminUrl: http://localhost:81/message/email
+  mobileUrl: http://localhost:82/message/email
 
 # 快递列表
 shop:
