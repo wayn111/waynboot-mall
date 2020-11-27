@@ -1,17 +1,17 @@
-/*
+*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.31.49
+ Source Server         : localhost
  Source Server Type    : MySQL
  Source Server Version : 80012
- Source Host           : 192.168.31.49:3306
+ Source Host           : localhost:3306
  Source Schema         : wayn_shop
 
  Target Server Type    : MySQL
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 22/11/2020 12:48:31
+ Date: 27/11/2020 11:07:04
 */
 
 SET NAMES utf8mb4;
@@ -71,7 +71,7 @@ CREATE TABLE `seckill`  (
   `number` int(11) NOT NULL COMMENT '库存数量',
   `start_time` timestamp(0) NOT NULL COMMENT '秒杀开始时间',
   `end_time` timestamp(0) NOT NULL COMMENT '秒杀结束时间',
-  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '秒杀创建时间',
+  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '秒杀创建时间',
   `version` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '版本',
   PRIMARY KEY (`seckill_id`) USING BTREE,
   INDEX `idx_start_time`(`start_time`) USING BTREE,
@@ -108,7 +108,7 @@ CREATE TABLE `shop_address`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`member_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货地址表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_address
@@ -137,7 +137,7 @@ CREATE TABLE `shop_banner`  (
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   `status` tinyint(4) NULL DEFAULT 0 COMMENT 'banner状态（0启用 1禁用）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_banner
@@ -236,7 +236,7 @@ CREATE TABLE `shop_cart`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 96 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_cart
@@ -306,10 +306,20 @@ INSERT INTO `shop_cart` VALUES (79, 1, 1113010, '1113010', '男式丝滑莫代�
 INSERT INTO `shop_cart` VALUES (80, 4, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-11-02 11:10:28', NULL, 1);
 INSERT INTO `shop_cart` VALUES (81, 4, 1152009, '1152009', '魔兽世界 联盟 护腕 一只', 233, 29.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', '吸汗、舒适、弹性、防护、耐用', '2020-11-02 11:17:47', NULL, 1);
 INSERT INTO `shop_cart` VALUES (82, 4, 1111007, '1111007', '妙曲奇遇记曲奇礼盒 520克', 154, 78.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/8d228f767b136a67aaf2cbbf6deb46fa.png', '六种口味，酥香脆爽', '2020-11-07 09:45:39', NULL, 1);
-INSERT INTO `shop_cart` VALUES (83, 1, 1181011, '1181011', '红米K30', 254, 1999.00, 2, '[\"白\",\"64g\"]', 1, 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', '红米手机', '2020-11-22 11:41:01', NULL, 1);
-INSERT INTO `shop_cart` VALUES (84, 1, 1181011, '1181011', '红米K30', 254, 1999.00, 1, '[\"白\",\"64g\"]', 1, 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', '红米手机', '2020-11-22 11:44:34', NULL, 1);
-INSERT INTO `shop_cart` VALUES (85, 1, 1135002, '1135002', '宫廷奢华真丝四件套', 204, 2599.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '100%桑蚕丝，丝滑润肤', '2020-11-22 12:02:46', NULL, 1);
-INSERT INTO `shop_cart` VALUES (86, 1, 1085019, '1085019', '20寸 纯PC“铝框”（非全铝）登机箱', 102, 349.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/65c955a7a98e84d44ca30bb88a591eac.png', '铝质包角，牢固抗摔', '2020-11-22 12:11:26', NULL, 0);
+INSERT INTO `shop_cart` VALUES (83, 1, 1152031, '1152031', '魔兽世界-伊利丹颈枕眼罩套装', 234, 99.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '差旅好伴侣', '2020-11-17 11:51:55', NULL, 1);
+INSERT INTO `shop_cart` VALUES (84, 1, 1152008, '1152008', '魔兽世界 部落 护腕 一只', 232, 29.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/203cb83d93606865e3ddde57b69b9e9a.png', '吸汗、舒适、弹性、防护、耐用', '2020-11-17 14:29:52', NULL, 1);
+INSERT INTO `shop_cart` VALUES (85, 1, 1056002, '1056002', '男式玩色内裤', 70, 59.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '德国工艺，多色随搭', '2020-11-17 14:36:44', NULL, 1);
+INSERT INTO `shop_cart` VALUES (86, 1, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-11-17 14:37:27', NULL, 1);
+INSERT INTO `shop_cart` VALUES (87, 1, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-11-17 14:45:22', NULL, 1);
+INSERT INTO `shop_cart` VALUES (88, 1, 1152031, '1152031', '魔兽世界-伊利丹颈枕眼罩套装', 234, 99.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '差旅好伴侣', '2020-11-17 14:46:57', NULL, 1);
+INSERT INTO `shop_cart` VALUES (89, 1, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-11-17 14:50:33', NULL, 1);
+INSERT INTO `shop_cart` VALUES (90, 1, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-11-17 14:52:13', NULL, 1);
+INSERT INTO `shop_cart` VALUES (91, 1, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-11-17 14:53:28', NULL, 1);
+INSERT INTO `shop_cart` VALUES (92, 1, 1110019, '1110019', '宠物合金钢安全除菌指甲护理组合', 153, 69.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/1e7e392b6fc9da99dc112197b7444eec.png', '猫狗皆可用，保护家具', '2020-11-17 14:54:49', NULL, 1);
+INSERT INTO `shop_cart` VALUES (93, 1, 1127047, '1127047', '趣味粉彩系列笔记本', 182, 29.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/6c03ca93d8fe404faa266ea86f3f1e43.png', '粉彩色泽，记录生活', '2020-11-17 14:56:48', NULL, 1);
+INSERT INTO `shop_cart` VALUES (94, 1, 1152031, '1152031', '魔兽世界-伊利丹颈枕眼罩套装', 234, 99.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '差旅好伴侣', '2020-11-17 15:52:49', NULL, 1);
+INSERT INTO `shop_cart` VALUES (95, 1, 1152031, '1152031', '魔兽世界-伊利丹颈枕眼罩套装', 234, 99.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '差旅好伴侣', '2020-11-18 16:15:22', NULL, 1);
+INSERT INTO `shop_cart` VALUES (96, 1, 1110016, '1110016', '天然硅胶宠物除毛按摩刷', 150, 39.00, 1, '[\"标准\"]', 0, 'http://yanxuan.nosdn.127.net/3bd73b7279a83d1cbb50c0e45778e6d6.png', '顺滑平面，猫狗通用，去除死毛', '2020-11-18 16:25:02', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_category
@@ -330,7 +340,7 @@ CREATE TABLE `shop_category`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `parent_id`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1036005 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1036004 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '类目表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_category
@@ -443,7 +453,7 @@ CREATE TABLE `shop_channel`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '名称',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_channel
@@ -471,8 +481,7 @@ CREATE TABLE `shop_column_goods_relation`  (
   `id` int(11) NOT NULL COMMENT '自增ID',
   `column_id` int(11) NOT NULL COMMENT '栏目ID',
   `goods_id` int(11) NOT NULL COMMENT '商品ID',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `column_id_index`(`column_id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '栏目商品关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -494,7 +503,7 @@ CREATE TABLE `shop_comment`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id_value`(`value_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1015 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1014 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_comment
@@ -1557,7 +1566,7 @@ CREATE TABLE `shop_goods`  (
   INDEX `cat_id`(`category_id`) USING BTREE,
   INDEX `brand_id`(`brand_id`) USING BTREE,
   INDEX `sort_order`(`sort_order`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1181012 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1181011 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods
@@ -1821,7 +1830,7 @@ CREATE TABLE `shop_goods_attribute`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 881 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 880 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品参数表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_attribute
@@ -2724,7 +2733,7 @@ CREATE TABLE `shop_goods_product`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 256 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 255 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品货品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_product
@@ -2798,7 +2807,7 @@ INSERT INTO `shop_goods_product` VALUES (66, 1051003, '[\"标准\"]', 148.00, 10
 INSERT INTO `shop_goods_product` VALUES (67, 1055012, '[\"标准\"]', 39.00, 100, 0, 'http://yanxuan.nosdn.127.net/3d437c8d68e2ec3f3dd61001bf98f16e.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (68, 1055016, '[\"标准\"]', 59.00, 100, 0, 'http://yanxuan.nosdn.127.net/23e0203f1512f33e605f61c28fa03d2d.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (69, 1055022, '[\"标准\"]', 4.90, 100, 0, 'http://yanxuan.nosdn.127.net/c7c74a96eacb29455dbf557b840eaaf5.png', '2018-02-01 00:00:00', '2020-10-02 23:12:18', 0);
-INSERT INTO `shop_goods_product` VALUES (70, 1056002, '[\"标准\"]', 59.00, 99, 0, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (70, 1056002, '[\"标准\"]', 59.00, 98, 0, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (71, 1057036, '[\"标准\"]', 79.00, 100, 0, 'http://yanxuan.nosdn.127.net/8a9ee5ba08929cc9e40b973607d2f633.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (72, 1064000, '[\"标准\"]', 79.00, 100, 0, 'http://yanxuan.nosdn.127.net/ebe118f94ddafe82c4a8cd51da6ff183.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (73, 1064002, '[\"标准\"]', 69.00, 100, 0, 'http://yanxuan.nosdn.127.net/48dbfe207b2203ef45055dcc9cedbe60.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2881,7 +2890,7 @@ INSERT INTO `shop_goods_product` VALUES (149, 1110015, '[\"标准\"]', 69.00, 10
 INSERT INTO `shop_goods_product` VALUES (150, 1110016, '[\"标准\"]', 39.00, 99, 0, 'http://yanxuan.nosdn.127.net/3bd73b7279a83d1cbb50c0e45778e6d6.png', '2018-02-01 00:00:00', '2020-08-19 01:06:17', 0);
 INSERT INTO `shop_goods_product` VALUES (151, 1110017, '[\"标准\"]', 79.00, 97, 0, 'http://yanxuan.nosdn.127.net/534231583f82572398ec84bad425cdaf.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (152, 1110018, '[\"标准\"]', 79.00, 100, 0, 'http://yanxuan.nosdn.127.net/d93aa5d6e7a296101cf4cb72613aeda6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (153, 1110019, '[\"标准\"]', 69.00, 100, 0, 'http://yanxuan.nosdn.127.net/1e7e392b6fc9da99dc112197b7444eec.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (153, 1110019, '[\"标准\"]', 69.00, 100, 0, 'http://yanxuan.nosdn.127.net/1e7e392b6fc9da99dc112197b7444eec.png', '2018-02-01 00:00:00', '2020-11-17 14:55:52', 0);
 INSERT INTO `shop_goods_product` VALUES (154, 1111007, '[\"标准\"]', 78.00, 99, 0, 'http://yanxuan.nosdn.127.net/8d228f767b136a67aaf2cbbf6deb46fa.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (155, 1111010, '[\"标准\"]', 69.00, 100, 0, 'http://yanxuan.nosdn.127.net/ef7efe55839e66993fb604dc3c2d9410.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (156, 1113010, '[\"标准\"]', 59.00, 99, 0, 'http://yanxuan.nosdn.127.net/2d0920b51331bb1636330ad8e07d1b97.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2910,7 +2919,7 @@ INSERT INTO `shop_goods_product` VALUES (178, 1127024, '[\"标准\"]', 39.00, 99
 INSERT INTO `shop_goods_product` VALUES (179, 1127025, '[\"标准\"]', 39.00, 97, 0, 'http://yanxuan.nosdn.127.net/b2fe79c872a8a7f647264b5e51bcc802.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (180, 1127038, '[\"标准\"]', 359.00, 100, 0, 'http://yanxuan.nosdn.127.net/addc278cf9c301dd535791df2e03b2ea.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (181, 1127039, '[\"标准\"]', 399.00, 100, 0, 'http://yanxuan.nosdn.127.net/be64df0a04ade4cfd75bf7d4e8509ecc.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (182, 1127047, '[\"标准\"]', 29.00, 98, 0, 'http://yanxuan.nosdn.127.net/6c03ca93d8fe404faa266ea86f3f1e43.png', '2018-02-01 00:00:00', '2020-08-30 21:53:10', 0);
+INSERT INTO `shop_goods_product` VALUES (182, 1127047, '[\"标准\"]', 29.00, 97, 0, 'http://yanxuan.nosdn.127.net/6c03ca93d8fe404faa266ea86f3f1e43.png', '2018-02-01 00:00:00', '2020-08-30 21:53:10', 0);
 INSERT INTO `shop_goods_product` VALUES (183, 1127052, '[\"标准\"]', 169.00, 100, 0, 'http://yanxuan.nosdn.127.net/4f483526cfe3b953f403ae02049df5b9.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (184, 1128002, '[\"标准\"]', 599.00, 100, 0, 'http://yanxuan.nosdn.127.net/a1094a808ffb3a52a6cb13565a283d98.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (185, 1128010, '[\"标准\"]', 29.00, 100, 0, 'http://yanxuan.nosdn.127.net/a84e8e6979f00efd9a728ed36b154753.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2932,7 +2941,7 @@ INSERT INTO `shop_goods_product` VALUES (200, 1134036, '[\"标准\"]', 38.00, 10
 INSERT INTO `shop_goods_product` VALUES (201, 1134056, '[\"标准\"]', 429.00, 100, 0, 'http://yanxuan.nosdn.127.net/c29f47f58ba1e3c2ff5a193eec0b11d6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (202, 1135000, '[\"标准\"]', 359.00, 100, 0, 'http://yanxuan.nosdn.127.net/53d0309471b570a7e12a3f01ba694491.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (203, 1135001, '[\"标准\"]', 459.00, 100, 0, 'http://yanxuan.nosdn.127.net/f82ee85933d6f0cc95382215281d3526.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (204, 1135002, '[\"标准\"]', 2599.00, 99, 0, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '2018-02-01 00:00:00', '2020-08-28 23:15:29', 0);
+INSERT INTO `shop_goods_product` VALUES (204, 1135002, '[\"标准\"]', 2599.00, 100, 0, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '2018-02-01 00:00:00', '2020-08-28 23:15:29', 0);
 INSERT INTO `shop_goods_product` VALUES (205, 1135050, '[\"标准\"]', 179.00, 100, 0, 'http://yanxuan.nosdn.127.net/366f3f3f0e8971c8cf871e2b55b74ff2.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (206, 1135051, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/9126151f028a8804026d530836b481cb.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (207, 1135052, '[\"标准\"]', 259.00, 100, 0, 'http://yanxuan.nosdn.127.net/63f5da1f5363af43aa91864bf66af48e.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2960,10 +2969,10 @@ INSERT INTO `shop_goods_product` VALUES (228, 1147048, '[\"标准\"]', 559.00, 1
 INSERT INTO `shop_goods_product` VALUES (229, 1151012, '[\"标准\"]', 359.00, 100, 0, 'http://yanxuan.nosdn.127.net/cb65635dbcef42b68ba21433f4948f5a.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (230, 1151013, '[\"标准\"]', 359.00, 100, 0, 'http://yanxuan.nosdn.127.net/73a8692048f58f15e823b636d7c3bb74.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (231, 1152004, '[\"标准\"]', 399.00, 99, 0, 'http://yanxuan.nosdn.127.net/8c93cef435d888bd79833777df1cd0c2.png', '2018-02-01 00:00:00', '2020-08-30 21:52:23', 0);
-INSERT INTO `shop_goods_product` VALUES (232, 1152008, '[\"标准\"]', 29.00, 97, 0, 'http://yanxuan.nosdn.127.net/203cb83d93606865e3ddde57b69b9e9a.png', '2018-02-01 00:00:00', '2020-08-16 15:14:04', 0);
+INSERT INTO `shop_goods_product` VALUES (232, 1152008, '[\"标准\"]', 29.00, 96, 0, 'http://yanxuan.nosdn.127.net/203cb83d93606865e3ddde57b69b9e9a.png', '2018-02-01 00:00:00', '2020-08-16 15:14:04', 0);
 INSERT INTO `shop_goods_product` VALUES (233, 1152009, '[\"标准\"]', 29.00, 96, 0, 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (234, 1152031, '[\"标准\"]', 99.00, 100, 0, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '2018-02-01 00:00:00', '2020-08-17 23:34:10', 0);
-INSERT INTO `shop_goods_product` VALUES (235, 1152095, '[\"标准\"]', 499.00, 100, 0, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '2018-02-01 00:00:00', '2020-11-02 11:15:07', 0);
+INSERT INTO `shop_goods_product` VALUES (234, 1152031, '[\"标准\"]', 99.00, 98, 0, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '2018-02-01 00:00:00', '2020-11-17 15:53:52', 0);
+INSERT INTO `shop_goods_product` VALUES (235, 1152095, '[\"标准\"]', 499.00, 96, 0, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '2018-02-01 00:00:00', '2020-11-17 14:46:25', 0);
 INSERT INTO `shop_goods_product` VALUES (236, 1152097, '[\"标准\"]', 399.00, 100, 0, 'http://yanxuan.nosdn.127.net/532836444ae5eaec40b5810ca4f9b1e6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (237, 1152100, '[\"标准\"]', 499.00, 100, 0, 'http://yanxuan.nosdn.127.net/a667c4fbbd9c499c0733539d7e986617.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (238, 1152101, '[\"标准\"]', 888.00, 100, 0, 'http://yanxuan.nosdn.127.net/c1c62211a17b71a634fa0c705d11fb42.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2982,7 +2991,7 @@ INSERT INTO `shop_goods_product` VALUES (250, 1181003, '[\"标准\"]', 1.00, 1, 
 INSERT INTO `shop_goods_product` VALUES (251, 1181004, '[\"标准\"]', 1.00, 1, 0, '', '2020-08-20 23:25:05', '2020-08-20 23:43:22', 1);
 INSERT INTO `shop_goods_product` VALUES (252, 1181011, '[\"红\",\"64g\"]', 1999.00, 1000, 1, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
 INSERT INTO `shop_goods_product` VALUES (253, 1181011, '[\"红\",\"128g\"]', 2299.00, 600, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
-INSERT INTO `shop_goods_product` VALUES (254, 1181011, '[\"白\",\"64g\"]', 1999.00, 1997, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
+INSERT INTO `shop_goods_product` VALUES (254, 1181011, '[\"白\",\"64g\"]', 1999.00, 2000, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
 INSERT INTO `shop_goods_product` VALUES (255, 1181011, '[\"白\",\"128g\"]', 2299.00, 100, 0, '', '2020-10-24 11:55:08', '2020-10-24 22:45:10', 0);
 
 -- ----------------------------
@@ -3000,7 +3009,7 @@ CREATE TABLE `shop_goods_specification`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 255 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 254 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_goods_specification
@@ -3276,7 +3285,7 @@ CREATE TABLE `shop_keyword`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '关键字表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '关键字表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_keyword
@@ -3316,7 +3325,7 @@ CREATE TABLE `shop_member`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_name`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_member
@@ -3361,7 +3370,7 @@ CREATE TABLE `shop_order`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order
@@ -3378,18 +3387,28 @@ INSERT INTO `shop_order` VALUES (52, 1, '15986274300000020', 203, 0, '河西', '
 INSERT INTO `shop_order` VALUES (53, 1, '15992341900000020', 401, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 36.00, 0.00, 0.00, 0.00, 0.00, 36.00, 36.00, 'xxxxx0987654321-wx', '2020-09-04 23:43:14', '44444tttttt', 'YTO', '2020-09-04 23:47:36', NULL, NULL, NULL, NULL, '2020-09-04 23:53:45', 0, NULL, '2020-09-04 23:43:11', '2020-09-04 23:53:45', 0);
 INSERT INTO `shop_order` VALUES (54, 1, '15992346150000021', 401, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', 'yyyy', 2000.00, 0.00, 0.00, 0.00, 0.00, 2000.00, 2000.00, 'xxxxx0987654321-wx', '2020-09-04 23:50:25', 'jjjj', 'YTO', '2020-09-04 23:50:41', NULL, NULL, NULL, NULL, '2020-09-04 23:53:41', 0, NULL, '2020-09-04 23:50:16', '2020-09-04 23:53:41', 0);
 INSERT INTO `shop_order` VALUES (55, 1, '16016514770000020', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', 'test', 4.90, 0.00, 0.00, 0.00, 0.00, 4.90, 4.90, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-10-02 23:12:18', '2020-10-02 23:11:18', NULL, 1);
-INSERT INTO `shop_order` VALUES (56, 1, '16016519330000020', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', 'test', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-10-02 23:18:58', 'rrrewr23', 'ZTO', '2020-11-22 11:33:48', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:18:54', '2020-11-22 11:33:48', 0);
-INSERT INTO `shop_order` VALUES (57, 1, '16016519700000021', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:19:34', 'tt3234ss', 'YD', '2020-11-22 11:33:10', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:19:30', '2020-11-22 11:33:10', 0);
-INSERT INTO `shop_order` VALUES (58, 1, '16016520750000022', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:21:26', 'tteeew22', 'EMS', '2020-11-22 11:30:41', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:21:16', '2020-11-22 11:30:41', 0);
-INSERT INTO `shop_order` VALUES (59, 1, '16016521700000023', 301, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 39.00, 0.00, 0.00, 0.00, 0.00, 39.00, 39.00, 'xxxxx0987654321-wx', '2020-10-02 23:22:53', 'ddd333', 'EMS', '2020-11-22 11:27:47', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:22:50', '2020-11-22 11:27:47', 0);
-INSERT INTO `shop_order` VALUES (60, 1, '16035926230000020', 401, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '', 294.00, 0.00, 0.00, 0.00, 0.00, 294.00, 294.00, 'xxxxx0987654321-wx', '2020-10-25 10:23:47', 'tttt', 'YTO', '2020-11-22 11:17:18', NULL, NULL, NULL, NULL, '2020-11-22 12:10:01', 0, NULL, '2020-10-25 10:23:43', '2020-11-22 12:10:01', 1);
+INSERT INTO `shop_order` VALUES (56, 1, '16016519330000020', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', 'test', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-10-02 23:18:58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:18:54', '2020-10-02 23:18:58', 0);
+INSERT INTO `shop_order` VALUES (57, 1, '16016519700000021', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:19:34', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:19:30', '2020-10-02 23:19:34', 0);
+INSERT INTO `shop_order` VALUES (58, 1, '16016520750000022', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-10-02 23:21:26', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:21:16', '2020-10-02 23:21:26', 0);
+INSERT INTO `shop_order` VALUES (59, 1, '16016521700000023', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 39.00, 0.00, 0.00, 0.00, 0.00, 39.00, 39.00, 'xxxxx0987654321-wx', '2020-10-02 23:22:53', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-02 23:22:50', '2020-10-02 23:22:53', 0);
+INSERT INTO `shop_order` VALUES (60, 1, '16035926230000020', 201, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '', 294.00, 0.00, 0.00, 0.00, 0.00, 294.00, 294.00, 'xxxxx0987654321-wx', '2020-10-25 10:23:47', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-10-25 10:23:43', '2020-10-25 10:23:47', 0);
 INSERT INTO `shop_order` VALUES (61, 4, '16042866410000050', 203, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '魔兽世界', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-02 11:10:46', NULL, NULL, NULL, 499.00, '微信退款接口', '已退款', '2020-11-02 11:15:03', NULL, 0, '2020-11-02 11:15:03', '2020-11-02 11:10:42', '2020-11-02 11:15:03', 0);
 INSERT INTO `shop_order` VALUES (62, 4, '16042870690000051', 401, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-11-02 11:17:57', 'xxdd133', 'ZTO', '2020-11-02 11:19:49', NULL, NULL, NULL, NULL, '2020-11-02 11:20:13', 0, NULL, '2020-11-02 11:17:50', '2020-11-02 11:20:13', 0);
 INSERT INTO `shop_order` VALUES (63, 4, '16042870690000052', 201, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'xxxxx0987654321-wx', '2020-11-02 11:18:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-02 11:17:50', '2020-11-02 11:18:53', 1);
-INSERT INTO `shop_order` VALUES (64, 4, '16047135430000050', 301, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 78.00, 0.00, 0.00, 0.00, 0.00, 78.00, 78.00, 'xxxxx0987654321-wx', '2020-11-07 09:45:51', '12343ddd', 'YTO', '2020-11-22 11:07:13', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-07 09:45:44', '2020-11-22 11:07:13', 0);
-INSERT INTO `shop_order` VALUES (65, 1, '16060164730000020', 301, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '红米手机', 3998.00, 0.00, 0.00, 0.00, 0.00, 3998.00, 3998.00, 'xxxxx0987654321-wx', '2020-11-22 11:41:18', 'rrr', 'YTO', '2020-11-22 11:41:45', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-22 11:41:14', '2020-11-22 11:41:45', 0);
-INSERT INTO `shop_order` VALUES (66, 1, '16060166760000021', 301, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '红米手机', 1999.00, 0.00, 0.00, 0.00, 0.00, 1999.00, 1999.00, 'xxxxx0987654321-wx', '2020-11-22 11:44:40', '555666', 'ZTO', '2020-11-22 12:01:01', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-22 11:44:37', '2020-11-22 12:01:01', 0);
-INSERT INTO `shop_order` VALUES (67, 1, '16060177700000022', 301, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '', 2599.00, 0.00, 0.00, 0.00, 0.00, 2599.00, 2599.00, 'xxxxx0987654321-wx', '2020-11-22 12:02:56', 'iiikkk', 'YTO', '2020-11-22 12:03:37', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-22 12:02:51', '2020-11-22 12:03:37', 0);
+INSERT INTO `shop_order` VALUES (64, 4, '16047135430000050', 201, 0, 'wayn', '13617159841', '北京市北京市东城区 规划姐12号湘满堂', '', 78.00, 0.00, 0.00, 0.00, 0.00, 78.00, 78.00, 'xxxxx0987654321-wx', '2020-11-07 09:45:51', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-07 09:45:44', '2020-11-07 09:45:51', 0);
+INSERT INTO `shop_order` VALUES (65, 1, '16055945970000020', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-11-17 14:30:03', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:29:58', '2020-11-17 14:30:03', 0);
+INSERT INTO `shop_order` VALUES (66, 1, '16055950080000021', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', 'rest', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-wx', '2020-11-17 14:36:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:36:49', '2020-11-17 14:36:52', 0);
+INSERT INTO `shop_order` VALUES (67, 1, '16055950500000022', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:37:40', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:37:31', '2020-11-17 14:37:40', 0);
+INSERT INTO `shop_order` VALUES (68, 1, '16055955250000023', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 14:46:26', '2020-11-17 14:45:26', NULL, 1);
+INSERT INTO `shop_order` VALUES (69, 1, '16055956200000024', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, 'xxxxx0987654321-wx', '2020-11-17 14:47:11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:47:00', '2020-11-17 14:47:11', 0);
+INSERT INTO `shop_order` VALUES (70, 1, '16055958350000025', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:50:39', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:50:36', '2020-11-17 14:50:39', 0);
+INSERT INTO `shop_order` VALUES (71, 1, '16055959360000026', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:52:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:52:17', '2020-11-17 14:52:37', 0);
+INSERT INTO `shop_order` VALUES (72, 1, '16055959360000027', 102, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 14:54:39', '2020-11-17 14:52:17', '2020-11-17 14:54:39', 0);
+INSERT INTO `shop_order` VALUES (73, 1, '16055960100000028', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:53:34', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:53:30', '2020-11-17 14:53:34', 0);
+INSERT INTO `shop_order` VALUES (74, 1, '16055960920000029', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 69.00, 0.00, 0.00, 0.00, 0.00, 69.00, 69.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 14:55:52', '2020-11-17 14:54:52', NULL, 0);
+INSERT INTO `shop_order` VALUES (75, 1, '16055962100000029', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-11-17 14:57:24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:56:51', '2020-11-17 14:57:24', 0);
+INSERT INTO `shop_order` VALUES (76, 1, '160559957200000210', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 15:53:52', '2020-11-17 15:52:52', NULL, 1);
+INSERT INTO `shop_order` VALUES (77, 1, '16056873260000020', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, 'xxxxx0987654321-wx', '2020-11-18 16:15:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-18 16:15:27', '2020-11-18 16:15:37', 0);
 
 -- ----------------------------
 -- Table structure for shop_order_goods
@@ -3413,7 +3432,7 @@ CREATE TABLE `shop_order_goods`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id`(`order_id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 72 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 80 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order_goods
@@ -3436,16 +3455,25 @@ INSERT INTO `shop_order_goods` VALUES (58, 56, 1152008, '魔兽世界 部落 护
 INSERT INTO `shop_order_goods` VALUES (59, 57, 1074001, '男式莫代尔无痕内裤', '1074001', 92, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 0, '2020-10-02 23:19:30', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (60, 58, 1056002, '男式玩色内裤', '1056002', 70, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', 0, '2020-10-02 23:21:16', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (61, 59, 1127025, '女式蝶边真丝内裤', '1127025', 179, 1, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/b2fe79c872a8a7f647264b5e51bcc802.png', 0, '2020-10-02 23:22:50', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (62, 60, 1074001, '男式莫代尔无痕内裤', '1074001', 92, 2, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 0, '2020-10-25 10:23:43', NULL, 1);
-INSERT INTO `shop_order_goods` VALUES (63, 60, 1127025, '女式蝶边真丝内裤', '1127025', 179, 2, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/b2fe79c872a8a7f647264b5e51bcc802.png', 0, '2020-10-25 10:23:43', NULL, 1);
-INSERT INTO `shop_order_goods` VALUES (64, 60, 1127024, '女式无痕真丝内裤', '1127024', 178, 1, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/0a70f12a712e90d7d93beec4f686fe8e.png', 0, '2020-10-25 10:23:43', NULL, 1);
-INSERT INTO `shop_order_goods` VALUES (65, 60, 1113010, '男式丝滑莫代尔平角内裤', '1113010', 156, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2d0920b51331bb1636330ad8e07d1b97.png', 0, '2020-10-25 10:23:43', NULL, 1);
+INSERT INTO `shop_order_goods` VALUES (62, 60, 1074001, '男式莫代尔无痕内裤', '1074001', 92, 2, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 0, '2020-10-25 10:23:43', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (63, 60, 1127025, '女式蝶边真丝内裤', '1127025', 179, 2, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/b2fe79c872a8a7f647264b5e51bcc802.png', 0, '2020-10-25 10:23:43', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (64, 60, 1127024, '女式无痕真丝内裤', '1127024', 178, 1, 39.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/0a70f12a712e90d7d93beec4f686fe8e.png', 0, '2020-10-25 10:23:43', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (65, 60, 1113010, '男式丝滑莫代尔平角内裤', '1113010', 156, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2d0920b51331bb1636330ad8e07d1b97.png', 0, '2020-10-25 10:23:43', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (66, 61, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-11-02 11:10:42', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (67, 62, 1152009, '魔兽世界 联盟 护腕 一只', '1152009', 233, 1, 29.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', 0, '2020-11-02 11:17:50', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (68, 64, 1111007, '妙曲奇遇记曲奇礼盒 520克', '1111007', 154, 1, 78.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/8d228f767b136a67aaf2cbbf6deb46fa.png', 0, '2020-11-07 09:45:44', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (69, 65, 1181011, '红米K30', '1181011', 254, 2, 1999.00, '[\"白\",\"64g\"]', 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', 0, '2020-11-22 11:41:14', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (70, 66, 1181011, '红米K30', '1181011', 254, 1, 1999.00, '[\"白\",\"64g\"]', 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', 0, '2020-11-22 11:44:37', NULL, 0);
-INSERT INTO `shop_order_goods` VALUES (71, 67, 1135002, '宫廷奢华真丝四件套', '1135002', 204, 1, 2599.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', 0, '2020-11-22 12:02:51', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (69, 65, 1152008, '魔兽世界 部落 护腕 一只', '1152008', 232, 1, 29.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/203cb83d93606865e3ddde57b69b9e9a.png', 0, '2020-11-17 14:29:58', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (70, 66, 1056002, '男式玩色内裤', '1056002', 70, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', 0, '2020-11-17 14:36:49', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (71, 67, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-11-17 14:37:31', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (72, 68, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-11-17 14:45:26', NULL, 1);
+INSERT INTO `shop_order_goods` VALUES (73, 69, 1152031, '魔兽世界-伊利丹颈枕眼罩套装', '1152031', 234, 1, 99.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', 0, '2020-11-17 14:47:00', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (74, 70, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-11-17 14:50:36', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (75, 71, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-11-17 14:52:17', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (76, 73, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-11-17 14:53:30', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (77, 74, 1110019, '宠物合金钢安全除菌指甲护理组合', '1110019', 153, 1, 69.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/1e7e392b6fc9da99dc112197b7444eec.png', 0, '2020-11-17 14:54:52', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (78, 75, 1127047, '趣味粉彩系列笔记本', '1127047', 182, 1, 29.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/6c03ca93d8fe404faa266ea86f3f1e43.png', 0, '2020-11-17 14:56:51', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (79, 76, 1152031, '魔兽世界-伊利丹颈枕眼罩套装', '1152031', 234, 1, 99.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', 0, '2020-11-17 15:52:52', NULL, 1);
+INSERT INTO `shop_order_goods` VALUES (80, 77, 1152031, '魔兽世界-伊利丹颈枕眼罩套装', '1152031', 234, 1, 99.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', 0, '2020-11-18 16:15:27', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_search_history
@@ -3461,7 +3489,7 @@ CREATE TABLE `shop_search_history`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 244 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 232 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_search_history
@@ -3689,26 +3717,15 @@ INSERT INTO `shop_search_history` VALUES (220, 1, '宠物', '', 1, '2020-11-07 0
 INSERT INTO `shop_search_history` VALUES (221, 1, '宠物', '', 1, '2020-11-07 09:47:07', NULL, 0);
 INSERT INTO `shop_search_history` VALUES (222, 1, '宠物', '', 1, '2020-11-07 09:47:11', NULL, 0);
 INSERT INTO `shop_search_history` VALUES (223, 1, '宠物', '', 1, '2020-11-07 09:47:11', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (224, 1, '宠物', '', 1, '2020-11-22 12:09:28', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (225, 1, '宠物', '', 1, '2020-11-22 12:09:30', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (226, 1, '床', '', 1, '2020-11-22 12:24:11', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (227, 1, '床', '', 1, '2020-11-22 12:24:12', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (228, 1, '床', '', 1, '2020-11-22 12:24:14', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (229, 1, '床', '', 1, '2020-11-22 12:24:16', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (230, 1, '床', '', 1, '2020-11-22 12:24:18', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (231, 1, '床', '', 1, '2020-11-22 12:24:19', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (232, 1, '床', '', 1, '2020-11-22 12:24:20', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (233, 1, '床', '', 1, '2020-11-22 12:24:21', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (234, 1, '床', '', 1, '2020-11-22 12:24:22', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (235, 1, '床', '', 1, '2020-11-22 12:24:23', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (236, 1, '床', '', 1, '2020-11-22 12:24:24', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (237, 1, '床', '', 1, '2020-11-22 12:24:26', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (238, 1, '床', '', 1, '2020-11-22 12:24:27', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (239, 1, '床', '', 1, '2020-11-22 12:24:29', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (240, 1, '床', '', 1, '2020-11-22 12:24:32', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (241, 1, '床', '', 1, '2020-11-22 12:24:32', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (242, 1, '床', '', 1, '2020-11-22 12:24:33', NULL, 0);
-INSERT INTO `shop_search_history` VALUES (243, 1, '床', '', 1, '2020-11-22 12:24:35', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (224, 1, '被子', '', 1, '2020-11-17 14:20:19', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (225, 1, '衣、', '', 1, '2020-11-17 14:20:22', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (226, 1, '衣', '', 1, '2020-11-17 14:20:24', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (227, 1, '衣', '', 1, '2020-11-17 14:20:25', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (228, 1, '魔兽世界', '', 1, '2020-11-17 14:28:56', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (229, 1, '内裤', '', 1, '2020-11-17 15:54:43', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (230, 1, '绿茶', '', 1, '2020-11-17 15:55:36', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (231, 1, '绿茶', '', 1, '2020-11-17 15:55:59', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (232, 1, '绿茶', '', 1, '2020-11-17 15:57:14', NULL, 0);
 
 -- ----------------------------
 -- Table structure for success_killed
@@ -3758,7 +3775,7 @@ CREATE TABLE `sys_dept`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dept
@@ -3799,7 +3816,7 @@ CREATE TABLE `sys_dict`  (
   INDEX `sys_dict_value`(`value`) USING BTREE,
   INDEX `sys_dict_label`(`name`) USING BTREE,
   INDEX `sys_dict_del_flag`(`del_flag`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 184 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 183 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict
@@ -3867,7 +3884,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2051 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2050 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -3921,7 +3938,7 @@ INSERT INTO `sys_menu` VALUES (2046, '运营管理', 0, 2, 'operation', NULL, 1,
 INSERT INTO `sys_menu` VALUES (2047, '金刚区管理', 2046, 1, 'diamond', 'operation/diamond/index', 1, 'C', 0, 0, NULL, 'druid', 'admin', '2020-10-10 11:08:48', 'admin', '2020-10-10 11:09:56', '');
 INSERT INTO `sys_menu` VALUES (2048, '栏目管理', 2046, 2, 'column', 'operation/column/index', 1, 'C', 0, 0, NULL, 'color', 'admin', '2020-10-10 11:17:54', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2049, '关键字管理', 2046, 3, 'keyword', 'operation/keyword/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-11-02 12:25:06', 'admin', '2020-11-02 12:25:47', '');
-INSERT INTO `sys_menu` VALUES (2050, '存储配置', 3, 1, 'storage', 'tool/storage/index', 1, 'C', 0, 0, NULL, 'log', 'admin', '2020-11-02 12:28:10', 'admin', '2020-11-16 22:23:50', '');
+INSERT INTO `sys_menu` VALUES (2050, '存储配置', 3, 1, 'storage', 'tool/storage/index', 1, 'C', 0, 0, NULL, 'log', 'admin', '2020-11-02 12:28:10', 'admin', '2020-11-16 11:53:36', '');
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -4020,7 +4037,7 @@ CREATE TABLE `sys_user`  (
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
@@ -4080,21 +4097,21 @@ INSERT INTO `tool_email_config` VALUES (1, '1669738430@qq.com', 'smtp.qq.com', '
 -- ----------------------------
 DROP TABLE IF EXISTS `tool_qiniu_config`;
 CREATE TABLE `tool_qiniu_config`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` bigint(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `access_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'accessKey',
   `bucket` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Bucket 识别符',
   `host` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '外链域名',
   `secret_key` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'secretKey',
   `type` tinyint(4) NULL DEFAULT NULL COMMENT '空间类型 0 公开 1 私有',
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
-  `enable` tinyint(4) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
+  `enable` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of tool_qiniu_config
 -- ----------------------------
-INSERT INTO `tool_qiniu_config` VALUES (1, NULL, NULL, 'http://cdn.wayn.xin', NULL, NULL, NULL, NULL);
+INSERT INTO `tool_qiniu_config` VALUES (1, '0m7AYz601l-UiO_9uyK0c8TEJqnbdkAPln7dgjVw', 'wayntest', 'http://cdn.wayn.xin', '0Z0caBUehc7uRhiIwcTjfVxR9MoDJDIDtRaaNP3O', 0, '华东', 1);
 
 -- ----------------------------
 -- Table structure for tool_qiniu_content
@@ -4108,9 +4125,124 @@ CREATE TABLE `tool_qiniu_content`  (
   `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件类型：私有或公开',
   `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件url',
   `suffix` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件后缀',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '上传或同步的时间',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`content_id`) USING BTREE,
   UNIQUE INDEX `uniq_name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云文件存储' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 227 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云文件存储' ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of tool_qiniu_content
+-- ----------------------------
+INSERT INTO `tool_qiniu_content` VALUES (119, 'wayntest', '04487620110d82bb4a9e3becc905224b', '57.54KB   ', '公开', 'http://cdn.wayn.xin/04487620110d82bb4a9e3becc905224b.jpeg', 'jpeg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (120, 'wayntest', '0452a44e012f1c644ac77a56ddd5cc29', '363.97KB   ', '公开', 'http://cdn.wayn.xin/0452a44e012f1c644ac77a56ddd5cc29.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (121, 'wayntest', '07f5dbd1-14f2-45d9-ac09-7b206b45297e(1)(1)(1)(1)-20201117094210', '363.97KB   ', '公开', 'http://cdn.wayn.xin/07f5dbd1-14f2-45d9-ac09-7b206b45297e(1)(1)(1)(1)-20201117094210.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (122, 'wayntest', '0b307d7881ca0a85ed65a319d66e064d', '122.85KB   ', '公开', 'http://cdn.wayn.xin/0b307d7881ca0a85ed65a319d66e064d.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (123, 'wayntest', '0c1b7767a955dc3363db44f6f4ae0d96', '127.22KB   ', '公开', 'http://cdn.wayn.xin/0c1b7767a955dc3363db44f6f4ae0d96.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (124, 'wayntest', '0e317cf3cc6f423c72785be0bf0670da', '70.18KB   ', '公开', 'http://cdn.wayn.xin/0e317cf3cc6f423c72785be0bf0670da.png', 'png', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (125, 'wayntest', '0ed14d5f9a754fbb4eab8895837c1b99', '839.86KB   ', '公开', 'http://cdn.wayn.xin/0ed14d5f9a754fbb4eab8895837c1b99.png', 'png', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (126, 'wayntest', '1080P_4000K_276717751', '260.37MB   ', '公开', 'http://cdn.wayn.xin/1080P_4000K_276717751.mp4', 'mp4', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (127, 'wayntest', '121e7a3beba7a951ef527079abd5340b', '122.85KB   ', '公开', 'http://cdn.wayn.xin/121e7a3beba7a951ef527079abd5340b.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (128, 'wayntest', '13fe2ba4dee1e31f4074a2a3d33ceb6f', '839.86KB   ', '公开', 'http://cdn.wayn.xin/13fe2ba4dee1e31f4074a2a3d33ceb6f.png', 'png', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (129, 'wayntest', '14aa058f81dc81d022a31b548d22a632', '651.75KB   ', '公开', 'http://cdn.wayn.xin/14aa058f81dc81d022a31b548d22a632.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (130, 'wayntest', '17b38950454c0cf2d8e36000e7e92efb', '839.86KB   ', '公开', 'http://cdn.wayn.xin/17b38950454c0cf2d8e36000e7e92efb.png', 'png', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (131, 'wayntest', '18a2492a59443b1c2baa9ff0f2f7c674', '421.56KB   ', '公开', 'http://cdn.wayn.xin/18a2492a59443b1c2baa9ff0f2f7c674.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (132, 'wayntest', '1a5fe29705cc22c1d239cd11bee18495', '46.90KB   ', '公开', 'http://cdn.wayn.xin/1a5fe29705cc22c1d239cd11bee18495.png', 'png', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (133, 'wayntest', '1c1b7335dac55f1ee76ab9a240c4ae58', '606.69KB   ', '公开', 'http://cdn.wayn.xin/1c1b7335dac55f1ee76ab9a240c4ae58.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (134, 'wayntest', '1cd5fab6cfe4a4dcf7e3f1d1aa5df730', '50.81KB   ', '公开', 'http://cdn.wayn.xin/1cd5fab6cfe4a4dcf7e3f1d1aa5df730.jpeg', 'jpeg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (135, 'wayntest', '1db16106509bc43c1cb3bd949b9f80be', '98.28KB   ', '公开', 'http://cdn.wayn.xin/1db16106509bc43c1cb3bd949b9f80be.jpg', 'jpg', '2020-11-17 11:08:23', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (136, 'wayntest', '2d593966f5f9a1b9cf402e9f4eb0c3c2', '28.84KB   ', '公开', 'http://cdn.wayn.xin/2d593966f5f9a1b9cf402e9f4eb0c3c2.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (137, 'wayntest', '3086550a1d2f219b4ab119e61fbf66e9', '56.09KB   ', '公开', 'http://cdn.wayn.xin/3086550a1d2f219b4ab119e61fbf66e9.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (138, 'wayntest', '3099da6436893b9670b3213a478e2e11', '98.28KB   ', '公开', 'http://cdn.wayn.xin/3099da6436893b9670b3213a478e2e11.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (139, 'wayntest', '310beebff689be65d2174e429a6263f1', '56.09KB   ', '公开', 'http://cdn.wayn.xin/310beebff689be65d2174e429a6263f1.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (140, 'wayntest', '3994f38228834d97b436fbb25e538bba', '44.97KB   ', '公开', 'http://cdn.wayn.xin/3994f38228834d97b436fbb25e538bba.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (141, 'wayntest', '39c6bfd15e1228de0738a2f1e5ec124f', '259.29KB   ', '公开', 'http://cdn.wayn.xin/39c6bfd15e1228de0738a2f1e5ec124f.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (142, 'wayntest', '3a9cdff9af11b653af58c8534ddbfc31', '277.95KB   ', '公开', 'http://cdn.wayn.xin/3a9cdff9af11b653af58c8534ddbfc31.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (143, 'wayntest', '3cd65f9aee2bc8e4306c9c22e3b975e8', '1.06MB   ', '公开', 'http://cdn.wayn.xin/3cd65f9aee2bc8e4306c9c22e3b975e8.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (144, 'wayntest', '431f80e62e2ccd8f290194099e2f0a4d', '122.85KB   ', '公开', 'http://cdn.wayn.xin/431f80e62e2ccd8f290194099e2f0a4d.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (145, 'wayntest', '443e40a1037816bac30a8bd7d2713c6c', '277.95KB   ', '公开', 'http://cdn.wayn.xin/443e40a1037816bac30a8bd7d2713c6c.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (146, 'wayntest', '45c1ba4511eea87a1b10d56aedd8174a', '122.85KB   ', '公开', 'http://cdn.wayn.xin/45c1ba4511eea87a1b10d56aedd8174a.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (147, 'wayntest', '45ce245ed8de15367d97dd7b99d77071', '1.19MB   ', '公开', 'http://cdn.wayn.xin/45ce245ed8de15367d97dd7b99d77071.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (148, 'wayntest', '468f8e099206ebe29cd686f1540d7d69', '62.36KB   ', '公开', 'http://cdn.wayn.xin/468f8e099206ebe29cd686f1540d7d69.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (149, 'wayntest', '5140b7950463511eff7bd1e9de567d34', '65.99KB   ', '公开', 'http://cdn.wayn.xin/5140b7950463511eff7bd1e9de567d34.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (150, 'wayntest', '52dfeb79582cd62983da35f558202877', '683.68KB   ', '公开', 'http://cdn.wayn.xin/52dfeb79582cd62983da35f558202877.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (151, 'wayntest', '54fefb60d9d2cd7d45e899f004e12313', '81.76KB   ', '公开', 'http://cdn.wayn.xin/54fefb60d9d2cd7d45e899f004e12313.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (152, 'wayntest', '55786cab5ff9979e4577492cc36d2868', '887.33KB   ', '公开', 'http://cdn.wayn.xin/55786cab5ff9979e4577492cc36d2868.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (153, 'wayntest', '5b66d2ff11497025fe279a920466b9ec', '96.29KB   ', '公开', 'http://cdn.wayn.xin/5b66d2ff11497025fe279a920466b9ec.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (154, 'wayntest', '5c0cf4282fc862c551fc42a51a6824a8', '839.86KB   ', '公开', 'http://cdn.wayn.xin/5c0cf4282fc862c551fc42a51a6824a8.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (155, 'wayntest', '62b85537bb3be8439ee7a15f96e04635', '81.76KB   ', '公开', 'http://cdn.wayn.xin/62b85537bb3be8439ee7a15f96e04635.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (156, 'wayntest', '63b84249abb5c5839211f39a4efcfb82', '1.13MB   ', '公开', 'http://cdn.wayn.xin/63b84249abb5c5839211f39a4efcfb82.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (157, 'wayntest', '63c739ef20bca5ace3149b8af8aec303', '62.36KB   ', '公开', 'http://cdn.wayn.xin/63c739ef20bca5ace3149b8af8aec303.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (158, 'wayntest', '645a63d6581733bfdf61a03ee918b277', '363.97KB   ', '公开', 'http://cdn.wayn.xin/645a63d6581733bfdf61a03ee918b277.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (159, 'wayntest', '664bb3982ebbe1464c39d652c5657ca8', '1.06MB   ', '公开', 'http://cdn.wayn.xin/664bb3982ebbe1464c39d652c5657ca8.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (160, 'wayntest', '68763fab809f4af6d15df39857db3383', '839.86KB   ', '公开', 'http://cdn.wayn.xin/68763fab809f4af6d15df39857db3383.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (161, 'wayntest', '7185f7e9a9e8486a5adce9a2b204de1b', '839.86KB   ', '公开', 'http://cdn.wayn.xin/7185f7e9a9e8486a5adce9a2b204de1b.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (162, 'wayntest', '7900937bea1d0a20076ea57c12b19f67', '42.54KB   ', '公开', 'http://cdn.wayn.xin/7900937bea1d0a20076ea57c12b19f67.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (163, 'wayntest', '79c2cffed665da7441f4798ab7009147', '839.86KB   ', '公开', 'http://cdn.wayn.xin/79c2cffed665da7441f4798ab7009147.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (164, 'wayntest', '7ae549a3982bd84a6e454da8a4d7b962', '76.17KB   ', '公开', 'http://cdn.wayn.xin/7ae549a3982bd84a6e454da8a4d7b962.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (165, 'wayntest', '7b58f6287fe8d55f78e8ae9cd4e528b3', '839.86KB   ', '公开', 'http://cdn.wayn.xin/7b58f6287fe8d55f78e8ae9cd4e528b3.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (166, 'wayntest', '7e066916f7af0d6eba01494468d9b76f', '163.88KB   ', '公开', 'http://cdn.wayn.xin/7e066916f7af0d6eba01494468d9b76f.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (167, 'wayntest', '807ebeb6143b01ae936e5a6a6829601c', '363.97KB   ', '公开', 'http://cdn.wayn.xin/807ebeb6143b01ae936e5a6a6829601c.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (168, 'wayntest', '83a5b7c39f18bc6d7a301bc5cef7d069', '259.29KB   ', '公开', 'http://cdn.wayn.xin/83a5b7c39f18bc6d7a301bc5cef7d069.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (169, 'wayntest', '88679eece783bf08ff3bb0912fe074ae', '277.95KB   ', '公开', 'http://cdn.wayn.xin/88679eece783bf08ff3bb0912fe074ae.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (170, 'wayntest', '88ceb4439ff0167163c83ff2992f30dd', '20.40KB   ', '公开', 'http://cdn.wayn.xin/88ceb4439ff0167163c83ff2992f30dd.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (171, 'wayntest', '8b59ac74678832727767c0994ae5602c', '2.59MB   ', '公开', 'http://cdn.wayn.xin/8b59ac74678832727767c0994ae5602c.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (172, 'wayntest', '8c1a9ebd73bbdaee74610b5751954a5a', '839.86KB   ', '公开', 'http://cdn.wayn.xin/8c1a9ebd73bbdaee74610b5751954a5a.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (173, 'wayntest', '9081f4f5c2664e871a7a14788ba443d7', '839.86KB   ', '公开', 'http://cdn.wayn.xin/9081f4f5c2664e871a7a14788ba443d7.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (174, 'wayntest', '92cbcd09719c50487d8466606d7c96d5', '76.17KB   ', '公开', 'http://cdn.wayn.xin/92cbcd09719c50487d8466606d7c96d5.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (175, 'wayntest', '97b17b3509231787cfc503b0e7029095', '887.33KB   ', '公开', 'http://cdn.wayn.xin/97b17b3509231787cfc503b0e7029095.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (176, 'wayntest', '97e021df11857609c9afe128cef05890', '363.97KB   ', '公开', 'http://cdn.wayn.xin/97e021df11857609c9afe128cef05890.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (177, 'wayntest', '9810050de731172541c9c7a150f6f585', '839.86KB   ', '公开', 'http://cdn.wayn.xin/9810050de731172541c9c7a150f6f585.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (178, 'wayntest', '9c78919c8fc057e599b19b2a2169e4fe', '363.97KB   ', '公开', 'http://cdn.wayn.xin/9c78919c8fc057e599b19b2a2169e4fe.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (179, 'wayntest', '9d56bfb6585d6affc5e3b5afc25fe8a2', '46.90KB   ', '公开', 'http://cdn.wayn.xin/9d56bfb6585d6affc5e3b5afc25fe8a2.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (180, 'wayntest', 'Surface Collection Collection (30 wallpapers) - WallpaperHub-20201116164242', '21.76MB   ', '公开', 'http://cdn.wayn.xin/Surface Collection Collection (30 wallpapers) - WallpaperHub-20201116164242.zip', 'zip', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (181, 'wayntest', 'a8c26c7945c2ded9c269b897b4d6b517', '423.54KB   ', '公开', 'http://cdn.wayn.xin/a8c26c7945c2ded9c269b897b4d6b517.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (182, 'wayntest', 'ae37b391eeb7045b582f976f847dacaa', '56.09KB   ', '公开', 'http://cdn.wayn.xin/ae37b391eeb7045b582f976f847dacaa.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (183, 'wayntest', 'b3ba3dfde43cd21bd339cb3a110d9f10', '839.86KB   ', '公开', 'http://cdn.wayn.xin/b3ba3dfde43cd21bd339cb3a110d9f10.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (184, 'wayntest', 'b3e7f3313d7795f1da73b77910830c9c', '1.13MB   ', '公开', 'http://cdn.wayn.xin/b3e7f3313d7795f1da73b77910830c9c.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (185, 'wayntest', 'b6c5cc3384e9d86a259730bff5c125e6', '839.86KB   ', '公开', 'http://cdn.wayn.xin/b6c5cc3384e9d86a259730bff5c125e6.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (186, 'wayntest', 'b6f2576a40108488ebdaa9d211390a48', '2.42KB   ', '公开', 'http://cdn.wayn.xin/b6f2576a40108488ebdaa9d211390a48.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (187, 'wayntest', 'baafe765ee92832db1804551227c1359', '839.86KB   ', '公开', 'http://cdn.wayn.xin/baafe765ee92832db1804551227c1359.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (188, 'wayntest', 'bbbf17f3a0f5a191a798977b3d400a4d', '839.86KB   ', '公开', 'http://cdn.wayn.xin/bbbf17f3a0f5a191a798977b3d400a4d.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (189, 'wayntest', 'bd52fd684f93ee9e723ae4ce87e451d4', '363.97KB   ', '公开', 'http://cdn.wayn.xin/bd52fd684f93ee9e723ae4ce87e451d4.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (190, 'wayntest', 'be2fc725ce8d041b564511c7f74ec549', '65.98KB   ', '公开', 'http://cdn.wayn.xin/be2fc725ce8d041b564511c7f74ec549.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (191, 'wayntest', 'bee08c34366fcc88fca6170824d3b7cf', '1.19MB   ', '公开', 'http://cdn.wayn.xin/bee08c34366fcc88fca6170824d3b7cf.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (192, 'wayntest', 'bf4313ccc27a2d5084c04f5ba02a955f', '56.09KB   ', '公开', 'http://cdn.wayn.xin/bf4313ccc27a2d5084c04f5ba02a955f.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (193, 'wayntest', 'bf85465930b03073c4076fa093a4ab8d', '913.77KB   ', '公开', 'http://cdn.wayn.xin/bf85465930b03073c4076fa093a4ab8d.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (194, 'wayntest', 'bf921e07e92e0688f83fa5552a261667', '1.19MB   ', '公开', 'http://cdn.wayn.xin/bf921e07e92e0688f83fa5552a261667.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (195, 'wayntest', 'c08758f9d0b741047ac3e66c57217940', '277.95KB   ', '公开', 'http://cdn.wayn.xin/c08758f9d0b741047ac3e66c57217940.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (196, 'wayntest', 'c137ab89368ca4054aceb5f1899fa723', '46.90KB   ', '公开', 'http://cdn.wayn.xin/c137ab89368ca4054aceb5f1899fa723.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (197, 'wayntest', 'c33ffe764cf06cd3071642caa1609b6d', '51.71KB   ', '公开', 'http://cdn.wayn.xin/c33ffe764cf06cd3071642caa1609b6d.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (198, 'wayntest', 'c4997fc2009788c44dbabf7bc5ffb438', '1.06MB   ', '公开', 'http://cdn.wayn.xin/c4997fc2009788c44dbabf7bc5ffb438.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (199, 'wayntest', 'c79b8caf23b5b0d3a0e471246ede28f5', '122.85KB   ', '公开', 'http://cdn.wayn.xin/c79b8caf23b5b0d3a0e471246ede28f5.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (200, 'wayntest', 'c8cf25bac8beaf239630c7440ca93b90', '772.74KB   ', '公开', 'http://cdn.wayn.xin/c8cf25bac8beaf239630c7440ca93b90.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (201, 'wayntest', 'c8d4c922c54d36e3ea5a7d4e6c923742', '122.85KB   ', '公开', 'http://cdn.wayn.xin/c8d4c922c54d36e3ea5a7d4e6c923742.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (202, 'wayntest', 'c984b181c15e11aa092d876917b23468', '362.44KB   ', '公开', 'http://cdn.wayn.xin/c984b181c15e11aa092d876917b23468.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (203, 'wayntest', 'c9ef8cd82e8a94fe1cbe6fad4998c09c', '81.76KB   ', '公开', 'http://cdn.wayn.xin/c9ef8cd82e8a94fe1cbe6fad4998c09c.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (204, 'wayntest', 'd03c6e601826e8e40e52874a4dcc3fa1', '363.97KB   ', '公开', 'http://cdn.wayn.xin/d03c6e601826e8e40e52874a4dcc3fa1.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (205, 'wayntest', 'd66ea78a9c7cce42f8b21e691fdcb026', '56.09KB   ', '公开', 'http://cdn.wayn.xin/d66ea78a9c7cce42f8b21e691fdcb026.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (206, 'wayntest', 'd69d77c04e6b2aacc8280bcef1d4696b', '56.09KB   ', '公开', 'http://cdn.wayn.xin/d69d77c04e6b2aacc8280bcef1d4696b.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (207, 'wayntest', 'd722672999f7c78be72f199684d5cab2', '1.06MB   ', '公开', 'http://cdn.wayn.xin/d722672999f7c78be72f199684d5cab2.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (208, 'wayntest', 'd8616a292d4031b5dd908fd5b53466fd', '839.86KB   ', '公开', 'http://cdn.wayn.xin/d8616a292d4031b5dd908fd5b53466fd.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (209, 'wayntest', 'd88065725c1eba2a871d004256695319', '57.54KB   ', '公开', 'http://cdn.wayn.xin/d88065725c1eba2a871d004256695319.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (210, 'wayntest', 'd953342ef57659206a447ef596fbe3b9', '335.79KB   ', '公开', 'http://cdn.wayn.xin/d953342ef57659206a447ef596fbe3b9.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (211, 'wayntest', 'd9d5b3baae53c269543d4c4616fd2709', '839.86KB   ', '公开', 'http://cdn.wayn.xin/d9d5b3baae53c269543d4c4616fd2709.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (212, 'wayntest', 'dc2e4c8576f8a242db9ee171899c030d', '277.95KB   ', '公开', 'http://cdn.wayn.xin/dc2e4c8576f8a242db9ee171899c030d.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (213, 'wayntest', 'dcb39a60f5443837ed47674312a5d381', '374.63KB   ', '公开', 'http://cdn.wayn.xin/dcb39a60f5443837ed47674312a5d381.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (214, 'wayntest', 'e588f053f6f61d3fb64ce8776ad224d6', '1.06MB   ', '公开', 'http://cdn.wayn.xin/e588f053f6f61d3fb64ce8776ad224d6.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (215, 'wayntest', 'e72c608ecafefb46500aab04186666ee', '122.85KB   ', '公开', 'http://cdn.wayn.xin/e72c608ecafefb46500aab04186666ee.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (216, 'wayntest', 'ea3db247b0b18c54d235b460737a0cb2', '3.47MB   ', '公开', 'http://cdn.wayn.xin/ea3db247b0b18c54d235b460737a0cb2.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (217, 'wayntest', 'ed7e1f2289acd52579cbf5cccc15a87e', '56.09KB   ', '公开', 'http://cdn.wayn.xin/ed7e1f2289acd52579cbf5cccc15a87e.jpeg', 'jpeg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (218, 'wayntest', 'eda8445bcbb8da8d478f17ddbf6cd17b', '139.37KB   ', '公开', 'http://cdn.wayn.xin/eda8445bcbb8da8d478f17ddbf6cd17b.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (219, 'wayntest', 'ef3fa684c943f154132683b70649e74a', '363.97KB   ', '公开', 'http://cdn.wayn.xin/ef3fa684c943f154132683b70649e74a.jpg', 'jpg', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (220, 'wayntest', 'f1438f63f654150c6b46f795439315fb', '1.19MB   ', '公开', 'http://cdn.wayn.xin/f1438f63f654150c6b46f795439315fb.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (221, 'wayntest', 'f42441b2149031153c50b960a2ab881c', '1.19MB   ', '公开', 'http://cdn.wayn.xin/f42441b2149031153c50b960a2ab881c.png', 'png', '2020-11-17 11:08:24', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (222, 'wayntest', 'f470f2210cd18f6662c55551fdc718f0', '1.06MB   ', '公开', 'http://cdn.wayn.xin/f470f2210cd18f6662c55551fdc718f0.jpg', 'jpg', '2020-11-17 11:08:25', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (223, 'wayntest', 'f86a314916240601d4fd9ac47df53abd', '56.09KB   ', '公开', 'http://cdn.wayn.xin/f86a314916240601d4fd9ac47df53abd.jpeg', 'jpeg', '2020-11-17 11:08:25', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (224, 'wayntest', 'f902f044d8b833fd30f2e82400ebb297', '51.26KB   ', '公开', 'http://cdn.wayn.xin/f902f044d8b833fd30f2e82400ebb297.jpeg', 'jpeg', '2020-11-17 11:08:25', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (225, 'wayntest', 'f9f9cae54b0ea99c9d5882259b3648bb', '813.49KB   ', '公开', 'http://cdn.wayn.xin/f9f9cae54b0ea99c9d5882259b3648bb.jpg', 'jpg', '2020-11-17 11:08:25', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (226, 'wayntest', 'fb98a05edf360bf02206d7e0e6ca5a7e', '163.88KB   ', '公开', 'http://cdn.wayn.xin/fb98a05edf360bf02206d7e0e6ca5a7e.png', 'png', '2020-11-17 11:08:25', NULL, 0);
+INSERT INTO `tool_qiniu_content` VALUES (227, 'wayntest', 'fd8b18f2f69efcdad318d6477551ac81', '839.86KB   ', '公开', 'http://cdn.wayn.xin/fd8b18f2f69efcdad318d6477551ac81.png', 'png', '2020-11-17 11:08:25', NULL, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
