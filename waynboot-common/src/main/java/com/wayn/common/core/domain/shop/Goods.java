@@ -68,7 +68,7 @@ public class Goods extends ShopBaseEntity implements Serializable {
     private String brief;
 
     /**
-     * 是否上架
+     * 是否上架（0代表为上架 1代表上架）
      */
     private Boolean isOnSale;
 
