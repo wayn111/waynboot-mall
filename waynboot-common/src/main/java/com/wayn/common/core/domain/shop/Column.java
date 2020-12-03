@@ -37,4 +37,9 @@ public class Column extends ShopBaseEntity implements Serializable {
      */
     private String name;
 
+    /**
+     * 删除标志（0代表存在 1代表删除）
+     */
+    private Boolean delFlag;
+
 }

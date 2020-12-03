@@ -15,6 +15,7 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -138,9 +139,19 @@ public class SearchController extends BaseController {
 
     @GetMapping("hotKeywords")
     public R hotKeywords() {
-        List<Keyword> keywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByDesc("sort_order"));
-        List<String> strings = keywords.stream().map(Keyword::getKeyword).collect(Collectors.toList());
-        return R.success().add("data", strings);
+        List<Keyword> hotKeywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByAsc("sort_order"));
+        List<String> hotStrings = hotKeywords.stream().map(Keyword::getKeyword).collect(Collectors.toList());
+        List<Keyword> defaultKeyword = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_default", true).orderByAsc("sort_order"));
+        List<String> defaultStrings = defaultKeyword.stream().map(Keyword::getKeyword).collect(Collectors.toList());
+        R r = R.success();
+        if (CollectionUtils.isNotEmpty(hotStrings)) {
+            r.add("data", hotStrings);
+        }
+        r.add("data", hotStrings);
+        if (CollectionUtils.isNotEmpty(defaultStrings)) {
+            r.add("default", defaultStrings.get(0));
+        }
+        return r;
     }
 
 }
