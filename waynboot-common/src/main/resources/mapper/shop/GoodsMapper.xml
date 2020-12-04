@@ -93,4 +93,48 @@
             </if>
         </where>
     </select>
+
+    <select id="selectColumnBindGoodsListPage" resultMap="ShopGoodsResult">
+        <include refid="selectGoodsVo"/>
+        <where>
+            del_flag = 0
+            and is_on_sale = 1
+            <if test="goods.goodsSn != null and goods.goodsSn != ''">
+                AND goods_sn like concat('%', #{goods.goodsSn}, '%')
+            </if>
+            <if test="goods.name != null and goods.name != ''">
+                AND name like concat('%', #{goods.name}, '%')
+            </if>
+            <if test="columnGoodsIds.size() > 0">
+                and id in
+                (
+                <foreach collection="columnGoodsIds" item="columnGoodsId" separator=",">
+                    #{columnGoodsId}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+    <select id="selectColumnUnBindGoodsListPage" resultMap="ShopGoodsResult">
+        <include refid="selectGoodsVo"/>
+        <where>
+            del_flag = 0
+            and is_on_sale = 1
+            <if test="goods.goodsSn != null and goods.goodsSn != ''">
+                AND goods_sn like concat('%', #{goods.goodsSn}, '%')
+            </if>
+            <if test="goods.name != null and goods.name != ''">
+                AND name like concat('%', #{goods.name}, '%')
+            </if>
+            <if test="columnGoodsIds.size() > 0">
+                and id not in
+                (
+                <foreach collection="columnGoodsIds" item="columnGoodsId" separator=",">
+                    #{columnGoodsId}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
 </mapper>

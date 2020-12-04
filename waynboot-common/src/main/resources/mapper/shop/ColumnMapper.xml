@@ -24,6 +24,12 @@
             <if test="column.name != null and column.name != ''">
                 AND name like concat('%', #{column.name}, '%')
             </if>
+            <if test="column.startTime != null and column.startTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{column.startTime},'%Y-%m-%d')
+            </if>
+            <if test="column.endTime != null and column.endTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{column.endTime},'%Y-%m-%d')
+            </if>
         </where>
         order by create_time desc
     </select>
