@@ -31,6 +31,10 @@ public interface IGoodsService extends IService<Goods> {
      */
     IPage<Goods> listPage(Page<Goods> page, Goods goods);
 
+    IPage<Goods> listColumnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
+
+    IPage<Goods> listColumnUnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
+
     /**
      * 获取商品详情（包含货品，规格，属性，分类）
      *
@@ -65,6 +69,7 @@ public interface IGoodsService extends IService<Goods> {
 
     /**
      * 更新商品相关对象
+     *
      * @param goodsSaveRelatedVO 商品保存关联VO对象
      * @return R
      */
@@ -72,7 +77,8 @@ public interface IGoodsService extends IService<Goods> {
 
     /**
      * 根据二级分类Id集合获取对应商品
-     * @param page 分页对象
+     *
+     * @param page       分页对象
      * @param l2cateList 二级分类Id集合
      * @return r
      */

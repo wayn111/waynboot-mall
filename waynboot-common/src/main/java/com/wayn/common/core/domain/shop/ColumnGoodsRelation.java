@@ -29,12 +29,12 @@ public class ColumnGoodsRelation implements Serializable {
     /**
      * 栏目ID
      */
-    private Integer columnId;
+    private Long columnId;
 
     /**
      * 商品ID
      */
-    private Integer goodsId;
+    private Long goodsId;
 
 
 }

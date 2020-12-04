@@ -23,4 +23,8 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     IPage<Goods> selectGoodsListPageByl2CateId(Page<Goods> page, List<Long> cateList);
 
     List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO);
+
+    IPage<Goods> selectColumnBindGoodsListPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
+
+    IPage<Goods> selectColumnUnBindGoodsListPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
 }

@@ -56,6 +56,16 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
+    public IPage<Goods> listColumnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
+        return goodsMapper.selectColumnBindGoodsListPage(page, goods, columnGoodsIds);
+    }
+
+    @Override
+    public IPage<Goods> listColumnUnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
+        return goodsMapper.selectColumnUnBindGoodsListPage(page, goods, columnGoodsIds);
+    }
+
+    @Override
     public Map<String, Object> getGoodsInfoById(Long goodsId) {
         Goods goods = goodsMapper.selectById(goodsId);
         List<GoodsProduct> goodsProducts = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
