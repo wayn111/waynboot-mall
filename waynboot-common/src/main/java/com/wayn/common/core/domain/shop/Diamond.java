@@ -53,14 +53,14 @@ public class Diamond extends ShopBaseEntity implements Serializable {
     private String valueUrl;
 
     /**
-     * 展示图标
+     * 图标地址
      */
-    private String icon;
+    private String iconUrl;
 
     /**
-     * 展示banner
+     * 跳转banner地址
      */
-    private String image;
+    private String picUrl;
 
     /**
      * 是否展示（0不展示，1展示）
