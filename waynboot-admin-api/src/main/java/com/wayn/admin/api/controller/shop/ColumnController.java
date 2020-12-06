@@ -54,12 +54,7 @@ public class ColumnController extends BaseController {
             }
             return columnVO;
         }).collect(Collectors.toList());
-        Page<ColumnVO> formatPage = getPage();
-        formatPage.setRecords(columnVOS);
-        formatPage.setTotal(columnIPage.getTotal());
-        formatPage.setPages(columnIPage.getPages());
-        formatPage.setSize(columnIPage.getSize());
-        return R.success().add("page", formatPage);
+        return R.success().add("page", formatPage(columnIPage, columnVOS));
     }
 
     @PostMapping
