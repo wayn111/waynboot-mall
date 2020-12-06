@@ -30,7 +30,7 @@ public class Column extends ShopBaseEntity implements Serializable {
     /**
      * 排序
      */
-    private Integer sortOrder;
+    private Integer sort;
 
     /**
      * 栏目名称

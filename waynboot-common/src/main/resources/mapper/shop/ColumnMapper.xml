@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="ShopColumnResult" type="com.wayn.common.core.domain.shop.Column">
         <result column="id"             property="id" />
-        <result column="sort_order"     property="sortOrder" />
+        <result column="sort"           property="sort" />
         <result column="name"           property="name" />
         <result column="create_time"    property="createTime" />
         <result column="update_time"    property="updateTime" />
@@ -15,7 +15,7 @@
     <!-- 通用查询结果列 -->
     <sql id="selectColumnVo">
         select id,
-        sort_order, name, create_time, update_time,del_flag from shop_column
+        sort, name, create_time, update_time,del_flag from shop_column
     </sql>
     <select id="selectColumnListPage" resultMap="ShopColumnResult">
         <include refid="selectColumnVo"/>
@@ -31,7 +31,6 @@
                 and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{column.endTime},'%Y-%m-%d')
             </if>
         </where>
-        order by create_time desc
     </select>
 
 </mapper>

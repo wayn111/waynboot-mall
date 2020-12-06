@@ -139,9 +139,9 @@ public class SearchController extends BaseController {
 
     @GetMapping("hotKeywords")
     public R hotKeywords() {
-        List<Keyword> hotKeywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByAsc("sort_order"));
+        List<Keyword> hotKeywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByAsc("sort"));
         List<String> hotStrings = hotKeywords.stream().map(Keyword::getKeyword).collect(Collectors.toList());
-        List<Keyword> defaultKeyword = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_default", true).orderByAsc("sort_order"));
+        List<Keyword> defaultKeyword = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_default", true).orderByAsc("sort"));
         List<String> defaultStrings = defaultKeyword.stream().map(Keyword::getKeyword).collect(Collectors.toList());
         R r = R.success();
         if (CollectionUtils.isNotEmpty(hotStrings)) {

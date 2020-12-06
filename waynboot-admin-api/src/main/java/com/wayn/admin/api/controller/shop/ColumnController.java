@@ -7,14 +7,18 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Column;
 import com.wayn.common.core.domain.shop.ColumnGoodsRelation;
 import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.domain.vo.ColumnVO;
 import com.wayn.common.core.service.shop.IColumnGoodsRelationService;
 import com.wayn.common.core.service.shop.IColumnService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +39,27 @@ public class ColumnController extends BaseController {
     @GetMapping("/list")
     public R list(Column column) {
         Page<Column> page = getPage();
-        return R.success().add("page", iColumnService.listPage(page, column));
+        IPage<Column> columnIPage = iColumnService.listPage(page, column);
+        List<ColumnVO> columnVOS = columnIPage.getRecords().stream().map(item -> {
+            ColumnVO columnVO = new ColumnVO();
+            try {
+                BeanUtils.copyProperties(columnVO, item);
+                int count = iColumnGoodsRelationService.count(new QueryWrapper<ColumnGoodsRelation>()
+                        .eq("column_id", item.getId()));
+                columnVO.setGoodsNum(count);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            return columnVO;
+        }).collect(Collectors.toList());
+        Page<ColumnVO> formatPage = getPage();
+        formatPage.setRecords(columnVOS);
+        formatPage.setTotal(columnIPage.getTotal());
+        formatPage.setPages(columnIPage.getPages());
+        formatPage.setSize(columnIPage.getSize());
+        return R.success().add("page", formatPage);
     }
 
     @PostMapping
@@ -65,6 +89,9 @@ public class ColumnController extends BaseController {
         Page<Goods> page = getPage();
         List<ColumnGoodsRelation> goodsRelationList = iColumnGoodsRelationService.list(new QueryWrapper<ColumnGoodsRelation>()
                 .eq("column_id", columnId));
+        if (CollectionUtils.isEmpty(goodsRelationList)) {
+            return R.success().add("page", new Page<Goods>());
+        }
         List<Long> columnGoodsIds = goodsRelationList.stream().map(ColumnGoodsRelation::getGoodsId).collect(Collectors.toList());
         IPage<Goods> listPage = iGoodsService.listColumnBindGoodsPage(page, goods, columnGoodsIds);
         return R.success().add("page", listPage);
@@ -85,8 +112,10 @@ public class ColumnController extends BaseController {
         return R.result(iColumnGoodsRelationService.save(columnGoodsRelation));
     }
 
-    @DeleteMapping("goods/{id}")
-    public R deleteGoods(@PathVariable Long id) {
-        return R.result(iColumnGoodsRelationService.removeById(id));
+    @DeleteMapping("goods")
+    public R deleteGoods(@RequestBody ColumnGoodsRelation columnGoodsRelation) {
+        return R.result(iColumnGoodsRelationService.remove(new QueryWrapper<ColumnGoodsRelation>()
+                .eq("goods_id", columnGoodsRelation.getGoodsId())
+                .eq("column_id", columnGoodsRelation.getColumnId())));
     }
 }

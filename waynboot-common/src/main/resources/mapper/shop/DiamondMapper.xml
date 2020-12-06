@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="com.wayn.common.core.domain.shop.Diamond">
         <result column="id"             property="id" />
         <result column="name"           property="name" />
-        <result column="sort_order"     property="sortOrder" />
+        <result column="sort"     property="sort" />
         <result column="jump_type"      property="jumpType" />
         <result column="value_id"       property="valueId" />
         <result column="value_url"      property="valueUrl" />
@@ -21,7 +21,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         select id,
-        name, sort_order, jump_type, value_id, value_url, icon, image, status, del_flag, create_time, update_time from diamond
+        name, sort, jump_type, value_id, value_url, icon, image, status, del_flag, create_time, update_time from diamond
     </sql>
 
 </mapper>

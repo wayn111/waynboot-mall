@@ -34,14 +34,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public List<VanTreeSelectVo> selectL1Category() {
-        List<Category> categoryList = list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort_order"));
+        List<Category> categoryList = list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort"));
         List<VanTreeSelectVo> vanTreeSelectVos = categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
         return vanTreeSelectVos;
     }
 
     @Override
     public List<VanTreeSelectVo> selectCategoryByPid(Long id) {
-        List<Category> categoryList = list(new QueryWrapper<Category>().eq("pid", id).orderByAsc("sort_order"));
+        List<Category> categoryList = list(new QueryWrapper<Category>().eq("pid", id).orderByAsc("sort"));
         List<VanTreeSelectVo> vanTreeSelectVos = categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
         return vanTreeSelectVos;
     }

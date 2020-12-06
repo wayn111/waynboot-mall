@@ -12,7 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="iconUrl" 		column="icon_url"  		/>
 		<result property="picUrl" 		column="pic_url"   		/>
 		<result property="level" 		column="level"   		/>
-		<result property="sortOrder" 	column="sort_order"   	/>
+		<result property="sort" 		column="sort"   	/>
 		<result property="delFlag"     	column="del_flag"   	/>
 		<result property="createTime" 	column="create_time" 	/>
 		<result property="updateTime" 	column="update_time" 	/>
@@ -21,11 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<sql id="selectCategoryVo">
         select c.id, c.name, c.keywords, c.pid, c.icon_url,
-        c.pic_url, c.level,c.sort_order, c.del_flag,
+        c.pic_url, c.level,c.sort, c.del_flag,
         c.create_time, c.update_time, c.remark
         from shop_category c
     </sql>
-    
+
 	<select id="selectCategoryList" parameterType="com.wayn.common.core.domain.shop.Category" resultMap="ShopCategoryResult">
         <include refid="selectCategoryVo"/>
         <where>
@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="id != null">
 				AND id = #{id}
 			</if>
-			order by pid asc, sort_order asc
+			order by pid asc, sort asc
 		</where>
     </select>
 

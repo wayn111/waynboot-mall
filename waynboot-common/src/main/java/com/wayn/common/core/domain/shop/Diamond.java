@@ -35,7 +35,7 @@ public class Diamond extends ShopBaseEntity implements Serializable {
     /**
      * 排序
      */
-    private Integer sortOrder;
+    private Integer sort;
 
     /**
      * 金刚区跳转类型（0栏目，1分类，2url）
