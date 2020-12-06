@@ -13,7 +13,7 @@
         <result column="keywords"           property="keywords" />
         <result column="brief"              property="brief" />
         <result column="is_on_sale"         property="isOnSale" />
-        <result column="sort_order"         property="sortOrder" />
+        <result column="sort"               property="sort" />
         <result column="pic_url"            property="picUrl" />
         <result column="share_url"          property="shareUrl" />
         <result column="is_new"             property="isNew" />
@@ -32,7 +32,7 @@
     <!-- 通用查询结果列 -->
     <sql id="selectGoodsVo">
         select id,
-        goods_sn, name, category_id, brand_id, gallery, keywords, brief, is_on_sale, sort_order, pic_url,
+        goods_sn, name, category_id, brand_id, gallery, keywords, brief, is_on_sale, sort, pic_url,
         share_url, is_new, is_hot, unit, counter_price, retail_price, detail, actual_sales, virtual_sales,
         create_time, update_time, del_flag
         from shop_goods

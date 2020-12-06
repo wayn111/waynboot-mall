@@ -61,7 +61,7 @@ public class Category extends ShopBaseEntity implements Serializable {
     /**
      * 排序
      */
-    private Integer sortOrder;
+    private Integer sort;
 
 
     /**

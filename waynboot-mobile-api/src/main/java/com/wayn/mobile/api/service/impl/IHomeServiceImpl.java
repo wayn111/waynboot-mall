@@ -46,8 +46,8 @@ public class IHomeServiceImpl implements IHomeService {
         ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(10, 10,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(), r -> new Thread(r, "首页线程"));
-        Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort_order"));
-        Callable<List<Category>> categoryCall = () -> iCategoryService.list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort_order"));
+        Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
+        Callable<List<Category>> categoryCall = () -> iCategoryService.list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort"));
         Callable<List<Goods>> newGoodsCall = () -> iGoodsService.list(new QueryWrapper<Goods>()
                 .eq("is_new", true)
                 .eq("is_on_sale", true)
@@ -88,9 +88,9 @@ public class IHomeServiceImpl implements IHomeService {
         }
         R success = R.success();
         List<CompletableFuture<Void>> list = new ArrayList();
-        CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort_order")))
+        CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort")))
                 .thenAccept(data -> success.add("bannerList", data));
-        CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iCategoryService.list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort_order")))
+        CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iCategoryService.list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort")))
                 .thenAccept(data -> success.add("categoryList", data));
         CompletableFuture<Void> f3 = CompletableFuture.supplyAsync(() -> iGoodsService.list(new QueryWrapper<Goods>()
                 .eq("is_new", true)

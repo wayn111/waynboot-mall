@@ -75,7 +75,7 @@ public class Goods extends ShopBaseEntity implements Serializable {
     /**
      * 排序
      */
-    private Integer sortOrder;
+    private Integer sort;
 
     /**
      * 商品页面商品图片

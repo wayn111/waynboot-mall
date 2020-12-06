@@ -10,7 +10,7 @@
         <result column="url"            property="url" />
         <result column="is_hot"         property="isHot" />
         <result column="is_default"     property="isDefault" />
-        <result column="sort_order"     property="sortOrder" />
+        <result column="sort"           property="sort" />
         <result column="create_time"    property="createTime" />
         <result column="update_time"    property="updateTime" />
         <result column="del_flag"       property="delFlag" />
@@ -19,7 +19,7 @@
     <!-- 通用查询结果列 -->
     <sql id="selectKeywordVo">
         select id,
-        keyword, jump_type, url, is_hot, is_default, sort_order, create_time, update_time, del_flag
+        keyword, jump_type, url, is_hot, is_default, sort, create_time, update_time, del_flag
         from shop_keyword
     </sql>
 
@@ -43,7 +43,7 @@
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{keyword.endTime},'%Y-%m-%d')
             </if>
         </where>
-        order by sort_order, create_time desc
+        order by sort, create_time desc
 
     </select>
 

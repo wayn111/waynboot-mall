@@ -28,7 +28,7 @@ public class Banner extends ShopBaseEntity implements Serializable {
 
     private String jumpUrl;
 
-    private Integer sortOrder;
+    private Integer sort;
 
     private Integer status;
 
