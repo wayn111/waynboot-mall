@@ -65,7 +65,7 @@ public class Diamond extends ShopBaseEntity implements Serializable {
     /**
      * 是否展示（0不展示，1展示）
      */
-    private Boolean status;
+    private Integer status;
 
     /**
      * 删除标志（0代表存在 1代表删除）
