@@ -1,9 +1,12 @@
 package com.wayn.common.core.service.shop.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Diamond;
 import com.wayn.common.core.mapper.shop.DiamondMapper;
 import com.wayn.common.core.service.shop.IDiamondService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,4 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class DiamondServiceImpl extends ServiceImpl<DiamondMapper, Diamond> implements IDiamondService {
 
+    @Autowired
+    private DiamondMapper diamondMapper;
+
+    @Override
+    public IPage<Diamond> listPage(Page<Diamond> page, Diamond diamond) {
+        return diamondMapper.selectDiamondListPage(page, diamond);
+    }
 }

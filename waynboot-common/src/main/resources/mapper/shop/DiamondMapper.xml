@@ -6,12 +6,12 @@
     <resultMap id="BaseResultMap" type="com.wayn.common.core.domain.shop.Diamond">
         <result column="id"             property="id" />
         <result column="name"           property="name" />
-        <result column="sort"     property="sort" />
+        <result column="sort"           property="sort" />
         <result column="jump_type"      property="jumpType" />
         <result column="value_id"       property="valueId" />
         <result column="value_url"      property="valueUrl" />
-        <result column="icon"           property="icon" />
-        <result column="image"          property="image" />
+        <result column="icon_url"       property="iconUrl" />
+        <result column="pic_url"        property="picUrl" />
         <result column="status"         property="status" />
         <result column="del_flag"       property="delFlag" />
         <result column="create_time"    property="createTime" />
@@ -19,9 +19,24 @@
     </resultMap>
 
     <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
+    <sql id="selectDiamondVo">
         select id,
-        name, sort, jump_type, value_id, value_url, icon, image, status, del_flag, create_time, update_time from diamond
+        name, sort, jump_type, value_id, value_url, icon_url, pic_url, status, del_flag, create_time, update_time from shop_diamond
     </sql>
+    <select id="selectDiamondListPage" resultMap="BaseResultMap">
+        <include refid="selectDiamondVo"/>
+        <where>
+            del_flag = 0
+            <if test="diamond.name != null and diamond.name != ''">
+                AND name like concat('%', #{diamond.name}, '%')
+            </if>
+            <if test="diamond.startTime != null and diamond.startTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{diamond.startTime},'%Y-%m-%d')
+            </if>
+            <if test="diamond.endTime != null and diamond.endTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{diamond.endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
 
 </mapper>

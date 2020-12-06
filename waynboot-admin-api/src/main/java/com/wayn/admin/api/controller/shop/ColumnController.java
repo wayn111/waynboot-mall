@@ -57,6 +57,12 @@ public class ColumnController extends BaseController {
         return R.success().add("page", formatPage(columnIPage, columnVOS));
     }
 
+    @GetMapping("/listAll")
+    public R listAll() {
+        List<Column> columnList = iColumnService.list();
+        return R.success().add("data", columnList);
+    }
+
     @PostMapping
     public R addBanner(@Validated @RequestBody Column column) {
         column.setCreateTime(new Date());
