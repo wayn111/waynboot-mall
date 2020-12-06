@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 03/12/2020 22:47:33
+ Date: 06/12/2020 10:33:55
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `platform_coupon`  (
   `del_flag` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '逻辑删除 0 存在 1 删除（默认为0）',
   PRIMARY KEY (`pc_id`) USING BTREE,
   INDEX `create_time`(`create_time`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台优惠卷配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台优惠卷配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for platform_coupon_user_receive
@@ -129,7 +129,7 @@ CREATE TABLE `shop_banner`  (
   `type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '栏目类型',
   `jump_url` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '点击banner跳转到url',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `sort_order` int(11) NULL DEFAULT NULL COMMENT '显示顺序',
+  `sort` int(11) NULL DEFAULT NULL COMMENT '显示顺序',
   `status` tinyint(4) NULL DEFAULT 0 COMMENT 'banner状态（0启用 1禁用）',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间/注册时间',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建人',
@@ -154,7 +154,7 @@ CREATE TABLE `shop_brand`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '品牌商名称',
   `desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '品牌商简介',
   `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '品牌商页的品牌商图片',
-  `sort_order` int(11) NULL DEFAULT 50 COMMENT '排序',
+  `sort` int(11) NULL DEFAULT 50 COMMENT '排序',
   `floor_price` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '品牌商的商品低价，仅用于页面展示',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
@@ -339,7 +339,7 @@ CREATE TABLE `shop_category`  (
   `icon_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '类目图标',
   `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '类目图片',
   `level` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'L1' COMMENT '级别（一级 L1 二级 L2）',
-  `sort_order` int(11) NULL DEFAULT 50 COMMENT '排序',
+  `sort` int(11) NULL DEFAULT 50 COMMENT '排序',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '删除标志（0代表存在 1代表删除）',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
@@ -472,21 +472,22 @@ DROP TABLE IF EXISTS `shop_column`;
 CREATE TABLE `shop_column`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `name` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '栏目名称',
-  `sort_order` smallint(6) NULL DEFAULT NULL COMMENT '排序',
+  `sort` smallint(6) NULL DEFAULT NULL COMMENT '排序',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页栏目配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页栏目配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_column
 -- ----------------------------
 INSERT INTO `shop_column` VALUES (1, '测试', 0, '2020-12-03 22:40:05', NULL, 1);
-INSERT INTO `shop_column` VALUES (2, '测试栏目1', 1, '2020-12-03 22:44:04', '2020-12-03 22:44:35', 0);
+INSERT INTO `shop_column` VALUES (2, '测试栏目1', 4, '2020-12-03 22:44:04', '2020-12-04 18:24:53', 0);
 INSERT INTO `shop_column` VALUES (3, '非法访', 2, '2020-12-03 22:44:21', NULL, 1);
 INSERT INTO `shop_column` VALUES (4, '测试栏目2', 2, '2020-12-03 22:44:41', NULL, 0);
 INSERT INTO `shop_column` VALUES (5, '测试栏目3', 3, '2020-12-03 22:44:46', NULL, 0);
+INSERT INTO `shop_column` VALUES (6, '水果', 1, '2020-12-05 11:53:06', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_column_goods_relation
@@ -497,7 +498,43 @@ CREATE TABLE `shop_column_goods_relation`  (
   `column_id` int(11) NOT NULL COMMENT '栏目ID',
   `goods_id` int(11) NOT NULL COMMENT '商品ID',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '栏目商品关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '栏目商品关联表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of shop_column_goods_relation
+-- ----------------------------
+INSERT INTO `shop_column_goods_relation` VALUES (1, 5, 1110019);
+INSERT INTO `shop_column_goods_relation` VALUES (3, 4, 1110016);
+INSERT INTO `shop_column_goods_relation` VALUES (7, 4, 1006002);
+INSERT INTO `shop_column_goods_relation` VALUES (8, 4, 1181000);
+INSERT INTO `shop_column_goods_relation` VALUES (9, 4, 1155000);
+INSERT INTO `shop_column_goods_relation` VALUES (10, 4, 1152161);
+INSERT INTO `shop_column_goods_relation` VALUES (11, 4, 1156006);
+INSERT INTO `shop_column_goods_relation` VALUES (12, 4, 1006010);
+INSERT INTO `shop_column_goods_relation` VALUES (14, 5, 1181011);
+INSERT INTO `shop_column_goods_relation` VALUES (16, 4, 1006013);
+INSERT INTO `shop_column_goods_relation` VALUES (17, 4, 1011004);
+INSERT INTO `shop_column_goods_relation` VALUES (18, 4, 1011004);
+INSERT INTO `shop_column_goods_relation` VALUES (19, 4, 1011004);
+INSERT INTO `shop_column_goods_relation` VALUES (20, 4, 1015007);
+INSERT INTO `shop_column_goods_relation` VALUES (21, 4, 1015007);
+INSERT INTO `shop_column_goods_relation` VALUES (22, 4, 1015007);
+INSERT INTO `shop_column_goods_relation` VALUES (23, 4, 1019000);
+INSERT INTO `shop_column_goods_relation` VALUES (24, 4, 1019000);
+INSERT INTO `shop_column_goods_relation` VALUES (25, 2, 1006014);
+INSERT INTO `shop_column_goods_relation` VALUES (27, 4, 1019001);
+INSERT INTO `shop_column_goods_relation` VALUES (29, 2, 1006002);
+INSERT INTO `shop_column_goods_relation` VALUES (30, 5, 1181011);
+INSERT INTO `shop_column_goods_relation` VALUES (33, 5, 1181011);
+INSERT INTO `shop_column_goods_relation` VALUES (35, 4, 1006002);
+INSERT INTO `shop_column_goods_relation` VALUES (36, 4, 1011004);
+INSERT INTO `shop_column_goods_relation` VALUES (37, 4, 1006002);
+INSERT INTO `shop_column_goods_relation` VALUES (39, 2, 1006013);
+INSERT INTO `shop_column_goods_relation` VALUES (40, 2, 1006051);
+INSERT INTO `shop_column_goods_relation` VALUES (41, 2, 1019000);
+INSERT INTO `shop_column_goods_relation` VALUES (42, 2, 1019001);
+INSERT INTO `shop_column_goods_relation` VALUES (43, 2, 1020000);
+INSERT INTO `shop_column_goods_relation` VALUES (45, 6, 1006002);
 
 -- ----------------------------
 -- Table structure for shop_comment
@@ -1562,7 +1599,7 @@ CREATE TABLE `shop_goods`  (
   `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '商品关键字，采用逗号间隔',
   `brief` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '商品简介',
   `is_on_sale` tinyint(1) NULL DEFAULT 1 COMMENT '是否上架（0代表为上架 1代表上架）',
-  `sort_order` int(11) NULL DEFAULT 100 COMMENT '排序',
+  `sort` int(11) NULL DEFAULT 100 COMMENT '排序',
   `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品页面商品图片',
   `share_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品分享海报',
   `is_new` tinyint(1) NULL DEFAULT 0 COMMENT '是否新品首发，如果设置则可以在新品首发页面展示',
@@ -1580,7 +1617,7 @@ CREATE TABLE `shop_goods`  (
   INDEX `goods_sn`(`goods_sn`) USING BTREE,
   INDEX `cat_id`(`category_id`) USING BTREE,
   INDEX `brand_id`(`brand_id`) USING BTREE,
-  INDEX `sort_order`(`sort_order`) USING BTREE
+  INDEX `sort_order`(`sort`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1181012 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品基本信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -3295,7 +3332,7 @@ CREATE TABLE `shop_keyword`  (
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '关键字的跳转链接',
   `is_hot` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是热门关键字',
   `is_default` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否是默认关键字',
-  `sort_order` int(11) NOT NULL DEFAULT 100 COMMENT '排序',
+  `sort` int(11) NOT NULL DEFAULT 100 COMMENT '排序',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
@@ -3385,7 +3422,7 @@ CREATE TABLE `shop_order`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 78 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order
@@ -3419,7 +3456,7 @@ INSERT INTO `shop_order` VALUES (69, 1, '16055956200000024', 201, 0, '游客', '
 INSERT INTO `shop_order` VALUES (70, 1, '16055958350000025', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:50:39', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:50:36', '2020-11-17 14:50:39', 0);
 INSERT INTO `shop_order` VALUES (71, 1, '16055959360000026', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:52:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:52:17', '2020-11-17 14:52:37', 0);
 INSERT INTO `shop_order` VALUES (72, 1, '16055959360000027', 102, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 14:54:39', '2020-11-17 14:52:17', '2020-11-17 14:54:39', 0);
-INSERT INTO `shop_order` VALUES (73, 1, '16055960100000028', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:53:34', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:53:30', '2020-11-17 14:53:34', 0);
+INSERT INTO `shop_order` VALUES (73, 1, '16055960100000028', 301, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2020-11-17 14:53:34', '444', 'ZTO', '2020-12-04 18:56:22', NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:53:30', '2020-12-04 18:56:22', 0);
 INSERT INTO `shop_order` VALUES (74, 1, '16055960920000029', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 69.00, 0.00, 0.00, 0.00, 0.00, 69.00, 69.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 14:55:52', '2020-11-17 14:54:52', NULL, 0);
 INSERT INTO `shop_order` VALUES (75, 1, '16055962100000029', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 29.00, 0.00, 0.00, 0.00, 0.00, 29.00, 29.00, 'xxxxx0987654321-wx', '2020-11-17 14:57:24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-17 14:56:51', '2020-11-17 14:57:24', 0);
 INSERT INTO `shop_order` VALUES (76, 1, '160559957200000210', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 15:53:52', '2020-11-17 15:52:52', NULL, 1);
@@ -3448,7 +3485,7 @@ CREATE TABLE `shop_order_goods`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id`(`order_id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 81 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order_goods
@@ -3511,7 +3548,7 @@ CREATE TABLE `shop_search_history`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 233 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_search_history
