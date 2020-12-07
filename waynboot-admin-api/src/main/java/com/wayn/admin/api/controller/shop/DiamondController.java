@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("shop/diamond")
 public class DiamondController extends BaseController {
+
     @Autowired
     private IDiamondService iDiamondService;
 
