@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Banner;
 import com.wayn.common.core.domain.shop.Category;
+import com.wayn.common.core.domain.shop.Diamond;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.service.shop.IBannerService;
 import com.wayn.common.core.service.shop.ICategoryService;
+import com.wayn.common.core.service.shop.IDiamondService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IHomeService;
@@ -24,7 +26,6 @@ public class IHomeServiceImpl implements IHomeService {
 
     private static final String INDEX_DATA = "shop_index_data";
 
-
     @Autowired
     private IBannerService iBannerService;
 
@@ -37,17 +38,22 @@ public class IHomeServiceImpl implements IHomeService {
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private IDiamondService iDiamondService;
+
     @Override
     public R getHomeIndexData() {
-        if (redisCache.existsKey(INDEX_DATA)) {
-            return redisCache.getCacheObject(INDEX_DATA);
-        }
+        // if (redisCache.existsKey(INDEX_DATA)) {
+        //     return redisCache.getCacheObject(INDEX_DATA);
+        // }
         R success = R.success();
         ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(10, 10,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(), r -> new Thread(r, "首页线程"));
         Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
-        Callable<List<Category>> categoryCall = () -> iCategoryService.list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort"));
+        Callable<List<Diamond>> diamondCall = () -> iDiamondService.list(new QueryWrapper<Diamond>()
+                .orderByAsc("sort")
+                .last("limit 10"));
         Callable<List<Goods>> newGoodsCall = () -> iGoodsService.list(new QueryWrapper<Goods>()
                 .eq("is_new", true)
                 .eq("is_on_sale", true)
@@ -59,19 +65,19 @@ public class IHomeServiceImpl implements IHomeService {
                 .orderByAsc("create_time")
                 .last("limit 6"));
         FutureTask<List<Banner>> bannerTask = new FutureTask<>(bannerCall);
-        FutureTask<List<Category>> categoryTask = new FutureTask<>(categoryCall);
+        FutureTask<List<Diamond>> diamondTask = new FutureTask<>(diamondCall);
         FutureTask<List<Goods>> newGoodsTask = new FutureTask<>(newGoodsCall);
         FutureTask<List<Goods>> hotGoodsTask = new FutureTask<>(hotGoodsCall);
         poolExecutor.submit(bannerTask);
-        poolExecutor.submit(categoryTask);
+        poolExecutor.submit(diamondTask);
         poolExecutor.submit(newGoodsTask);
         poolExecutor.submit(hotGoodsTask);
         try {
             success.add("bannerList", bannerTask.get());
-            success.add("categoryList", categoryTask.get());
+            success.add("categoryList", diamondTask.get());
             success.add("newGoodsList", newGoodsTask.get());
             success.add("hotGoodsList", hotGoodsTask.get());
-            redisCache.setCacheObject(INDEX_DATA, success, 10, TimeUnit.MINUTES);
+            // redisCache.setCacheObject(INDEX_DATA, success, 10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } finally {
