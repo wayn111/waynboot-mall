@@ -45,7 +45,7 @@ public class Diamond extends ShopBaseEntity implements Serializable {
     /**
      * 跳转栏目ID或者分类ID
      */
-    private Integer valueId;
+    private Long valueId;
 
     /**
      * 跳转连接
