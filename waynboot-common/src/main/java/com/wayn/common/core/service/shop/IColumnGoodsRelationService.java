@@ -13,4 +13,10 @@ import com.wayn.common.core.domain.shop.ColumnGoodsRelation;
  */
 public interface IColumnGoodsRelationService extends IService<ColumnGoodsRelation> {
 
+    /**
+     * 获取栏目配置的商品数量
+     * @param columnId 栏目ID
+     * @return 商品数量
+     */
+    Integer getGoodsNum(Long columnId);
 }
