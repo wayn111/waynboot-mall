@@ -13,4 +13,5 @@ import com.wayn.common.core.domain.shop.ColumnGoodsRelation;
  */
 public interface ColumnGoodsRelationMapper extends BaseMapper<ColumnGoodsRelation> {
 
+    Integer getGoodsNum(Long columnId);
 }

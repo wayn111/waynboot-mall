@@ -11,8 +11,13 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id,
+        select id,
         column_id, goods_id
+        from shop_column_goods_relation
     </sql>
+    <select id="getGoodsNum" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM (SELECT COUNT(1) FROM shop_column_goods_relation WHERE column_id = #{columnId} GROUP BY goods_id) a
+    </select>
 
 </mapper>

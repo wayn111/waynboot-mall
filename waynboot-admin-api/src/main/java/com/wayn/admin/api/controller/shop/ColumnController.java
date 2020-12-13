@@ -44,8 +44,7 @@ public class ColumnController extends BaseController {
             ColumnVO columnVO = new ColumnVO();
             try {
                 BeanUtils.copyProperties(columnVO, item);
-                int count = iColumnGoodsRelationService.count(new QueryWrapper<ColumnGoodsRelation>()
-                        .eq("column_id", item.getId()));
+                Integer count = iColumnGoodsRelationService.getGoodsNum(item.getId());
                 columnVO.setGoodsNum(count);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
