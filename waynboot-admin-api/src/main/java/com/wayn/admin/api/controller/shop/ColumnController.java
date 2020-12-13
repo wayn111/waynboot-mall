@@ -44,13 +44,11 @@ public class ColumnController extends BaseController {
             ColumnVO columnVO = new ColumnVO();
             try {
                 BeanUtils.copyProperties(columnVO, item);
-                Integer count = iColumnGoodsRelationService.getGoodsNum(item.getId());
-                columnVO.setGoodsNum(count);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
+            Integer count = iColumnGoodsRelationService.getGoodsNum(item.getId());
+            columnVO.setGoodsNum(count);
             return columnVO;
         }).collect(Collectors.toList());
         return R.success().add("page", formatPage(columnIPage, columnVOS));
