@@ -34,6 +34,7 @@
         <if test="qiniuContent.endTime != null and qiniuContent.endTime != ''">
             and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{qiniuContent.endTime},'%Y-%m-%d')
         </if>
+        order by create_time desc
     </select>
 
 </mapper>
