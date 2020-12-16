@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.base.entity.ElasticEntity;
 import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
@@ -141,22 +140,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 保存商品货品
         iGoodsProductService.saveBatch(Arrays.asList(products));
 
-        // 同步es
-        ElasticEntity elasticEntity = new ElasticEntity();
-        elasticEntity.setId(goods.getId().toString());
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", goods.getId());
-        map.put("name", goods.getName());
-        map.put("countPrice", goods.getCounterPrice());
-        map.put("retailPrice", goods.getRetailPrice());
-        map.put("keyword", goods.getKeywords().split(","));
-        map.put("isOnSale", goods.getIsOnSale());
-        map.put("createTime", goods.getCreateTime());
-        elasticEntity.setData(map);
-        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
-        if (!one) {
-            throw new BusinessException("创建商品，同步es失败");
-        }
+        baseElasticService.syncGoods2Es(goods);
         return R.success();
     }
 
@@ -238,22 +222,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsAttributeService.saveBatch(insertAttributes);
         // 更新商品货品
         iGoodsProductService.updateBatchById(Arrays.asList(products));
-        // 同步es
-        ElasticEntity elasticEntity = new ElasticEntity();
-        elasticEntity.setId(goods.getId().toString());
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", goods.getId());
-        map.put("name", goods.getName());
-        map.put("countPrice", goods.getCounterPrice());
-        map.put("retailPrice", goods.getRetailPrice());
-        map.put("keyword", Objects.isNull(goods.getKeywords()) ? Collections.emptyList() : goods.getKeywords().split(","));
-        map.put("isOnSale", goods.getIsOnSale());
-        map.put("createTime", goods.getCreateTime());
-        elasticEntity.setData(map);
-        boolean one = baseElasticService.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
-        if (!one) {
-            throw new BusinessException("创建商品，同步es失败");
-        }
+
+        baseElasticService.syncGoods2Es(goods);
         return R.success();
     }
 
