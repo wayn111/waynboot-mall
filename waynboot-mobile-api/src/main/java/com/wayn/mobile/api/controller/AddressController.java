@@ -30,13 +30,13 @@ public class AddressController {
         if (address.getIsDefault()) {
             iAddressService.update().eq("member_id", memberId).set("is_default", false).update();
         }
-        if (Objects.isNull(address.getId())) {
-            address.setMemberId(memberId);
-            address.setCreateTime(new Date());
-            return R.result(iAddressService.save(address));
-        } else {
+        if (Objects.nonNull(address.getId())) {
+            address.setUpdateTime(new Date());
             return R.result(iAddressService.updateById(address));
         }
+        address.setMemberId(memberId);
+        address.setCreateTime(new Date());
+        return R.result(iAddressService.save(address));
     }
 
     @DeleteMapping("{addressId}")

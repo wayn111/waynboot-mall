@@ -15,11 +15,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.OrderVO;
-import com.wayn.common.core.service.shop.IAddressService;
-import com.wayn.common.core.service.shop.IGoodsProductService;
-import com.wayn.common.core.service.shop.IMemberService;
-import com.wayn.common.core.service.shop.IOrderGoodsService;
-import com.wayn.common.core.service.tool.IMailConfigService;
+import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.util.OrderHandleOption;
 import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.exception.BusinessException;
@@ -39,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,8 +59,6 @@ import java.util.*;
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
 
     @Autowired
-    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
-    @Autowired
     private RedisCache redisCache;
     @Autowired
     private IAddressService iAddressService;
@@ -80,11 +73,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Autowired
     private IMemberService iMemberService;
     @Autowired
-    private IMailConfigService mailConfigService;
-    @Autowired
     private OrderMapper orderMapper;
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private IMailService iMailService;
 
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
@@ -369,6 +362,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
 
         log.info("处理腾讯支付平台的订单支付");
+        assert result != null;
         log.info(result.getReturnMsg());
 
         String orderSn = result.getOutTradeNo();
@@ -402,7 +396,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
+            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
         }
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
@@ -434,7 +428,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
+            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
         }
 
         // 删除redis中订单id
@@ -502,7 +496,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
             if (StringUtils.isNotBlank(email)) {
-                sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl());
+                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl());
             }
         }
 
@@ -564,22 +558,5 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return SysConstants.STRING_FALSE_MSG("用户ID不一致");
         }
         return SysConstants.STRING_TRUE;
-    }
-
-    /**
-     * 发送邮件
-     *
-     * @param subject 主题
-     * @param content 内容
-     * @param tos     接收人
-     */
-    private void sendEmail(String subject, String content, String tos, String notifyUrl) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("subject", subject);
-        map.put("content", content);
-        map.put("tos", tos);
-        map.put("notifyUrl", notifyUrl);
-        // 异步发送邮件
-        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
     }
 }

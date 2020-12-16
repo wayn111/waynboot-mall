@@ -9,16 +9,11 @@ import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
 import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
-import com.wayn.common.core.service.shop.IAdminOrderService;
-import com.wayn.common.core.service.shop.IGoodsProductService;
-import com.wayn.common.core.service.shop.IMemberService;
-import com.wayn.common.core.service.shop.IOrderGoodsService;
-import com.wayn.common.core.service.tool.IMailConfigService;
+import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.util.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,8 +30,6 @@ import java.util.Map;
 public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> implements IAdminOrderService {
 
     @Autowired
-    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
-    @Autowired
     private AdminOrderMapper adminOrderMapper;
     //    @Autowired
     private WxPayService wxPayService;
@@ -47,7 +40,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
     @Autowired
     private IMemberService iMemberService;
     @Autowired
-    private IMailConfigService mailConfigService;
+    private IMailService iMailService;
 
     @Value("${wayn.adminUrl}")
     private String adminUrl;
@@ -130,7 +123,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         // 注意订单号只发后6位
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email, adminUrl);
+            iMailService.sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email, adminUrl);
         }
         // logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
         return R.success();
@@ -162,7 +155,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            sendEmail("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收", order.getOrderSn().substring(8, 14), email, adminUrl);
+            iMailService.sendEmail("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收", order.getOrderSn().substring(8, 14), email, adminUrl);
         }
         return R.success();
     }
@@ -182,20 +175,5 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         return R.success().add("data", data);
     }
 
-    /**
-     * 发送邮件
-     *
-     * @param subject 主题
-     * @param content 内容
-     * @param tos     接收人
-     */
-    private void sendEmail(String subject, String content, String tos, String notifyUrl) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("subject", subject);
-        map.put("content", content);
-        map.put("tos", tos);
-        map.put("notifyUrl", notifyUrl);
-        // 异步发送邮件
-        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
-    }
+
 }
