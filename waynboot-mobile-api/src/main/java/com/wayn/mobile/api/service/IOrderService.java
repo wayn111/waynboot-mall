@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.util.R;
+import com.wayn.message.core.messsage.OrderDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +26,15 @@ public interface IOrderService extends IService<Order> {
      * @param orderVO 订单VO
      * @return R
      */
-    R submit(OrderVO orderVO);
+    R submit(OrderDTO orderDTO);
+
+
+    /**
+     * 异步下单
+     *
+     * @param orderVO 订单VO
+     */
+    void asyncSubmit(OrderVO orderVO);
 
     /**
      * 微信H5支付
@@ -69,6 +78,7 @@ public interface IOrderService extends IService<Order> {
 
     /**
      * 测试支付成功回调
+     *
      * @param orderId 订单ID
      * @return r
      */

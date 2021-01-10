@@ -6,12 +6,11 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+// @Configuration
 public class DirectRabbitConfig {
 
-    //队列 起名：TestDirectQueue
+    // 队列 起名：TestDirectQueue
     @Bean
     public Queue TestDirectQueue() {
         // durable:是否持久化,默认是false,持久化队列：会被存储在磁盘上，当消息代理重启时仍然存在，暂存队列：当前连接有效
@@ -20,29 +19,42 @@ public class DirectRabbitConfig {
         //   return new Queue("TestDirectQueue",true,true,false);
 
         //一般设置一下队列的持久化就好,其余两个就是默认false
-        return new Queue("TestDirectQueue",true);
+        return new Queue("TestDirectQueue", true);
     }
 
-    //Direct交换机 起名：TestDirectExchange
+    @Bean
+    public Queue OrderDirectQueue() {
+        return new Queue("OrderDirectQueue", true);
+    }
+
+    // Direct交换机 起名：TestDirectExchange
     @Bean
     DirectExchange TestDirectExchange() {
         //  return new DirectExchange("TestDirectExchange",true,true);
-        return new DirectExchange("TestDirectExchange",true,false);
+        return new DirectExchange("TestDirectExchange", true, false);
     }
 
-    //绑定  将队列和交换机绑定, 并设置用于匹配键：TestDirectRouting
     @Bean
-    Binding bindingDirect() {
+    DirectExchange OrderDirectExchange() {
+        //  return new DirectExchange("TestDirectExchange",true,true);
+        return new DirectExchange("OrderDirectExchange", true, false);
+    }
+
+    // 绑定  将队列和交换机绑定, 并设置用于匹配键：TestDirectRouting
+    @Bean
+    Binding bindingTestDirect() {
         return BindingBuilder.bind(TestDirectQueue()).to(TestDirectExchange()).with("TestDirectRouting");
     }
 
-
+    @Bean
+    Binding bindingOrderDirect() {
+        return BindingBuilder.bind(OrderDirectQueue()).to(OrderDirectExchange()).with("OrderDirectRouting");
+    }
 
     @Bean
     DirectExchange lonelyDirectExchange() {
         return new DirectExchange("lonelyDirectExchange");
     }
-
 
 
 }

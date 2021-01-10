@@ -31,10 +31,10 @@ public class OrderController extends BaseController {
         return iOrderService.statusCount();
     }
 
-
     @PostMapping("submit")
     public R submit(@RequestBody OrderVO orderVO) {
-        return iOrderService.submit(orderVO);
+        iOrderService.asyncSubmit(orderVO);
+        return R.success();
     }
 
     @PostMapping("info")

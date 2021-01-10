@@ -21,7 +21,9 @@ import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.task.TaskService;
 import com.wayn.common.util.R;
+import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.common.util.ip.IpUtils;
+import com.wayn.message.core.messsage.OrderDTO;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.OrderMapper;
 import com.wayn.mobile.api.service.ICartService;
@@ -35,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +81,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private TaskService taskService;
     @Autowired
     private IMailService iMailService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
@@ -144,16 +149,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public R submit(OrderVO orderVO) {
-        // 验证用户ID，防止用户不一致
-        Long userId = orderVO.getUserId();
+    public void asyncSubmit(OrderVO orderVO) {
+        Map<String, Object> map = new HashMap<>();
+        OrderDTO orderDTO = new OrderDTO();
+        MyBeanUtil.copyProperties(orderVO,orderDTO);
+        map.put("order", orderDTO);
+        map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
+        // 异步发送邮件
+        rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", map);
+    }
 
-        if (Objects.isNull(userId) || !userId.equals(SecurityUtils.getUserId())) {
-            return R.error("用户ID不一致");
-        }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public R submit(OrderDTO orderDTO) {
+        Long userId = orderDTO.getUserId();
+
         // 获取用户地址，为空取默认地址
-        Long addressId = orderVO.getAddressId();
+        Long addressId = orderDTO.getAddressId();
         Address checkedAddress;
         if (Objects.nonNull(addressId)) {
             checkedAddress = iAddressService.getById(addressId);
@@ -162,12 +174,25 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
 
         // 获取用户订单商品，为空默认取购物车已选中商品
-        List<Long> cartIdArr = orderVO.getCartIdArr();
+        List<Long> cartIdArr = orderDTO.getCartIdArr();
         List<Cart> checkedGoodsList;
         if (CollectionUtils.isEmpty(cartIdArr)) {
             checkedGoodsList = iCartService.list(new QueryWrapper<Cart>().eq("checked", true).eq("user_id", userId));
         } else {
             checkedGoodsList = iCartService.listByIds(cartIdArr);
+        }
+
+        // 商品货品数量减少
+        for (Cart checkGoods : checkedGoodsList) {
+            Long productId = checkGoods.getProductId();
+            GoodsProduct product = iGoodsProductService.getById(productId);
+            int remainNumber = product.getNumber() - checkGoods.getNumber();
+            if (remainNumber < 0) {
+                throw new RuntimeException("下单的商品货品数量大于库存量");
+            }
+            if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
+                throw new BusinessException("商品货品库存减少失败");
+            }
         }
 
         // 商品费用
@@ -204,7 +229,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setOrderStatus(OrderUtil.STATUS_CREATE);
         order.setConsignee(checkedAddress.getName());
         order.setMobile(checkedAddress.getTel());
-        order.setMessage(orderVO.getMessage());
+        order.setMessage(orderDTO.getMessage());
         String detailedAddress = checkedAddress.getProvince() + checkedAddress.getCity() + checkedAddress.getCounty() + " " + checkedAddress.getAddressDetail();
         order.setAddress(detailedAddress);
         order.setFreightPrice(freightPrice);
@@ -215,51 +240,38 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setOrderPrice(orderTotalPrice);
         order.setActualPrice(actualPrice);
         order.setCreateTime(new Date());
-        if (save(order)) {
-            Long orderId = order.getId();
-            // 添加订单商品表项
-            for (Cart cartGoods : checkedGoodsList) {
-                // 订单商品
-                OrderGoods orderGoods = new OrderGoods();
-                orderGoods.setOrderId(orderId);
-                orderGoods.setGoodsId(cartGoods.getGoodsId());
-                orderGoods.setGoodsSn(cartGoods.getGoodsSn());
-                orderGoods.setProductId(cartGoods.getProductId());
-                orderGoods.setGoodsName(cartGoods.getGoodsName());
-                orderGoods.setPicUrl(cartGoods.getPicUrl());
-                orderGoods.setPrice(cartGoods.getPrice());
-                orderGoods.setNumber(cartGoods.getNumber());
-                orderGoods.setSpecifications(cartGoods.getSpecifications());
-                orderGoods.setCreateTime(LocalDateTime.now());
-                iOrderGoodsService.save(orderGoods);
-            }
-
-            // 删除购物车里面的商品信息
-            if (CollectionUtils.isEmpty(cartIdArr)) {
-                iCartService.remove(new QueryWrapper<Cart>().eq("user_id", userId));
-            } else {
-                iCartService.removeByIds(cartIdArr);
-            }
-            // 商品货品数量减少
-            for (Cart checkGoods : checkedGoodsList) {
-                Long productId = checkGoods.getProductId();
-                GoodsProduct product = iGoodsProductService.getById(productId);
-                int remainNumber = product.getNumber() - checkGoods.getNumber();
-                if (remainNumber < 0) {
-                    throw new RuntimeException("下单的商品货品数量大于库存量");
-                }
-                if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
-                    throw new BusinessException("商品货品库存减少失败");
-                }
-                // 一秒
-                long delay = 1000;
-                redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
-                taskService.addTask(new CancelOrderTask(order.getId(), delay * 60));
-            }
-            return R.success().add("orderId", order.getId());
-        } else {
+        if (!save(order)) {
             return R.error("订单创建失败");
         }
+        Long orderId = order.getId();
+        // 添加订单商品表项
+        for (Cart cartGoods : checkedGoodsList) {
+            // 订单商品
+            OrderGoods orderGoods = new OrderGoods();
+            orderGoods.setOrderId(orderId);
+            orderGoods.setGoodsId(cartGoods.getGoodsId());
+            orderGoods.setGoodsSn(cartGoods.getGoodsSn());
+            orderGoods.setProductId(cartGoods.getProductId());
+            orderGoods.setGoodsName(cartGoods.getGoodsName());
+            orderGoods.setPicUrl(cartGoods.getPicUrl());
+            orderGoods.setPrice(cartGoods.getPrice());
+            orderGoods.setNumber(cartGoods.getNumber());
+            orderGoods.setSpecifications(cartGoods.getSpecifications());
+            orderGoods.setCreateTime(LocalDateTime.now());
+            iOrderGoodsService.save(orderGoods);
+        }
+
+        // 删除购物车里面的商品信息
+        if (CollectionUtils.isEmpty(cartIdArr)) {
+            iCartService.remove(new QueryWrapper<Cart>().eq("user_id", userId));
+        } else {
+            iCartService.removeByIds(cartIdArr);
+        }
+        // 下单60s内未支付自动取消订单
+        long delay = 1000;
+        redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
+        taskService.addTask(new CancelOrderTask(order.getId(), delay * 60));
+        return R.success().add("orderId", order.getId());
     }
 
     @Override
@@ -396,7 +408,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
+            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
         }
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
@@ -428,7 +440,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl());
+            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
         }
 
         // 删除redis中订单id
@@ -496,7 +508,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
             if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl());
+                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl()+ "/message/order");
             }
         }
 

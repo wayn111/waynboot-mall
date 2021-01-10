@@ -14,6 +14,7 @@
         <module>waynboot-generator</module>
         <module>waynboot-mobile-api</module>
         <module>waynboot-message</module>
+        <module>waynboot-message-core</module>
     </modules>
     <groupId>com.wayn</groupId>
     <artifactId>waynboot</artifactId>
