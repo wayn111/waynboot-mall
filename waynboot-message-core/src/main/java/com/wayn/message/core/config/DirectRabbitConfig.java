@@ -1,4 +1,4 @@
-package com.wayn.message.config;
+package com.wayn.message.core.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -16,7 +16,7 @@ public class DirectRabbitConfig {
     // 队列 起名：TestDirectQueue
     @Bean
     public Queue TestDirectQueue() {
-        return new Queue("TestDirectQueue",true);
+        return new Queue("TestDirectQueue", true);
     }
 
     // Direct交换机 起名：TestDirectExchange
@@ -27,8 +27,23 @@ public class DirectRabbitConfig {
 
     // 绑定  将队列和交换机绑定, 并设置用于匹配键：TestDirectRouting
     @Bean
-    Binding bindingDirect() {
+    Binding bindingTestDirect() {
         return BindingBuilder.bind(TestDirectQueue()).to(TestDirectExchange()).with("TestDirectRouting");
+    }
+
+    @Bean
+    public Queue OrderDirectQueue() {
+        return new Queue("OrderDirectQueue", true);
+    }
+
+    @Bean
+    DirectExchange OrderDirectExchange() {
+        return new DirectExchange("OrderDirectExchange");
+    }
+
+    @Bean
+    Binding bindingOrderDirect() {
+        return BindingBuilder.bind(OrderDirectQueue()).to(OrderDirectExchange()).with("OrderDirectRouting");
     }
 
 }

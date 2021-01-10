@@ -50,17 +50,17 @@ wayn:
   version: 1.1.0
   email: 166738430@qq.com
   uploadDir: E:/wayn/upload
-  adminUrl: http://localhost:81/message/email
-  mobileUrl: http://localhost:82/message/email
+  adminUrl: http://localhost:81
+  mobileUrl: http://localhost:82
 
 # wx支付配置
 shop:
   # 开发者应该设置成自己的wx相关信息
   wx:
-    app-id: wxa5b486c6b918ecfb
+    app-id: wxe2d425f83d4fbe82
     app-secret: e04004829d4c383b4db7769d88dfbca1
-    mch-id: 111111
-    mch-key: xxxxxx
+    mch-id: 1508367571
+    mch-key: hYaUiN8G34Za3r46x3AMcymG9yhudBH2
     notify-url: http://www.example.com/wx/order/pay-notify
     # 商户证书文件路径
     # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3

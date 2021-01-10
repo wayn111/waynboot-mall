@@ -14,6 +14,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-message-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>${spring-boot.version}</version>

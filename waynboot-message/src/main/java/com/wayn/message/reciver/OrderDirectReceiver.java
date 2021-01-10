@@ -18,15 +18,15 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@RabbitListener(queues = "TestDirectQueue")
-public class DirectReceiver {
+@RabbitListener(queues = "OrderDirectQueue")
+public class OrderDirectReceiver {
 
     @Autowired
     private RestTemplate restTemplate;
 
     @RabbitHandler
     public void process(Map testMessage) {
-        System.out.println("DirectReceiver消费者收到消息  : " + testMessage.toString());
+        System.out.println("OrderDirectReceiver消费者收到消息  : " + testMessage.toString());
         String notifyUrl = (String) testMessage.get("notifyUrl");
         if (StringUtils.isEmpty(notifyUrl)) {
             log.error("notifyUrl不能为空！，参数：" + testMessage.toString());
@@ -35,14 +35,12 @@ public class DirectReceiver {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap();
-        multiValueMap.add("subject", testMessage.get("subject"));
-        multiValueMap.add("content", testMessage.get("content"));
-        multiValueMap.add("tos", testMessage.get("tos"));
+        multiValueMap.add("order", testMessage.get("order"));
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
             if (response.getStatusCode().value() != 200) {
-                throw new Exception(testMessage.toString() + " 邮件发送失败");
+                throw new Exception(testMessage.toString() + " 下单失败");
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
