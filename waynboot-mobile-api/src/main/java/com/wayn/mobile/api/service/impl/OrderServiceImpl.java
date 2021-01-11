@@ -149,29 +149,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
     @Override
-    public void asyncSubmit(OrderVO orderVO) {
+    public R asyncSubmit(OrderVO orderVO) {
         Map<String, Object> map = new HashMap<>();
         OrderDTO orderDTO = new OrderDTO();
-        MyBeanUtil.copyProperties(orderVO,orderDTO);
-        map.put("order", orderDTO);
-        map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
-        // 异步发送邮件
-        rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", map);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public R submit(OrderDTO orderDTO) {
+        MyBeanUtil.copyProperties(orderVO, orderDTO);
         Long userId = orderDTO.getUserId();
-
-        // 获取用户地址，为空取默认地址
-        Long addressId = orderDTO.getAddressId();
-        Address checkedAddress;
-        if (Objects.nonNull(addressId)) {
-            checkedAddress = iAddressService.getById(addressId);
-        } else {
-            checkedAddress = iAddressService.list(new QueryWrapper<Address>().eq("is_default", true)).get(0);
-        }
 
         // 获取用户订单商品，为空默认取购物车已选中商品
         List<Long> cartIdArr = orderDTO.getCartIdArr();
@@ -221,11 +203,70 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 最终支付费用
         BigDecimal actualPrice = orderTotalPrice.subtract(integralPrice);
+        String orderSn = OrderSnGenUtil.generateOrderSn(userId);
+        orderDTO.setOrderSn(orderSn);
+
+        map.put("order", orderDTO);
+        map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
+        // 异步发送邮件
+        rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", map);
+        return R.success().add("actualPrice", actualPrice).add("orderSn", orderSn);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public R submit(OrderDTO orderDTO) {
+        Long userId = orderDTO.getUserId();
+
+        // 获取用户地址，为空取默认地址
+        Long addressId = orderDTO.getAddressId();
+        Address checkedAddress;
+        if (Objects.nonNull(addressId)) {
+            checkedAddress = iAddressService.getById(addressId);
+        } else {
+            checkedAddress = iAddressService.list(new QueryWrapper<Address>().eq("is_default", true)).get(0);
+        }
+
+        // 获取用户订单商品，为空默认取购物车已选中商品
+        List<Long> cartIdArr = orderDTO.getCartIdArr();
+        List<Cart> checkedGoodsList;
+        if (CollectionUtils.isEmpty(cartIdArr)) {
+            checkedGoodsList = iCartService.list(new QueryWrapper<Cart>().eq("checked", true).eq("user_id", userId));
+        } else {
+            checkedGoodsList = iCartService.listByIds(cartIdArr);
+        }
+
+        // 商品费用
+        BigDecimal checkedGoodsPrice = new BigDecimal("0.00");
+        for (Cart checkGoods : checkedGoodsList) {
+            checkedGoodsPrice = checkedGoodsPrice.add(checkGoods.getPrice().multiply(new BigDecimal(checkGoods.getNumber())));
+        }
+
+        // 根据订单商品总价计算运费，满足条件（例如88元）则免运费，否则需要支付运费（例如8元）；
+        BigDecimal freightPrice = new BigDecimal("0.00");
+        /*if (checkedGoodsPrice.compareTo(SystemConfig.getFreightLimit()) < 0) {
+            freightPrice = SystemConfig.getFreight();
+        }*/
+
+        // 可以使用的其他钱，例如用户积分
+        BigDecimal integralPrice = new BigDecimal("0.00");
+
+        // 优惠卷抵扣费用
+        BigDecimal couponPrice = new BigDecimal("0.00");
+
+        // 团购抵扣费用
+        BigDecimal grouponPrice = new BigDecimal("0.00");
+
+        // 订单费用
+        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal("0.00"));
+
+        // 最终支付费用
+        BigDecimal actualPrice = orderTotalPrice.subtract(integralPrice);
 
         // 组装订单数据
         Order order = new Order();
         order.setUserId(userId);
-        order.setOrderSn(OrderSnGenUtil.generateOrderSn(userId));
+        order.setOrderSn(orderDTO.getOrderSn());
         order.setOrderStatus(OrderUtil.STATUS_CREATE);
         order.setConsignee(checkedAddress.getName());
         order.setMobile(checkedAddress.getTel());
@@ -276,9 +317,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional
-    public R prepay(Long orderId, HttpServletRequest request) {
+    public R prepay(String orderSn, HttpServletRequest request) {
         // 获取订单详情
-        Order order = getById(orderId);
+        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         String checkMsg = checkOrderOperator(order);
         if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
             return R.error(checkMsg);
@@ -317,9 +358,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional
-    public R h5pay(Long orderId, HttpServletRequest request) {
+    public R h5pay(String orderSn, HttpServletRequest request) {
         // 获取订单详情
-        Order order = getById(orderId);
+        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         String checkMsg = checkOrderOperator(order);
         if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
             return R.error(checkMsg);
@@ -418,10 +459,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public R testPayNotify(Long orderId) {
-        Order order = getById(orderId);
+    public R testPayNotify(String orderSn) {
+        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         if (order == null) {
-            return R.error("订单不存在 id =" + orderId);
+            return R.error("订单不存在，编号：" + orderSn);
         }
 
         // 检查这个订单是否已经处理过
@@ -508,7 +549,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
             if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl()+ "/message/order");
+                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/message/order");
             }
         }
 

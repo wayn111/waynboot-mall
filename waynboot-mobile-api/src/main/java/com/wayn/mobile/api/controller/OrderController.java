@@ -33,23 +33,22 @@ public class OrderController extends BaseController {
 
     @PostMapping("submit")
     public R submit(@RequestBody OrderVO orderVO) {
-        iOrderService.asyncSubmit(orderVO);
-        return R.success();
+        return iOrderService.asyncSubmit(orderVO);
     }
 
     @PostMapping("info")
     public R info(@RequestBody OrderVO orderVO) {
-        return R.success().add("data", iOrderService.getById(orderVO.getOrderId()));
+        return R.success().add("data", iOrderService.getById(orderVO.getOrderSn()));
     }
 
     @PostMapping("prepay")
     public R prepay(@RequestBody OrderVO orderVO) {
-        return iOrderService.prepay(orderVO.getOrderId(), request);
+        return iOrderService.prepay(orderVO.getOrderSn(), request);
     }
 
     @PostMapping("h5pay")
     public R h5pay(@RequestBody OrderVO orderVO) {
-        return iOrderService.h5pay(orderVO.getOrderId(), request);
+        return iOrderService.h5pay(orderVO.getOrderSn(), request);
     }
 
     @PostMapping("payNotify")
@@ -57,9 +56,9 @@ public class OrderController extends BaseController {
         return iOrderService.payNotify(request, response);
     }
 
-    @GetMapping("testPayNotify/{orderId}")
-    public R payNotify(@PathVariable Long orderId) {
-        return iOrderService.testPayNotify(orderId);
+    @GetMapping("testPayNotify/{orderSn}")
+    public R payNotify(@PathVariable String orderSn) {
+        return iOrderService.testPayNotify(orderSn);
     }
 
     @PostMapping("cancel/{orderId}")
