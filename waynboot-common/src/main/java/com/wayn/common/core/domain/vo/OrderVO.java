@@ -10,7 +10,7 @@ public class OrderVO {
     /**
      * 订单ID
      */
-    private Long orderId;
+    private String orderSn;
 
     /**
      * 用户地址列表

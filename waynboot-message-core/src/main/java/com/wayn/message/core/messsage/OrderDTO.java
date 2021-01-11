@@ -9,10 +9,11 @@ import java.util.List;
 public class OrderDTO implements Serializable {
 
     private static final long serialVersionUID = 3237709318648096242L;
+
     /**
-     * 订单ID
+     * 订单编号
      */
-    private Long orderId;
+    private String OrderSn;
 
     /**
      * 用户地址列表
@@ -29,5 +30,8 @@ public class OrderDTO implements Serializable {
      */
     private Long addressId;
 
+    /**
+     * 订单备注
+     */
     private String message;
 }

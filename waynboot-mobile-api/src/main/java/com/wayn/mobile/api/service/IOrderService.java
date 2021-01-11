@@ -23,7 +23,7 @@ public interface IOrderService extends IService<Order> {
     /**
      * 添加订单记录
      *
-     * @param orderVO 订单VO
+     * @param orderDTO 订单DTO
      * @return R
      */
     R submit(OrderDTO orderDTO);
@@ -34,16 +34,16 @@ public interface IOrderService extends IService<Order> {
      *
      * @param orderVO 订单VO
      */
-    void asyncSubmit(OrderVO orderVO);
+    R asyncSubmit(OrderVO orderVO);
 
     /**
      * 微信H5支付
      *
-     * @param orderId 订单ID
+     * @param orderSn 订单编号
      * @param request 请求
      * @return r
      */
-    R h5pay(Long orderId, HttpServletRequest request);
+    R h5pay(String orderSn, HttpServletRequest request);
 
     /**
      * 付款订单的预支付会话标识
@@ -52,11 +52,11 @@ public interface IOrderService extends IService<Order> {
      * 2. 微信商户平台返回支付订单ID
      * 3. 设置订单付款状态
      *
-     * @param orderId 订单ID
+     * @param orderSn 订单编号
      * @param request 请求
      * @return r
      */
-    R prepay(Long orderId, HttpServletRequest request);
+    R prepay(String orderSn, HttpServletRequest request);
 
     /**
      * 获取订单列表
@@ -79,10 +79,10 @@ public interface IOrderService extends IService<Order> {
     /**
      * 测试支付成功回调
      *
-     * @param orderId 订单ID
+     * @param orderSn 订单编号
      * @return r
      */
-    R testPayNotify(Long orderId);
+    R testPayNotify(String orderSn);
 
     /**
      * 取消订单
