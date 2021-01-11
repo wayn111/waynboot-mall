@@ -549,7 +549,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
             if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/message/order");
+                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
             }
         }
 
