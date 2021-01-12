@@ -613,21 +613,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return SysConstants.STRING_TRUE;
     }
 
-    /**
-     * 取消订单/退款返还优惠券
-     * <br/>
-     * @param orderId
-     * @return void
-     * @author Tyson
-     * @date 2020/6/8/0008 1:41
-     */
-    /*public void releaseCoupon(Integer orderId) {
-        List<LitemallCouponUser> couponUsers = couponUserService.findByOid(orderId);
-        for (LitemallCouponUser couponUser: couponUsers) {
-            // 优惠券状态设置为可使用
-            couponUser.setStatus(CouponUserConstant.STATUS_USABLE);
-            couponUser.setUpdateTime(LocalDateTime.now());
-            couponUserService.update(couponUser);
+    /*public void releaseCoupon(Long orderId) {
+        List<CouponUser> couponUserList = couponUserService.list(new QueryWrapper<CouponUser>().eq("order_id", orderId));
+        if (CollectionUtils.isEmpty(couponUserList)) {
+            return;
+        }
+        for (CouponUser couponUser : couponUserList) {
+            couponUser.setStatus((byte) 0);
+            couponUser.setUpdateTime(new Date());
+            couponUserService.updateById(couponUser);
         }
     }*/
 }
