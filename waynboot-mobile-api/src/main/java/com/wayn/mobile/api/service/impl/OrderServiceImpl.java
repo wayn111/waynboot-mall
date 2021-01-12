@@ -195,6 +195,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 优惠卷抵扣费用
         BigDecimal couponPrice = new BigDecimal("0.00");
 
+        // 团购抵扣费用
+        BigDecimal grouponPrice = new BigDecimal("0.00");
+
         // 订单费用
         BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal("0.00"));
 
@@ -215,14 +218,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R submit(OrderDTO orderDTO) {
         Long userId = orderDTO.getUserId();
 
-        // 获取用户地址，为空取默认地址
+        // 获取用户地址
         Long addressId = orderDTO.getAddressId();
         Address checkedAddress;
-        if (Objects.nonNull(addressId)) {
-            checkedAddress = iAddressService.getById(addressId);
-        } else {
-            checkedAddress = iAddressService.list(new QueryWrapper<Address>().eq("is_default", true)).get(0);
+        if (Objects.isNull(addressId)) {
+            return R.error("请选择收获地址");
         }
+        checkedAddress = iAddressService.getById(addressId);
 
         // 获取用户订单商品，为空默认取购物车已选中商品
         List<Long> cartIdArr = orderDTO.getCartIdArr();
@@ -281,6 +283,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!save(order)) {
             return R.error("订单创建失败");
         }
+
         Long orderId = order.getId();
         // 添加订单商品表项
         for (Cart cartGoods : checkedGoodsList) {
@@ -402,13 +405,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         try {
             result = wxPayService.parseOrderNotifyResult(xmlResult);
 
-            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getResultCode())) {
+            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
                 log.error(xmlResult);
                 throw new WxPayException("微信通知支付失败！");
             }
         } catch (WxPayException e) {
             e.printStackTrace();
-//            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
+            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
         log.info("处理腾讯支付平台的订单支付");
@@ -520,7 +523,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             }
         }
         // 返还优惠券
-//        releaseCoupon(orderId);
+        // releaseCoupon(orderId);
         return R.success();
     }
 
@@ -609,4 +612,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         return SysConstants.STRING_TRUE;
     }
+
+    /**
+     * 取消订单/退款返还优惠券
+     * <br/>
+     * @param orderId
+     * @return void
+     * @author Tyson
+     * @date 2020/6/8/0008 1:41
+     */
+    /*public void releaseCoupon(Integer orderId) {
+        List<LitemallCouponUser> couponUsers = couponUserService.findByOid(orderId);
+        for (LitemallCouponUser couponUser: couponUsers) {
+            // 优惠券状态设置为可使用
+            couponUser.setStatus(CouponUserConstant.STATUS_USABLE);
+            couponUser.setUpdateTime(LocalDateTime.now());
+            couponUserService.update(couponUser);
+        }
+    }*/
 }

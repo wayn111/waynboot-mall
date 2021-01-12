@@ -46,43 +46,46 @@ public class CancelOrderTask extends Task {
 
     @Override
     public void run() {
-        log.info("系统开始处理延时任务---订单超时未付款---" + this.orderId);
+        log.info("系统开始处理延时任务---订单超时未付款---{}", this.orderId);
         IOrderService orderService = SpringContextUtil.getBean(IOrderService.class);
         IOrderGoodsService orderGoodsService = SpringContextUtil.getBean(IOrderGoodsService.class);
         IGoodsProductService productService = SpringContextUtil.getBean(IGoodsProductService.class);
         RedisCache redisCache = SpringContextUtil.getBean(RedisCache.class);
         Set<Long> zSet = redisCache.getCacheZset("order_zset", 0, System.currentTimeMillis());
-        if (CollectionUtils.isNotEmpty(zSet) && zSet.contains(this.orderId)) {
-            for (Long orderId : zSet) {
-                log.info("redis内未付款---" + orderId);
-                final Long num = redisCache.deleteZsetObject("order_zset", orderId);
-                if (num != null && num > 0) {
-                    Order order = orderService.getOne(new QueryWrapper<Order>().eq("order_status", OrderUtil.STATUS_CREATE).eq("id", orderId));
-                    if (Objects.isNull(order) || !OrderUtil.isCreateStatus(order)) {
-                        return;
-                    }
-
-                    // 设置订单已取消状态
-                    order.setOrderStatus(OrderUtil.STATUS_AUTO_CANCEL);
-                    order.setOrderEndTime(LocalDateTime.now());
-                    if (!orderService.updateById(order)) {
-                        throw new RuntimeException("更新数据已失效");
-                    }
-
-                    // 商品货品数量增加
-                    Long orderId1 = order.getId();
-                    List<OrderGoods> orderGoodsList = orderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId1));
-                    for (OrderGoods orderGoods : orderGoodsList) {
-                        Long productId = orderGoods.getProductId();
-                        Integer number = orderGoods.getNumber();
-                        if (!productService.addStock(productId, number)) {
-                            throw new RuntimeException("商品货品库存增加失败");
-                        }
-                    }
-                }
-                log.info("redis内未付款---" + orderId);
-            }
+        if (CollectionUtils.isEmpty(zSet) || !zSet.contains(this.orderId)) {
+            return;
         }
-        log.info("系统结束处理延时任务---订单超时未付款---" + this.orderId);
+        for (Long orderId : zSet) {
+            log.info("redis内未付款订单, 编号：{} begin", orderId);
+            final Long num = redisCache.deleteZsetObject("order_zset", orderId);
+            if (num == null || num <= 0) {
+                break;
+            }
+            Order order = orderService.getOne(new QueryWrapper<Order>().eq("order_status", OrderUtil.STATUS_CREATE).eq("id", orderId));
+            if (Objects.isNull(order) || !OrderUtil.isCreateStatus(order)) {
+                break;
+            }
+
+            // 设置订单为已取消状态
+            order.setOrderStatus(OrderUtil.STATUS_AUTO_CANCEL);
+            order.setOrderEndTime(LocalDateTime.now());
+            if (!orderService.updateById(order)) {
+                log.info("redis内未付款订单, 编号：{} 更新订单状态失败", orderId);
+                throw new RuntimeException("更新订单状态失败");
+            }
+
+            // 商品货品数量增加
+            List<OrderGoods> orderGoodsList = orderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
+            for (OrderGoods orderGoods : orderGoodsList) {
+                Long productId = orderGoods.getProductId();
+                Integer number = orderGoods.getNumber();
+                if (!productService.addStock(productId, number)) {
+                    log.info("redis内未付款订单, 编号：{} 商品货品库存增加失败", orderId);
+                    throw new RuntimeException("商品货品库存增加失败");
+                }
+            }
+            log.info("redis内未付款订单, 编号：{} end", orderId);
+        }
+        log.info("系统结束处理延时任务---订单超时未付款---{}", this.orderId);
     }
 }
