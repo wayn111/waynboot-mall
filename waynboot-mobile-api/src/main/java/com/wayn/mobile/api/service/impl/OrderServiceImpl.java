@@ -195,9 +195,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 优惠卷抵扣费用
         BigDecimal couponPrice = new BigDecimal("0.00");
 
-        // 团购抵扣费用
-        BigDecimal grouponPrice = new BigDecimal("0.00");
-
         // 订单费用
         BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal("0.00"));
 
@@ -208,7 +205,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         map.put("order", orderDTO);
         map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
-        // 异步发送邮件
+        // 异步下单
         rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", map);
         return R.success().add("actualPrice", actualPrice).add("orderSn", orderSn);
     }
@@ -316,7 +313,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R prepay(String orderSn, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
@@ -357,7 +354,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R h5pay(String orderSn, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
