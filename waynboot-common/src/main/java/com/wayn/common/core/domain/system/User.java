@@ -93,10 +93,6 @@ public class User extends BaseEntity {
      * 用户头像
      */
     private String avatar;
-    /**
-     * 删除标志（0代表存在 1代表删除）
-     */
-    private Integer delFlag;
 
     @TableField(exist = false)
     private Dept dept;
@@ -112,6 +108,11 @@ public class User extends BaseEntity {
      */
     @TableField(exist = false)
     private Long[] roleIds;
+
+    /**
+     * 删除标志（0代表存在 1代表删除）
+     */
+    private Boolean delFlag;
 
     public static boolean isAdmin(Long userId) {
         return userId != null && 1L == userId;
