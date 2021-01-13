@@ -28,7 +28,7 @@ import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.OrderMapper;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderService;
-import com.wayn.mobile.api.task.CancelOrderTask;
+import com.wayn.mobile.api.task.OrderUnpaidTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.config.WaynConfig;
 import com.wayn.mobile.framework.redis.RedisCache;
@@ -311,7 +311,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 下单60s内未支付自动取消订单
         long delay = 1000;
         redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
-        taskService.addTask(new CancelOrderTask(order.getId(), delay * 60));
+        taskService.addTask(new OrderUnpaidTask(order.getId(), delay * 60));
         return R.success().add("orderId", order.getId());
     }
 
@@ -454,7 +454,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
-        taskService.removeTask(new CancelOrderTask(order.getId()));
+        taskService.removeTask(new OrderUnpaidTask(order.getId()));
         return R.error(WxPayNotifyResponse.success("处理成功!"));
     }
 
@@ -487,7 +487,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
-        taskService.removeTask(new CancelOrderTask(order.getId()));
+        taskService.removeTask(new OrderUnpaidTask(order.getId()));
         return R.success("处理成功!");
     }
 

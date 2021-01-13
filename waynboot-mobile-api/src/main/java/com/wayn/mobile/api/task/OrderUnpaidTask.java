@@ -19,10 +19,10 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * 未支付订单超时自动取消任务
+ * 订单未支付超时自动取消任务
  */
 @Slf4j
-public class CancelOrderTask extends Task {
+public class OrderUnpaidTask extends Task {
 
     /**
      * 默认延迟时间30分钟，单位毫秒
@@ -34,12 +34,12 @@ public class CancelOrderTask extends Task {
      */
     private final Long orderId;
 
-    public CancelOrderTask(Long orderId, long delayInMilliseconds) {
+    public OrderUnpaidTask(Long orderId, long delayInMilliseconds) {
         super("CancelOrderTask-" + orderId, delayInMilliseconds);
         this.orderId = orderId;
     }
 
-    public CancelOrderTask(Long orderId) {
+    public OrderUnpaidTask(Long orderId) {
         super("CancelOrderTask-" + orderId, DELAY_TIME);
         this.orderId = orderId;
     }
