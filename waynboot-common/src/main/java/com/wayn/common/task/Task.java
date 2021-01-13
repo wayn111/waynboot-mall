@@ -4,8 +4,13 @@ package com.wayn.common.task;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 定时任务抽象类
+ */
 public abstract class Task implements Delayed, Runnable {
+
     private final String id;
+
     private final long start;
 
     public Task(String id, long delayInMilliseconds) {
