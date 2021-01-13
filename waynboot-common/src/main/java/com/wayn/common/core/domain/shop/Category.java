@@ -67,7 +67,7 @@ public class Category extends ShopBaseEntity implements Serializable {
     /**
      * banner状态（0启用 1禁用）
      */
-    private Integer delFlag;
+    private Boolean delFlag;
 
     /**
      * 备注

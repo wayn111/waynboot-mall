@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 12/12/2020 19:30:46
+ Date: 13/01/2021 22:20:22
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `platform_coupon`  (
   `del_flag` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '逻辑删除 0 存在 1 删除（默认为0）',
   PRIMARY KEY (`pc_id`) USING BTREE,
   INDEX `create_time`(`create_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台优惠卷配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台优惠卷配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for platform_coupon_user_receive
@@ -52,7 +52,7 @@ CREATE TABLE `platform_coupon_user_receive`  (
   `is_delete` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '逻辑删除 0 存在 1 删除（默认为0）',
   PRIMARY KEY (`pcs_id`) USING BTREE,
   INDEX `pc_id`(`pc_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户领取平台优惠卷张数表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户领取平台优惠卷张数表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of platform_coupon_user_receive
@@ -69,9 +69,9 @@ CREATE TABLE `seckill`  (
   `seckill_id` bigint(20) NOT NULL COMMENT '商品库存id',
   `name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '商品名称',
   `number` int(11) NOT NULL COMMENT '库存数量',
-  `start_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '秒杀开始时间',
+  `start_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '秒杀开始时间',
   `end_time` timestamp(0) NOT NULL COMMENT '秒杀结束时间',
-  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '秒杀创建时间',
+  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '秒杀创建时间',
   `version` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '版本',
   PRIMARY KEY (`seckill_id`) USING BTREE,
   INDEX `idx_start_time`(`start_time`) USING BTREE,
@@ -135,7 +135,7 @@ CREATE TABLE `shop_banner`  (
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建人',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '最后更新时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '最后更新人',
-  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'banner' ROW_FORMAT = Dynamic;
 
@@ -160,7 +160,7 @@ CREATE TABLE `shop_brand`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1046001 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '品牌商表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1046000 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '品牌商表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_brand
@@ -236,7 +236,7 @@ CREATE TABLE `shop_cart`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 102 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 119 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_cart
@@ -325,6 +325,23 @@ INSERT INTO `shop_cart` VALUES (98, 1, 1152008, '1152008', '魔兽世界 部落 
 INSERT INTO `shop_cart` VALUES (99, 1, 1152009, '1152009', '魔兽世界 联盟 护腕 一只', 233, 29.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', '吸汗、舒适、弹性、防护、耐用', '2020-12-03 21:25:50', NULL, 1);
 INSERT INTO `shop_cart` VALUES (100, 1, 1152031, '1152031', '魔兽世界-伊利丹颈枕眼罩套装', 234, 99.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '差旅好伴侣', '2020-12-03 21:25:51', NULL, 1);
 INSERT INTO `shop_cart` VALUES (101, 1, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 2, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2020-12-03 21:25:52', NULL, 1);
+INSERT INTO `shop_cart` VALUES (102, 1, 1006002, '1006002', '轻奢纯棉刺绣水洗四件套', 7, 899.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/8ab2d3287af0cefa2cc539e40600621d.png', '设计师原款，精致绣花', '2020-12-14 09:45:35', NULL, 1);
+INSERT INTO `shop_cart` VALUES (103, 1, 1135002, '1135002', '宫廷奢华真丝四件套', 204, 2599.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '100%桑蚕丝，丝滑润肤', '2020-12-14 09:46:21', NULL, 1);
+INSERT INTO `shop_cart` VALUES (104, 1, 1022000, '1022000', '意式毛线绣球四件套', 31, 299.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/5350e35e6f22165f38928f3c2c52ac57.png', '浪漫毛线绣球，简约而不简单', '2020-12-14 09:47:01', NULL, 1);
+INSERT INTO `shop_cart` VALUES (105, 1, 1135002, '1135002', '宫廷奢华真丝四件套', 204, 2599.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '100%桑蚕丝，丝滑润肤', '2020-12-14 09:48:24', NULL, 1);
+INSERT INTO `shop_cart` VALUES (106, 1, 1056002, '1056002', '男式玩色内裤', 70, 59.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '德国工艺，多色随搭', '2020-12-14 09:50:20', NULL, 1);
+INSERT INTO `shop_cart` VALUES (107, 1, 1074001, '1074001', '男式莫代尔无痕内裤', 92, 59.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 'Bemis技术，极简无痕', '2020-12-14 09:51:19', NULL, 1);
+INSERT INTO `shop_cart` VALUES (108, 1, 1006002, '1006002', '轻奢纯棉刺绣水洗四件套', 7, 899.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/8ab2d3287af0cefa2cc539e40600621d.png', '设计师原款，精致绣花', '2020-12-14 09:52:18', NULL, 1);
+INSERT INTO `shop_cart` VALUES (109, 1, 1056002, '1056002', '男式玩色内裤', 70, 59.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '德国工艺，多色随搭', '2020-12-14 09:52:56', NULL, 1);
+INSERT INTO `shop_cart` VALUES (110, 1, 1019000, '1019000', '升级款护颈波浪记忆枕', 22, 99.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/77c09feb378814be712741b273d16656.png', '享受自在侧睡', '2021-01-07 18:57:23', NULL, 1);
+INSERT INTO `shop_cart` VALUES (111, 1, 1006014, '1006014', '双宫茧桑蚕丝被 子母被', 11, 1399.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/2b537159f0f789034bf8c4b339c43750.png', '双层子母被，四季皆可使用', '2021-01-10 13:13:09', NULL, 1);
+INSERT INTO `shop_cart` VALUES (112, 1, 1152095, '1152095', '魔兽世界 联盟·暴风城 堡垒收纳盒', 235, 499.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '桌面整理神器', '2021-01-10 14:16:09', NULL, 1);
+INSERT INTO `shop_cart` VALUES (113, 1, 1056002, '1056002', '男式玩色内裤', 70, 59.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '德国工艺，多色随搭', '2021-01-10 14:16:42', NULL, 1);
+INSERT INTO `shop_cart` VALUES (114, 1, 1006014, '1006014', '双宫茧桑蚕丝被 子母被', 11, 1399.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/2b537159f0f789034bf8c4b339c43750.png', '双层子母被，四季皆可使用', '2021-01-10 14:19:04', NULL, 1);
+INSERT INTO `shop_cart` VALUES (115, 1, 1181000, '1181000', '母亲节礼物-舒适安睡组合', 2, 1500.00, 1, '[\"1.5m床垫*1+枕头*2\",\"玛瑙红\"]', 1, 'quality=90&thumbnail=200x200&imageView', '安心舒适是最好的礼物', '2021-01-10 14:19:59', NULL, 1);
+INSERT INTO `shop_cart` VALUES (116, 1, 1131017, '1131017', '平滑细篾头层青碳化竹凉席', 196, 259.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/2b6e2268ed712f1a336283f013abb7a1.png', '细篾整密，凉滑不夹肉', '2021-01-11 10:00:34', NULL, 1);
+INSERT INTO `shop_cart` VALUES (117, 1, 1019000, '1019000', '升级款护颈波浪记忆枕', 22, 99.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/77c09feb378814be712741b273d16656.png', '享受自在侧睡', '2021-01-11 10:15:23', NULL, 1);
+INSERT INTO `shop_cart` VALUES (118, 1, 1046044, '1046044', '美利奴羊毛盖毯设计师款', 61, 349.00, 1, '[\"标准\"]', 1, 'http://yanxuan.nosdn.127.net/2bfecfe58ea3ee0d554f2ed58e9ba30a.png', '欧洲知名品牌设计师联合打造', '2021-01-11 10:18:26', NULL, 1);
 
 -- ----------------------------
 -- Table structure for shop_category
@@ -458,7 +475,7 @@ CREATE TABLE `shop_channel`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '名称',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文章栏目' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_channel
@@ -477,7 +494,7 @@ CREATE TABLE `shop_column`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页栏目配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页栏目配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_column
@@ -527,7 +544,7 @@ CREATE TABLE `shop_comment`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id_value`(`value_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1015 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1014 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_comment
@@ -1555,7 +1572,7 @@ CREATE TABLE `shop_diamond`  (
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页金刚区配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '首页金刚区配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_diamond
@@ -2778,16 +2795,16 @@ CREATE TABLE `shop_goods_product`  (
 -- Records of shop_goods_product
 -- ----------------------------
 INSERT INTO `shop_goods_product` VALUES (1, 1181000, '[\"1.5m床垫*1+枕头*2\",\"浅杏粉\"]', 999.00, 100, 0, 'http://yanxuan.nosdn.127.net/1f67b1970ee20fd572b7202da0ff705d.png', '2018-02-01 00:00:00', '2020-08-16 01:08:54', 0);
-INSERT INTO `shop_goods_product` VALUES (2, 1181000, '[\"1.5m床垫*1+枕头*2\",\"玛瑙红\"]', 1500.00, 198, 0, 'quality=90&thumbnail=200x200&imageView', '2018-02-01 00:00:00', '2018-11-07 17:14:01', 0);
+INSERT INTO `shop_goods_product` VALUES (2, 1181000, '[\"1.5m床垫*1+枕头*2\",\"玛瑙红\"]', 1500.00, 192, 0, 'quality=90&thumbnail=200x200&imageView', '2018-02-01 00:00:00', '2018-11-07 17:14:01', 0);
 INSERT INTO `shop_goods_product` VALUES (3, 1181000, '[\"1.5m床垫*1+枕头*2\",\"烟白灰\"]', 1000.00, 300, 0, 'http://yanxuan.nosdn.127.net/36f64a7161b67e7fb8ea45be32ecfa25.png?quality=90&thumbnail=200x200&imageView', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (4, 1181000, '[\"1.8m床垫*1+枕头*2\",\"浅杏粉\"]', 1001.00, 398, 0, 'http://yanxuan.nosdn.127.net/10022c73fa7aa75c2c0d736e96cc56d5.png?quality=90&thumbnail=200x200&imageView', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (5, 1181000, '[\"1.8m床垫*1+枕头*2\",\"玛瑙红\"]', 2000.00, 0, 0, 'quality=90&thumbnail=200x200&imageView', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (6, 1181000, '[\"1.8m床垫*1+枕头*2\",\"烟白灰\"]', 3000.00, 0, 0, 'http://yanxuan.nosdn.127.net/36f64a7161b67e7fb8ea45be32ecfa25.png?quality=90&thumbnail=200x200&imageView', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (7, 1006002, '[\"标准\"]', 899.00, 100, 0, 'http://yanxuan.nosdn.127.net/8ab2d3287af0cefa2cc539e40600621d.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (7, 1006002, '[\"标准\"]', 899.00, 100, 0, 'http://yanxuan.nosdn.127.net/8ab2d3287af0cefa2cc539e40600621d.png', '2018-02-01 00:00:00', '2020-12-14 09:53:21', 0);
 INSERT INTO `shop_goods_product` VALUES (8, 1006007, '[\"标准\"]', 459.00, 100, 0, 'http://yanxuan.nosdn.127.net/66425d1ed50b3968fed27c822fdd32e0.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (9, 1006010, '[\"标准\"]', 659.00, 100, 0, 'http://yanxuan.nosdn.127.net/8fe022126a2789d970f82853be13a5e6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (10, 1006013, '[\"标准\"]', 699.00, 100, 0, 'http://yanxuan.nosdn.127.net/583812520c68ca7995b6fac4c67ae2c7.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (11, 1006014, '[\"标准\"]', 1399.00, 100, 0, 'http://yanxuan.nosdn.127.net/2b537159f0f789034bf8c4b339c43750.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (11, 1006014, '[\"标准\"]', 1399.00, 100, 0, 'http://yanxuan.nosdn.127.net/2b537159f0f789034bf8c4b339c43750.png', '2018-02-01 00:00:00', '2021-01-10 14:20:19', 0);
 INSERT INTO `shop_goods_product` VALUES (12, 1006051, '[\"标准\"]', 59.00, 100, 0, 'http://yanxuan.nosdn.127.net/ad5a317216f9da495b144070ecf1f957.png', '2018-02-01 00:00:00', '2020-06-20 22:01:42', 0);
 INSERT INTO `shop_goods_product` VALUES (13, 1009009, '[\"标准\"]', 1999.00, 100, 0, 'http://yanxuan.nosdn.127.net/9791006f25e26b2d7c81f41f87ce8619.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (14, 1009012, '[\"标准\"]', 59.00, 100, 0, 'http://yanxuan.nosdn.127.net/a196b367f23ccfd8205b6da647c62b84.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2798,7 +2815,7 @@ INSERT INTO `shop_goods_product` VALUES (18, 1010000, '[\"标准\"]', 399.00, 10
 INSERT INTO `shop_goods_product` VALUES (19, 1010001, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/a8b0a5def7d64e411dd98bdfb1fc989b.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (20, 1011004, '[\"标准\"]', 199.00, 99, 0, 'http://yanxuan.nosdn.127.net/0984c9388a2c3fd2335779da904be393.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (21, 1015007, '[\"标准\"]', 59.00, 100, 0, 'http://yanxuan.nosdn.127.net/a2045004de8a6225289376ad54317fc8.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (22, 1019000, '[\"标准\"]', 99.00, 100, 0, 'http://yanxuan.nosdn.127.net/77c09feb378814be712741b273d16656.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (22, 1019000, '[\"标准\"]', 99.00, 98, 0, 'http://yanxuan.nosdn.127.net/77c09feb378814be712741b273d16656.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (23, 1019001, '[\"标准\"]', 109.00, 100, 0, 'http://yanxuan.nosdn.127.net/7644803ab19b3e398456aa5a54229363.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (24, 1019002, '[\"标准\"]', 199.00, 100, 0, 'http://yanxuan.nosdn.127.net/0118039f7cda342651595d994ed09567.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (25, 1019006, '[\"标准\"]', 99.00, 100, 0, 'http://yanxuan.nosdn.127.net/60c3707837c97a21715ecc3986a744ce.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2807,7 +2824,7 @@ INSERT INTO `shop_goods_product` VALUES (27, 1021000, '[\"标准\"]', 39.00, 100
 INSERT INTO `shop_goods_product` VALUES (28, 1021001, '[\"标准\"]', 99.00, 100, 0, 'http://yanxuan.nosdn.127.net/fd5a8622ee1a7dfd4b57b938ebf25b24.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (29, 1021004, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/654b02045fde802b51d5bbf09a8b75f2.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (30, 1021010, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/25d734cc0b2eae8f63f9deb1e4ad5f64.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (31, 1022000, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/5350e35e6f22165f38928f3c2c52ac57.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (31, 1022000, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/5350e35e6f22165f38928f3c2c52ac57.png', '2018-02-01 00:00:00', '2020-12-14 09:48:03', 0);
 INSERT INTO `shop_goods_product` VALUES (32, 1022001, '[\"标准\"]', 349.00, 100, 0, 'http://yanxuan.nosdn.127.net/bf8faee3b27b480f63b70056597b626d.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (33, 1023003, '[\"标准\"]', 398.00, 100, 0, 'http://yanxuan.nosdn.127.net/c39d54c06a71b4b61b6092a0d31f2335.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (34, 1023012, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/07376e78bf4fb8a5aa8e6a0b1437c3ad.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2837,7 +2854,7 @@ INSERT INTO `shop_goods_product` VALUES (57, 1044012, '[\"标准\"]', 349.00, 10
 INSERT INTO `shop_goods_product` VALUES (58, 1045000, '[\"标准\"]', 28.00, 100, 0, 'http://yanxuan.nosdn.127.net/b2adc3fd9b84a289a1be03e8ee400e61.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (59, 1046001, '[\"标准\"]', 8.90, 100, 0, 'http://yanxuan.nosdn.127.net/74583e585825ecacb11f7c53d2021e00.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (60, 1046002, '[\"标准\"]', 9.90, 100, 0, 'http://yanxuan.nosdn.127.net/eb486cfe807c4fe5696aa59cbcf1f96a.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (61, 1046044, '[\"标准\"]', 349.00, 100, 0, 'http://yanxuan.nosdn.127.net/2bfecfe58ea3ee0d554f2ed58e9ba30a.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (61, 1046044, '[\"标准\"]', 349.00, 99, 0, 'http://yanxuan.nosdn.127.net/2bfecfe58ea3ee0d554f2ed58e9ba30a.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (62, 1048005, '[\"标准\"]', 59.00, 100, 0, 'http://yanxuan.nosdn.127.net/ce980c16810a471dffff6aa8d7bac754.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (63, 1051000, '[\"标准\"]', 180.00, 100, 0, 'http://yanxuan.nosdn.127.net/e564410546a11ddceb5a82bfce8da43d.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (64, 1051001, '[\"标准\"]', 159.00, 100, 0, 'http://yanxuan.nosdn.127.net/f53ed57d9e23fda7e24dfd0e0a50c5d1.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2846,7 +2863,7 @@ INSERT INTO `shop_goods_product` VALUES (66, 1051003, '[\"标准\"]', 148.00, 10
 INSERT INTO `shop_goods_product` VALUES (67, 1055012, '[\"标准\"]', 39.00, 100, 0, 'http://yanxuan.nosdn.127.net/3d437c8d68e2ec3f3dd61001bf98f16e.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (68, 1055016, '[\"标准\"]', 59.00, 100, 0, 'http://yanxuan.nosdn.127.net/23e0203f1512f33e605f61c28fa03d2d.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (69, 1055022, '[\"标准\"]', 4.90, 100, 0, 'http://yanxuan.nosdn.127.net/c7c74a96eacb29455dbf557b840eaaf5.png', '2018-02-01 00:00:00', '2020-10-02 23:12:18', 0);
-INSERT INTO `shop_goods_product` VALUES (70, 1056002, '[\"标准\"]', 59.00, 98, 0, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (70, 1056002, '[\"标准\"]', 59.00, 98, 0, 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', '2018-02-01 00:00:00', '2021-01-10 14:17:55', 0);
 INSERT INTO `shop_goods_product` VALUES (71, 1057036, '[\"标准\"]', 79.00, 100, 0, 'http://yanxuan.nosdn.127.net/8a9ee5ba08929cc9e40b973607d2f633.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (72, 1064000, '[\"标准\"]', 79.00, 100, 0, 'http://yanxuan.nosdn.127.net/ebe118f94ddafe82c4a8cd51da6ff183.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (73, 1064002, '[\"标准\"]', 69.00, 100, 0, 'http://yanxuan.nosdn.127.net/48dbfe207b2203ef45055dcc9cedbe60.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2868,7 +2885,7 @@ INSERT INTO `shop_goods_product` VALUES (88, 1071006, '[\"标准\"]', 9.90, 100,
 INSERT INTO `shop_goods_product` VALUES (89, 1072000, '[\"标准\"]', 89.00, 100, 0, 'http://yanxuan.nosdn.127.net/87cf3a17ad40bfdcdc3314ea4591a5e8.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (90, 1072001, '[\"标准\"]', 49.00, 100, 0, 'http://yanxuan.nosdn.127.net/0e9d5954d7dc2477d9c46b730e05ab42.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (91, 1073008, '[\"标准\"]', 149.00, 100, 0, 'http://yanxuan.nosdn.127.net/619e46411ccd62e5c0f16692ee1a85a0.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (92, 1074001, '[\"标准\"]', 59.00, 97, 0, 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (92, 1074001, '[\"标准\"]', 59.00, 97, 0, 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', '2018-02-01 00:00:00', '2020-12-14 09:52:22', 0);
 INSERT INTO `shop_goods_product` VALUES (93, 1075022, '[\"标准\"]', 39.00, 100, 0, 'http://yanxuan.nosdn.127.net/97ad483a94ed88216a989df83e39cbf0.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (94, 1075023, '[\"标准\"]', 199.00, 100, 0, 'http://yanxuan.nosdn.127.net/29bc800b9f1fa551bc3cd47b10e2a799.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (95, 1075024, '[\"标准\"]', 2399.00, 100, 0, 'http://yanxuan.nosdn.127.net/ce4a1eb18ea518bf584620632509935f.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2972,7 +2989,7 @@ INSERT INTO `shop_goods_product` VALUES (192, 1130041, '[\"标准\"]', 109.00, 1
 INSERT INTO `shop_goods_product` VALUES (193, 1130042, '[\"标准\"]', 239.00, 100, 0, 'http://yanxuan.nosdn.127.net/dc9d09334eb201fe9408ed604e549941.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (194, 1130049, '[\"标准\"]', 429.00, 100, 0, 'http://yanxuan.nosdn.127.net/d88513f85b3617d734bde93af2c766c9.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (195, 1130056, '[\"标准\"]', 2299.00, 100, 0, 'http://yanxuan.nosdn.127.net/56e72b84a9bb66687c003ecdaba73816.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (196, 1131017, '[\"标准\"]', 259.00, 100, 0, 'http://yanxuan.nosdn.127.net/2b6e2268ed712f1a336283f013abb7a1.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
+INSERT INTO `shop_goods_product` VALUES (196, 1131017, '[\"标准\"]', 259.00, 94, 0, 'http://yanxuan.nosdn.127.net/2b6e2268ed712f1a336283f013abb7a1.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (197, 1134022, '[\"标准\"]', 79.00, 100, 0, 'http://yanxuan.nosdn.127.net/a2b7489b4a2b1c09b66464cede4dabd7.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (198, 1134030, '[\"标准\"]', 46.00, 99, 0, 'http://yanxuan.nosdn.127.net/aa49dfe878becf768eddc4c1636643a6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (199, 1134032, '[\"标准\"]', 49.00, 84, 0, 'http://yanxuan.nosdn.127.net/8b30eeb17c831eba08b97bdcb4c46a8e.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -2980,7 +2997,7 @@ INSERT INTO `shop_goods_product` VALUES (200, 1134036, '[\"标准\"]', 38.00, 10
 INSERT INTO `shop_goods_product` VALUES (201, 1134056, '[\"标准\"]', 429.00, 100, 0, 'http://yanxuan.nosdn.127.net/c29f47f58ba1e3c2ff5a193eec0b11d6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (202, 1135000, '[\"标准\"]', 359.00, 100, 0, 'http://yanxuan.nosdn.127.net/53d0309471b570a7e12a3f01ba694491.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (203, 1135001, '[\"标准\"]', 459.00, 100, 0, 'http://yanxuan.nosdn.127.net/f82ee85933d6f0cc95382215281d3526.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
-INSERT INTO `shop_goods_product` VALUES (204, 1135002, '[\"标准\"]', 2599.00, 100, 0, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '2018-02-01 00:00:00', '2020-08-28 23:15:29', 0);
+INSERT INTO `shop_goods_product` VALUES (204, 1135002, '[\"标准\"]', 2599.00, 100, 0, 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', '2018-02-01 00:00:00', '2020-12-14 09:49:42', 0);
 INSERT INTO `shop_goods_product` VALUES (205, 1135050, '[\"标准\"]', 179.00, 100, 0, 'http://yanxuan.nosdn.127.net/366f3f3f0e8971c8cf871e2b55b74ff2.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (206, 1135051, '[\"标准\"]', 299.00, 100, 0, 'http://yanxuan.nosdn.127.net/9126151f028a8804026d530836b481cb.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (207, 1135052, '[\"标准\"]', 259.00, 100, 0, 'http://yanxuan.nosdn.127.net/63f5da1f5363af43aa91864bf66af48e.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -3011,7 +3028,7 @@ INSERT INTO `shop_goods_product` VALUES (231, 1152004, '[\"标准\"]', 399.00, 9
 INSERT INTO `shop_goods_product` VALUES (232, 1152008, '[\"标准\"]', 29.00, 95, 0, 'http://yanxuan.nosdn.127.net/203cb83d93606865e3ddde57b69b9e9a.png', '2018-02-01 00:00:00', '2020-08-16 15:14:04', 0);
 INSERT INTO `shop_goods_product` VALUES (233, 1152009, '[\"标准\"]', 29.00, 95, 0, 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (234, 1152031, '[\"标准\"]', 99.00, 97, 0, 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', '2018-02-01 00:00:00', '2020-11-17 15:53:52', 0);
-INSERT INTO `shop_goods_product` VALUES (235, 1152095, '[\"标准\"]', 499.00, 94, 0, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '2018-02-01 00:00:00', '2020-11-17 14:46:25', 0);
+INSERT INTO `shop_goods_product` VALUES (235, 1152095, '[\"标准\"]', 499.00, 93, 0, 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', '2018-02-01 00:00:00', '2020-11-17 14:46:25', 0);
 INSERT INTO `shop_goods_product` VALUES (236, 1152097, '[\"标准\"]', 399.00, 100, 0, 'http://yanxuan.nosdn.127.net/532836444ae5eaec40b5810ca4f9b1e6.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (237, 1152100, '[\"标准\"]', 499.00, 100, 0, 'http://yanxuan.nosdn.127.net/a667c4fbbd9c499c0733539d7e986617.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
 INSERT INTO `shop_goods_product` VALUES (238, 1152101, '[\"标准\"]', 888.00, 100, 0, 'http://yanxuan.nosdn.127.net/c1c62211a17b71a634fa0c705d11fb42.png', '2018-02-01 00:00:00', '2018-02-01 00:00:00', 0);
@@ -3369,8 +3386,8 @@ CREATE TABLE `shop_member`  (
 -- ----------------------------
 -- Records of shop_member
 -- ----------------------------
-INSERT INTO `shop_member` VALUES (1, 'user123', '$2a$10$aGoVROMpNskqSJoXyjJjXuXZrt2Yj4N8UCRGL/eazZmx9gAi2sPju', 1, NULL, '1669738430@qq.com', '2019-04-20 22:17:43', '0:0:0:0:0:0:0:1', 0, 'wayn', '13617159841', 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', '', '', 0, '2019-04-20 22:17:43', '2020-07-24 16:57:24', 0);
-INSERT INTO `shop_member` VALUES (4, '新用户1604286442342', '$2a$10$e3crfj8k4tDE/XtVfD7EXObGTZIuLismMgu0pK.mEBAyIv/DFovYW', 0, NULL, '1669738430@qq.com', NULL, '', 0, '用户昵称1604286442342', '13617159840', 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', '', '', 0, '2020-11-02 11:07:22', NULL, 0);
+INSERT INTO `shop_member` VALUES (1, 'user123', '$2a$10$aGoVROMpNskqSJoXyjJjXuXZrt2Yj4N8UCRGL/eazZmx9gAi2sPju', 1, NULL, '1669738430@qq.com', '2019-04-20 22:17:43', '0:0:0:0:0:0:0:1', 0, 'wayn', '13617159841', 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', 'o5TVj0Wb3XNghMnQpxOoTLqjHiWI', '', 0, '2019-04-20 22:17:43', '2020-07-24 16:57:24', 0);
+INSERT INTO `shop_member` VALUES (4, '新用户1604286442342', '$2a$10$e3crfj8k4tDE/XtVfD7EXObGTZIuLismMgu0pK.mEBAyIv/DFovYW', 0, NULL, '1669738430@qq.com', NULL, '', 0, '用户昵称1604286442342', '13617159840', 'http://cdn.wayn.xin/0295dc8f9fc9edff45bd902623279604.png', 'o5TVj0Wb3XNghMnQpxOoTLqjHiWI', '', 0, '2020-11-02 11:07:22', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_order
@@ -3409,7 +3426,7 @@ CREATE TABLE `shop_order`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order
@@ -3449,6 +3466,22 @@ INSERT INTO `shop_order` VALUES (75, 1, '16055962100000029', 201, 0, '游客', '
 INSERT INTO `shop_order` VALUES (76, 1, '160559957200000210', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-11-17 15:53:52', '2020-11-17 15:52:52', NULL, 1);
 INSERT INTO `shop_order` VALUES (77, 1, '16056873260000020', 201, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, 'xxxxx0987654321-wx', '2020-11-18 16:15:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-11-18 16:15:27', '2020-11-18 16:15:37', 0);
 INSERT INTO `shop_order` VALUES (78, 1, '16070023120000020', 201, 0, '河西', '13617159841', '河南省郑州市中原区 测试街道333号', '', 1593.00, 0.00, 0.00, 0.00, 0.00, 1593.00, 1593.00, 'xxxxx0987654321-wx', '2020-12-03 21:31:57', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2020-12-03 21:31:52', '2020-12-03 21:31:57', 0);
+INSERT INTO `shop_order` VALUES (79, 1, '16079103420000020', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 899.00, 0.00, 0.00, 0.00, 0.00, 899.00, 899.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:46:43', '2020-12-14 09:45:42', NULL, 0);
+INSERT INTO `shop_order` VALUES (80, 1, '16079103830000021', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 2599.00, 0.00, 0.00, 0.00, 0.00, 2599.00, 2599.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:47:24', '2020-12-14 09:46:24', NULL, 0);
+INSERT INTO `shop_order` VALUES (81, 1, '16079104230000022', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 299.00, 0.00, 0.00, 0.00, 0.00, 299.00, 299.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:48:04', '2020-12-14 09:47:03', NULL, 0);
+INSERT INTO `shop_order` VALUES (82, 1, '16079105060000023', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 2599.00, 0.00, 0.00, 0.00, 0.00, 2599.00, 2599.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:49:42', '2020-12-14 09:48:27', NULL, 0);
+INSERT INTO `shop_order` VALUES (83, 1, '16079106240000024', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:51:25', '2020-12-14 09:50:24', NULL, 0);
+INSERT INTO `shop_order` VALUES (84, 1, '16079106810000025', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:52:23', '2020-12-14 09:51:22', NULL, 0);
+INSERT INTO `shop_order` VALUES (85, 1, '16079107400000026', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 899.00, 0.00, 0.00, 0.00, 0.00, 899.00, 899.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:53:22', '2020-12-14 09:52:21', NULL, 0);
+INSERT INTO `shop_order` VALUES (86, 1, '16079107780000027', 103, 0, '游客', '13617159841', '北京市北京市东城区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2020-12-14 09:53:59', '2020-12-14 09:52:59', NULL, 0);
+INSERT INTO `shop_order` VALUES (87, 1, '16100170500000020', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, 'xxxxx0987654321-wx', '2021-01-07 18:57:44', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2021-01-07 18:57:30', '2021-01-07 18:57:44', 0);
+INSERT INTO `shop_order` VALUES (88, 1, '16102583420000020', 103, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 1399.00, 0.00, 0.00, 0.00, 0.00, 1399.00, 1399.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2021-01-10 14:00:11', '2021-01-10 13:59:04', NULL, 0);
+INSERT INTO `shop_order` VALUES (89, 1, '16102593710000021', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 499.00, 0.00, 0.00, 0.00, 0.00, 499.00, 499.00, 'xxxxx0987654321-wx', '2021-01-10 14:16:31', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2021-01-10 14:16:12', '2021-01-10 14:16:31', 0);
+INSERT INTO `shop_order` VALUES (90, 1, '16102594060000022', 103, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 59.00, 0.00, 0.00, 0.00, 0.00, 59.00, 59.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2021-01-10 14:17:47', '2021-01-10 14:16:46', NULL, 0);
+INSERT INTO `shop_order` VALUES (91, 1, '16102595490000023', 103, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 1399.00, 0.00, 0.00, 0.00, 0.00, 1399.00, 1399.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2021-01-10 14:20:11', '2021-01-10 14:19:10', NULL, 0);
+INSERT INTO `shop_order` VALUES (92, 1, '16103309170000020', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 1759.00, 0.00, 0.00, 0.00, 0.00, 1759.00, 1759.00, 'xxxxx0987654321-wx', '2021-01-11 10:18:18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2021-01-11 10:08:55', '2021-01-11 10:18:18', 0);
+INSERT INTO `shop_order` VALUES (93, 1, '16103313270000021', 202, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 99.00, 0.00, 0.00, 0.00, 0.00, 99.00, 99.00, 'xxxxx0987654321-wx', '2021-01-11 10:15:44', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2021-01-11 10:15:31', '2021-01-11 10:15:53', 0);
+INSERT INTO `shop_order` VALUES (94, 1, '16103315090000022', 201, 0, 'wayn', '13617159841', '湖北省咸宁市咸安区 桂花街道12号', '', 349.00, 0.00, 0.00, 0.00, 0.00, 349.00, 349.00, 'xxxxx0987654321-wx', '2021-01-11 10:18:37', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2021-01-11 10:18:29', '2021-01-11 10:18:37', 0);
 
 -- ----------------------------
 -- Table structure for shop_order_goods
@@ -3472,7 +3505,7 @@ CREATE TABLE `shop_order_goods`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id`(`order_id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_order_goods
@@ -3520,6 +3553,23 @@ INSERT INTO `shop_order_goods` VALUES (83, 78, 1152008, '魔兽世界 部落 护
 INSERT INTO `shop_order_goods` VALUES (84, 78, 1152009, '魔兽世界 联盟 护腕 一只', '1152009', 233, 1, 29.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/ae6d41117717387b82dcaf1dfce0cd97.png', 0, '2020-12-03 21:31:52', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (85, 78, 1152031, '魔兽世界-伊利丹颈枕眼罩套装', '1152031', 234, 1, 99.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/fd6e78a397bd9e9804116a36f0270b0a.png', 0, '2020-12-03 21:31:53', NULL, 0);
 INSERT INTO `shop_order_goods` VALUES (86, 78, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 2, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2020-12-03 21:31:53', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (87, 79, 1006002, '轻奢纯棉刺绣水洗四件套', '1006002', 7, 1, 899.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/8ab2d3287af0cefa2cc539e40600621d.png', 0, '2020-12-14 09:45:42', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (88, 80, 1135002, '宫廷奢华真丝四件套', '1135002', 204, 1, 2599.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', 0, '2020-12-14 09:46:24', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (89, 81, 1022000, '意式毛线绣球四件套', '1022000', 31, 1, 299.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/5350e35e6f22165f38928f3c2c52ac57.png', 0, '2020-12-14 09:47:03', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (90, 82, 1135002, '宫廷奢华真丝四件套', '1135002', 204, 1, 2599.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/45548f26cfd0c7c41e0afc3709d48286.png', 0, '2020-12-14 09:48:27', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (91, 83, 1056002, '男式玩色内裤', '1056002', 70, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', 0, '2020-12-14 09:50:24', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (92, 84, 1074001, '男式莫代尔无痕内裤', '1074001', 92, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/73567265b04a9998f64419186ddd8531.png', 0, '2020-12-14 09:51:22', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (93, 85, 1006002, '轻奢纯棉刺绣水洗四件套', '1006002', 7, 1, 899.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/8ab2d3287af0cefa2cc539e40600621d.png', 0, '2020-12-14 09:52:21', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (94, 86, 1056002, '男式玩色内裤', '1056002', 70, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', 0, '2020-12-14 09:52:59', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (95, 87, 1019000, '升级款护颈波浪记忆枕', '1019000', 22, 1, 99.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/77c09feb378814be712741b273d16656.png', 0, '2021-01-07 18:57:30', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (96, 88, 1006014, '双宫茧桑蚕丝被 子母被', '1006014', 11, 1, 1399.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2b537159f0f789034bf8c4b339c43750.png', 0, '2021-01-10 13:59:07', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (97, 89, 1152095, '魔兽世界 联盟·暴风城 堡垒收纳盒', '1152095', 235, 1, 499.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/c86b49f635fa141decebabbd0966a6ef.png', 0, '2021-01-10 14:16:12', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (98, 90, 1056002, '男式玩色内裤', '1056002', 70, 1, 59.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/922fdbe007033f7a88f7ebc57c3d1e75.png', 0, '2021-01-10 14:16:46', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (99, 91, 1006014, '双宫茧桑蚕丝被 子母被', '1006014', 11, 1, 1399.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2b537159f0f789034bf8c4b339c43750.png', 0, '2021-01-10 14:19:10', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (100, 92, 1181000, '母亲节礼物-舒适安睡组合', '1181000', 2, 1, 1500.00, '[\"1.5m床垫*1+枕头*2\",\"玛瑙红\"]', 'quality=90&thumbnail=200x200&imageView', 0, '2021-01-11 10:08:58', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (101, 92, 1131017, '平滑细篾头层青碳化竹凉席', '1131017', 196, 1, 259.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2b6e2268ed712f1a336283f013abb7a1.png', 0, '2021-01-11 10:08:58', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (102, 93, 1019000, '升级款护颈波浪记忆枕', '1019000', 22, 1, 99.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/77c09feb378814be712741b273d16656.png', 0, '2021-01-11 10:15:31', NULL, 0);
+INSERT INTO `shop_order_goods` VALUES (103, 94, 1046044, '美利奴羊毛盖毯设计师款', '1046044', 61, 1, 349.00, '[\"标准\"]', 'http://yanxuan.nosdn.127.net/2bfecfe58ea3ee0d554f2ed58e9ba30a.png', 0, '2021-01-11 10:18:30', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_search_history
@@ -3535,7 +3585,7 @@ CREATE TABLE `shop_search_history`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 238 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 242 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '搜索历史表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of shop_search_history
@@ -3777,6 +3827,10 @@ INSERT INTO `shop_search_history` VALUES (234, 1, '520元礼包抢先领', '', 1
 INSERT INTO `shop_search_history` VALUES (235, 1, '520元礼包抢先领', '', 1, '2020-12-03 22:04:45', NULL, 0);
 INSERT INTO `shop_search_history` VALUES (236, 1, '520元礼包抢先领', '', 1, '2020-12-03 22:04:50', NULL, 0);
 INSERT INTO `shop_search_history` VALUES (237, 1, '520元礼包抢先领', '', 1, '2020-12-08 23:59:17', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (238, 1, '520元礼包抢先领', '', 1, '2020-12-22 13:42:28', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (239, 1, '520元礼包抢先领', '', 1, '2020-12-22 13:46:32', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (240, 1, '520元礼包抢先领', '', 1, '2021-01-07 18:57:08', NULL, 0);
+INSERT INTO `shop_search_history` VALUES (241, 1, '手机', '', 1, '2021-01-07 18:57:15', NULL, 0);
 
 -- ----------------------------
 -- Table structure for success_killed
@@ -3786,10 +3840,10 @@ CREATE TABLE `success_killed`  (
   `seckill_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '商品库存id',
   `user_phone` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户手机号',
   `state` tinyint(4) NOT NULL DEFAULT -1 COMMENT '状态信息：-1无效，0成功，1已付款，2已发货',
-  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
+  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '创建时间',
   PRIMARY KEY (`seckill_id`, `user_phone`) USING BTREE,
   INDEX `idx_create_time`(`create_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '秒杀库存表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '秒杀库存表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of success_killed
@@ -3824,9 +3878,9 @@ CREATE TABLE `sys_dept`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dept
@@ -3862,12 +3916,12 @@ CREATE TABLE `sys_dict`  (
   `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '备注信息',
-  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标记（0存在 1删除）',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记（0存在 1删除）',
   PRIMARY KEY (`dict_id`) USING BTREE,
   INDEX `sys_dict_value`(`value`) USING BTREE,
   INDEX `sys_dict_label`(`name`) USING BTREE,
   INDEX `sys_dict_del_flag`(`del_flag`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 188 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 187 CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '字典表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict
@@ -3939,7 +3993,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2051 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2050 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -4010,9 +4064,9 @@ CREATE TABLE `sys_role`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`role_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3421 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3420 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role
@@ -4090,9 +4144,9 @@ CREATE TABLE `sys_user`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(4) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
+  `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
@@ -4145,7 +4199,7 @@ CREATE TABLE `tool_email_config`  (
 -- ----------------------------
 -- Records of tool_email_config
 -- ----------------------------
-INSERT INTO `tool_email_config` VALUES (1, '1669738430@qq.com', 'smtp.qq.com', 'ttkbqckbwpwyefca', '587', 'wayn');
+INSERT INTO `tool_email_config` VALUES (1, '1669738430@qq.com', 'smtp.qq.com', 'toysnrbbqiycdaab', '587', 'wayn');
 
 -- ----------------------------
 -- Table structure for tool_qiniu_config
@@ -4161,7 +4215,7 @@ CREATE TABLE `tool_qiniu_config`  (
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
   `enable` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of tool_qiniu_config
@@ -4185,7 +4239,7 @@ CREATE TABLE `tool_qiniu_content`  (
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
   PRIMARY KEY (`content_id`) USING BTREE,
   UNIQUE INDEX `uniq_name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 228 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云文件存储' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 227 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云文件存储' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of tool_qiniu_content
