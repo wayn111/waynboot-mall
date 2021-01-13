@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 订单数据VO
+ */
 @Data
 public class OrderVO {
 

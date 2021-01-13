@@ -28,7 +28,7 @@ import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.OrderMapper;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderService;
-import com.wayn.mobile.api.task.CancelOrderTask;
+import com.wayn.mobile.api.task.OrderUnpaidTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.config.WaynConfig;
 import com.wayn.mobile.framework.redis.RedisCache;
@@ -208,7 +208,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         map.put("order", orderDTO);
         map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
-        // 异步发送邮件
+        // 异步下单
         rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", map);
         return R.success().add("actualPrice", actualPrice).add("orderSn", orderSn);
     }
@@ -218,14 +218,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R submit(OrderDTO orderDTO) {
         Long userId = orderDTO.getUserId();
 
-        // 获取用户地址，为空取默认地址
+        // 获取用户地址
         Long addressId = orderDTO.getAddressId();
         Address checkedAddress;
-        if (Objects.nonNull(addressId)) {
-            checkedAddress = iAddressService.getById(addressId);
-        } else {
-            checkedAddress = iAddressService.list(new QueryWrapper<Address>().eq("is_default", true)).get(0);
+        if (Objects.isNull(addressId)) {
+            return R.error("请选择收获地址");
         }
+        checkedAddress = iAddressService.getById(addressId);
 
         // 获取用户订单商品，为空默认取购物车已选中商品
         List<Long> cartIdArr = orderDTO.getCartIdArr();
@@ -284,6 +283,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!save(order)) {
             return R.error("订单创建失败");
         }
+
         Long orderId = order.getId();
         // 添加订单商品表项
         for (Cart cartGoods : checkedGoodsList) {
@@ -311,12 +311,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 下单60s内未支付自动取消订单
         long delay = 1000;
         redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
-        taskService.addTask(new CancelOrderTask(order.getId(), delay * 60));
+        taskService.addTask(new OrderUnpaidTask(order.getId(), delay * 60));
         return R.success().add("orderId", order.getId());
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R prepay(String orderSn, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
@@ -357,7 +357,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R h5pay(String orderSn, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
@@ -405,13 +405,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         try {
             result = wxPayService.parseOrderNotifyResult(xmlResult);
 
-            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getResultCode())) {
+            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
                 log.error(xmlResult);
                 throw new WxPayException("微信通知支付失败！");
             }
         } catch (WxPayException e) {
             e.printStackTrace();
-//            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
+            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
         log.info("处理腾讯支付平台的订单支付");
@@ -454,7 +454,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
-        taskService.removeTask(new CancelOrderTask(order.getId()));
+        taskService.removeTask(new OrderUnpaidTask(order.getId()));
         return R.error(WxPayNotifyResponse.success("处理成功!"));
     }
 
@@ -487,7 +487,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
-        taskService.removeTask(new CancelOrderTask(order.getId()));
+        taskService.removeTask(new OrderUnpaidTask(order.getId()));
         return R.success("处理成功!");
     }
 
@@ -523,7 +523,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             }
         }
         // 返还优惠券
-//        releaseCoupon(orderId);
+        // releaseCoupon(orderId);
         return R.success();
     }
 
@@ -612,4 +612,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         return SysConstants.STRING_TRUE;
     }
+
+    /*public void releaseCoupon(Long orderId) {
+        List<CouponUser> couponUserList = couponUserService.list(new QueryWrapper<CouponUser>().eq("order_id", orderId));
+        if (CollectionUtils.isEmpty(couponUserList)) {
+            return;
+        }
+        for (CouponUser couponUser : couponUserList) {
+            couponUser.setStatus((byte) 0);
+            couponUser.setUpdateTime(new Date());
+            couponUserService.updateById(couponUser);
+        }
+    }*/
 }
