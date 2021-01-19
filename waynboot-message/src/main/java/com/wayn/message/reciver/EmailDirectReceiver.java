@@ -18,15 +18,15 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@RabbitListener(queues = "TestDirectQueue")
-public class TestDirectReceiver {
+@RabbitListener(queues = "EmailDirectQueue")
+public class EmailDirectReceiver {
 
     @Autowired
     private RestTemplate restTemplate;
 
     @RabbitHandler
     public void process(Map testMessage) {
-        System.out.println("TestDirectReceiver消费者收到消息  : " + testMessage.toString());
+        System.out.println("EmailDirectReceiver消费者收到消息  : " + testMessage.toString());
         String notifyUrl = (String) testMessage.get("notifyUrl");
         if (StringUtils.isEmpty(notifyUrl)) {
             log.error("notifyUrl不能为空！，参数：" + testMessage.toString());

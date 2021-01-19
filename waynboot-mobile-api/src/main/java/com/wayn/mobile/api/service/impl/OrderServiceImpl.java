@@ -1,5 +1,6 @@
 package com.wayn.mobile.api.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -222,7 +223,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         Long addressId = orderDTO.getAddressId();
         Address checkedAddress;
         if (Objects.isNull(addressId)) {
-            return R.error("请选择收获地址");
+            throw new BusinessException("收获地址为空，请求参数" + JSON.toJSONString(orderDTO));
         }
         checkedAddress = iAddressService.getById(addressId);
 
@@ -281,10 +282,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setActualPrice(actualPrice);
         order.setCreateTime(new Date());
         if (!save(order)) {
-            return R.error("订单创建失败");
+            throw new BusinessException("订单创建失败" + JSON.toJSONString(order));
         }
 
         Long orderId = order.getId();
+        List<OrderGoods> orderGoodsList = new ArrayList<>();
         // 添加订单商品表项
         for (Cart cartGoods : checkedGoodsList) {
             // 订单商品
@@ -299,7 +301,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderGoods.setNumber(cartGoods.getNumber());
             orderGoods.setSpecifications(cartGoods.getSpecifications());
             orderGoods.setCreateTime(LocalDateTime.now());
-            iOrderGoodsService.save(orderGoods);
+            orderGoodsList.add(orderGoods);
+        }
+        if (!iOrderGoodsService.saveBatch(orderGoodsList)) {
+            throw new BusinessException("添加订单商品表项失败" + JSON.toJSONString(orderGoodsList));
         }
 
         // 删除购物车里面的商品信息

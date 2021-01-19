@@ -3,6 +3,7 @@ package com.wayn.mobile.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.base.service.BaseElasticService;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -121,6 +123,7 @@ public class SearchController extends BaseController {
         if (goodsIdList.size() == 0) {
             return R.success().add("goods", Collections.emptyList());
         }
+        // 根据es中返回商品ID查询商品详情并保持es中的排序
         List<Goods> goodsList = iGoodsService.list(new QueryWrapper<Goods>().in("id", goodsIdList)
                 .last("order by FIELD(id," + StringUtils.join(goodsIdList, ",") + ") asc"));
         if (goodsList.size() > 0) {
@@ -128,6 +131,29 @@ public class SearchController extends BaseController {
             iSearchHistoryService.save(searchHistory);
         }
         return R.success().add("goods", goodsList);
+    }
+
+    /**
+     * 关键字提醒
+     * <p>
+     * 当用户输入关键字一部分时，可以推荐系统中合适的关键字。
+     *
+     * @param keyword 关键字
+     * @return 合适的关键字
+     */
+    @GetMapping("helper")
+    public R helper(@NotEmpty String keyword) {
+        Page<Keyword> page = getPage();
+        Keyword newKeyword = new Keyword();
+        newKeyword.setKeyword(keyword);
+        IPage<Keyword> keywordIPage = iKeywordService.listPage(page, newKeyword);
+        List<Keyword> keywordList = keywordIPage.getRecords();
+        String[] keys = new String[keywordList.size()];
+        int index = 0;
+        for (Keyword key : keywordList) {
+            keys[index++] = key.getKeyword();
+        }
+        return R.success().add("keys", keys);
     }
 
     @GetMapping("hotList")
