@@ -56,10 +56,10 @@ spring:
           config:
             multi-statement-allow: true
   redis:
-    host: 182.254.214.165
-    port: 6379
+    host: wayn.ltd
+    port: 1688
     timeout: 5000
-    password:
+    password: admin@@123456
     databaseIndex: 2
     expire: 400
     maxTotal: 50000
