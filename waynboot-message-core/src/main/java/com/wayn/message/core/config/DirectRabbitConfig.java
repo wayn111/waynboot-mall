@@ -13,22 +13,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DirectRabbitConfig {
 
-    // 队列 起名：TestDirectQueue
+    // 队列 起名：EmailDirectQueue
     @Bean
-    public Queue TestDirectQueue() {
-        return new Queue("TestDirectQueue", true);
+    public Queue EmailDirectQueue() {
+        return new Queue("EmailDirectQueue", true);
     }
 
-    // Direct交换机 起名：TestDirectExchange
+    // Direct交换机 起名：EmailDirectExchange
     @Bean
-    DirectExchange TestDirectExchange() {
-        return new DirectExchange("TestDirectExchange");
+    DirectExchange EmailDirectExchange() {
+        return new DirectExchange("EmailDirectExchange");
     }
 
-    // 绑定  将队列和交换机绑定, 并设置用于匹配键：TestDirectRouting
+    // 绑定  将队列和交换机绑定, 并设置用于匹配键：EmailDirectRouting
     @Bean
     Binding bindingTestDirect() {
-        return BindingBuilder.bind(TestDirectQueue()).to(TestDirectExchange()).with("TestDirectRouting");
+        return BindingBuilder.bind(EmailDirectQueue()).to(EmailDirectExchange()).with("EmailDirectRouting");
     }
 
     @Bean
