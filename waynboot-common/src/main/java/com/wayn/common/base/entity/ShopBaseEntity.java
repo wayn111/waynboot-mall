@@ -10,7 +10,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 基础entity类，集成以获取通用字段
+ * 基础entity类，继承
+ * 以获取通用字段
  */
 @Data
 public class ShopBaseEntity implements Serializable {
