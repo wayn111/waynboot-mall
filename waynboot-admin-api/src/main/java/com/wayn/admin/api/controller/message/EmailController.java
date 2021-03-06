@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 
+/**
+ * 消息通知的邮件发送控制器
+ */
 @RestController
 @RequestMapping("message/email")
 public class EmailController {

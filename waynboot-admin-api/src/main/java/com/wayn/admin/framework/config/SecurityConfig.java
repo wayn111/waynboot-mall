@@ -16,6 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @Configuration
@@ -48,7 +51,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity    // CRSF禁用，因为不使用session
+        httpSecurity
+                // cors启用
+                .cors().and()
+                // CRSF（跨站请求伪造）禁用，因为不使用session
                 .csrf().disable()
                 // 认证失败处理类
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
@@ -56,8 +62,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // 过滤请求
                 .authorizeRequests()
+                //处理跨域请求中的Preflight请求(cors)，设置corsConfigurationSource后无需使用
+                // .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 // 对于登录login 验证码captchaImage 允许匿名访问
-                .antMatchers("/login", "/captcha").anonymous()
+                .antMatchers("/login", "/captcha", "/favicon.ico").anonymous()
                 .antMatchers("/upload/**").anonymous()
                 .antMatchers("/common/download**").anonymous()
                 .antMatchers("/swagger-ui.html").anonymous()
@@ -90,4 +98,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }
+
 }
