@@ -9,7 +9,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        /** 本地文件上传路径 */
+        // 本地文件上传路径
         registry.addResourceHandler("/upload/**").addResourceLocations("file:" + WaynConfig.getUploadDir() + "/");
     }
 }
