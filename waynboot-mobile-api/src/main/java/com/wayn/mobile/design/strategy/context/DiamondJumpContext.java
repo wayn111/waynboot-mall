@@ -15,6 +15,11 @@ public class DiamondJumpContext {
 
     private Map<Integer, DiamondJumpType> map = new HashMap<>();
 
+    /**
+     * 由spring自动注入DiamondJumpType子类
+     *
+     * @param diamondJumpTypes 金刚位跳转类型集合
+     */
     public DiamondJumpContext(List<DiamondJumpType> diamondJumpTypes) {
         for (DiamondJumpType diamondJumpType : diamondJumpTypes) {
             map.put(diamondJumpType.getType(), diamondJumpType);
