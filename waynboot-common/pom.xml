@@ -5,12 +5,11 @@
     <parent>
         <artifactId>waynboot</artifactId>
         <groupId>com.wayn</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>waynboot-common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <dependencies>
         <dependency>
@@ -198,21 +197,4 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <compilerArgs>
-                        <compilerArg>-parameters</compilerArg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

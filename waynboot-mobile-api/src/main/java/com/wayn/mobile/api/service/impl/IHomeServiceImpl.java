@@ -43,13 +43,14 @@ public class IHomeServiceImpl implements IHomeService {
 
     @Override
     public R getHomeIndexData() {
-        // if (redisCache.existsKey(INDEX_DATA)) {
-        //     return redisCache.getCacheObject(INDEX_DATA);
-        // }
         R success = R.success();
-        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(10, 10,
-                0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<>(), r -> new Thread(r, "首页线程"));
+        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(
+                10,
+                10,
+                0L,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(),
+                r -> new Thread(r, "首页线程"));
         Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
         Callable<List<Diamond>> diamondCall = () -> iDiamondService.list(new QueryWrapper<Diamond>()
                 .orderByAsc("sort")
@@ -93,7 +94,7 @@ public class IHomeServiceImpl implements IHomeService {
             return redisCache.getCacheObject(INDEX_DATA);
         }
         R success = R.success();
-        List<CompletableFuture<Void>> list = new ArrayList();
+        List<CompletableFuture<Void>> list = new ArrayList<>();
         CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort")))
                 .thenAccept(data -> success.add("bannerList", data));
         CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iCategoryService.list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort")))
@@ -114,7 +115,7 @@ public class IHomeServiceImpl implements IHomeService {
         list.add(f2);
         list.add(f3);
         list.add(f4);
-        CompletableFuture.allOf(list.toArray(new CompletableFuture[list.size()])).join();
+        CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
         redisCache.setCacheObject(INDEX_DATA, success, 10, TimeUnit.MINUTES);
         return success;
     }

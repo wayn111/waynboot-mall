@@ -5,18 +5,18 @@
     <parent>
         <artifactId>waynboot</artifactId>
         <groupId>com.wayn</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>waynboot-message</artifactId>
+    <version>1.1.0</version>
 
     <dependencies>
 
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-message-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.1.0</version>
         </dependency>
 
         <dependency>
@@ -76,9 +76,9 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.wayn.MessageApplication</mainClass>
                     <layout>ZIP</layout>
-                    <commandlineArguments>
-                        -parameters
-                    </commandlineArguments>
+<!--                    <commandlineArguments>-->
+<!--                        -parameters-->
+<!--                    </commandlineArguments>-->
                 </configuration>
                 <executions>
                     <execution>
