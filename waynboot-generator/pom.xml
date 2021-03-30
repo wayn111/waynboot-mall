@@ -5,11 +5,11 @@
     <parent>
         <artifactId>waynboot</artifactId>
         <groupId>com.wayn</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>waynboot-generator</artifactId>
+    <version>1.1.0</version>
 
     <dependencies>
         <!-- Apache工具组件 -->
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
-            <version>${mybatis-plus.version}</version>
+            <version>3.4.1</version>
         </dependency>
 
         <!--阿里数据库连接池 -->
@@ -51,5 +51,4 @@
             <version>2.3.30</version>
         </dependency>
     </dependencies>
-
 </project>

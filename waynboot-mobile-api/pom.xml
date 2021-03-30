@@ -5,11 +5,13 @@
     <parent>
         <artifactId>waynboot</artifactId>
         <groupId>com.wayn</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>waynboot-mobile-api</artifactId>
+    <version>1.1.0</version>
+
+
 
     <dependencies>
         <!-- swagger2-->
@@ -55,7 +57,7 @@
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.elasticsearch</groupId>
@@ -75,7 +77,7 @@
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-message-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -103,9 +105,9 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.wayn.MobileApplication</mainClass>
                     <layout>ZIP</layout>
-                    <commandlineArguments>
-                        -parameters
-                    </commandlineArguments>
+<!--                    <commandlineArguments>-->
+<!--                        -parameters-->
+<!--                    </commandlineArguments>-->
                 </configuration>
                 <executions>
                     <execution>

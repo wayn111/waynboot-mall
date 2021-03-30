@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!-- Inherit defaults from Spring Boot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.4.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.4.4</version>
     </parent>
     <modules>
         <module>waynboot-common</module>
@@ -18,21 +18,22 @@
     </modules>
     <groupId>com.wayn</groupId>
     <artifactId>waynboot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
     <name>waynboot</name>
-    <description>waynboot project for Spring Boot</description>
+    <description>waynboot mall</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.2.4.RELEASE</spring-boot.version>
+        <spring-boot.version>2.4.4</spring-boot.version>
         <mysql.connector.java.version>8.0.19</mysql.connector.java.version>
         <jedis.version>3.3.0</jedis.version>
         <lombok.version>1.18.6</lombok.version>
-        <mybatis-plus.version>3.4.1</mybatis-plus.version>
+        <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <druid.version>1.2.4</druid.version>
         <commons.io.version>2.8.0</commons.io.version>
         <commons.collections.version>3.2.2</commons.collections.version>
@@ -42,8 +43,8 @@
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <swagger.version>2.9.2</swagger.version>
         <easypoi.version>4.2.0</easypoi.version>
-        <jwt.version>3.12.0</jwt.version>
-        <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
+        <jwt.version>3.14.0</jwt.version>
+        <qiniu.version>7.4.0</qiniu.version>
         <mail.version>1.4.7</mail.version>
     </properties>
 
@@ -242,6 +243,32 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <url>https://repo.spring.io/snapshot</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+        </pluginRepository>
     </pluginRepositories>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgs>
+                        <compilerArg>-parameters</compilerArg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
