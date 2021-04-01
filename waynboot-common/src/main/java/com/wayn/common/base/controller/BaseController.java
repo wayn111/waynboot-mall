@@ -65,14 +65,10 @@ public class BaseController {
             Page<T> tPage = new Page<>(pageNumber, pageSize);
             if (StringUtils.isNotEmpty(sortName)) {
                 String[] split = sortName.split(",");
-                for (int i = 0; i < split.length; i++) {
+                for (String s : split) {
                     OrderItem orderItem = new OrderItem();
-                    orderItem.setColumn(split[i].replaceAll("[A-Z]", "_$0").toLowerCase());
-                    if (sortOrder != null && sortOrder.startsWith(Constants.ORDER_DESC)) {
-                        orderItem.setAsc(false);
-                    } else {
-                        orderItem.setAsc(true);
-                    }
+                    orderItem.setColumn(s.replaceAll("[A-Z]", "_$0").toLowerCase());
+                    orderItem.setAsc(sortOrder == null || !sortOrder.startsWith(Constants.ORDER_DESC));
                     tPage.addOrder(orderItem);
                 }
             }
@@ -105,7 +101,7 @@ public class BaseController {
      * @return 返回分页对象
      */
     protected <T> Page<T> getPage(int pageNumber, int pageSize) {
-        return new Page<T>(pageNumber, pageSize);
+        return new Page<>(pageNumber, pageSize);
     }
 
     /**
@@ -132,9 +128,7 @@ public class BaseController {
      * @return 重定向后地址
      */
     protected String redirectTo(String url) {
-        StringBuffer rto = new StringBuffer("redirect:");
-        rto.append(url);
-        return rto.toString();
+        return "redirect:" + url;
     }
 
     /**
