@@ -406,7 +406,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
-        WxPayOrderNotifyResult result = null;
+        WxPayOrderNotifyResult result;
         try {
             result = wxPayService.parseOrderNotifyResult(xmlResult);
 
@@ -419,9 +419,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
-        log.info("处理腾讯支付平台的订单支付");
-        assert result != null;
-        log.info(result.getReturnMsg());
+        log.info("处理腾讯支付平台的订单支付, {}", result.getReturnMsg());
 
         String orderSn = result.getOutTradeNo();
         String payId = result.getTransactionId();
