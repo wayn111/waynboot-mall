@@ -1,8 +1,8 @@
 package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.framework.config.WaynConfig;
 import com.wayn.common.base.controller.BaseController;
+import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Role;
 import com.wayn.common.core.service.system.IRoleService;

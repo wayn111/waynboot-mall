@@ -1,4 +1,4 @@
-package com.wayn.mobile.framework.manager.upload.service.impl;
+package com.wayn.common.base.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.qiniu.common.QiniuException;
@@ -6,6 +6,8 @@ import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
+import com.wayn.common.base.service.UploadService;
+import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.domain.tool.QiniuConfig;
 import com.wayn.common.core.service.tool.IQiniuConfigService;
 import com.wayn.common.exception.BusinessException;
@@ -13,8 +15,6 @@ import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUtils;
 import com.wayn.common.util.file.QiniuUtil;
 import com.wayn.common.util.http.HttpUtil;
-import com.wayn.mobile.framework.config.WaynConfig;
-import com.wayn.mobile.framework.manager.upload.service.UploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
