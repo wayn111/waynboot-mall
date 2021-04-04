@@ -1,8 +1,8 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.framework.config.WaynConfig;
-import com.wayn.admin.framework.manager.upload.service.UploadService;
 import com.wayn.admin.framework.security.service.TokenService;
+import com.wayn.common.base.service.UploadService;
+import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IUserService;

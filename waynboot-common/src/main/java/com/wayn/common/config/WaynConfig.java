@@ -1,4 +1,4 @@
-package com.wayn.mobile.framework.config;
+package com.wayn.common.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
-package com.wayn.admin.api.controller.system;
+package com.wayn.common.base.controller;
 
-import com.wayn.admin.framework.config.WaynConfig;
-import com.wayn.admin.framework.manager.upload.service.UploadService;
+import com.wayn.common.base.service.UploadService;
+import com.wayn.common.config.WaynConfig;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUploadUtil;
@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.util.Base64;
 
 /**
  * 通用请求处理类
@@ -101,4 +102,27 @@ public class CommonController {
             return R.error(e.getMessage());
         }
     }
+
+    /**
+     * 通用上传请求
+     */
+    @PostMapping("base64uploadFile")
+    @ResponseBody
+    public R base64uploadFile(String filename,
+                              String base64content,
+                              HttpServletRequest request) {
+        try {
+            byte[] decode = Base64.getDecoder().decode(base64content.substring(base64content.indexOf(IMAGE_BASE64_FLAG) + IMAGE_BASE64_FLAG.length()));
+            // 上传文件路径
+            String filePath = WaynConfig.getUploadDir();
+            String fileName = FileUploadUtil.uploadFile(decode, filename, filePath);
+            String fileUrl = uploadService.uploadFile(fileName);
+            return R.success().add("url", fileUrl).add("fileName", fileName);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return R.error(e.getMessage());
+        }
+    }
+
+    public static final String IMAGE_BASE64_FLAG = ";base64,";
 }

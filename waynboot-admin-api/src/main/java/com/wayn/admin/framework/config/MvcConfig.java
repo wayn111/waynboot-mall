@@ -1,5 +1,6 @@
 package com.wayn.admin.framework.config;
 
+import com.wayn.common.config.WaynConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
