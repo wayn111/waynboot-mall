@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class BusinessException extends RuntimeException {
 
+    private static final long serialVersionUID = -2969542356458982180L;
     private Integer code;
 
     private String msg;

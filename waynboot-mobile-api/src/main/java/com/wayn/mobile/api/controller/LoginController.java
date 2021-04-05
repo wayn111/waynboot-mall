@@ -21,7 +21,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,7 +109,7 @@ public class LoginController {
         SendMailVO sendMailVO = new SendMailVO();
         sendMailVO.setSubject("mall商城注册通知");
         sendMailVO.setContent("邮箱验证码：" + verCode);
-        sendMailVO.setTos(Arrays.asList(registryObj.getEmail()));
+        sendMailVO.setTos(Collections.singletonList(registryObj.getEmail()));
         MailUtil.sendMail(emailConfig, sendMailVO, false);
         return R.success().add("key", key);
     }

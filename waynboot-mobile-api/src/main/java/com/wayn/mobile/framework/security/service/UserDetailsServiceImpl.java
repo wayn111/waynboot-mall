@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             log.info("登录用户：{} 不存在.", mobile);
             throw new UsernameNotFoundException("登录用户：" + mobile + " 不存在");
         }
-        if (UserStatus.DISABLE.getCode() == member.getStatus()) {
+        if (UserStatus.DISABLE.getCode().equals(member.getStatus())) {
             log.info("登录用户：{} 已经被停用.", mobile);
             throw new DisabledException("登录用户：" + mobile + " 不存在");
         }
