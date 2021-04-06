@@ -17,14 +17,11 @@ import com.wayn.mobile.framework.security.RegistryObj;
 import com.wayn.mobile.framework.security.service.LoginService;
 import com.wf.captcha.SpecCaptcha;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -114,17 +111,4 @@ public class LoginController {
         return R.success().add("key", key);
     }
 
-    @Autowired
-    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
-
-    @GetMapping("test")
-    public R test() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("subject", "新订单通知");
-        map.put("content", "hello");
-        map.put("tos", "1669738430@qq.com");
-        //将消息携带绑定键值：TestDirectRouting 发送到交换机TestDirectExchange
-        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
-        return R.success();
-    }
 }
