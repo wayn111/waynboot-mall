@@ -110,5 +110,4 @@ public class LoginController {
         MailUtil.sendMail(emailConfig, sendMailVO, false);
         return R.success().add("key", key);
     }
-
 }
