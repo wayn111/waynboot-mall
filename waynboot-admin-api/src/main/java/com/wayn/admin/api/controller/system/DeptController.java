@@ -56,8 +56,11 @@ public class DeptController {
         }
         dept.setUpdateBy(SecurityUtils.getUsername());
         dept.setUpdateTime(new Date());
+        Long topParentId = 0L;
+        if (!topParentId.equals(dept.getParentId())) {
         Dept parent = iDeptService.getById(dept.getParentId());
-        dept.setAncestors(parent.getAncestors() + "," + dept.getParentId());
+            dept.setAncestors(parent.getAncestors() + "," + dept.getParentId());
+        }
         return R.result(iDeptService.updateById(dept));
     }
 
