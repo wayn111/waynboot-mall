@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Comment;
+import com.wayn.common.core.domain.vo.CommentTagNumVO;
+import com.wayn.common.core.domain.vo.CommentVO;
 import com.wayn.common.core.mapper.shop.CommentMapper;
 import com.wayn.common.core.service.shop.ICommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +28,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     public IPage<Comment> listPage(Page<Comment> page, Comment comment) {
         return commentMapper.selectListPage(page, comment);
+    }
+
+    @Override
+    public IPage<CommentVO> selectByTagType(Page<Comment> page, Long goodsId, Integer tagType) {
+        return commentMapper.selectByTagType(page, goodsId, tagType);
+    }
+
+    @Override
+    public CommentTagNumVO selectTagNum(Long goodsId) {
+        return commentMapper.selectTagNum(goodsId);
     }
 }

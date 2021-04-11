@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Comment;
+import com.wayn.common.core.domain.vo.CommentTagNumVO;
+import com.wayn.common.core.domain.vo.CommentVO;
 
 /**
  * <p>
@@ -23,4 +25,24 @@ public interface ICommentService extends IService<Comment> {
      * @return 地址分页列表
      */
     IPage<Comment> listPage(Page<Comment> page, Comment comment);
+
+    /**
+     * 根据标签类型查询分页列表
+     *
+     * @param page    分页对象
+     * @param goodsId 商品ID
+     * @param tagType 标签类型
+     * @return 分页对象
+     */
+    IPage<CommentVO> selectByTagType(Page<Comment> page, Long goodsId, Integer tagType);
+
+    /**
+     * 查询标签数量
+     *
+     * @param goodsId 商品ID
+     * @return 标签数量
+     */
+    CommentTagNumVO selectTagNum(Long goodsId);
+
+
 }

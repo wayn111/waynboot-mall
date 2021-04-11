@@ -3,10 +3,7 @@ package com.wayn.mobile.api.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.core.domain.shop.GoodsAttribute;
 import com.wayn.common.core.domain.shop.GoodsProduct;
-import com.wayn.common.core.service.shop.IGoodsAttributeService;
-import com.wayn.common.core.service.shop.IGoodsProductService;
-import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.core.service.shop.IGoodsSpecificationService;
+import com.wayn.common.core.service.shop.*;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IGoodsDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +35,11 @@ public class GoodsDetailServiceImpl implements IGoodsDetailService {
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(), r -> new Thread(r, "商品详情线程"));
         Callable<Object> specificationCall = () -> iGoodsSpecificationService.getSpecificationVOList(goodsId);
-        Callable<List<GoodsProduct>> productCall = () -> iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
-        Callable<List<GoodsAttribute>> attrCall = () -> iGoodsAttributeService.list(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
+        Callable<List<GoodsProduct>> productCall =
+                () -> iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
+        Callable<List<GoodsAttribute>> attrCall =
+                () -> iGoodsAttributeService.list(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
+
         FutureTask<Object> specificationTask = new FutureTask<>(specificationCall);
         FutureTask<List<GoodsProduct>> productTask = new FutureTask<>(productCall);
         FutureTask<List<GoodsAttribute>> attrTask = new FutureTask<>(attrCall);
