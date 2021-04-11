@@ -1,32 +1,15 @@
-package com.wayn.common.core.domain.shop;
+package com.wayn.common.core.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.wayn.common.base.entity.ShopBaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
+import java.util.Date;
 
-/**
- * <p>
- * 评论表
- * </p>
- *
- * @author wayn
- * @since 2020-10-03
- */
 @Data
-@TableName("shop_comment")
-@EqualsAndHashCode(callSuper = false)
-public class Comment extends ShopBaseEntity implements Serializable {
+public class CommentVO {
 
-    private static final long serialVersionUID = 2415577057902110771L;
-
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -52,7 +35,17 @@ public class Comment extends ShopBaseEntity implements Serializable {
     /**
      * 用户表的用户ID
      */
-    private Integer userId;
+    private Long userId;
+
+    /**
+     * 评论用户头像
+     */
+    private String avatar;
+
+    /**
+     * 评论用户名称
+     */
+    private String username;
 
     /**
      * 是否含有图片（0无图，1有图）
@@ -70,10 +63,6 @@ public class Comment extends ShopBaseEntity implements Serializable {
      */
     private Integer star;
 
-    /**
-     * 删除标志（0代表存在 1代表删除）
-     */
-    private Boolean delFlag;
-
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 }
