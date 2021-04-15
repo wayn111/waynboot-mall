@@ -6,9 +6,9 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://192.168.31.49:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-        username: root
-        password: admin123
+        url: jdbc:mysql://waynmysql.mysql.rds.aliyuncs.com:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        username: wayn_shop
+        password: 123456
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -73,11 +73,11 @@ spring:
   rabbitmq:
     host: wayn.ltd
     port: 5672
-    username: admin
-    password: admin
+    username: guest
+    password: guest
 
 es:
-  host: 182.254.214.165
+  host: wayn.ltd
   port: 9200
   scheme: http
 

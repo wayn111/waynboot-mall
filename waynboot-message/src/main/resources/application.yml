@@ -4,10 +4,10 @@ server:
 spring:
   #配置rabbitMq 服务器
   rabbitmq:
-    host: 182.254.214.165
+    host: wayn.ltd
     port: 5672
-    username: admin
-    password: admin
+    username: guest
+    password: guest
 
 # 日志配置
 logging:
