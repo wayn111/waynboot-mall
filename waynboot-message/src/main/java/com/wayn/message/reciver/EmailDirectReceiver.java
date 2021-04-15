@@ -26,7 +26,7 @@ public class EmailDirectReceiver {
 
     @RabbitHandler
     public void process(Map testMessage) {
-        System.out.println("EmailDirectReceiver消费者收到消息  : " + testMessage.toString());
+        log.info("EmailDirectReceiver消费者收到消息: {}", testMessage.toString());
         String notifyUrl = (String) testMessage.get("notifyUrl");
         if (StringUtils.isEmpty(notifyUrl)) {
             log.error("notifyUrl不能为空！，参数：" + testMessage.toString());
