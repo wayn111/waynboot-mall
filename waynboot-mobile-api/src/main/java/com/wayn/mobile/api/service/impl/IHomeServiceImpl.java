@@ -43,6 +43,9 @@ public class IHomeServiceImpl implements IHomeService {
 
     @Override
     public R getHomeIndexData() {
+        if (redisCache.existsKey(INDEX_DATA)) {
+            return redisCache.getCacheObject(INDEX_DATA);
+        }
         R success = R.success();
         ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(
                 10,
@@ -78,7 +81,7 @@ public class IHomeServiceImpl implements IHomeService {
             success.add("categoryList", diamondTask.get());
             success.add("newGoodsList", newGoodsTask.get());
             success.add("hotGoodsList", hotGoodsTask.get());
-            // redisCache.setCacheObject(INDEX_DATA, success, 10, TimeUnit.MINUTES);
+            redisCache.setCacheObject(INDEX_DATA, success, 10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } finally {
