@@ -54,16 +54,6 @@ public class CartController extends BaseController {
         return iCartService.changeNum(cartId, number);
     }
 
-    @PostMapping("addNum/{cartId}/{number}")
-    public R addNum(@PathVariable Long cartId, @PathVariable Integer number) {
-        return iCartService.addNum(cartId, number);
-    }
-
-    @PostMapping("minusNum/{cartId}/{number}")
-    public R minusNum(@PathVariable Long cartId, @PathVariable Integer number) {
-        return iCartService.minusNum(cartId, number);
-    }
-
     @DeleteMapping("{cartId}")
     public R delete(@PathVariable Long cartId) {
         return R.result(iCartService.removeById(cartId));
