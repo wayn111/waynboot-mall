@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -164,11 +165,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } else {
             checkedGoodsList = iCartService.listByIds(cartIdArr);
         }
-
+        List<Long> goodsIds = checkedGoodsList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
+        List<GoodsProduct> goodsProducts = iGoodsProductService.listByIds(goodsIds);
+        Map<Long, GoodsProduct> goodsIdMap = goodsProducts.stream().collect(
+                Collectors.toMap(GoodsProduct::getId, goodsProduct -> goodsProduct));
         // 商品货品数量减少
         for (Cart checkGoods : checkedGoodsList) {
             Long productId = checkGoods.getProductId();
-            GoodsProduct product = iGoodsProductService.getById(productId);
+            GoodsProduct product = goodsIdMap.get(productId);
             int remainNumber = product.getNumber() - checkGoods.getNumber();
             if (remainNumber < 0) {
                 throw new RuntimeException("下单的商品货品数量大于库存量");
