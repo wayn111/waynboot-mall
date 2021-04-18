@@ -31,7 +31,7 @@
     </update>
 
     <update id="reduceStock">
-        update shop_goods_product set number = number - #{number} where id = #{productId} and number - 1 >= 0
+        update shop_goods_product set number = number - #{number} where id = #{productId} and number - #{number} >= 0
     </update>
 
 </mapper>
