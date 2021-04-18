@@ -8,6 +8,7 @@ import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
+import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.mobile.api.domain.Cart;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
 
     @Autowired
-    private CartMapper cartMapper;
+    private ICartService iCartService;
 
     @Autowired
     private IGoodsService iGoodsService;
@@ -49,7 +50,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public Cart checkExistsGoods(Long userId, Long goodsId, Long productId) {
-        return cartMapper.selectOne(new QueryWrapper<Cart>()
+        return iCartService.getOne(new QueryWrapper<Cart>()
                 .eq("user_id", userId)
                 .eq("goods_id", goodsId)
                 .eq("product_id", productId));
@@ -64,7 +65,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             return R.error("参数错误");
         }
         Goods goods = iGoodsService.getById(goodsId);
-        if (Objects.isNull(iGoodsProductService) || !goods.getIsOnSale()) {
+        if (!goods.getIsOnSale()) {
             return R.error("商品已经下架");
         }
         Long userId = SecurityUtils.getLoginUser().getMember().getId();
@@ -137,24 +138,21 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public R changeNum(Long cartId, Integer number) {
+        Cart cart = iCartService.getById(cartId);
+        Long productId = cart.getProductId();
+        GoodsProduct goodsProduct = iGoodsProductService.getById(productId);
+        Integer productNumber = goodsProduct.getNumber();
+        if (number > productNumber) {
+            throw new BusinessException(String.format("库存不足，该商品只剩%d件了", productNumber));
+        }
         return R.result(update().setSql("number = " + number).eq("id", cartId).update(), "修改失败");
-    }
-
-    @Override
-    public R addNum(Long cartId, Integer number) {
-        return R.result(update().setSql("number = number + 1").eq("id", cartId).update(), "添加失败");
-    }
-
-    @Override
-    public R minusNum(Long cartId, Integer number) {
-        return R.result(update().setSql("number = number - 1").eq("id", cartId).last("and number > 1").update(), "最少购买一件");
     }
 
     @Override
     public R addDefaultGoodsProduct(Cart cart) {
         Long goodsId = cart.getGoodsId();
         List<GoodsProduct> products = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
-        List<GoodsProduct> goodsProducts = products.stream().filter(goodsProduct -> goodsProduct.getDefaultSelected()).collect(Collectors.toList());
+        List<GoodsProduct> goodsProducts = products.stream().filter(GoodsProduct::getDefaultSelected).collect(Collectors.toList());
         GoodsProduct defaultProduct;
         // 如果默认选中货品不为空则取默认选中货品，否则取第一个货品
         if (CollectionUtils.isNotEmpty(goodsProducts)) {

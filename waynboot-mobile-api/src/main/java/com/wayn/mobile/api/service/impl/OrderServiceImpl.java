@@ -14,6 +14,7 @@ import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.WaynConfig;
+import com.wayn.common.constant.ErrorCode;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.OrderVO;
@@ -73,6 +74,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private IOrderGoodsService iOrderGoodsService;
     @Autowired
     private IGoodsProductService iGoodsProductService;
+    @Autowired
+    private IGoodsService iGoodsService;
     @Autowired
     private WxPayService wxPayService;
     @Autowired
@@ -166,16 +169,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             checkedGoodsList = iCartService.listByIds(cartIdArr);
         }
         List<Long> goodsIds = checkedGoodsList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
-        List<GoodsProduct> goodsProducts = iGoodsProductService.listByIds(goodsIds);
+        List<GoodsProduct> goodsProducts = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().in("goods_id", goodsIds));
         Map<Long, GoodsProduct> goodsIdMap = goodsProducts.stream().collect(
                 Collectors.toMap(GoodsProduct::getId, goodsProduct -> goodsProduct));
         // 商品货品数量减少
         for (Cart checkGoods : checkedGoodsList) {
             Long productId = checkGoods.getProductId();
+            Long goodsId = checkGoods.getGoodsId();
             GoodsProduct product = goodsIdMap.get(productId);
             int remainNumber = product.getNumber() - checkGoods.getNumber();
             if (remainNumber < 0) {
-                throw new RuntimeException("下单的商品货品数量大于库存量");
+                Goods goods = iGoodsService.getById(goodsId);
+                String goodsName = goods.getName();
+                String[] specifications = product.getSpecifications();
+                throw new BusinessException(String.format("%s,%s 库存不足", goodsName, StringUtils.join(specifications, " ")));
             }
             if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
                 throw new BusinessException("商品货品库存减少失败");
@@ -469,7 +476,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R testPayNotify(String orderSn) {
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         if (order == null) {
-            return R.error("订单不存在，编号：" + orderSn);
+            return R.error(ErrorCode.ORDER_NOT_EXISTS_ERROR, "订单不存在，编号：" + orderSn);
         }
 
         // 检查这个订单是否已经处理过

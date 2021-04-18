@@ -60,24 +60,6 @@ public interface ICartService extends IService<Cart> {
     R changeNum(Long cartId, Integer number);
 
     /**
-     * 添加购物车商品数量
-     *
-     * @param cartId 购物车商品ID
-     * @param number 商品数量
-     * @return r
-     */
-    R addNum(Long cartId, Integer number);
-
-    /**
-     * 减少购物车商品数量
-     *
-     * @param cartId 购物车商品ID
-     * @param number 商品数量
-     * @return r
-     */
-    R minusNum(Long cartId, Integer number);
-
-    /**
      * 添加商品的默认选中货品至购物车
      * @param cart 购物车对象
      * @return r

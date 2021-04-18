@@ -14,4 +14,10 @@ public class ErrorCode {
      */
     public static final int PARAMETER_TYPE_ERROR = 4002;
 
+
+    /**
+     * 订单不存在错误
+     */
+    public static final int ORDER_NOT_EXISTS_ERROR = 5001;
+
 }
