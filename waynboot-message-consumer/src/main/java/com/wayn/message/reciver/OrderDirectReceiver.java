@@ -25,22 +25,22 @@ public class OrderDirectReceiver {
     private RestTemplate restTemplate;
 
     @RabbitHandler
-    public void process(Map testMessage) {
+    public void process(Map<String, Object> testMessage) {
         log.info("OrderDirectReceiver消费者收到消息: {}", testMessage.toString());
         String notifyUrl = (String) testMessage.get("notifyUrl");
         if (StringUtils.isEmpty(notifyUrl)) {
-            log.error("notifyUrl不能为空！，参数：" + testMessage.toString());
+            log.error("notifyUrl不能为空！，参数：{}", testMessage);
             return;
         }
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap();
+        MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("order", testMessage.get("order"));
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
             if (response.getStatusCode().value() != 200) {
-                throw new Exception(testMessage.toString() + " 下单失败");
+                throw new Exception(testMessage + " 下单失败");
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
