@@ -1,5 +1,12 @@
 server:
-  port: 82
+  port: 443
+  ssl:
+    enabled: true
+    key-store: classpath:mall.wayn.ltd.jks
+    key-store-password: idFXdK.Rnm3CgZp
+    key-store-type: JKS
+
+http-port: 82
 
 spring:
   profiles:
@@ -49,7 +56,7 @@ wayn:
   name: wayn
   version: 1.1.0
   email: 166738430@qq.com
-  uploadDir: E:/wayn/upload
+  uploadDir: /opt/wayn/upload
   adminUrl: http://localhost:81
   mobileUrl: http://localhost:82
 
