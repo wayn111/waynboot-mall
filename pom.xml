@@ -99,7 +99,7 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
-            <!--阿里数据库连接池 -->
+            <!-- 阿里数据库连接池 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
@@ -140,7 +140,7 @@
                 <version>${easy-captcha.version}</version>
             </dependency>
 
-            <!--文件上传工具类 -->
+            <!-- 文件上传工具类 -->
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
@@ -198,7 +198,7 @@
                 <version>${swagger.version}</version>
             </dependency>
 
-            <!--防止进入swagger页面报类型转换错误，排除2.9.2中的引用，手动增加1.5.21版本-->
+            <!-- 防止进入swagger页面报类型转换错误，排除2.9.2中的引用，手动增加1.5.21版本-->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
