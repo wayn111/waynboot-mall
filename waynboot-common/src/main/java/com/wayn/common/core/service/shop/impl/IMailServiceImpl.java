@@ -22,5 +22,6 @@ public class IMailServiceImpl implements IMailService {
         map.put("notifyUrl", notifyUrl);
         // 异步发送邮件
         rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", map);
+
     }
 }
