@@ -14,6 +14,7 @@ import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.WaynConfig;
+import com.wayn.common.constant.Constants;
 import com.wayn.common.constant.ErrorCode;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
@@ -23,6 +24,7 @@ import com.wayn.common.core.util.OrderHandleOption;
 import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.task.TaskService;
+import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.common.util.ip.IpUtils;
@@ -39,6 +41,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -155,7 +163,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     public R asyncSubmit(OrderVO orderVO) {
-        Map<String, Object> map = new HashMap<>();
         OrderDTO orderDTO = new OrderDTO();
         MyBeanUtil.copyProperties(orderVO, orderDTO);
         Long userId = orderDTO.getUserId();
@@ -218,10 +225,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String orderSn = OrderSnGenUtil.generateOrderSn(userId);
         orderDTO.setOrderSn(orderSn);
 
+        // 异步下单
+        CorrelationData correlationData = new CorrelationData(IdUtil.getUid());
+        Map<String, Object> map = new HashMap<>();
         map.put("order", orderDTO);
         map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
-        // 异步下单
-        rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", map);
+        try {
+            Message message = MessageBuilder
+                    .withBody(JSON.toJSONString(map).getBytes(Constants.UTF_ENCODING))
+                    .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
+                    .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                    .build();
+            rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", message, correlationData);
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage(), e);
+        }
         return R.success().add("actualPrice", actualPrice).add("orderSn", orderSn);
     }
 
