@@ -30,6 +30,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -51,17 +56,22 @@
             <version>${commons.collections.version}</version>
         </dependency>
 
-        <!--文件上传工具类 -->
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>${commons.fileupload.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
             <version>${spring-boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
+        <!-- 阿里JSON解析器 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
 
     </dependencies>
@@ -76,9 +86,9 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.wayn.MessageApplication</mainClass>
                     <layout>ZIP</layout>
-<!--                    <commandlineArguments>-->
-<!--                        -parameters-->
-<!--                    </commandlineArguments>-->
+                    <!--<commandlineArguments>
+                        -parameters
+                    </commandlineArguments>-->
                 </configuration>
                 <executions>
                     <execution>

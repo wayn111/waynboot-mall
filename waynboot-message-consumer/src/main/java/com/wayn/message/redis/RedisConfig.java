@@ -1,4 +1,4 @@
-package com.wayn.mobile.framework.redis;
+package com.wayn.message.redis;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;

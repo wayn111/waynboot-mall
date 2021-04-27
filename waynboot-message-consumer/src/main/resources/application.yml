@@ -2,12 +2,31 @@ server:
   port: 85
 
 spring:
+  redis:
+    host: wayn.ltd
+    port: 1688
+    timeout: 5000
+    password: admin@@123456
+    databaseIndex: 2
+    expire: 400
+    maxTotal: 50000
+    jedis:
+      pool:
+        max-active: 50
+        max-idle: 100
+        min-idle: 10
+        max-wait: 2000
   #配置rabbitMq 服务器
   rabbitmq:
     host: wayn.ltd
     port: 5672
     username: guest
     password: guest
+    # 消息确认配置项
+    # 确认消息已发送到交换机(Exchange)
+    publisher-confirm-type: correlated
+    # 确认消息已发送到队列(Queue)
+    publisher-returns: true
 
 # 日志配置
 logging:
