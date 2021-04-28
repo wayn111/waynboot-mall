@@ -12,8 +12,8 @@ import com.wayn.common.core.service.shop.ICategoryService;
 import com.wayn.common.core.service.shop.IDiamondService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
+import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.api.service.IHomeService;
-import com.wayn.mobile.framework.redis.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

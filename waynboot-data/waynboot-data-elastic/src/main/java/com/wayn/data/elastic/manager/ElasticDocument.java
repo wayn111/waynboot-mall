@@ -1,10 +1,6 @@
-package com.wayn.common.base.service;
+package com.wayn.data.elastic.manager;
 
 import com.alibaba.fastjson.JSON;
-import com.wayn.common.base.entity.ElasticEntity;
-import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -34,11 +30,13 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Component
-public class BaseElasticService {
+public class ElasticDocument {
 
     @Autowired
     RestHighLevelClient restHighLevelClient;
@@ -280,27 +278,4 @@ public class BaseElasticService {
         }
     }
 
-    /**
-     * 同步商品信息到es中
-     *
-     * @param goods 商品信息
-     */
-    public void syncGoods2Es(Goods goods) {
-        // 同步es
-        ElasticEntity elasticEntity = new ElasticEntity();
-        elasticEntity.setId(goods.getId().toString());
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", goods.getId());
-        map.put("name", goods.getName());
-        map.put("countPrice", goods.getCounterPrice());
-        map.put("retailPrice", goods.getRetailPrice());
-        map.put("keyword", Objects.isNull(goods.getKeywords()) ? Collections.emptyList() : goods.getKeywords().split(","));
-        map.put("isOnSale", goods.getIsOnSale());
-        map.put("createTime", goods.getCreateTime());
-        elasticEntity.setData(map);
-        boolean one = insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
-        if (!one) {
-            throw new BusinessException("商品同步es失败");
-        }
-    }
 }

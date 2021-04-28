@@ -1,4 +1,4 @@
-package com.wayn.admin.framework.redis;
+package com.wayn.data.redis.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;

@@ -1,4 +1,4 @@
-package com.wayn.admin.framework.config;
+package com.wayn.data.elastic.config;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;

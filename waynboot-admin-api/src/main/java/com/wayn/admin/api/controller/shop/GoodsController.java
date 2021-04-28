@@ -2,16 +2,16 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.admin.framework.redis.RedisCache;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.base.entity.ElasticEntity;
-import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUtils;
+import com.wayn.data.elastic.manager.ElasticDocument;
+import com.wayn.data.elastic.manager.ElasticEntity;
+import com.wayn.data.redis.manager.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -40,7 +40,7 @@ public class GoodsController extends BaseController {
     @Autowired
     private IGoodsService iGoodsService;
     @Autowired
-    private BaseElasticService baseElasticService;
+    private ElasticDocument elasticDocument;
     @Autowired
     private RedisCache redisCache;
 
@@ -78,9 +78,9 @@ public class GoodsController extends BaseController {
         boolean flag = false;
         redisCache.setCacheObject(SysConstants.REDIS_ES_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
         try {
-            baseElasticService.deleteIndex(SysConstants.ES_GOODS_INDEX);
+            elasticDocument.deleteIndex(SysConstants.ES_GOODS_INDEX);
             InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
-            if (baseElasticService.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
+            if (elasticDocument.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
                 List<Goods> list = iGoodsService.list();
                 List<ElasticEntity> entities = new ArrayList<>();
                 for (Goods goods : list) {
@@ -100,7 +100,7 @@ public class GoodsController extends BaseController {
                     elasticEntity.setData(map);
                     entities.add(elasticEntity);
                 }
-                flag = baseElasticService.insertBatch("goods", entities);
+                flag = elasticDocument.insertBatch("goods", entities);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

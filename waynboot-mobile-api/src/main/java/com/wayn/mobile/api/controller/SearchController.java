@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.shop.Keyword;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IKeywordService;
 import com.wayn.common.util.R;
+import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
 import com.wayn.mobile.framework.security.util.SecurityUtils;
@@ -60,7 +60,7 @@ public class SearchController extends BaseController {
     private IKeywordService iKeywordService;
 
     @Autowired
-    private BaseElasticService baseElasticService;
+    private ElasticDocument elasticDocument;
 
     @GetMapping("result")
     public R list(SearchVO searchVO) {
@@ -118,7 +118,7 @@ public class SearchController extends BaseController {
         searchSourceBuilder.query(boolQueryBuilder);
         searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
         searchSourceBuilder.size((int) page.getSize());
-        List<JSONObject> list = baseElasticService.search("goods", searchSourceBuilder, JSONObject.class);
+        List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
         List<Integer> goodsIdList = list.stream().map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
         if (goodsIdList.size() == 0) {
             return R.success().add("goods", Collections.emptyList());

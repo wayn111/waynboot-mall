@@ -1,9 +1,4 @@
-package com.wayn.admin.framework.redis;
-
-/**
- * @author bootdo 1992lcg@163.com
- * @version V1.0
- */
+package com.wayn.data.redis.manager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +34,6 @@ public class RedisConfig {
 
     @Value("${spring.redis.jedis.pool.max-wait}")
     private int maxWaitMillis;
-
 
     @Bean
     public JedisPoolConfig jedisPoolConfig() {
