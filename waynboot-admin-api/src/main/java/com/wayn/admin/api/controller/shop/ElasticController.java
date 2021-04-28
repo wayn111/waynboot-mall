@@ -2,12 +2,12 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.wayn.common.base.entity.ElasticEntity;
-import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUtils;
+import com.wayn.data.elastic.manager.ElasticDocument;
+import com.wayn.data.elastic.manager.ElasticEntity;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class ElasticController {
 
     @Autowired
-    private BaseElasticService baseElasticService;
+    private ElasticDocument elasticDocument;
 
     @Autowired
     private IGoodsService iGoodsService;
@@ -65,7 +65,7 @@ public class ElasticController {
             elasticEntity.setData(map);
             entities.add(elasticEntity);
         }
-        baseElasticService.insertBatch("goods", entities);
+        elasticDocument.insertBatch("goods", entities);
         return R.success();
     }
 
@@ -96,7 +96,7 @@ public class ElasticController {
         searchSourceBuilder.from(page);
         searchSourceBuilder.size(pageSize);
         searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-        List<JSONObject> list = baseElasticService.search("goods", searchSourceBuilder, JSONObject.class);
+        List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
         list = list.stream().filter(jsonObject -> (boolean) jsonObject.get("isOnSale")).collect(Collectors.toList());
         return R.success().add("data", list);
     }

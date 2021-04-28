@@ -1,4 +1,4 @@
-package com.wayn.mobile.framework.config;
+package com.wayn.data.redis.config;
 
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -55,8 +55,9 @@ public class CacheConfig extends CachingConfigurerSupport {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
         config.setDatabase(databaseIndex);
         config.setPassword(password);
-        return new JedisConnectionFactory(config,jedisClientConfiguration);
+        return new JedisConnectionFactory(config, jedisClientConfiguration);
     }
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory jedisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -92,7 +93,7 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     private RedisCacheConfiguration defaultCacheConfig() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                .prefixKeysWith("redis_key")
+                .prefixCacheNameWith("redis_key")
                 .entryTtl(Duration.ofSeconds(expire))
                 .disableCachingNullValues();
     }

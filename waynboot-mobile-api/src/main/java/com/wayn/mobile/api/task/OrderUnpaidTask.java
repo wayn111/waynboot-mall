@@ -8,8 +8,8 @@ import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.task.Task;
 import com.wayn.common.util.spring.SpringContextUtil;
+import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.api.service.IOrderService;
-import com.wayn.mobile.framework.redis.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.base.service.BaseElasticService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
@@ -13,6 +12,7 @@ import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
+import com.wayn.data.elastic.manager.ElasticDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +47,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     private ICategoryService iCategoryService;
 
     @Autowired
-    private BaseElasticService baseElasticService;
+    private ElasticDocument elasticDocument;
 
     @Override
     public IPage<Goods> listPage(Page<Goods> page, Goods goods) {
@@ -140,7 +140,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 保存商品货品
         iGoodsProductService.saveBatch(Arrays.asList(products));
 
-        baseElasticService.syncGoods2Es(goods);
+        // baseElasticService.syncGoods2Es(goods);
         return R.success();
     }
 
@@ -162,7 +162,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
         iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
         // 同步es
-        boolean one = baseElasticService.delete(SysConstants.ES_GOODS_INDEX, goodsId.toString());
+        boolean one = elasticDocument.delete(SysConstants.ES_GOODS_INDEX, goodsId.toString());
         if (!one) {
             throw new BusinessException("删除商品，同步es失败");
         }
@@ -223,7 +223,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 更新商品货品
         iGoodsProductService.updateBatchById(Arrays.asList(products));
 
-        baseElasticService.syncGoods2Es(goods);
+        // elasticDocume`nt.syncGoods2Es(goods);
         return R.success();
     }
 

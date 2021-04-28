@@ -1,4 +1,4 @@
-package com.wayn.common.base.entity;
+package com.wayn.data.elastic.manager;
 
 import lombok.Data;
 

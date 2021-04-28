@@ -1,6 +1,5 @@
 package com.wayn.admin.api.controller.system;
 
-import com.wayn.admin.framework.redis.RedisCache;
 import com.wayn.admin.framework.security.service.LoginService;
 import com.wayn.admin.framework.security.service.SysPermissionService;
 import com.wayn.admin.framework.security.service.TokenService;
@@ -12,6 +11,7 @@ import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
+import com.wayn.data.redis.manager.RedisCache;
 import com.wf.captcha.SpecCaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

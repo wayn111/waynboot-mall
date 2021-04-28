@@ -4,7 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.util.jwt.JwtUtil;
-import com.wayn.mobile.framework.redis.RedisCache;
+import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

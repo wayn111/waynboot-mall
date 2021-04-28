@@ -12,7 +12,7 @@ import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.mail.MailUtil;
-import com.wayn.mobile.framework.redis.RedisCache;
+import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.RegistryObj;
 import com.wayn.mobile.framework.security.service.TokenService;
