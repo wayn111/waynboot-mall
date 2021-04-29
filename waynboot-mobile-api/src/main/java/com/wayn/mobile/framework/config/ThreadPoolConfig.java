@@ -11,15 +11,15 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * 线程池配置
+ * 线程池配置，各系统分开使用
  **/
 @Configuration
 public class ThreadPoolConfig {
     // 核心线程池大小
-    private int corePoolSize = 50;
+    private int corePoolSize = 200;
 
     // 最大可创建的线程数
-    private int maxPoolSize = 200;
+    private int maxPoolSize = 400;
 
     // 队列最大长度
     private int queueCapacity = 1000;

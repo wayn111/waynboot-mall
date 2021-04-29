@@ -15,6 +15,7 @@ import com.wayn.common.util.R;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.api.service.IHomeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,19 +42,15 @@ public class IHomeServiceImpl implements IHomeService {
     @Autowired
     private IDiamondService iDiamondService;
 
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
     @Override
     public R getHomeIndexData() {
         if (redisCache.existsKey(INDEX_DATA)) {
             return redisCache.getCacheObject(INDEX_DATA);
         }
         R success = R.success();
-        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(
-                10,
-                10,
-                0L,
-                TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<>(),
-                r -> new Thread(r, "首页线程"));
         Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
         Callable<List<Diamond>> diamondCall = () -> iDiamondService.list(new QueryWrapper<Diamond>()
                 .orderByAsc("sort")
@@ -72,10 +69,10 @@ public class IHomeServiceImpl implements IHomeService {
         FutureTask<List<Diamond>> diamondTask = new FutureTask<>(diamondCall);
         FutureTask<List<Goods>> newGoodsTask = new FutureTask<>(newGoodsCall);
         FutureTask<List<Goods>> hotGoodsTask = new FutureTask<>(hotGoodsCall);
-        poolExecutor.submit(bannerTask);
-        poolExecutor.submit(diamondTask);
-        poolExecutor.submit(newGoodsTask);
-        poolExecutor.submit(hotGoodsTask);
+        threadPoolTaskExecutor.submit(bannerTask);
+        threadPoolTaskExecutor.submit(diamondTask);
+        threadPoolTaskExecutor.submit(newGoodsTask);
+        threadPoolTaskExecutor.submit(hotGoodsTask);
         try {
             success.add("bannerList", bannerTask.get());
             success.add("categoryList", diamondTask.get());
@@ -85,7 +82,7 @@ public class IHomeServiceImpl implements IHomeService {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } finally {
-            poolExecutor.shutdown();
+            threadPoolTaskExecutor.shutdown();
         }
         return success;
     }
