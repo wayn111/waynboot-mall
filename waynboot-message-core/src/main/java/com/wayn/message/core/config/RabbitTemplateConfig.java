@@ -30,7 +30,6 @@ public class RabbitTemplateConfig {
             System.out.println("ReturnCallback:     " + "交换机：" + returned.getExchange());
             System.out.println("ReturnCallback:     " + "路由键：" + returned.getRoutingKey());
         });
-
         return rabbitTemplate;
     }
 }
