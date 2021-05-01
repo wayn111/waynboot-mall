@@ -74,8 +74,8 @@ public class LoginController {
         redisCache.deleteObject(registryObj.getKey());
         redisCache.deleteObject(registryObj.getEmailKey());
         Member member = new Member();
-        member.setUsername("新用户" + new Date().getTime());
-        member.setNickname("用户昵称" + new Date().getTime());
+        member.setUsername("用户" + new Date().getTime() / 1000);
+        member.setNickname("昵称" + new Date().getTime() / 1000);
         member.setMobile(registryObj.getMobile());
         member.setEmail(registryObj.getEmail());
         member.setPassword(SecurityUtils.encryptPassword(registryObj.getPassword()));
