@@ -13,6 +13,7 @@ import com.wayn.common.core.service.shop.*;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
+import com.wayn.data.elastic.manager.ElasticEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -223,7 +224,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 更新商品货品
         iGoodsProductService.updateBatchById(Arrays.asList(products));
 
-        // elasticDocume`nt.syncGoods2Es(goods);
+        syncGoods2Es(goods);
         return R.success();
     }
 
@@ -235,5 +236,29 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     @Override
     public List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO) {
         return goodsMapper.searchResult(page, searchVO);
+    }
+
+    /**
+     * 同步商品信息到es中
+     *
+     * @param goods 商品信息
+     */
+    public void syncGoods2Es(Goods goods) {
+        // 同步es
+        ElasticEntity elasticEntity = new ElasticEntity();
+        elasticEntity.setId(goods.getId().toString());
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", goods.getId());
+        map.put("name", goods.getName());
+        map.put("countPrice", goods.getCounterPrice());
+        map.put("retailPrice", goods.getRetailPrice());
+        map.put("keyword", Objects.isNull(goods.getKeywords()) ? Collections.emptyList() : goods.getKeywords().split(","));
+        map.put("isOnSale", goods.getIsOnSale());
+        map.put("createTime", goods.getCreateTime());
+        elasticEntity.setData(map);
+        boolean one = elasticDocument.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
+        if (!one) {
+            throw new BusinessException("商品同步es失败");
+        }
     }
 }
