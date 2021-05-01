@@ -226,7 +226,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         orderDTO.setOrderSn(orderSn);
 
         // 异步下单
-        CorrelationData correlationData = new CorrelationData(IdUtil.getUid());
+        String uid = IdUtil.getUid();
+        System.out.println(uid);
+        CorrelationData correlationData = new CorrelationData(uid);
         Map<String, Object> map = new HashMap<>();
         map.put("order", orderDTO);
         map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
