@@ -16,7 +16,7 @@ spring:
         max-idle: 100
         min-idle: 10
         max-wait: 2000
-  #配置rabbitMq 服务器
+  # 配置rabbitMq 服务器
   rabbitmq:
     host: wayn.ltd
     port: 5672
@@ -27,6 +27,10 @@ spring:
     publisher-confirm-type: correlated
     # 确认消息已发送到队列(Queue)
     publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 100
 
 # 日志配置
 logging:

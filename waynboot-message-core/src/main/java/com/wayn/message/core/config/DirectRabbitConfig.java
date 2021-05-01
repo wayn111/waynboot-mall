@@ -13,24 +13,39 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DirectRabbitConfig {
 
-    // 队列 起名：EmailDirectQueue
+    /************************************ 订单队列、交换机 begin *******************************************/
+
+    /**
+     * 设置队列名称，并持久化
+     *
+     * @return 队列
+     */
     @Bean
     public Queue EmailDirectQueue() {
         return new Queue("EmailDirectQueue", true);
     }
 
-    // Direct交换机 起名：EmailDirectExchange
+    /**
+     * 设置交换机名称
+     *
+     * @return 交换机
+     */
     @Bean
     DirectExchange EmailDirectExchange() {
         return new DirectExchange("EmailDirectExchange");
     }
 
-    // 绑定  将队列和交换机绑定, 并设置用于匹配键：EmailDirectRouting
+    /**
+     * 将队列和交换机绑定, 并设置用于匹配键：EmailDirectRouting
+     */
     @Bean
-    Binding bindingTestDirect() {
+    Binding bindingEmailDirect() {
         return BindingBuilder.bind(EmailDirectQueue()).to(EmailDirectExchange()).with("EmailDirectRouting");
     }
+    /************************************ 订单队列、交换机 end *******************************************/
 
+
+    /************************************ 订单队列、交换机 begin *******************************************/
     @Bean
     public Queue OrderDirectQueue() {
         return new Queue("OrderDirectQueue", true);
@@ -45,5 +60,6 @@ public class DirectRabbitConfig {
     Binding bindingOrderDirect() {
         return BindingBuilder.bind(OrderDirectQueue()).to(OrderDirectExchange()).with("OrderDirectRouting");
     }
+    /************************************ 订单队列、交换机 end *******************************************/
 
 }
