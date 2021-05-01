@@ -56,7 +56,7 @@ public class ElasticDocument {
             CreateIndexRequest request = new CreateIndexRequest(idxName);
             buildSetting(request);
             request.mapping(idxSQL, XContentType.JSON);
-//            request.settings() 手工指定Setting
+            // request.settings() 手工指定Setting
             CreateIndexResponse res = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
             if (!res.isAcknowledged()) {
                 return false;
@@ -79,7 +79,7 @@ public class ElasticDocument {
         request.local(false);
         request.humanReadable(true);
         request.includeDefaults(false);
-//        request.indicesOptions(IndicesOptions.lenientExpandOpen());
+        // request.indicesOptions(IndicesOptions.lenientExpandOpen());
         return restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
     }
 
@@ -112,7 +112,7 @@ public class ElasticDocument {
         log.error("Data : id={},entity={}", entity.getId(), JSON.toJSONString(entity.getData()));
         request.id(entity.getId());
         request.source(entity.getData(), XContentType.JSON);
-//        request.source(JSON.toJSONString(entity.getData()), XContentType.JSON);
+        // request.source(JSON.toJSONString(entity.getData()), XContentType.JSON);
         try {
             IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
             ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();

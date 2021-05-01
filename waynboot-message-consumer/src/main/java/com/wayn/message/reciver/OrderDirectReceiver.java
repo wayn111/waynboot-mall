@@ -59,7 +59,7 @@ public class OrderDirectReceiver {
             if (response.getStatusCode().value() != 200) {
                 throw new Exception("调用订单系统下单失败 ：" + msgObject);
             }
-            // 确认收到消息，false只确认当前consumer一个消息收到，true确认所有consumer获得的消息
+            // multiple参数：确认收到消息，false只确认当前consumer一个消息收到，true确认所有consumer获得的消息
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
             channel.basicNack(deliveryTag, false, true);

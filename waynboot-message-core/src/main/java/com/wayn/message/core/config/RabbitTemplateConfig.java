@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
- * RabbitTemplate配置，设置生产者confirm确认和消费者return确认
+ * RabbitTemplate配置，设置生产者confirm确认和消费者手动确认
  */
 @Component
 public class RabbitTemplateConfig {
@@ -15,9 +15,8 @@ public class RabbitTemplateConfig {
     public RabbitTemplate createRabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate();
         rabbitTemplate.setConnectionFactory(connectionFactory);
-        // 设置开启Mandatory,才能触发回调函数,无论消息推送结果怎么样都强制调用回调函数
+        // 设置开启Mandatory，才能触发回调函数,无论消息推送结果怎么样都强制调用回调函数
         rabbitTemplate.setMandatory(true);
-
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             System.out.println("ConfirmCallback:     " + "相关数据：" + correlationData);
             System.out.println("ConfirmCallback:     " + "确认情况：" + ack);
