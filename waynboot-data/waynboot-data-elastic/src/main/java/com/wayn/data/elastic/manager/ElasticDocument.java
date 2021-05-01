@@ -109,7 +109,7 @@ public class ElasticDocument {
      */
     public boolean insertOrUpdateOne(String idxName, ElasticEntity entity) {
         IndexRequest request = new IndexRequest(idxName);
-        log.error("Data : id={},entity={}", entity.getId(), JSON.toJSONString(entity.getData()));
+        log.info("Data : id={},entity={}", entity.getId(), JSON.toJSONString(entity.getData()));
         request.id(entity.getId());
         request.source(entity.getData(), XContentType.JSON);
         // request.source(JSON.toJSONString(entity.getData()), XContentType.JSON);
