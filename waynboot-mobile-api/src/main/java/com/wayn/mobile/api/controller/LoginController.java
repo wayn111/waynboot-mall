@@ -58,24 +58,25 @@ public class LoginController {
             return R.error("手机号已注册，请更换手机号");
         }
 
-        // 获取redis中的验证码
-        String redisCode = redisCache.getCacheObject(registryObj.getKey());
-        String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
+        // String redisCode = redisCache.getCacheObject(registryObj.getKey());
+        // // 判断验证码
+        // if (registryObj.getCode() == null || !redisCode.equals(registryObj.getCode().trim().toLowerCase())) {
+        //     return R.error("验证码不正确");
+        // }
+        //
+        // redisCache.deleteObject(registryObj.getKey());
 
-        // 判断验证码
-        if (registryObj.getCode() == null || !redisCode.equals(registryObj.getCode().trim().toLowerCase())) {
-            return R.error("验证码不正确");
-        }
+        String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
         // 判断邮箱验证码
         if (registryObj.getEmailCode() == null || !redisEmailCode.equals(registryObj.getEmailCode().trim().toLowerCase())) {
             return R.error("邮箱验证码不正确");
         }
         // 删除验证码
-        redisCache.deleteObject(registryObj.getKey());
         redisCache.deleteObject(registryObj.getEmailKey());
         Member member = new Member();
         member.setUsername("用户" + new Date().getTime() / 1000);
         member.setNickname("昵称" + new Date().getTime() / 1000);
+        member.setAvatar("http://cdn.wayn.xin/091fffcf8e8c25ed8d2cb926be60a16a.png");
         member.setMobile(registryObj.getMobile());
         member.setEmail(registryObj.getEmail());
         member.setPassword(SecurityUtils.encryptPassword(registryObj.getPassword()));
