@@ -1,11 +1,10 @@
 server:
-  port: 82
-#  port: 433
-#  ssl:
-#    enabled: true
-#    key-store: classpath:mall.wayn.ltd.jks
-#    key-store-password: idFXdK.Rnm3CgZp
-#    key-store-type: JKS
+  port: 443
+  ssl:
+    enabled: true
+    key-store: classpath:mall.wayn.ltd.jks
+    key-store-password: idFXdK.Rnm3CgZp
+    key-store-type: JKS
 
 http-port: 82
 
