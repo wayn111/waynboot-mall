@@ -1,7 +1,9 @@
 package com.wayn.common.base.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wayn.common.base.service.UploadService;
 import com.wayn.common.config.WaynConfig;
+import com.wayn.common.core.domain.vo.Base64FileVO;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUploadUtil;
@@ -9,16 +11,15 @@ import com.wayn.common.util.file.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 /**
  * 通用请求处理类
@@ -30,6 +31,7 @@ import java.util.Base64;
 @RequestMapping("common")
 public class CommonController {
 
+    public static final String IMAGE_BASE64_FLAG = ";base64,";
     @Autowired
     private UploadService uploadService;
 
@@ -124,5 +126,32 @@ public class CommonController {
         }
     }
 
-    public static final String IMAGE_BASE64_FLAG = ";base64,";
+    /**
+     * 通用上传请求
+     */
+    @PostMapping("base64uploadFileList")
+    @ResponseBody
+    public R base64uploadFileList(@RequestBody List<Base64FileVO> list, HttpServletRequest request) {
+        try {
+            List<JSONObject> fileList = new ArrayList<>();
+            for (Base64FileVO base64FileVO : list) {
+                String filename = base64FileVO.getFilename();
+                String base64content = base64FileVO.getBase64content();
+                byte[] decode = Base64.getDecoder().decode(base64content.substring(base64content.indexOf(IMAGE_BASE64_FLAG) + IMAGE_BASE64_FLAG.length()));
+                // 上传文件路径
+                String filePath = WaynConfig.getUploadDir();
+                String fileName = FileUploadUtil.uploadFile(decode, filename, filePath);
+                String fileUrl = uploadService.uploadFile(fileName);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("fileName", fileName);
+                jsonObject.put("url", fileUrl);
+                fileList.add(jsonObject);
+            }
+            return R.success().add("fileList", fileList);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return R.error(e.getMessage());
+        }
+    }
+
 }

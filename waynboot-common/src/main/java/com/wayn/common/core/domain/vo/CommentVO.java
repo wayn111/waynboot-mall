@@ -13,6 +13,11 @@ public class CommentVO {
     private Long id;
 
     /**
+     * 订单商品项ID
+     */
+    private Long orderGoodsId;
+
+    /**
      * 如果type=0，则是商品评论；如果是type=1，则是专题评论。
      */
     private Long valueId;

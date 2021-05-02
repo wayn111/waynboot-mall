@@ -118,12 +118,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             List<Map<String, Object>> orderGoodsVoList = new ArrayList<>(orderGoodsList.size());
             for (OrderGoods orderGoods : orderGoodsList) {
                 Map<String, Object> orderGoodsVo = new HashMap<>();
-                orderGoodsVo.put("id", orderGoods.getGoodsId());
+                orderGoodsVo.put("id", orderGoods.getId());
+                orderGoodsVo.put("goodsId", orderGoods.getGoodsId());
                 orderGoodsVo.put("goodsName", orderGoods.getGoodsName());
                 orderGoodsVo.put("number", orderGoods.getNumber());
                 orderGoodsVo.put("picUrl", orderGoods.getPicUrl());
                 orderGoodsVo.put("specifications", orderGoods.getSpecifications());
                 orderGoodsVo.put("price", orderGoods.getPrice());
+                orderGoodsVo.put("comment", orderGoods.getComment());
                 orderGoodsVoList.add(orderGoodsVo);
             }
             orderVo.put("goodsList", orderGoodsVoList);

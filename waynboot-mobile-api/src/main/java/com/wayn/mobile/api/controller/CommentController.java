@@ -10,8 +10,11 @@ import com.wayn.common.core.service.shop.ICommentService;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("comment")
@@ -25,6 +28,11 @@ public class CommentController extends BaseController {
         Page<Comment> page = getPage();
         IPage<CommentVO> commentIPage = iCommentService.selectByTagType(page, goodsId, tagType);
         return R.success().add("page", commentIPage);
+    }
+
+    @PostMapping
+    public R addComment(@Valid @RequestBody CommentVO commentVO) {
+        return R.success().add("data", iCommentService.saveComment(commentVO));
     }
 
     @PostMapping("tagNum")

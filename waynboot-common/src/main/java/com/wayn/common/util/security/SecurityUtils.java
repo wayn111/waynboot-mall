@@ -13,6 +13,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * @author ruoyi
  */
 public class SecurityUtils {
+
+    /**
+     * 获取用户ID
+     **/
+    public static Long getUserId() {
+        try {
+            return getLoginUser().getUser().getUserId();
+        } catch (Exception e) {
+            throw new BusinessException("获取用户账户异常", HttpStatus.UNAUTHORIZED.value());
+        }
+    }
+
     /**
      * 获取用户账户
      **/

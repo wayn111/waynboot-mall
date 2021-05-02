@@ -44,5 +44,12 @@ public interface ICommentService extends IService<Comment> {
      */
     CommentTagNumVO selectTagNum(Long goodsId);
 
+    /**
+     * 添加评论信息
+     *
+     * @param commentVO 评论VO
+     * @return boolean
+     */
+    boolean saveComment(CommentVO commentVO);
 
 }
