@@ -20,7 +20,7 @@ public class HomeController extends BaseController {
 
     @PostMapping("index")
     public R index() {
-        return IHomeService.getHomeIndexDataCompletableFuture();
+        return IHomeService.getHomeIndexData();
     }
 
     @PostMapping("index1")

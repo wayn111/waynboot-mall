@@ -49,11 +49,5 @@
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.wayn</groupId>
-            <artifactId>waynboot-data</artifactId>
-            <version>1.1.0</version>
-        </dependency>
     </dependencies>
 </project>
