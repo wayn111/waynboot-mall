@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class OrderDirectReceiver {
@@ -70,6 +71,7 @@ public class OrderDirectReceiver {
             // multiple参数：确认收到消息，false只确认当前consumer一个消息收到，true确认所有consumer获得的消息
             channel.basicAck(deliveryTag, false);
             redisCache.setCacheMapValue("order_consumer_set", msgId, "order done");
+            redisCache.expire("order_consumer_set", 180, TimeUnit.SECONDS);
         } catch (Exception e) {
             channel.basicNack(deliveryTag, false, true);
             log.error(e.getMessage(), e);

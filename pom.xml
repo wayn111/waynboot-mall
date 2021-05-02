@@ -33,7 +33,7 @@
         <spring-boot.version>2.4.4</spring-boot.version>
         <mysql.connector.java.version>8.0.19</mysql.connector.java.version>
         <jedis.version>3.3.0</jedis.version>
-        <elasticsearch.version>7.4.2</elasticsearch.version>
+        <elasticsearch.version>[7.9.2,)</elasticsearch.version>
         <lombok.version>1.18.6</lombok.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <druid.version>1.2.4</druid.version>
