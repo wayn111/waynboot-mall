@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Banner;
-import com.wayn.common.core.domain.shop.Category;
 import com.wayn.common.core.domain.shop.Diamond;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.service.shop.IBannerService;
@@ -95,9 +94,13 @@ public class IHomeServiceImpl implements IHomeService {
         }
         R success = R.success();
         List<CompletableFuture<Void>> list = new ArrayList<>();
-        CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort")))
+        CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(new QueryWrapper<Banner>()
+                .eq("status", 0)
+                .orderByAsc("sort")))
                 .thenAccept(data -> success.add("bannerList", data));
-        CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iCategoryService.list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort")))
+        CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iDiamondService.list(new QueryWrapper<Diamond>()
+                .orderByAsc("sort")
+                .last("limit 10")))
                 .thenAccept(data -> success.add("categoryList", data));
         CompletableFuture<Void> f3 = CompletableFuture.supplyAsync(() -> iGoodsService.list(new QueryWrapper<Goods>()
                 .eq("is_new", true)
@@ -116,7 +119,7 @@ public class IHomeServiceImpl implements IHomeService {
         list.add(f3);
         list.add(f4);
         CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
-        redisCache.setCacheObject(INDEX_DATA, success, 10, TimeUnit.MINUTES);
+        redisCache.setCacheObject(INDEX_DATA, success, 3600, TimeUnit.MINUTES);
         return success;
     }
 
