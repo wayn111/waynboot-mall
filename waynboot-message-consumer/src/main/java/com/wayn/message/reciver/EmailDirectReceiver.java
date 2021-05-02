@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RabbitListener(queues = "EmailDirectQueue")
@@ -68,6 +69,7 @@ public class EmailDirectReceiver {
             // multiple参数：确认收到消息，false只确认当前consumer一个消息收到，true确认所有consumer获得的消息
             channel.basicAck(deliveryTag, false);
             redisCache.setCacheMapValue("email_consumer_set", msgId, "email has send");
+            redisCache.expire("email_consumer_set", 180, TimeUnit.SECONDS);
         } catch (Exception e) {
             channel.basicNack(deliveryTag, false, true);
             log.error(e.getMessage(), e);
