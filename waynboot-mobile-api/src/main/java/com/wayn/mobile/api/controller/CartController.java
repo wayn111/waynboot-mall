@@ -6,7 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.service.ICartService;
-import com.wayn.mobile.framework.security.util.SecurityUtils;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +30,7 @@ public class CartController extends BaseController {
 
     @GetMapping("list")
     public R list() {
-        Long userId = SecurityUtils.getUserId();
+        Long userId = MobileSecurityUtils.getUserId();
         return iCartService.list(userId);
     }
 
@@ -66,10 +66,10 @@ public class CartController extends BaseController {
 
     @PostMapping("getCheckedGoods")
     public R getCheckedGoods() {
-        Long userId = SecurityUtils.getUserId();
+        Long userId = MobileSecurityUtils.getUserId();
         List<Cart> cartList = iCartService.list(new QueryWrapper<Cart>()
                 .eq("user_id", userId).eq("checked", true));
-        BigDecimal amount = new BigDecimal(0.00);
+        BigDecimal amount = new BigDecimal("0.00");
         // 计算总价
         for (Cart cart : cartList) {
             amount = amount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));

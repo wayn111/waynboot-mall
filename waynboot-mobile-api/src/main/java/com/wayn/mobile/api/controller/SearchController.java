@@ -15,7 +15,7 @@ import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
-import com.wayn.mobile.framework.security.util.SecurityUtils;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.unit.TimeValue;
@@ -64,7 +64,7 @@ public class SearchController extends BaseController {
 
     @GetMapping("result")
     public R list(SearchVO searchVO) {
-        Long memberId = SecurityUtils.getUserId();
+        Long memberId = MobileSecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();
         Boolean filterNew = searchVO.getFilterNew();
         Boolean filterHot = searchVO.getFilterHot();

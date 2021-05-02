@@ -36,7 +36,7 @@ import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.OrderUnpaidTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
-import com.wayn.mobile.framework.security.util.SecurityUtils;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -101,7 +101,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R selectListPage(IPage<Order> page, Integer showType) {
         List<Short> orderStatus = OrderUtil.orderStatus(showType);
         Order order = new Order();
-        order.setUserId(SecurityUtils.getUserId());
+        order.setUserId(MobileSecurityUtils.getUserId());
         IPage<Order> orderIPage = orderMapper.selectOrderListPage(page, order, orderStatus);
         List<Order> orderList = orderIPage.getRecords();
         List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
@@ -137,7 +137,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public R statusCount() {
         R success = R.success();
-        Long userId = SecurityUtils.getUserId();
+        Long userId = MobileSecurityUtils.getUserId();
         List<Order> orderList = list(new QueryWrapper<Order>().select("order_status", "comments").eq("user_id", userId));
         int unpaid = 0;
         int unship = 0;
@@ -367,7 +367,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!handleOption.isPay()) {
             return R.error("订单不能支付");
         }
-        Member member = iMemberService.getById(SecurityUtils.getUserId());
+        Member member = iMemberService.getById(MobileSecurityUtils.getUserId());
         String openid = member.getWeixinOpenid();
         if (openid == null) {
             return R.error("订单不能支付");
@@ -639,7 +639,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @return 成功返回<code>SysConstants.STRING_TRUE</code>，失败返回<code>SysConstants.STRING_FALSE</code>，或者自定义消息
      */
     private String checkOrderOperator(Order order) {
-        Long userId = SecurityUtils.getUserId();
+        Long userId = MobileSecurityUtils.getUserId();
         if (Objects.isNull(order)) {
             return SysConstants.STRING_FALSE;
         }
