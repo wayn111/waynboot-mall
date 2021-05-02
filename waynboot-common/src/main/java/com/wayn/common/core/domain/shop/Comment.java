@@ -52,7 +52,7 @@ public class Comment extends ShopBaseEntity implements Serializable {
     /**
      * 用户表的用户ID
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * 是否含有图片（0无图，1有图）
