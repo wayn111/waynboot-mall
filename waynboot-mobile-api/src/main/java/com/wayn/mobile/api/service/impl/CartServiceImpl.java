@@ -14,7 +14,7 @@ import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.CartMapper;
 import com.wayn.mobile.api.service.ICartService;
-import com.wayn.mobile.framework.security.util.SecurityUtils;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,7 +68,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         if (!goods.getIsOnSale()) {
             return R.error("商品已经下架");
         }
-        Long userId = SecurityUtils.getLoginUser().getMember().getId();
+        Long userId = MobileSecurityUtils.getLoginUser().getMember().getId();
         GoodsProduct product = iGoodsProductService.getById(productId);
         Cart existsCart = checkExistsGoods(userId, goodsId, productId);
         if (Objects.isNull(existsCart)) {
@@ -106,7 +106,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public R goodsCount() {
-        Long userId = SecurityUtils.getLoginUser().getMember().getId();
+        Long userId = MobileSecurityUtils.getUserId();
         List<Cart> cartList = list(new QueryWrapper<Cart>()
                 .eq("user_id", userId));
         return R.success().add("count", cartList.size());

@@ -16,7 +16,7 @@ import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.RegistryObj;
 import com.wayn.mobile.framework.security.service.TokenService;
-import com.wayn.mobile.framework.security.util.SecurityUtils;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import com.wf.captcha.SpecCaptcha;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +120,7 @@ public class UserController {
         }
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Member member = loginUser.getMember();
-        member.setPassword(SecurityUtils.encryptPassword(registryObj.getPassword()));
+        member.setPassword(MobileSecurityUtils.encryptPassword(registryObj.getPassword()));
         boolean update = iMemberService.updateById(member);
         if (!update) {
             throw new BusinessException("修改密码失败");

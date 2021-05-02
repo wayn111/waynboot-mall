@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.mapper.SearchHistoryMapper;
 import com.wayn.mobile.api.service.ISearchHistoryService;
-import com.wayn.mobile.framework.security.util.SecurityUtils;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class SearchHistoryServiceImpl extends ServiceImpl<SearchHistoryMapper, S
 
     @Override
     public List<SearchHistory> selectList() {
-        Long memberId = SecurityUtils.getUserId();
+        Long memberId = MobileSecurityUtils.getUserId();
         return searchHistoryMapper.selectSeachHistoryList(memberId);
     }
 

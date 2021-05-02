@@ -1,7 +1,12 @@
 package com.wayn.message.reciver;
 
+import com.alibaba.fastjson.JSONObject;
+import com.rabbitmq.client.Channel;
+import com.wayn.data.redis.manager.RedisCache;
+import com.wayn.message.core.constant.SysConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
@@ -21,10 +27,23 @@ public class EmailDirectReceiver {
 
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RedisCache redisCache;
 
     @RabbitHandler
-    public void process(Map<String, Object> testMessage) {
+    public void process(Map<String, Object> testMessage, Channel channel, Message message) throws IOException {
         log.info("EmailDirectReceiver消费者收到消息: {}", testMessage.toString());
+        // spring_listener_return_correlation
+        String msgId = message.getMessageProperties().getHeader("spring_returned_message_correlation");
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        // 消费者消费消息时幂等性处理
+        if (redisCache.getCacheMap("email_consumer_set").containsKey(msgId)) {
+            // redis中包含该 key，说明该消息已经被消费过
+            log.info(msgId + ":消息已经被消费");
+            channel.basicAck(deliveryTag, false);// 确认消息已消费
+            return;
+        }
+
         String notifyUrl = (String) testMessage.get("notifyUrl");
         if (StringUtils.isEmpty(notifyUrl)) {
             log.error("notifyUrl不能为空！，参数：{}", testMessage);
@@ -40,9 +59,17 @@ public class EmailDirectReceiver {
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
             if (response.getStatusCode().value() != 200) {
-                throw new Exception(testMessage + " 邮件发送失败");
+                throw new Exception("邮件发送失败 ：" + testMessage);
             }
+            JSONObject jsonObject = JSONObject.parseObject(response.getBody());
+            if (SysConstants.RESULT_SUCCESS_CODE != (int) jsonObject.get("code")) {
+                throw new Exception("邮件发送失败 ：" + jsonObject.get("msg"));
+            }
+            // multiple参数：确认收到消息，false只确认当前consumer一个消息收到，true确认所有consumer获得的消息
+            channel.basicAck(deliveryTag, false);
+            redisCache.setCacheMapValue("email_consumer_set", msgId, "email has send");
         } catch (Exception e) {
+            channel.basicNack(deliveryTag, false, true);
             log.error(e.getMessage(), e);
         }
     }

@@ -6,7 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
-import com.wayn.mobile.framework.security.util.SecurityUtils;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ public class SearchHistoryController extends BaseController {
 
     @PostMapping
     public R add(@RequestBody SearchHistory searchHistory) {
-        Long memberId = SecurityUtils.getUserId();
+        Long memberId = MobileSecurityUtils.getUserId();
         searchHistory.setUserId(memberId);
         return R.result(iSearchHistoryService.save(searchHistory));
     }
@@ -44,7 +44,7 @@ public class SearchHistoryController extends BaseController {
 
     @DeleteMapping("all")
     public R delete() {
-        Long memberId = SecurityUtils.getUserId();
+        Long memberId = MobileSecurityUtils.getUserId();
         return R.result(iSearchHistoryService.remove(new QueryWrapper<SearchHistory>().eq("user_id", memberId)));
     }
 

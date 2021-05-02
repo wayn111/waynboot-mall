@@ -2,6 +2,7 @@ package com.wayn.common.constant;
 
 public class SysConstants {
 
+    public static final int RESULT_SUCCESS_CODE = 200;
 
     /**
      * 用户默认密码
@@ -65,6 +66,12 @@ public class SysConstants {
      * string类型boolean返回值，失败默认为error
      */
     public final static String STRING_FALSE = "false";
+    public static final String ES_GOODS_INDEX = "goods";
+    public static final String REDIS_ES_GOODS_INDEX = "es_goods";
+    /**
+     * es商品索引的创建语句所在文件位置
+     */
+    public static String ES_INDEX_GOODS_FILENAME = "/es/index/goods.json";
 
     /**
      * string类型boolean返回值，失败后返回自定义错误消息
@@ -72,13 +79,5 @@ public class SysConstants {
     public static String STRING_FALSE_MSG(String msg) {
         return msg;
     }
-
-    /**
-     * es商品索引的创建语句所在文件位置
-     */
-    public static String ES_INDEX_GOODS_FILENAME = "/es/index/goods.json";
-
-    public static final String ES_GOODS_INDEX = "goods";
-    public static final String REDIS_ES_GOODS_INDEX = "es_goods";
 
 }

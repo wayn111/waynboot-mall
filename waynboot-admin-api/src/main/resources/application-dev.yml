@@ -75,6 +75,11 @@ spring:
     port: 5672
     username: guest
     password: guest
+    # 消息确认配置项
+    # 确认消息已发送到交换机(Exchange)
+    publisher-confirm-type: correlated
+    # 确认消息已发送到队列(Queue)
+    publisher-returns: true
 
 es:
   host: wayn.ltd

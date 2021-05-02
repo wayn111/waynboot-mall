@@ -8,6 +8,7 @@ import com.wayn.common.core.domain.vo.CommentTagNumVO;
 import com.wayn.common.core.domain.vo.CommentVO;
 import com.wayn.common.core.service.shop.ICommentService;
 import com.wayn.common.util.R;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ public class CommentController extends BaseController {
 
     @PostMapping
     public R addComment(@Valid @RequestBody CommentVO commentVO) {
+        commentVO.setUserId(MobileSecurityUtils.getUserId());
         return R.success().add("data", iCommentService.saveComment(commentVO));
     }
 
