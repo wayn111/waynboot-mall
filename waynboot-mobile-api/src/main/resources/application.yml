@@ -1,12 +1,13 @@
 server:
-  port: 443
-  ssl:
-    enabled: true
-    key-store: classpath:mall.wayn.ltd.jks
-    key-store-password: idFXdK.Rnm3CgZp
-    key-store-type: JKS
-
-http-port: 82
+  port: 82
+#  https配置，放开HttpsConfiguration文件注释即可
+#  port: 443
+#  ssl:
+#    enabled: true
+#    key-store: classpath:mall.wayn.ltd.jks
+#    key-store-password: idFXdK.Rnm3CgZp
+#    key-store-type: JKS
+#http-port: 82
 
 spring:
   profiles:
@@ -56,18 +57,19 @@ wayn:
   name: wayn
   version: 1.1.0
   email: 166738430@qq.com
-  uploadDir: /opt/wayn/upload
-  adminUrl: http://localhost:81
-  mobileUrl: http://localhost:82
+#  uploadDir: /opt/wayn/upload # linux下文件上传目录
+  uploadDir: D:/wayn/upload # windows下文件上传目录
+  adminUrl: http://127.0.0.1:81
+  mobileUrl: http://127.0.0.1:82
 
 # wx支付配置
 shop:
   # 开发者应该设置成自己的wx相关信息
   wx:
-    app-id: wxe2d425f83d4fbe82
-    app-secret: e04004829d4c383b4db7769d88dfbca1
-    mch-id: 1508367571
-    mch-key: hYaUiN8G34Za3r46x3AMcymG9yhudBH2
+    app-id:
+    app-secret:
+    mch-id:
+    mch-key:
     notify-url: http://www.example.com/wx/order/pay-notify
     # 商户证书文件路径
     # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3

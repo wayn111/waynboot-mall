@@ -3,10 +3,10 @@ server:
 
 spring:
   redis:
-    host: wayn.ltd
-    port: 1688
+    host: 127.0.0.1
+    port: 6379
     timeout: 5000
-    password: admin@@123456
+    password:
     databaseIndex: 2
     expire: 400
     maxTotal: 50000
@@ -18,7 +18,7 @@ spring:
         max-wait: 2000
   # 配置rabbitMq 服务器
   rabbitmq:
-    host: wayn.ltd
+    host: 127.0.0.1
     port: 5672
     username: guest
     password: guest
