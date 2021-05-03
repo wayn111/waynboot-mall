@@ -32,6 +32,14 @@ public class MobileSecurityUtils {
         }
     }
 
+    public static Long getUserIdNonException() {
+        try {
+            return getLoginUser().getMember().getId();
+        } catch (Exception e) {
+            return 0L;
+        }
+    }
+
     /**
      * 获取用户
      **/

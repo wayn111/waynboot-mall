@@ -106,7 +106,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public R goodsCount() {
-        Long userId = MobileSecurityUtils.getUserId();
+        Long userId = MobileSecurityUtils.getUserIdNonException();
         List<Cart> cartList = list(new QueryWrapper<Cart>()
                 .eq("user_id", userId));
         return R.success().add("count", cartList.size());
