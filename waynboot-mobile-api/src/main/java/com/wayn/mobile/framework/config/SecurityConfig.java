@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 // cors启用
                 .cors().and()
-                // CRSF禁用，因为不使用session
+                // CSRF(跨站请求伪造)禁用，因为不使用session
                 .csrf().disable()
                 // 认证失败处理类
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
