@@ -41,8 +41,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public R login(@RequestBody LoginObj loginObj) {
-        String token = loginService.login(loginObj.getMobile(), loginObj.getPassword());
         // 生成令牌
+        String token = loginService.login(loginObj.getMobile(), loginObj.getPassword());
         return R.success().add(SysConstants.TOKEN, token);
     }
 
