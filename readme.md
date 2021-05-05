@@ -57,7 +57,7 @@ git clone git@github.com:wayn111/waynboot-mall.git
 在项目根目录下，找到`wayn_shop_*.sql`文件，新建mysql数据库wayn_shop，导入其中
 
 # 5. 修改Mysql、Redis、RabbitMQ、Elasticsearch连接配置
-修改`application-dev.yml`以及`application.yml`文件中数据连接配置享关信息
+修改`application-dev.yml`以及`application.yml`文件中数据连接配置相关信息
 
 # 6. 启动项目
 后台api：
