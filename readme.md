@@ -51,7 +51,7 @@ git clone git@github.com:wayn111/waynboot-mall.git
 # 2. 导入项目依赖
 将waynboot-mall目录用idea打开，导入maven依赖
 
-# 3. 安装Mysql、Redis、RabbitMQ、ElasticSearch到本地
+# 3. 安装Mysql8.0+、Redis3.0+、RabbitMQ3.0+、ElasticSearch7.0+到本地
 
 # 4. 导入sql文件
 在项目根目录下，找到`wayn_shop_*.sql`文件，新建mysql数据库wayn_shop，导入其中
