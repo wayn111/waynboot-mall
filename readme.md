@@ -28,6 +28,9 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 15. RabbitMQ生产者发送消息采用异步confirm模式，消费者消费消息时需手动确认
 16. ...
 
+## 商城难点整理
+- todo
+
 ## 文件目录
 ```java
 |-- waynboot-admin-api             // 运营后台api模块，提供后台项目api接口
