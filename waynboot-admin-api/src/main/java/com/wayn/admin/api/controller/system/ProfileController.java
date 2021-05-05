@@ -58,9 +58,11 @@ public class ProfileController {
     public R updatePwd(String oldPassword, String newPassword) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String password = loginUser.getPassword();
-        if (!password.equals(oldPassword)) {
+
+        if (!SecurityUtils.matchesPassword(oldPassword, password)) {
             return R.error("旧密码错误");
-        } else if (oldPassword.equals(newPassword)) {
+        }
+        if (SecurityUtils.matchesPassword(newPassword, password)) {
             return R.error("新密码不能与旧密码相同");
         }
         boolean result = iUserService.update().set("password", SecurityUtils.encryptPassword(newPassword)).update();
