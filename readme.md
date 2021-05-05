@@ -24,8 +24,9 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 11. 添加策略模式使用示例，优化首页金刚区跳转逻辑
 12. 拆分出通用的数据访问模块，统一redis & elastic配置与访问
 13. 使用elasticsearch-rest-high-level-client客户端对elasticsearch进行操作
-14. RabbitMQ生产者发送消息采用异步confirm模式，消费者消费消息时需手动确认
-15. ...
+14. 支持商品数据同步elasticsearch操作以及elasticsearch商品搜索
+15. RabbitMQ生产者发送消息采用异步confirm模式，消费者消费消息时需手动确认
+16. ...
 
 ## 文件目录
 ```java
