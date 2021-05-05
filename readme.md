@@ -140,6 +140,15 @@ h5商城api:
 QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlfh0OLIq5I8wDIjRj6DlT&jump_from=webapi"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="waynboot-mall交流群" title="waynboot-mall交流群"></a>
 有问题可以先提issue😁
 
+## todo
+
+- [ ] 支持多店铺
+- [ ] 订单详情页面
+- [ ] 秒杀专区
+- [ ] 优惠卷使用
+- [ ] 团购下单
+- [ ] ...
+
 ## 感谢
 
 - [panda-mall](https://github.com/Ewall1106/vue-h5-template)
