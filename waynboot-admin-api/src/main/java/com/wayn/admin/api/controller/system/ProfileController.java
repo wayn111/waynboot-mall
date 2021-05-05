@@ -11,6 +11,7 @@ import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUploadUtil;
 import com.wayn.common.util.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +40,7 @@ public class ProfileController {
         return success;
     }
 
+    @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PutMapping
     public R updateProfile(@RequestBody User user) {
         if (iUserService.updateById(user)) {
@@ -54,6 +56,7 @@ public class ProfileController {
         return R.error("修改个人信息异常，请联系管理员");
     }
 
+    @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PutMapping("/updatePwd")
     public R updatePwd(String oldPassword, String newPassword) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -75,6 +78,7 @@ public class ProfileController {
         return R.error("修改密码异常，请联系管理员");
     }
 
+    @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PostMapping("/avatar")
     public R avatar(@RequestParam("avatarfile") MultipartFile file, HttpServletRequest request) throws IOException {
         if (!file.isEmpty()) {
