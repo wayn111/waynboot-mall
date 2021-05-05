@@ -68,6 +68,7 @@ public class UserController extends BaseController {
         } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkEmailUnique(user))) {
             return R.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
+        user.setAvatar("http://cdn.wayn.xin/80af3951523e76f4818ac7fff1223808.jpeg");
         user.setCreateBy(SecurityUtils.getUsername());
         user.setCreateTime(new Date());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
