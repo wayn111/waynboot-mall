@@ -141,4 +141,5 @@ QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlf
 ## 感谢
 
 - [panda-mall](https://github.com/Ewall1106/vue-h5-template)
+- [litemall](https://github.com/linlinjava/litemall)
 - [vant-ui](https://github.com/youzan/vant)
