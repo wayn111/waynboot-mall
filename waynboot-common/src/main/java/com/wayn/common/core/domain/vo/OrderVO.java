@@ -16,7 +16,7 @@ public class OrderVO {
     private String orderSn;
 
     /**
-     * 用户地址列表
+     * 用户购物车列表
      */
     private List<Long> cartIdArr;
 

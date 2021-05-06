@@ -19,7 +19,7 @@ public class OrderDTO implements Serializable {
     private String OrderSn;
 
     /**
-     * 用户地址列表
+     * 用户购物车列表
      */
     private List<Long> cartIdArr;
 
