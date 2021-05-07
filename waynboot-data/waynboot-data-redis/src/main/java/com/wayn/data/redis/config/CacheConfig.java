@@ -100,7 +100,6 @@ public class CacheConfig extends CachingConfigurerSupport {
                 .disableCachingNullValues();
     }
 
-
     @Bean(name = "cacheKeyGenerator")
     public KeyGenerator cacheKeyGenerator() {
         return (target, method, params) -> {
