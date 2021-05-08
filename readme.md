@@ -29,7 +29,6 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 16. ...
 
 ## 商城难点整理
-- todo
 #### 1. 下单流程，库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
 1. 下单时扣减，这个方案属于实时扣减，当有大量下单请求时，由于订单数小于请求数，会发生下单失败，但是无法防止短时间大量恶意请求占用库存，
 造成普通用户无法下单
@@ -50,6 +49,7 @@ threadPoolTaskExecutor.submit(bannerTask);
 # 4. 最后可以在外部通过FutureTask的get方法异步获取执行结果 
 List<Banner> list = bannerTask.get()
 ```
+- todo
 
 ## 文件目录
 ```java
