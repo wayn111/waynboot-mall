@@ -49,6 +49,47 @@ threadPoolTaskExecutor.submit(bannerTask);
 # 4. 最后可以在外部通过FutureTask的get方法异步获取执行结果 
 List<Banner> list = bannerTask.get()
 ```
+#### 3. `ElasticSearch`查询操作，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
+```java
+SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+MatchQueryBuilder matchFiler = QueryBuilders.matchQuery("isOnSale", true);
+MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("name", keyword);
+MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
+boolQueryBuilder.filter(matchFiler).should(matchQuery).should(matchPhraseQueryBuilder).minimumShouldMatch(1);
+searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
+// 按是否新品排序
+if (isNew) {
+    searchSourceBuilder.sort(new FieldSortBuilder("isNew").order(SortOrder.DESC));
+}
+// 按是否热品排序
+if (isHot) {
+    searchSourceBuilder.sort(new FieldSortBuilder("isHot").order(SortOrder.DESC));
+}
+// 按价格高低排序
+if (isPrice) {
+    searchSourceBuilder.sort(new FieldSortBuilder("retailPrice").order("asc".equals(orderBy) ? SortOrder.ASC : SortOrder.DESC));
+}
+// 按销量排序
+if (isSales) {
+    searchSourceBuilder.sort(new FieldSortBuilder("sales").order(SortOrder.DESC));
+}
+// 筛选新品
+if (filterNew) {
+    MatchQueryBuilder filterQuery = QueryBuilders.matchQuery("isNew", true);
+    boolQueryBuilder.filter(filterQuery);
+}
+// 筛选热品
+if (filterHot) {
+    MatchQueryBuilder filterQuery = QueryBuilders.matchQuery("isHot", true);
+    boolQueryBuilder.filter(filterQuery);
+}
+
+searchSourceBuilder.query(boolQueryBuilder);
+searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
+searchSourceBuilder.size((int) page.getSize());
+List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
+```
 - todo
 
 ## 文件目录
