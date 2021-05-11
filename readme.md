@@ -65,7 +65,7 @@ List<Banner> list = bannerTask.get()
 |-- pom.xml                        // maven父项目依赖，定义子项目依赖版本
 |-- ...
 ```
-
+ 
 ## 开发部署
 ```
 # 1. 克隆项目
