@@ -211,7 +211,7 @@ QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlf
 - [ ] 秒杀专区
 - [ ] 优惠卷使用
 - [ ] 团购下单
-- [ ] ...
+- [ ] ... 
 
 ## 感谢
 
