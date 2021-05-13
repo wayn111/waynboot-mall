@@ -59,7 +59,7 @@ MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery
 boolQueryBuilder.filter(matchFiler).should(matchQuery).should(matchPhraseQueryBuilder).minimumShouldMatch(1);
 searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
 // 按是否新品排序
-if (isNew) {
+if (isNew) { 
     searchSourceBuilder.sort(new FieldSortBuilder("isNew").order(SortOrder.DESC));
 }
 // 按是否热品排序
