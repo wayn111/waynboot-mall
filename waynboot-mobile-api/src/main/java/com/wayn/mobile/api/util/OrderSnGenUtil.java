@@ -17,6 +17,7 @@ public class OrderSnGenUtil {
 
     /**
      * 返回订单编号，生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
+     *
      * @param userId 用户ID
      * @return 订单编号
      */
@@ -26,7 +27,8 @@ public class OrderSnGenUtil {
     }
 
     /**
-     *  计算该用户今日内第几次下单
+     * 计算该用户今日内第几次下单
+     *
      * @param userId 用户ID
      * @return 该用户今日第几次下单
      */
@@ -37,12 +39,11 @@ public class OrderSnGenUtil {
 
     /**
      * 加密用户ID，返回num位字符串
+     *
      * @param userId 用户ID
      * @return num位加密字符串
      */
     private static String encryptUserId(String userId) {
-        String result;
-        result = String.format("%0" + 6 + "d", Integer.parseInt(userId) + 1);
-        return result;
+        return String.format("%0" + 6 + "d", Integer.parseInt(userId) + 1);
     }
 }
