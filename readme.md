@@ -101,6 +101,92 @@ List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSO
 2. 订单消费者接受到订单消息后生成订单记录（未支付）
 3. 用户点击支付按钮时，前端根据订单编号轮询订单信息查询接口，如果订单编号记录已经入库则进行后续支付操作，如果订单编号未入库则返回错误信息（订单异常）
 4. 用户支付完成后在回调通知里更新订单状态为已支付
+
+#### 6. 金刚区跳转使用策略模式
+```java
+# 1. 定义金刚位跳转策略接口
+public interface DiamondJumpType {
+
+    List<Goods> getGoods(Page<Goods> page, Diamond diamond);
+
+    Integer getType();
+}
+
+# 2. 定义策略实现类，并使用@Component注解注入spring
+@Component
+public class CategoryStrategy implements DiamondJumpType {
+
+    @Autowired
+    private GoodsMapper goodsMapper;
+
+    @Override
+    public List<Goods> getGoods(Page<Goods> page, Diamond diamond) {
+        List<Long> cateList = Arrays.asList(diamond.getValueId());
+        return goodsMapper.selectGoodsListPageByl2CateId(page, cateList).getRecords();
+    }
+
+    @Override
+    public Integer getType() {
+        return JumpTypeEnum.CATEGORY.getType();
+    }
+}
+@Component
+public class ColumnStrategy implements DiamondJumpType {
+
+    @Autowired
+    private IColumnGoodsRelationService iColumnGoodsRelationService;
+
+    @Autowired
+    private IGoodsService iGoodsService;
+
+    @Override
+    public List<Goods> getGoods(Page<Goods> page, Diamond diamond) {
+        List<ColumnGoodsRelation> goodsRelationList = iColumnGoodsRelationService.list(new QueryWrapper<ColumnGoodsRelation>()
+                .eq("column_id", diamond.getValueId()));
+        List<Long> goodsIdList = goodsRelationList.stream().map(ColumnGoodsRelation::getGoodsId).collect(Collectors.toList());
+        Page<Goods> goodsPage = iGoodsService.page(page, new QueryWrapper<Goods>().in("id", goodsIdList).eq("is_on_sale", true));
+        return goodsPage.getRecords();
+    }
+
+    @Override
+    public Integer getType() {
+        return JumpTypeEnum.COLUMN.getType();
+    }
+}
+
+# 3. 定义策略上下文，通过构造器注入spring，定义map属性，通过key获取对应策略实现类
+@Component
+public class DiamondJumpContext {
+
+    private Map<Integer, DiamondJumpType> map = new HashMap<>();
+
+    /**
+     * 由spring自动注入DiamondJumpType子类
+     *
+     * @param diamondJumpTypes 金刚位跳转类型集合
+     */
+    public DiamondJumpContext(List<DiamondJumpType> diamondJumpTypes) {
+        for (DiamondJumpType diamondJumpType : diamondJumpTypes) {
+            map.put(diamondJumpType.getType(), diamondJumpType);
+        }
+    }
+
+    public DiamondJumpType getInstance(Integer jumpType) {
+        return map.get(jumpType);
+    }
+}
+
+# 4.使用
+@Autowired
+private DiamondJumpContext diamondJumpContext;
+
+@Test
+public void test(){
+    DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(1);
+}
+
+```
+
 - todo
 
 ## 文件目录
