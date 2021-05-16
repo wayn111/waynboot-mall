@@ -76,7 +76,8 @@ public class LoginController {
         Member member = new Member();
         member.setUsername("用户" + new Date().getTime() / 1000);
         member.setNickname("昵称" + new Date().getTime() / 1000);
-        member.setAvatar("http://cdn.wayn.xin/091fffcf8e8c25ed8d2cb926be60a16a.png");
+        String avatar = "http://cdn.wayn.xin/091fffcf8e8c25ed8d2cb926be60a16a.png";
+        member.setAvatar(avatar);
         member.setMobile(registryObj.getMobile());
         member.setEmail(registryObj.getEmail());
         member.setPassword(SecurityUtils.encryptPassword(registryObj.getPassword()));
