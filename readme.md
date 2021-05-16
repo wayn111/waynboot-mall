@@ -303,9 +303,11 @@ QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlf
 
 ## todo
 
-- [ ] 支持多店铺
 - [ ] 订单详情页面
+- [ ] 商城资讯流
+- [ ] 联系客服
 - [ ] 秒杀专区
+- [ ] 支持多店铺
 - [ ] 优惠卷使用
 - [ ] 团购下单
 - [ ] ... 
