@@ -6,19 +6,31 @@ import org.apache.commons.lang3.SystemUtils;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * ID生成帮助类
+ */
 public class IdUtil {
 
+
+    /**
+     * 生成UUID
+     *
+     * @return string
+     */
     public static String getUid() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    public static String getSnowFlakeId() {
-        return null;
+    /**
+     * 生成分布式ID，依赖雪花算法
+     *
+     * @return long
+     */
+    public static long getSnowFlakeId() {
+        return new SnowFlake(SnowFlake.getDataCenterId(), SnowFlake.getMachineId()).nextId();
     }
 
     /**
@@ -51,13 +63,14 @@ public class IdUtil {
         private final static long MACHINE_LEFT = SEQUENCE_BIT;
         private final static long DATACENTER_LEFT = SEQUENCE_BIT + MACHINE_BIT;
         private final static long TIMESTAMP_LEFT = DATACENTER_LEFT + DATACENTER_BIT;
-
         private final long datacenterId;  // 数据中心
         private final long machineId;     // 机器标识
+
         private final ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current(); // 线程安全的Random
-        private final int clockBackOffset = 10; // 时钟回拨偏移量
+        private final int clockBackOffset = 10; // 可容忍的时钟回拨偏移量
         private long sequence = 0L; // 序列号
         private long lastStamp = -1L;// 上一次时间戳
+
 
         public SnowFlake(long datacenterId, long machineId) {
             if (datacenterId > MAX_DATACENTER_NUM || datacenterId < 0) {
@@ -72,16 +85,12 @@ public class IdUtil {
 
         public static void main(String[] args) {
             SnowFlake snowFlake = new SnowFlake(getDataCenterId(), getMachineId());
-            long l = snowFlake.nextId();
-            System.out.println(l);
-            System.out.println(Long.valueOf(l).toString().length());
-            System.out.println(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")));
-            // long start = System.currentTimeMillis();
-            // for (int i = 0; i < 5000000; i++) {
-            //     System.out.println(snowFlake.nextId());
-            // }
-            //
-            // System.out.println(System.currentTimeMillis() - start);
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 5000000; i++) {
+                System.out.println(snowFlake.nextId());
+            }
+
+            System.out.println(System.currentTimeMillis() - start);
         }
 
         private static long getMachineId() {
@@ -151,9 +160,9 @@ public class IdUtil {
             lastStamp = currStamp;
 
             return (currStamp - START_STAMP) << TIMESTAMP_LEFT // 时间戳部分
-                    | datacenterId << DATACENTER_LEFT       // 数据中心部分
-                    | machineId << MACHINE_LEFT             // 机器标识部分
-                    | sequence;                             // 序列号部分
+                    | datacenterId << DATACENTER_LEFT          // 数据中心部分
+                    | machineId << MACHINE_LEFT                // 机器标识部分
+                    | sequence;                                // 序列号部分
         }
 
         private long getNextMill() {
