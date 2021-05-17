@@ -25,7 +25,7 @@
         <result column="content"            property="content"/>
         <result column="admin_content"      property="adminContent"/>
         <result column="user_id"            property="userId"/>
-        <result column="username"           property="username"/>
+        <result column="nickname"           property="username"/>
         <result column="avatar"             property="avatar"/>
         <result column="has_picture"        property="hasPicture"/>
         <result column="pic_urls"           property="picUrls"
@@ -61,7 +61,7 @@
                c.star,
                c.create_time,
                c.update_time,
-               m.username,
+               m.nickname,
                m.avatar
         from shop_comment c
                  left join shop_member m on c.user_id = m.id

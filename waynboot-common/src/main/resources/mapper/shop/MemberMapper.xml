@@ -5,7 +5,6 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="ShopMemberResult" type="com.wayn.common.core.domain.shop.Member">
         <result column="id"                 property="id" />
-        <result column="username"           property="username" />
         <result column="password"           property="password" />
         <result column="gender"             property="gender" />
         <result column="birthday"           property="birthday"/>
@@ -27,7 +26,7 @@
     <!-- 通用查询结果列 -->
     <sql id="selectMemberVo">
         select id,
-        username, password, gender, birthday, email, last_login_time, last_login_ip, user_level, nickname, mobile, avatar, weixin_openid, session_key, status, create_time, update_time, del_flag
+        password, gender, birthday, email, last_login_time, last_login_ip, user_level, nickname, mobile, avatar, weixin_openid, session_key, status, create_time, update_time, del_flag
         from shop_member
     </sql>
 
@@ -37,9 +36,6 @@
             del_flag = 0
             <if test="member.id != null">
                 AND id like concat('%', #{member.id}, '%')
-            </if>
-            <if test="member.username != null and member.username != ''">
-                AND username like concat('%', #{member.username}, '%')
             </if>
             <if test="member.status != null">
                 AND status = #{member.status}

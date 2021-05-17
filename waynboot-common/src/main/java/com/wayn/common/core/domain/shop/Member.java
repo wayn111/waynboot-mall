@@ -34,11 +34,6 @@ public class Member extends ShopBaseEntity implements Serializable {
     private Long id;
 
     /**
-     * 用户名称
-     */
-    private String username;
-
-    /**
      * 用户密码
      */
     private String password;
@@ -108,6 +103,5 @@ public class Member extends ShopBaseEntity implements Serializable {
      * 删除标志（0代表存在 1代表删除）
      */
     private Boolean delFlag;
-
 
 }
