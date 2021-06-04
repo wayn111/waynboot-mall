@@ -12,19 +12,6 @@
     <version>1.1.0</version>
 
     <dependencies>
-        <!-- swagger2-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-
-        <!-- swagger2-UI-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.wayn</groupId>
@@ -50,8 +37,7 @@
                     <artifactId>lombok</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
+        </dependency>     <!--springfox swagger官方Starter-->
     </dependencies>
 
     <build>
@@ -63,9 +49,9 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.wayn.MobileApplication</mainClass>
                     <layout>ZIP</layout>
-<!--                    <commandlineArguments>-->
-<!--                        -parameters-->
-<!--                    </commandlineArguments>-->
+                    <!--                    <commandlineArguments>-->
+                    <!--                        -parameters-->
+                    <!--                    </commandlineArguments>-->
                 </configuration>
                 <executions>
                     <execution>

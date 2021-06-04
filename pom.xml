@@ -32,7 +32,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <spring-boot.version>2.4.4</spring-boot.version>
         <mysql.connector.java.version>8.0.19</mysql.connector.java.version>
-        <jedis.version>3.3.0</jedis.version>
+        <lettuce.version>6.1.2.RELEASE</lettuce.version>
         <elasticsearch.version>7.12.1</elasticsearch.version>
         <lombok.version>1.18.6</lombok.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
@@ -43,7 +43,7 @@
         <commons-lang3.version>3.11</commons-lang3.version>
         <fastjson.version>1.2.75</fastjson.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
-        <swagger.version>2.9.2</swagger.version>
+        <swagger.version>3.0.0</swagger.version>
         <easypoi.version>4.2.0</easypoi.version>
         <jwt.version>3.14.0</jwt.version>
         <qiniu.version>7.4.0</qiniu.version>
@@ -68,6 +68,17 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-redis</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
+            <dependency>
+                <groupId>io.lettuce</groupId>
+                <artifactId>lettuce-core</artifactId>
+                <version>${lettuce.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>2.9.0</version>
             </dependency>
 
             <dependency>
@@ -149,12 +160,6 @@
                 <version>${commons.fileupload.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>${jedis.version}</version>
-            </dependency>
-
             <!-- jwt验证 -->
             <dependency>
                 <groupId>com.auth0</groupId>
@@ -193,24 +198,10 @@
                 <version>${qiniu.version}</version>
             </dependency>
 
-            <!-- swagger2-->
+            <!--springfox swagger官方Starter-->
             <dependency>
                 <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-
-            <!-- 防止进入swagger页面报类型转换错误，排除2.9.2中的引用，手动增加1.5.21版本-->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>1.5.21</version>
-            </dependency>
-
-            <!-- swagger2-UI-->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
+                <artifactId>springfox-boot-starter</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
 
