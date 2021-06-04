@@ -11,10 +11,8 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
 
     /**
@@ -30,7 +28,7 @@ public class SwaggerConfig {
                 // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 // 扫描指定包中的swagger注解
-                //.apis(RequestHandlerSelectors.basePackage("com.ruoyi.project.tool.swagger"))
+                //.apis(RequestHandlerSelectors.basePackage("com.waynboot.mobile"))
                 // 扫描所有 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
@@ -43,9 +41,9 @@ public class SwaggerConfig {
         // 用ApiInfoBuilder进行定制
         return new ApiInfoBuilder()
                 // 设置标题
-                .title("标题：wayn_admin管理系统_接口文档")
+                .title("标题：wayn_mobile_接口文档")
                 // 描述
-                .description("描述：用于查看后台管理系统api接口")
+                .description("描述：用于查看wayn_mobile api接口")
                 // 作者信息
                 .contact(new Contact(WaynConfig.getName(), null, WaynConfig.getEmail()))
                 // 版本
