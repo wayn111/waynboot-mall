@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
 @TableName("shop_banner")
+@ToString
 @EqualsAndHashCode(callSuper = true)
 public class Banner extends ShopBaseEntity implements Serializable {
 

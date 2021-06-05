@@ -66,7 +66,7 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     private RedisCacheConfiguration defaultCacheConfig() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                .prefixCacheNameWith("redis:cache:")
+                .prefixCacheNameWith("redis:cache")
                 .entryTtl(Duration.ofSeconds(expire))
                 .disableCachingNullValues();
     }
