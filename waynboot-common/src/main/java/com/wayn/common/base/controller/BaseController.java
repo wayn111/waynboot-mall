@@ -74,7 +74,7 @@ public class BaseController {
             }
             return tPage;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            // log.error(e.getMessage(), e);
             return getPage(1, 10);
         }
     }
