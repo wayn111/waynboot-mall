@@ -5,17 +5,10 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    timeout: 5000
     password:
-    databaseIndex: 2
+    database: 0
+    timeout: 5000
     expire: 400
-    maxTotal: 50000
-    jedis:
-      pool:
-        max-active: 50
-        max-idle: 100
-        min-idle: 10
-        max-wait: 2000
   # 配置rabbitMq 服务器
   rabbitmq:
     host: 127.0.0.1

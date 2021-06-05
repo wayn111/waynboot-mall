@@ -25,15 +25,6 @@ import java.time.Duration;
 @Configuration
 public class CacheConfig extends CachingConfigurerSupport {
 
-    @Value("${spring.redis.host}")
-    private String host = "127.0.0.1";
-
-    @Value("${spring.redis.port}")
-    private int port = 6379;
-
-    @Value("${spring.redis.password}")
-    private String password = "";
-
     // 0 - never expire
     @Value("${spring.redis.expire}")
     private int expire = 0;
@@ -75,7 +66,7 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     private RedisCacheConfiguration defaultCacheConfig() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                .prefixCacheNameWith("redis_key")
+                .prefixCacheNameWith("redis:cache:")
                 .entryTtl(Duration.ofSeconds(expire))
                 .disableCachingNullValues();
     }
