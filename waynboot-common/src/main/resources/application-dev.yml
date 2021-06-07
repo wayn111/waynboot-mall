@@ -17,11 +17,11 @@ spring:
         username:
         password:
       # 初始连接数
-      initialSize: 20
+      initialSize: 40
       # 最小连接池数量
-      minIdle: 10
+      minIdle: 40
       # 最大连接池数量
-      maxActive: 40
+      maxActive: 60
       # 配置获取连接等待超时的时间
       maxWait: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
