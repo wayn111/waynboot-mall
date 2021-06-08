@@ -28,6 +28,12 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <!-- 阿里云docker容器命名空间 site:https://cr.console.aliyun.com/cn-shanghai/instance/namespaces-->
+        <aliyun-docker-namespace>wayn111</aliyun-docker-namespace>
+        <docker-from-image-name>adoptopenjdk:11-jre-openj9</docker-from-image-name>
+        <docker-username>填写你的阿里云账号</docker-username>
+        <docker-passwqrd>填写你的密码，site:https://cr.console.aliyun.com/cn-shanghai/instance/credentials</docker-passwqrd>
+
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <spring-boot.version>2.4.4</spring-boot.version>

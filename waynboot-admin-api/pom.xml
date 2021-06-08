@@ -11,6 +11,11 @@
 
     <artifactId>waynboot-admin-api</artifactId>
 
+    <properties>
+        <aliyun-docker-namespace>wayn111</aliyun-docker-namespace>
+        <main-class>com.wayn.AdminApplication</main-class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
@@ -98,6 +103,50 @@
                     <execution>
                         <goals>
                             <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <!--配置基本镜像-->
+                    <from>
+                        <image>${docker-from-image-name}</image>
+                    </from>
+                    <!--配置最终推送的地址，仓库名，镜像名-->
+                    <to>
+                        <image>registry.cn-shanghai.aliyuncs.com/${aliyun-docker-namespace}/${project.artifactId}
+                        </image>
+                        <tags>
+                            <tag>${project.version}</tag>
+                            <tag>latest</tag>
+                        </tags>
+                        <auth>
+                            <username>${docker-username}</username>
+                            <password>${docker-passwqrd}</password>
+                        </auth>
+                    </to>
+                    <container>
+                        <mainClass>${main-class}</mainClass>
+                        <jvmFlags>
+                            <jvmFlag>-Xms512m</jvmFlag>
+                            <jvmFlag>-Xmx512m</jvmFlag>
+                            <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
+                            <jvmFlag>-XX:HeapDumpPath=./</jvmFlag>
+                        </jvmFlags>
+                    </container>
+                </configuration>
+
+                <!-- 绑定到maven lifecicle-->
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
                         </goals>
                     </execution>
                 </executions>
