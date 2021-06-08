@@ -86,7 +86,7 @@
                         </tags>
                         <auth>
                             <username>${docker-username}</username>
-                            <username>${docker-passwqrd}</username>
+                            <password>${docker-passwqrd}</password>
                         </auth>
                     </to>
                     <container>
