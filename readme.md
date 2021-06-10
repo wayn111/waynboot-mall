@@ -30,7 +30,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 17. ...
   
 ## 商城难点整理
-#### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
+### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
 1. 下单时扣减，这个方案属于实时扣减，当有大量下单请求时，由于订单数小于请求数，会发生下单失败，但是无法防止短时间大量恶意请求占用库存，
 造成普通用户无法下单
 2. 支付成功扣减，这个方案可以预防恶意请求占用库存，但是会存在多个请求同时下单后，在支付回调中扣减库存失败，导致订单还是下单失败并且还要退还订单金额（这种请求就是订单数超过了库存数，无法发货，影响用户体验）
@@ -39,7 +39,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 4. 针对大流量下单场景，比如一分钟内五十万次下单请求，可以通过设置虚拟库存的方式减少下单接口对数据库的访问。具体来说就是把商品实际库存保存到redis中，
 下单时配合lua脚本原子的get和decr商品库存数量（这一步就拦截了大部分请求），执行成功后在扣减实际库存
 
-#### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
+### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
 ```java
 # 1. 通过创建子线程继承Callable接口
 Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
@@ -50,7 +50,7 @@ threadPoolTaskExecutor.submit(bannerTask);
 # 4. 最后可以在外部通过FutureTask的get方法异步获取执行结果 
 List<Banner> list = bannerTask.get()
 ```
-#### 3. `ElasticSearch`查询操作，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
+### 3. `ElasticSearch`查询操作，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
 ```java
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -91,18 +91,18 @@ searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
 searchSourceBuilder.size((int) page.getSize());
 List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
 ```
-#### 4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
+### 4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
 1. 秒级时间戳：时间递增保证唯一性
 2. 加密用户ID：加密处理，返回用户ID6位数字，可以防并发访问，同一秒用户不会产生2个订单
 3. 今日第几次下单：便于运营查询处理用户当日订单
 
-#### 5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力
+### 5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力
 1. 用户点击提交订单按钮，后台生成订单编号和订单金额跳转到订单支付页面，并发送rabbitMQ消息（包含订单编号等信息）
 2. 订单消费者接受到订单消息后生成订单记录（未支付）
 3. 用户点击支付按钮时，前端根据订单编号轮询订单信息查询接口，如果订单编号记录已经入库则进行后续支付操作，如果订单编号未入库则返回错误信息（订单异常）
 4. 用户支付完成后在回调通知里更新订单状态为已支付
 
-#### 6. 金刚区跳转使用策略模式
+### 6. 金刚区跳转使用策略模式
 ```java
 # 1. 定义金刚位跳转策略接口
 public interface DiamondJumpType {
@@ -184,7 +184,70 @@ private DiamondJumpContext diamondJumpContext;
 public void test(){
     DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(1);
 }
+```
+### 7. 使用google jib插件部署项目到阿里云容器服务
+#### 1. 在waynboot-mobile-api子项目pom中添加如下配置
+```javascript
+<plugin>
+   <groupId>com.google.cloud.tools</groupId>
+   <artifactId>jib-maven-plugin</artifactId>
+   <version>3.0.0</version>
+   <configuration>
+      <!--配置基本镜像，可以在docker hub网站上寻找合适jdk11版本镜像-->
+      <from>
+         <image>adoptopenjdk:11-jre-openj9</image>
+      </from>
+      <!--配置最终推送的地址，仓库名，镜像名-->
+      <to>
+         <image>registry.cn-shanghai.aliyuncs.com/阿里云容器服务命名空间/你的项目名称
+         </image>
+         <tags>
+            <tag>你的版本号</tag>
+            <tag>latest</tag>
+         </tags>
+         <auth>
+            <username>你的阿里云镜像服务账号</username>
+            <password>你的阿里云镜像服务密码</password>
+         </auth>
+      </to>
+      <container>
+         <mainClass>com.waynboot.modile.ModileAppliction</mainClass>
+         <jvmFlags>
+            <jvmFlag>-Xms512m</jvmFlag>
+            <jvmFlag>-Xmx512m</jvmFlag>
+            <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
+            <jvmFlag>-XX:HeapDumpPath=./</jvmFlag>
+         </jvmFlags>
+      </container>
+   </configuration>
 
+   <!-- 绑定到maven lifecicle-->
+   <executions>
+      <execution>
+         <phase>package</phase>
+         <goals>
+            <goal>build</goal>
+         </goals>
+      </execution>
+   </executions>
+</plugin>
+```
+推送完成后就可以在阿里云容器服务管理控制台中看到自己推送得镜像
+![image-20210610163326702](http://cdn.wayn.ltd/img/image-20210610163326702.png)
+#### 2. 服务器获通过镜像启动java服务 
+##### 1.登录阿里云Docker Registry
+```javascript
+docker login --username=166973****@qq.com registry.cn-shanghai.aliyuncs.com
+# 输入命令后会提示输入密码
+```
+##### 2.从Registry中拉取镜像
+```javascript
+docker pull registry.cn-shanghai.aliyuncs.com/wayn111/newbee-mall-plus:lastes
+```
+##### 3.启动java服务
+```javascript
+docker run -d -p 81:81 --name waynboot-mobile-api registry.cn-shanghai.aliyuncs.com/wayn111/newbee-mall-plus:lastes
+# 自此大功能告成
 ```
 
 - todo
