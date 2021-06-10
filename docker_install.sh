@@ -5,6 +5,9 @@ app_name="waynboot_mall"
 docker_redistry_prefix="registry.cn-shanghai.aliyuncs.com/wayn111/"
 waynboot_mall=("waynboot-mobile-api:82" "waynboot-admin-api:81" "waynboot-message-consumer:85")
 
+echo "${app_name}项目开始安装"
+echo "------------------------------------------------------------------"
+
 for var in "${waynboot_mall[@]}"; do
   echo "${var}:初始化安装开始"
   port=${var#*:}
