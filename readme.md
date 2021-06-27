@@ -30,7 +30,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 17. ...
   
 ## 商城难点整理
-#### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
+### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
 1. 下单时扣减，这个方案属于实时扣减，当有大量下单请求时，由于订单数小于请求数，会发生下单失败，但是无法防止短时间大量恶意请求占用库存，
 造成普通用户无法下单
 2. 支付成功扣减，这个方案可以预防恶意请求占用库存，但是会存在多个请求同时下单后，在支付回调中扣减库存失败，导致订单还是下单失败并且还要退还订单金额（这种请求就是订单数超过了库存数，无法发货，影响用户体验）
@@ -39,7 +39,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 4. 针对大流量下单场景，比如一分钟内五十万次下单请求，可以通过设置虚拟库存的方式减少下单接口对数据库的访问。具体来说就是把商品实际库存保存到redis中，
 下单时配合lua脚本原子的get和decr商品库存数量（这一步就拦截了大部分请求），执行成功后在扣减实际库存
 
-#### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
+### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
 ```java
 # 1. 通过创建子线程继承Callable接口
 Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
@@ -50,7 +50,8 @@ threadPoolTaskExecutor.submit(bannerTask);
 # 4. 最后可以在外部通过FutureTask的get方法异步获取执行结果 
 List<Banner> list = bannerTask.get()
 ```
-#### 3. `ElasticSearch`查询操作，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
+
+### 3. `ElasticSearch`查询操作，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
 ```java
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -91,18 +92,57 @@ searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
 searchSourceBuilder.size((int) page.getSize());
 List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
 ```
-#### 4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
+
+### 4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
 1. 秒级时间戳：时间递增保证唯一性
 2. 加密用户ID：加密处理，返回用户ID6位数字，可以防并发访问，同一秒用户不会产生2个订单
 3. 今日第几次下单：便于运营查询处理用户当日订单
+```java
+/**
+ * 返回订单编号，生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
+ *
+ * @param userId 用户ID
+ * @return 订单编号
+ */
+public static String generateOrderSn(Long userId) {
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
+        return now + encryptUserId(String.valueOf(userId), 6) + countByOrderSn(userId);
+        }
 
-#### 5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力
-1. 用户点击提交订单按钮，后台生成订单编号和订单金额跳转到订单支付页面，并发送rabbitMQ消息（包含订单编号等信息）
-2. 订单消费者接受到订单消息后生成订单记录（未支付）
+/**
+ * 计算该用户今日内第几次下单
+ *
+ * @param userId 用户ID
+ * @return 该用户今日第几次下单
+ */
+public static int countByOrderSn(Long userId) {
+        IOrderService orderService = SpringContextUtil.getBean(IOrderService.class);
+        return orderService.count(new QueryWrapper<Order>().eq("user_id", userId)
+        .gt("create_time", LocalDate.now())
+        .lt("create_time", LocalDate.now().plusDays(1)));
+        }
+
+/**
+ * 加密用户ID，返回num位字符串
+ *
+ * @param userId 用户ID
+ * @param num    长度
+ * @return num位加密字符串
+ */
+private static String encryptUserId(String userId, int num) {
+        return String.format("%0" + num + "d", Integer.parseInt(userId) + 1);
+        }
+
+```
+
+### 5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力
+1. 用户点击提交订单按钮，后台生成订单编号和订单金额跳转到订单支付页面，并将订单编号等信息发送rabbitMQ消息（生产订单）
+2. 订单消费者接受到订单消息后，获取订单编号生成订单记录（用户待支付）
 3. 用户点击支付按钮时，前端根据订单编号轮询订单信息查询接口，如果订单编号记录已经入库则进行后续支付操作，如果订单编号未入库则返回错误信息（订单异常）
-4. 用户支付完成后在回调通知里更新订单状态为已支付
+4. 前端调用微信/支付宝完成支付操作
+5. 用户支付完成后在回调通知里更新订单状态为已支付（已成功）
 
-#### 6. 金刚区跳转使用策略模式
+### 6. 金刚区跳转使用策略模式
 ```java
 # 1. 定义金刚位跳转策略接口
 public interface DiamondJumpType {
