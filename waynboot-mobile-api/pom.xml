@@ -92,8 +92,9 @@
                     <container>
                         <mainClass>${main-class}</mainClass>
                         <jvmFlags>
-                            <jvmFlag>-Xms512m</jvmFlag>
-                            <jvmFlag>-Xmx512m</jvmFlag>
+                            <jvmFlag>-Xms1212m</jvmFlag>
+                            <jvmFlag>-Xmx1212m</jvmFlag>
+                            <jvmFlag>-Xss512k</jvmFlag>
                             <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
                             <jvmFlag>-XX:HeapDumpPath=./</jvmFlag>
                         </jvmFlags>
