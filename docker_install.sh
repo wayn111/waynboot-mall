@@ -1,4 +1,4 @@
-# /bin/bash
+#!/usr/bin/env bash
 # waynboot-mall项目得docker方式部署脚本
 
 app_name="waynboot_mall"
