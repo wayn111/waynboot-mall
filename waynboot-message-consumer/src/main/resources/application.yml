@@ -3,15 +3,15 @@ server:
 
 spring:
   redis:
-    host: 127.0.0.1
-    port: 6379
-    password:
-    database: 0
+    host: wayn.ltd
+    port: 1688
     timeout: 5000
+    password: admin@@123456
+    database: 2
     expire: 400
   # 配置rabbitMq 服务器
   rabbitmq:
-    host: 127.0.0.1
+    host: wayn.ltd
     port: 5672
     username: guest
     password: guest

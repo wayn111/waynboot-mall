@@ -6,9 +6,9 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://127.0.0.1:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-        username: root
-        password: 123456
+        url: jdbc:mysql://waynmysql.mysql.rds.aliyuncs.com:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        username: wayn
+        password: heGE@@201011
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -56,15 +56,22 @@ spring:
           config:
             multi-statement-allow: true
   redis:
-    host: 127.0.0.1
-    port: 6379
-    password:
+    host: wayn.ltd
+    port: 1688
+    password: admin@@123456
     database: 2
     timeout: 5000
     expire: 400
+    lettuce:
+      shutdown-timeout: 100ms
+      pool:
+        max-active: 4
+        min-idle: 0
+        max-idle: 4
+        max-wait: 1ms
   #配置rabbitMq 服务器
   rabbitmq:
-    host: 127.0.0.1
+    host: wayn.ltd
     port: 5672
     username: guest
     password: guest
@@ -75,7 +82,7 @@ spring:
     publisher-returns: true
 
 es:
-  host: 127.0.0.1
+  host: huawei.wayn.ltd
   port: 9200
   scheme: http
 

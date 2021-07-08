@@ -57,10 +57,10 @@ wayn:
   name: wayn
   version: 1.1.0
   email: 166738430@qq.com
-#  uploadDir: /opt/wayn/upload # linux下文件上传目录
-  uploadDir: D:/wayn/upload # windows下文件上传目录
-  adminUrl: http://127.0.0.1:81
-  mobileUrl: http://127.0.0.1:82
+  uploadDir: /opt/wayn/upload # linux下文件上传目录
+#  uploadDir: D:/wayn/upload # windows下文件上传目录
+  adminUrl: http://mall.wayn.ltd:81
+  mobileUrl: http://mall.wayn.ltd:82
 
 # wx支付配置
 shop:
