@@ -1,4 +1,5 @@
-FROM openjdk:11-jdk
+
+FROM adoptopenjdk:11-jdk-openj9
 
 ARG MAVEN_VERSION=3.8.1
 ARG USER_HOME_DIR="/root"
