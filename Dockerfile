@@ -1,2 +1,1 @@
-FROM maven:11-jdk-openj9
-MAINTAINER wayn111
+FROM maven:3.8.1-jdk-11-openj9
