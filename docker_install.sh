@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# waynboot-mall项目得docker方式部署脚本
+# waynboot-mall项目-阿里云容器服务-docker方式部署脚本
 
 app_name="waynboot_mall"
 docker_redistry_prefix="registry.cn-shanghai.aliyuncs.com/wayn111/"

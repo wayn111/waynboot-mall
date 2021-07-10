@@ -40,7 +40,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 下单时配合lua脚本原子的get和decr商品库存数量（这一步就拦截了大部分请求），执行成功后在扣减实际库存
 
 ### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
-```java
+```
 # 1. 通过创建子线程继承Callable接口
 Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
 # 2. 传入Callable的任务给FutureTask
