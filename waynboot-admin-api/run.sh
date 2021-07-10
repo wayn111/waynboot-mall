@@ -10,7 +10,6 @@ app_version='1.1.0'
 profile_active='dev'
 # coding docker host
 coding_docker_host="waynaqua-docker.pkg.coding.net/wayn"
-echo '----copy jar----'
 docker stop ${app_name}
 echo '----stop container----'
 docker rm ${app_name}
@@ -21,10 +20,9 @@ echo '----rm image----'
 docker pull ${coding_docker_host}/${group_name}/${app_name}:${app_version}
 echo '----pull image----'
 docker run -p ${app_port}:${app_port} --name ${app_name} \
-  --link mysql:db \
   -e 'spring.profiles.active'=${profile_active} \
   -e TZ="Asia/Shanghai" \
   -v /etc/localtime:/etc/localtime \
   -v /mydata/app/${app_name}/logs:/var/logs \
-  -d ${group_name}/${app_name}:${app_version}
+  -d ${coding_docker_host}/${group_name}/${app_name}:${app_version}
 echo '----start container----'
