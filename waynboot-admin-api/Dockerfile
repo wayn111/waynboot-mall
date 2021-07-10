@@ -9,4 +9,4 @@ RUN bash -c 'touch /opt/waynboot-mall/waynboot-admin-api-1.1.0.jar'
 # 声明服务运行在8080端口
 EXPOSE 81
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", "-jar", "-Xms812m<", "-Xmx812m<", "-Xss512k",  "/opt/waynboot-mall/waynboot-admin-api-1.1.0.jar"]
+ENTRYPOINT ["java", "-jar", "-Xms812m", "-Xmx812m", "-Xss512k",  "/opt/waynboot-mall/waynboot-admin-api-1.1.0.jar"]
