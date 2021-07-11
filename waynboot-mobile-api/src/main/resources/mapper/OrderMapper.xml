@@ -21,6 +21,7 @@
         <result column="order_price"            property="orderPrice" />
         <result column="actual_price"           property="actualPrice" />
         <result column="pay_id"                 property="payId" />
+        <result column="pay_type"                 property="payType" />
         <result column="pay_time"               property="payTime" />
         <result column="ship_sn"                property="shipSn" />
         <result column="ship_channel"           property="shipChannel" />
@@ -40,7 +41,10 @@
     <!-- 通用查询结果列 -->
     <sql id="selectOrderVo">
         select id,
-        user_id, order_sn, order_status, aftersale_status, consignee, mobile, address, message, goods_price, freight_price, coupon_price, integral_price, groupon_price, order_price, actual_price, pay_id, pay_time, ship_sn, ship_channel, ship_time, refund_amount, refund_type, refund_content, refund_time, confirm_time, comments, order_end_time, create_time, update_time, del_flag
+        user_id, order_sn, order_status, aftersale_status, consignee, mobile, address, message,
+               goods_price, freight_price, coupon_price, integral_price, groupon_price, order_price,
+               actual_price, pay_id, pay_time, ship_sn, ship_channel, ship_time, refund_amount, refund_type, pay_type,
+               refund_content, refund_time, confirm_time, comments, order_end_time, create_time, update_time, del_flag
         from shop_order
     </sql>
 
@@ -50,6 +54,9 @@
             del_flag = 0
             <if test="order.orderStatus != null">
                 AND order_status = #{order.orderStatus}
+            </if>
+            <if test="order.payType != null">
+                AND pay_type = #{order.payType}
             </if>
             <if test="order.userId != null">
                 AND user_id = #{order.userId}
