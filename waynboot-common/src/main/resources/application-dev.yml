@@ -64,11 +64,6 @@ spring:
     expire: 400
     lettuce:
       shutdown-timeout: 100ms
-      pool:
-        max-active: 4
-        min-idle: 0
-        max-idle: 4
-        max-wait: 1ms
   #配置rabbitMq 服务器
   rabbitmq:
     host: wayn.ltd

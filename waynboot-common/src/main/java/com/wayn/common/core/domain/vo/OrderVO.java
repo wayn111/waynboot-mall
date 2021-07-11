@@ -31,4 +31,9 @@ public class OrderVO {
     private Long addressId;
 
     private String message;
+
+    /**
+     * 支付方式 1微信 2支付宝
+     */
+    private Integer payType;
 }
