@@ -26,6 +26,11 @@ public class OrderController extends BaseController {
         return iOrderService.selectListPage(page, showType);
     }
 
+    @PostMapping("info")
+    public R info(@RequestBody OrderVO orderVO) {
+        return R.success().add("data", iOrderService.getById(orderVO.getOrderSn()));
+    }
+
     @PostMapping("statusCount")
     public R statusCount() {
         return iOrderService.statusCount();
@@ -36,19 +41,26 @@ public class OrderController extends BaseController {
         return iOrderService.asyncSubmit(orderVO);
     }
 
-    @PostMapping("info")
-    public R info(@RequestBody OrderVO orderVO) {
-        return R.success().add("data", iOrderService.getById(orderVO.getOrderSn()));
-    }
-
+    /**
+     * JSAPI支付
+     *
+     * @param orderVO
+     * @return
+     */
     @PostMapping("prepay")
     public R prepay(@RequestBody OrderVO orderVO) {
-        return iOrderService.prepay(orderVO.getOrderSn(), request);
+        return iOrderService.prepay(orderVO.getOrderSn(), orderVO.getPayType(), request);
     }
 
+    /**
+     * H5支付
+     *
+     * @param orderVO
+     * @return
+     */
     @PostMapping("h5pay")
     public R h5pay(@RequestBody OrderVO orderVO) {
-        return iOrderService.h5pay(orderVO.getOrderSn(), request);
+        return iOrderService.h5pay(orderVO.getOrderSn(), orderVO.getPayType(), request);
     }
 
     @PostMapping("payNotify")
@@ -56,9 +68,9 @@ public class OrderController extends BaseController {
         return iOrderService.payNotify(request, response);
     }
 
-    @GetMapping("testPayNotify/{orderSn}")
-    public R payNotify(@PathVariable String orderSn) {
-        return iOrderService.testPayNotify(orderSn);
+    @GetMapping("searchResult/{orderSn}")
+    public R searchResult(@PathVariable String orderSn) {
+        return iOrderService.searchResult(orderSn);
     }
 
     @PostMapping("cancel/{orderId}")

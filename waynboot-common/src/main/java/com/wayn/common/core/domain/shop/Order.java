@@ -111,9 +111,14 @@ public class Order extends ShopBaseEntity implements Serializable {
     private String payId;
 
     /**
-     * 微信付款时间
+     * 支付方式 1微信 2支付宝
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Integer payType;
+
+    /**
+     * 付款时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime payTime;
 
     /**
@@ -129,7 +134,7 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 发货开始时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime shipTime;
 
     /**
@@ -150,13 +155,13 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 退款时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime refundTime;
 
     /**
      * 用户确认收货时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime confirmTime;
 
     /**
@@ -167,7 +172,7 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 订单关闭时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderEndTime;
 
     /**
