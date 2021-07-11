@@ -2,11 +2,13 @@ package com.wayn.common.util;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class R {
+public class R implements Serializable {
 
+    private static final long serialVersionUID = -5316597326293972581L;
     private int code;
     private String msg;
     private Map<String, Object> map = new HashMap<>();

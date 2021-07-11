@@ -22,6 +22,7 @@ import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.util.OrderHandleOption;
 import com.wayn.common.core.util.OrderUtil;
+import com.wayn.common.enums.PayTypeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.task.TaskService;
 import com.wayn.common.util.IdUtil;
@@ -355,7 +356,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R prepay(String orderSn, HttpServletRequest request) {
+    public R prepay(String orderSn, Integer payType, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         String checkMsg = checkOrderOperator(order);
@@ -367,36 +368,42 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!handleOption.isPay()) {
             return R.error("订单不能支付");
         }
-        Member member = iMemberService.getById(MobileSecurityUtils.getUserId());
-        String openid = member.getWeixinOpenid();
-        if (openid == null) {
-            return R.error("订单不能支付");
-        }
-        WxPayMpOrderResult result;
-        try {
-            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-            orderRequest.setOutTradeNo(order.getOrderSn());
-            orderRequest.setOpenid(openid);
-            orderRequest.setBody("订单：" + order.getOrderSn());
-            // 元转成分
-            int fee;
-            BigDecimal actualPrice = order.getActualPrice();
-            fee = actualPrice.multiply(new BigDecimal(100)).intValue();
-            orderRequest.setTotalFee(fee);
-            orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
+        // 设置支付方式
+        order.setPayType(payType);
+        if (PayTypeEnum.WX.getCode() == payType) {
+            Member member = iMemberService.getById(MobileSecurityUtils.getUserId());
+            String openid = member.getWeixinOpenid();
+            if (openid == null) {
+                return R.error("订单不能支付");
+            }
+            WxPayMpOrderResult result;
+            try {
+                WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+                orderRequest.setOutTradeNo(order.getOrderSn());
+                orderRequest.setOpenid(openid);
+                orderRequest.setBody("订单：" + order.getOrderSn());
+                // 元转成分
+                int fee;
+                BigDecimal actualPrice = order.getActualPrice();
+                fee = actualPrice.multiply(new BigDecimal(100)).intValue();
+                orderRequest.setTotalFee(fee);
+                orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
 
-            result = wxPayService.createOrder(orderRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.error("订单不能支付");
+                result = wxPayService.createOrder(orderRequest);
+                return R.success().add("result", result);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return R.error("订单不能支付");
+            }
+        } else {
+            return R.success();
         }
-        return R.success().add("result", result);
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R h5pay(String orderSn, HttpServletRequest request) {
+    public R h5pay(String orderSn, Integer payType, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         String checkMsg = checkOrderOperator(order);
@@ -408,24 +415,48 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!handleOption.isPay()) {
             return R.error("订单不能支付");
         }
+        // 设置支付方式
+        order.setPayType(payType);
+        if (PayTypeEnum.WX.getCode() == payType) {
+            WxPayMwebOrderResult result;
+            try {
+                WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+                orderRequest.setOutTradeNo(order.getOrderSn());
+                orderRequest.setTradeType("MWEB");
+                orderRequest.setBody("订单：" + order.getOrderSn());
+                // 元转成分
+                int fee;
+                BigDecimal actualPrice = order.getActualPrice();
+                fee = actualPrice.multiply(new BigDecimal(100)).intValue();
+                orderRequest.setTotalFee(fee);
+                orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
+                result = wxPayService.createOrder(orderRequest);
+                return R.success().add("data", result);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return R.error("支付失败");
+            }
+        } else {
+            // todo 暂时没有实现支付宝支付，直接更新支付状态为已支付
+            order.setPayId("xxxxx0987654321-ali");
+            order.setPayTime(LocalDateTime.now());
+            order.setOrderStatus(OrderUtil.STATUS_PAY);
+            order.setUpdateTime(new Date());
+            if (!updateById(order)) {
+                return R.error("更新数据已失效");
+            }
 
-        WxPayMwebOrderResult result;
-        try {
-            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-            orderRequest.setOutTradeNo(order.getOrderSn());
-            orderRequest.setTradeType("MWEB");
-            orderRequest.setBody("订单：" + order.getOrderSn());
-            // 元转成分
-            int fee;
-            BigDecimal actualPrice = order.getActualPrice();
-            fee = actualPrice.multiply(new BigDecimal(100)).intValue();
-            orderRequest.setTotalFee(fee);
-            orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
-            result = wxPayService.createOrder(orderRequest);
-            return R.success().add("data", result);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return R.error("支付失败");
+            // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
+            String email = iMemberService.getById(order.getUserId()).getEmail();
+            if (StringUtils.isNotBlank(email)) {
+                iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+            }
+
+            // 删除redis中订单id
+            redisCache.deleteZsetObject("order_zset", order.getId());
+            // 取消订单超时未支付任务
+            taskService.removeTask(new OrderUnpaidTask(order.getId()));
+            return R.success();
         }
     }
 
@@ -495,36 +526,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public R testPayNotify(String orderSn) {
+    public R searchResult(String orderSn) {
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         if (order == null) {
             return R.error(ErrorCode.ORDER_NOT_EXISTS_ERROR, "订单不存在，编号：" + orderSn);
         }
 
         // 检查这个订单是否已经处理过
-        if (OrderUtil.hasPayed(order)) {
-            return R.error("订单已经处理成功!");
+        if (!OrderUtil.isCreateStatus(order)) {
+            return R.error(ErrorCode.ORDER_NOT_EXISTS_ERROR, "订单创建失败!");
         }
-
-        order.setPayId("xxxxx0987654321-wx");
-        order.setPayTime(LocalDateTime.now());
-        order.setOrderStatus(OrderUtil.STATUS_PAY);
-        order.setUpdateTime(new Date());
-        if (!updateById(order)) {
-            return R.error("更新数据已失效");
-        }
-
-        // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-        String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotBlank(email)) {
-            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
-        }
-
-        // 删除redis中订单id
-        redisCache.deleteZsetObject("order_zset", order.getId());
-        // 取消订单超时未支付任务
-        taskService.removeTask(new OrderUnpaidTask(order.getId()));
-        return R.success("处理成功!");
+        return R.success("订单创建成功!");
     }
 
     @Override

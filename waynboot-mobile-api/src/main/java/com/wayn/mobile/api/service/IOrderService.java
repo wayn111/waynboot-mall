@@ -43,7 +43,7 @@ public interface IOrderService extends IService<Order> {
      * @param request 请求
      * @return r
      */
-    R h5pay(String orderSn, HttpServletRequest request);
+    R h5pay(String orderSn, Integer payType, HttpServletRequest request);
 
     /**
      * 付款订单的预支付会话标识
@@ -56,7 +56,7 @@ public interface IOrderService extends IService<Order> {
      * @param request 请求
      * @return r
      */
-    R prepay(String orderSn, HttpServletRequest request);
+    R prepay(String orderSn, Integer payType, HttpServletRequest request);
 
     /**
      * 获取订单列表
@@ -82,7 +82,7 @@ public interface IOrderService extends IService<Order> {
      * @param orderSn 订单编号
      * @return r
      */
-    R testPayNotify(String orderSn);
+    R searchResult(String orderSn);
 
     /**
      * 取消订单
