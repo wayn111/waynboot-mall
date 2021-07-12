@@ -9,6 +9,7 @@ import com.wayn.message.core.messsage.OrderDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 /**
  * <p>
@@ -56,7 +57,7 @@ public interface IOrderService extends IService<Order> {
      * @param request 请求
      * @return r
      */
-    R prepay(String orderSn, Integer payType, HttpServletRequest request);
+    R prepay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException;
 
     /**
      * 获取订单列表
