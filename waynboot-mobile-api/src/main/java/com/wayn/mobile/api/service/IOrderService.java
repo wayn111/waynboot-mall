@@ -44,7 +44,7 @@ public interface IOrderService extends IService<Order> {
      * @param request 请求
      * @return r
      */
-    R h5pay(String orderSn, Integer payType, HttpServletRequest request);
+    R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException;
 
     /**
      * 付款订单的预支付会话标识
