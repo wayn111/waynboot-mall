@@ -1,6 +1,10 @@
 package com.wayn.mobile.api.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,6 +17,7 @@ import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
+import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.Constants;
 import com.wayn.common.constant.ErrorCode;
@@ -354,11 +359,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return R.success().add("orderId", order.getId());
     }
 
+    @Autowired
+    private AlipayConfig alipayConfig;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R prepay(String orderSn, Integer payType, HttpServletRequest request) {
+    public R prepay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
+        Long userId = order.getUserId();
         String checkMsg = checkOrderOperator(order);
         if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
             return R.error(checkMsg);
@@ -370,33 +379,97 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         // 设置支付方式
         order.setPayType(payType);
-        if (PayTypeEnum.WX.getCode() == payType) {
-            Member member = iMemberService.getById(MobileSecurityUtils.getUserId());
-            String openid = member.getWeixinOpenid();
-            if (openid == null) {
-                return R.error("订单不能支付");
-            }
-            WxPayMpOrderResult result;
-            try {
-                WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-                orderRequest.setOutTradeNo(order.getOrderSn());
-                orderRequest.setOpenid(openid);
-                orderRequest.setBody("订单：" + order.getOrderSn());
-                // 元转成分
-                int fee;
-                BigDecimal actualPrice = order.getActualPrice();
-                fee = actualPrice.multiply(new BigDecimal(100)).intValue();
-                orderRequest.setTotalFee(fee);
-                orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
+        switch (Objects.requireNonNull(PayTypeEnum.of(payType))) {
+            case WX:
+                Member member = iMemberService.getById(MobileSecurityUtils.getUserId());
+                String openid = member.getWeixinOpenid();
+                if (openid == null) {
+                    return R.error("订单不能支付");
+                }
+                WxPayMpOrderResult result;
+                try {
+                    WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
+                    orderRequest.setOutTradeNo(order.getOrderSn());
+                    orderRequest.setOpenid(openid);
+                    orderRequest.setBody("订单：" + order.getOrderSn());
+                    // 元转成分
+                    int fee;
+                    BigDecimal actualPrice = order.getActualPrice();
+                    fee = actualPrice.multiply(new BigDecimal(100)).intValue();
+                    orderRequest.setTotalFee(fee);
+                    orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
 
-                result = wxPayService.createOrder(orderRequest);
-                return R.success().add("result", result);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return R.error("订单不能支付");
-            }
-        } else {
-            return R.success();
+                    result = wxPayService.createOrder(orderRequest);
+                    return R.success().add("result", result);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return R.error("订单不能支付");
+                }
+            case ALI:
+                request.setCharacterEncoding(Constants.UTF_ENCODING);
+                // 初始化
+                AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGateway(), alipayConfig.getAppId(),
+                        alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(), alipayConfig.getAlipayPublicKey(),
+                        alipayConfig.getSigntype());
+                // 创建API对应的request
+                AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+                // 在公共参数中设置回跳和通知地址
+                String url = WaynConfig.getMobileUrl() + request.getContextPath();
+                alipayRequest.setReturnUrl(url + "/returnOrders/" + orderSn + "/" + userId);
+                alipayRequest.setNotifyUrl(url + "/paySuccess?payType=1&orderNo=" + orderSn);
+
+                // 填充业务参数
+                // 必填
+                // 商户订单号，需保证在商户端不重复
+                String out_trade_no = orderSn + new Random().nextInt(9999);
+                // 销售产品码，与支付宝签约的产品码名称。目前仅支持FAST_INSTANT_TRADE_PAY
+                String product_code = "FAST_INSTANT_TRADE_PAY";
+                // 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]。
+                BigDecimal actualPrice = order.getActualPrice();
+                String total_amount = actualPrice.toString();
+                // 订单标题
+                String subject = "支付宝测试";
+
+                // 选填
+                // 商品描述，可空
+                String body = "商品描述";
+
+                alipayRequest.setBizContent("{" + "\"out_trade_no\":\"" + out_trade_no + "\"," + "\"product_code\":\""
+                        + product_code + "\"," + "\"total_amount\":\"" + total_amount + "\"," + "\"subject\":\"" + subject
+                        + "\"," + "\"body\":\"" + body + "\"}");
+                // 请求
+                String form;
+                try {
+                    // 需要自行申请支付宝的沙箱账号、申请appID，并在配置文件中依次配置AppID、密钥、公钥，否则这里会报错。
+                    form = alipayClient.pageExecute(alipayRequest).getBody();//调用SDK生成表单
+                    return R.success().add("form", form);
+                } catch (AlipayApiException e) {
+                    e.printStackTrace();
+                    return R.error("订单不能支付");
+                }
+            case ALI_TEST:
+                // todo 暂时没有实现支付宝支付，直接更新支付状态为已支付
+                order.setPayId("xxxxx0987654321-ali");
+                order.setPayTime(LocalDateTime.now());
+                order.setOrderStatus(OrderUtil.STATUS_PAY);
+                order.setUpdateTime(new Date());
+                if (!updateById(order)) {
+                    return R.error("更新数据已失效");
+                }
+
+                // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
+                String email = iMemberService.getById(order.getUserId()).getEmail();
+                if (StringUtils.isNotBlank(email)) {
+                    iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+                }
+
+                // 删除redis中订单id
+                redisCache.deleteZsetObject("order_zset", order.getId());
+                // 取消订单超时未支付任务
+                taskService.removeTask(new OrderUnpaidTask(order.getId()));
+                return R.success();
+            default:
+                return R.error("不支持的支付类型！");
         }
     }
 
