@@ -74,8 +74,8 @@ public class OrderController extends BaseController {
     }
 
     @PostMapping("aliPayNotify")
-    public R aliPayNotify(Integer payType, String orderNo) {
-        log.info("支付宝paySuccess通知数据记录：orderNo: {}, payType：{}", orderNo, payType);
+    public R aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
+        log.info("支付宝paySuccess通知数据记录：req: {}", JSONObject.toJSONString(request.getParameterMap()));
         return iOrderService.aliPayNotify(request, response);
     }
 
