@@ -401,7 +401,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.success().add("result", result);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            ;
             return R.error("订单不能支付");
         }
     }
@@ -522,7 +521,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            ;
             return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
@@ -536,7 +534,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             }
         } catch (WxPayException e) {
             log.error(e.getMessage(), e);
-            ;
             return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
