@@ -12,9 +12,9 @@ public class TestEOF {
                 System.out.write(in.readByte());
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);;
         }
         System.out.println(1000== 1000);
         Integer i1 = 1000;

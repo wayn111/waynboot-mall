@@ -56,7 +56,7 @@ spring:
           config:
             multi-statement-allow: true
   redis:
-    host: wayn.ltd
+    host: huawei.wayn.ltd
     port: 1688
     password: admin@@123456
     database: 2
@@ -64,6 +64,14 @@ spring:
     expire: 400
     lettuce:
       shutdown-timeout: 100ms
+  #    cluster:
+  #      nodes:
+  #        - 127.0.0.1:1681
+  #        - 127.0.0.1:1682
+  #        - 127.0.0.1:1683
+  #        - 127.0.0.1:1684
+  #        - 127.0.0.1:1685
+  #        - 127.0.0.1:1686
   #配置rabbitMq 服务器
   rabbitmq:
     host: wayn.ltd
@@ -81,3 +89,13 @@ es:
   port: 9200
   scheme: http
 
+# alipay 需要自行申请支付宝的沙箱账号、申请appID，并依次配置AppID、密钥、公钥，否则无法发起支付宝支付。
+alipay:
+  app-id: 2016102200737915
+  rsa-private-key: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCtoV++1Mbau8gghCeivDyWZ36HBAHScBtcFG1b5aQUc5SjGvk9jfQJxreDRKrkcI++Vldm6GxcZJEm+BlRmiwwyDD+8qS3v4ilGJxmAcNJ/kNgjOkrZveBK6dyw3khrpAtRMQBZEdPCpgtBw8lLqoc/VfE0DRw05MVo4VWsBejaZM2m7Ee3eueKn+DlZdkbVT0h6NQO+vKD3l/Au22sT5Fz6D7tz5s+hDiuTS5ieu3moX6nfEju+thflbOqJL5oI2OdZRcF+TQOROx3k+7DIXTGcmkhVvMjgdkvou0a3M9tCJraiQ346fTbQuFXk4jgsuTj3R7naG5CadbDQsiYC1lAgMBAAECggEALUm4NYg+TfNI4eJWjEXY78oS4JiU+RSwrjXNyHh/ca4sCNcSR5HtI1enqh+RC4ConZbbuUXKbdb1XVq9D+HMwPSWgwk7GYpl09o1gQ3YqEYfwOFAOEflKtX+GRsPT0++32/eSBal2uICi0waETK4wFL8P6Om6f7lkHFUaCYKJF8IZHsUdrEqHn2COoLDnJyFXTdPlrA4cF1Hd9tsAu0fJWrC9aIO+YcUwibb3etrC4qqcaq9+b0Pm31CioimcIoeLhoFHNzqWTkixlY8y8+h94czmX5tfsxxhWVCEh1ojZmwmkgKaO2OoW+uY6RlFtWYtiBBrr+uN/UOEDEWS2huSQKBgQDu7tH4jJNmEEBl/9lJc1lE8koqLFuSgKPs4Xm44b/mquOnVAG7BTrF1giUgOtZysoZxaaoZMkp4FJI2lPbArd3oHIBl8UOc6zjnyvbOxQURqA1yDlvbFg30lq+vnz82jnxY4u4H0iBWVvBGTPFicDOprODm6/dvDOp/5tSh4ZSawKBgQC6CGrZSFCt/qjSzCy2bHqPCgwo/Q+3TCZkfhpbGvQgbOq2KtLjG7K9LaSVue7bYgz8ZBe6QcNhrgb5M2ReczP8I0QDCzg4yCSdGzff2ORCW120jsfCmrUaJ6EPfldBLb1e8pff90zFvzExNopPKgbDwD7+weV7/QbH/nS1gy2TbwKBgQDl4HW5iR5jSu16dQ5L4aOYdvet3aF4sTWFuWUP4Hpt5ipDGcrUcXKbVpJItkQ4zqdk5kmyp8z28jCYkR2uj82OVZp6N9fKULadBM4ADbYCz/Rh6jKAJiA2DLdr3v+Hkjm/KYQKcGaktCFYBfROcHtFFxONYqNwVRrrytVYMLWl4wKBgDLL75kK9PS9r413sNHTBxgdrzpV9z+erHEOOdYcowJjmydIxDK9Mm4Tk3hKv9zphhA4qH30TQxT/5V2IfbkUBKN8pk+LAjdJZo8f2JBD/rKheiyf/s0UTUmEwVvAxZKDgZqCWxfU3g/f4gnk1aQbC5xRQI9IZNcgMiFQ4r4ma5DAoGBAL8A7FO6Z1/HPX+9LpxRbAQj5LOUYt0v5mvD+67Diq6ZVAVz604bxqAhvxgO4E8kQF8sulHACjjx3c3bHBKrkYouxamXeXTclqJqupVaMbf8L+aFzNSDacQ/fsHRTu4At5TDRhxBqoxAqJFjds6jrbr624xyJWvJ4O9uwL0TmlBM
+  alipay-public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2AKd5pdlkvkdw5ceATHxE5Y0iULn5ctHnbY+IQST8lyxEhss+qW1LuTe3BLN7olCKvRvorRakqOp/wAWuhZ+3RzkO7XrZxxXbG14Iq7V9ftjXbwBYP/jExpnGWyUVdpALCkPkbGRJGwzRWQFF55GSePkLW3VioAi/fIq36jxiVeuwRANQ/QJmRtftNZpH871ceNHMiHd/Cjv/Bf4a+kMyyRqst5UpK/cHiyPfwHV7s44QgxHgfa4pjb2kJk3JSiG7ByEzjquwjOtXZqBl49x8a9/DAgySGpNb+xc6pYfcBZa05m6FO+3/OtWkCk349MFHiR6nYwAUJyLjN17cgyRJQIDAQAB
+  gateway: https://openapi.alipaydev.com/gateway.do
+  charset: UTF-8
+  format: json
+  log-path: ./log
+  signtype: RSA2

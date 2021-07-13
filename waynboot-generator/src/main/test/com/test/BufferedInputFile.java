@@ -10,7 +10,7 @@ public class BufferedInputFile {
         try (BufferedReader reader = new BufferedReader(new FileReader("E:/data.txt"))) {
             System.out.println(reader.lines().collect(Collectors.joining("\n")));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);;
         }
     }
 

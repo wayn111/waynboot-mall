@@ -62,7 +62,7 @@ public class ElasticDocument {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);;
         }
         return true;
     }

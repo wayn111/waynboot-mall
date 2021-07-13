@@ -6,12 +6,14 @@ import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IGoodsDetailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.*;
 
+@Slf4j
 @Service
 public class GoodsDetailServiceImpl implements IGoodsDetailService {
 
@@ -52,7 +54,7 @@ public class GoodsDetailServiceImpl implements IGoodsDetailService {
             success.add("productList", productTask.get());
             success.add("attributes", attrTask.get());
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);;
         } finally {
             poolExecutor.shutdown();
         }
