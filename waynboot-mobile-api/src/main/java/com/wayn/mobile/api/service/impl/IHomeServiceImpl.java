@@ -13,6 +13,7 @@ import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.api.service.IHomeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+@Slf4j
 @Service
 public class IHomeServiceImpl implements IHomeService {
 
@@ -79,7 +81,7 @@ public class IHomeServiceImpl implements IHomeService {
             success.add("hotGoodsList", hotGoodsTask.get());
             redisCache.setCacheObject(INDEX_DATA, success, 10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } finally {
             threadPoolTaskExecutor.shutdown();
         }

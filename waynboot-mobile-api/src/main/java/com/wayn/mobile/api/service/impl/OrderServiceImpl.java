@@ -5,6 +5,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,6 +44,7 @@ import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.OrderUnpaidTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -364,7 +366,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R prepay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException {
+    public R prepay(String orderSn, Integer payType, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         String checkMsg = checkOrderOperator(order);
@@ -399,7 +401,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             result = wxPayService.createOrder(orderRequest);
             return R.success().add("result", result);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            ;
             return R.error("订单不能支付");
         }
     }
@@ -407,9 +410,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException {
+    public R h5pay(String orderSn, Integer payType, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
+        Long userId = order.getUserId();
         String checkMsg = checkOrderOperator(order);
         if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
             return R.error(checkMsg);
@@ -443,13 +447,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     return R.error("订单不能支付");
                 }
             case ALI:
-                request.setCharacterEncoding(Constants.UTF_ENCODING);
                 // 初始化
                 AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGateway(), alipayConfig.getAppId(),
                         alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(), alipayConfig.getAlipayPublicKey(),
                         alipayConfig.getSigntype());
-                // 创建API对应的request
-                AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+                // 创建API对应的request，使用手机网站支付request
+                AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
                 // 在公共参数中设置回跳和通知地址
                 String url = WaynConfig.getMobileUrl() + request.getContextPath();
                 alipayRequest.setReturnUrl(url + "/returnOrders/" + orderSn + "/" + userId);
@@ -470,7 +473,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 // 选填
                 // 商品描述，可空
                 String body = "商品描述";
-
                 alipayRequest.setBizContent("{" + "\"out_trade_no\":\"" + out_trade_no + "\"," + "\"product_code\":\""
                         + product_code + "\"," + "\"total_amount\":\"" + total_amount + "\"," + "\"subject\":\"" + subject
                         + "\"," + "\"body\":\"" + body + "\"}");
@@ -481,7 +483,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     form = alipayClient.pageExecute(alipayRequest).getBody();//调用SDK生成表单
                     return R.success().add("form", form);
                 } catch (AlipayApiException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
+                    ;
                     return R.error("订单不能支付");
                 }
             case ALI_TEST:
@@ -511,12 +514,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public R payNotify(HttpServletRequest request, HttpServletResponse response) {
+    public R wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
         String xmlResult;
         try {
             xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            ;
             return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
@@ -529,7 +533,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 throw new WxPayException("微信通知支付失败！");
             }
         } catch (WxPayException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            ;
             return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
@@ -573,6 +578,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 取消订单超时未支付任务
         taskService.removeTask(new OrderUnpaidTask(order.getId()));
         return R.error(WxPayNotifyResponse.success("处理成功!"));
+    }
+
+    @Override
+    public R aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
+        return null;
     }
 
     @Override

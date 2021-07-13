@@ -12,6 +12,7 @@ import com.wayn.common.core.service.shop.IColumnGoodsRelationService;
 import com.wayn.common.core.service.shop.IColumnService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("shop/column")
 public class ColumnController extends BaseController {
@@ -45,7 +47,7 @@ public class ColumnController extends BaseController {
             try {
                 BeanUtils.copyProperties(columnVO, item);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             Integer count = iColumnGoodsRelationService.getGoodsNum(item.getId());
             columnVO.setGoodsNum(count);
