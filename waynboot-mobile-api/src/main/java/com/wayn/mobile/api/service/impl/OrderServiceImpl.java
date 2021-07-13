@@ -1,10 +1,11 @@
 package com.wayn.mobile.api.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,7 +13,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
-import com.github.binarywang.wxpay.bean.order.WxPayMwebOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
@@ -44,7 +44,6 @@ import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.OrderUnpaidTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -423,8 +422,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!handleOption.isPay()) {
             return R.error("订单不能支付");
         }
-        // 设置支付方式
-        order.setPayType(payType);
+        // 保存支付方式
+        boolean update = update().set("pay_type", payType).eq("order_sn", orderSn).update();
+        if (!update) {
+            return R.error("订单设置支付类型失败！");
+        }
         switch (Objects.requireNonNull(PayTypeEnum.of(payType))) {
             case WX:
                 WxPayMpOrderResult result;
@@ -456,7 +458,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 // 在公共参数中设置回跳和通知地址
                 String url = WaynConfig.getMobileUrl() + request.getContextPath();
                 alipayRequest.setReturnUrl(url + "/returnOrders/" + orderSn + "/" + userId);
-                alipayRequest.setNotifyUrl(url + "/paySuccess?payType=1&orderNo=" + orderSn);
+                alipayRequest.setNotifyUrl(url + "/paySuccess?payType=1&orderSn=" + orderSn);
 
                 // 填充业务参数
                 // 必填
@@ -582,7 +584,53 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     public R aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+        //将异步通知中收到的所有参数都存放到map中
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        Map<String, String> paramsMap = new HashMap<>();
+        parameterMap.forEach((s, strings) -> {
+            paramsMap.put(s, strings[0]);
+        });
+        try {
+            boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, alipayConfig.getAlipayPublicKey(), alipayConfig.getCharset(), alipayConfig.getSigntype()); //调用SDK验证签名
+            if (signVerified) {
+                // 验签成功后，按照支付结果异步通知中的描述，对支付结果中的业务内容进行二次校验，校验成功后在response中返回success并继续商户自身业务处理，校验失败返回failure
+                String orderSn = request.getParameter("orderSn");
+                Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
+                if (order == null) {
+                    return R.error(WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn));
+                }
+
+                // 检查这个订单是否已经处理过
+                if (OrderUtil.hasPayed(order)) {
+                    return R.error(WxPayNotifyResponse.success("订单已经处理成功!"));
+                }
+
+                order.setPayId("0xsdfsadfas-ali");
+                order.setPayTime(LocalDateTime.now());
+                order.setOrderStatus(OrderUtil.STATUS_PAY);
+                order.setUpdateTime(new Date());
+                if (!updateById(order)) {
+                    return R.error(WxPayNotifyResponse.fail("更新数据已失效"));
+                }
+
+                // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
+                String email = iMemberService.getById(order.getUserId()).getEmail();
+                if (StringUtils.isNotBlank(email)) {
+                    iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+                }
+                // 删除redis中订单id
+                redisCache.deleteZsetObject("order_zset", order.getId());
+                // 取消订单超时未支付任务
+                taskService.removeTask(new OrderUnpaidTask(order.getId()));
+                return R.success(WxPayNotifyResponse.success("处理成功!"));
+            } else {
+                // 验签失败则记录异常日志，并在response中返回failure.
+                return R.error("验签失败");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return R.error(String.format("支付宝支付回调失败, req: %s", JSONObject.toJSONString(request.getParameterMap())));
+        }
     }
 
     @Override

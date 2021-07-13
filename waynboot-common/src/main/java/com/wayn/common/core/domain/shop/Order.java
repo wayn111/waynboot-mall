@@ -106,7 +106,7 @@ public class Order extends ShopBaseEntity implements Serializable {
     private BigDecimal actualPrice;
 
     /**
-     * 微信付款编号
+     * 付款编号
      */
     private String payId;
 
