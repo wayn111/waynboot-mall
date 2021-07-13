@@ -129,7 +129,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                     jsonObject.put("tag", "热品");
                 }
             } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);;
             }
             array.add(jsonObject);
         }

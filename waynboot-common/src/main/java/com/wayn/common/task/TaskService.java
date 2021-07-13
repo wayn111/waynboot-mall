@@ -1,11 +1,13 @@
 package com.wayn.common.task;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @Component
 public class TaskService {
     private final DelayQueue<Task> delayQueue = new DelayQueue<>();
@@ -19,7 +21,7 @@ public class TaskService {
                     Task task = delayQueue.take();
                     task.run();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);;
                 }
             }
         });
