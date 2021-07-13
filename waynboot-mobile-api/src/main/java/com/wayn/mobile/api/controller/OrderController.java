@@ -1,18 +1,21 @@
 package com.wayn.mobile.api.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IOrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Slf4j
 @RestController
 @RequestMapping("order")
 public class OrderController extends BaseController {
@@ -63,9 +66,16 @@ public class OrderController extends BaseController {
         return iOrderService.h5pay(orderVO.getOrderSn(), orderVO.getPayType(), request);
     }
 
-    @PostMapping("payNotify")
-    public R payNotify(HttpServletRequest request, HttpServletResponse response) {
-        return iOrderService.payNotify(request, response);
+    @PostMapping("wxPayNotify")
+    public R wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
+        log.info("微信paySuccess通知数据记录：req：{}", JSONObject.toJSONString(request.getParameterMap()));
+        return iOrderService.wxPayNotify(request, response);
+    }
+
+    @PostMapping("aliPayNotify")
+    public R aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
+        log.info("支付宝paySuccess通知数据记录：req: {}", JSONObject.toJSONString(request.getParameterMap()));
+        return iOrderService.aliPayNotify(request, response);
     }
 
     @GetMapping("searchResult/{orderSn}")

@@ -1,6 +1,7 @@
 package com.wayn.common.util.file;
 
 import com.wayn.common.util.security.Md5Utils;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -12,6 +13,7 @@ import java.text.DecimalFormat;
  *
  * @author ruoyi
  */
+@Slf4j
 public class FileUtils extends org.apache.commons.io.FileUtils {
     public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-\\|\\.\\u4e00-\\u9fa5]+";
 
@@ -150,7 +152,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             try {
                 if (!((temp = br.readLine()) != null)) break;
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);;
             }
             content.append(temp);
         }

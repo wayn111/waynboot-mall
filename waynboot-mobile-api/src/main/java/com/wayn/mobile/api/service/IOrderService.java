@@ -9,6 +9,7 @@ import com.wayn.message.core.messsage.OrderDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 /**
  * <p>
@@ -74,7 +75,9 @@ public interface IOrderService extends IService<Order> {
      * @param response 响应
      * @return r
      */
-    R payNotify(HttpServletRequest request, HttpServletResponse response);
+    R wxPayNotify(HttpServletRequest request, HttpServletResponse response);
+
+    R aliPayNotify(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 测试支付成功回调
