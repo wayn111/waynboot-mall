@@ -62,9 +62,17 @@ spring:
     database: 2
     timeout: 5000
     expire: 400
+  #    cluster:
+  #      nodes:
+  #        - 127.0.0.1:1681
+  #        - 127.0.0.1:1682
+  #        - 127.0.0.1:1683
+  #        - 127.0.0.1:1684
+  #        - 127.0.0.1:1685
+  #        - 127.0.0.1:1686
   #配置rabbitMq 服务器
   rabbitmq:
-    host: 127.0.0.1
+    host: wayn.ltd
     port: 5672
     username: guest
     password: guest
@@ -75,7 +83,18 @@ spring:
     publisher-returns: true
 
 es:
-  host: 127.0.0.1
+  host: huawei.wayn.ltd
   port: 9200
   scheme: http
 
+# alipay 需要自行申请支付宝的沙箱账号、申请appID，并依次配置AppID、密钥、公钥，否则无法发起支付宝支付。
+alipay:
+  app-id:
+  rsa-private-key:
+  alipay-public_key:
+  gateway: https://openapi.alipaydev.com/gateway.do
+  charset: UTF-8
+  format: json
+  #  log_path: /opt/newbeeplus/log
+  log_path: D://newbeemallplus//log
+  signtype: RSA2
