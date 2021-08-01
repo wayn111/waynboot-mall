@@ -489,7 +489,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     return R.error("订单不能支付");
                 }
             case ALI_TEST:
-                // todo 暂时没有实现支付宝支付，直接更新支付状态为已支付
+                // 支付宝test，直接更新支付状态为已支付
                 order.setPayId("xxxxx0987654321-ali");
                 order.setPayTime(LocalDateTime.now());
                 order.setOrderStatus(OrderUtil.STATUS_PAY);
