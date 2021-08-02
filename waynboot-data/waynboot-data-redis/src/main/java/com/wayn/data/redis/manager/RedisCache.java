@@ -91,6 +91,17 @@ public class RedisCache {
     }
 
     /**
+     * 获取多个key的
+     *
+     * @param keys 多个key组成的集合
+     * @return 多个key对应的value
+     */
+    public <T> List<T> mGetCacheObject(Collection<String> keys) {
+        ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        return operation.multiGet(keys);
+    }
+
+    /**
      * 删除单个对象
      *
      * @param key
