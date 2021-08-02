@@ -9,7 +9,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 [运营后台项目](https://github.com/wayn111/waynboot-admin)  
 [h5商城项目](https://github.com/wayn111/waynboot-mobile)
 
-## waynboot-mall接口项目
+## 技术特点
 
 1.  商城接口代码清晰、注释完善、模块拆分合理
 2.  使用Spring-Security进行访问权限控制
@@ -27,9 +27,10 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 14. 支持商品数据同步elasticsearch操作以及elasticsearch商品搜索
 15. RabbitMQ生产者发送消息采用异步confirm模式，消费者消费消息时需手动确认
 16. 下单处理过程引入rabbitMQ，异步生成订单记录，提高系统下单处理能力
-17. ...
-  
-## 商城技术特点
+17.  引入google jib加速和简化构建Docker应用镜像
+18.  ...
+
+## 难点整理
 ### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
 1. 下单时扣减，这个方案属于实时扣减，当有大量下单请求时，由于订单数小于请求数，会发生下单失败，但是无法防止短时间大量恶意请求占用库存，
 造成普通用户无法下单
@@ -40,14 +41,14 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 下单时配合lua脚本原子的get和decr商品库存数量（这一步就拦截了大部分请求），执行成功后在扣减实际库存
 
 ### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
-```
-# 1. 通过创建子线程继承Callable接口
+```java
+// 1. 通过创建子线程继承Callable接口
 Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
-# 2. 传入Callable的任务给FutureTask
+// 2. 传入Callable的任务给FutureTask
 FutureTask<List<Banner>> bannerTask = new FutureTask<>(bannerCall);
-# 3. 放入线程池执行
+// 3. 放入线程池执行
 threadPoolTaskExecutor.submit(bannerTask);
-# 4. 最后可以在外部通过FutureTask的get方法异步获取执行结果 
+// 4. 最后可以在外部通过FutureTask的get方法异步获取执行结果 
 List<Banner> list = bannerTask.get()
 ```
 
@@ -145,15 +146,37 @@ private static String encryptUserId(String userId, int num) {
 
 ### 6. 金刚区跳转使用策略模式
 ```java
-# 1. 定义金刚位跳转策略接口
+# 1. 定义金刚位跳转策略接口以及跳转枚举类
 public interface DiamondJumpType {
 
     List<Goods> getGoods(Page<Goods> page, Diamond diamond);
 
     Integer getType();
 }
+// 金刚位跳转类型枚举
+public enum JumpTypeEnum {
+    COLUMN(0),
+    CATEGORY(1);
+
+    private Integer type;
+
+    JumpTypeEnum(Integer type) {
+        this.type = type;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public JumpTypeEnum setType(Integer type) {
+        this.type = type;
+        return this;
+    }
+}
 
 # 2. 定义策略实现类，并使用@Component注解注入spring
+    
+// 分类策略实现
 @Component
 public class CategoryStrategy implements DiamondJumpType {
 
@@ -171,6 +194,8 @@ public class CategoryStrategy implements DiamondJumpType {
         return JumpTypeEnum.CATEGORY.getType();
     }
 }
+
+// 栏目策略实现
 @Component
 public class ColumnStrategy implements DiamondJumpType {
 
@@ -217,22 +242,73 @@ public class DiamondJumpContext {
     }
 }
 
-# 4.使用
+# 4.使用，注入DiamondJumpContext对象，调用getInstance方法传入枚举类型
 @Autowired
 private DiamondJumpContext diamondJumpContext;
 
 @Test
 public void test(){
-    DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(1);
+    DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(JumpTypeEnum.COLUMN.getType());
 }
 
 ```
-### 7. google jib docker镜像部署
+### 7. google jib加速和简化docker镜像构建
+
+```xml
+		<plugins>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <!-- 1. 配置基本镜像-->
+                    <from>
+                        <image>adoptopenjdk:11-jre-openj9</image>
+                    </from>
+                    <!-- 2. 配置最终推送的地址，仓库名，镜像名，默认是docker hub，这里配置的是阿里云容器服务地址-->
+                    <to>
+                        <image>registry.cn-shanghai.aliyuncs.com/${aliyun-docker-namespace}/${project.artifactId}
+                        </image>
+                        <tags>
+                            <!-- 3. 配置镜像标签，这里使用项目版本号-->
+                            <tag>${project.version}</tag>
+                        </tags>
+                        <auth>
+                            <!-- 4. 配置docker镜像仓库的认证信息-->
+                            <username>填写你的阿里云账号</username>
+                            <password>填写你的密码 site:https://cr.console.aliyun.com/cn-shanghai/instance/credentials</password>
+                        </auth>
+                    </to>
+                    <container>
+                        <!-- 6. 配置项目启动类以及jvm参数-->
+                        <mainClass>填写项目启动类路劲 eg:com.wayn.AdminApplication</mainClass>
+                        <jvmFlags>
+                            <jvmFlag>-Xms812m</jvmFlag>
+                            <jvmFlag>-Xmx812m</jvmFlag>
+                            <jvmFlag>-Xss512k</jvmFlag>
+                            <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
+                            <jvmFlag>-XX:HeapDumpPath=./</jvmFlag>
+                        </jvmFlags>
+                    </container>
+                </configuration>
+
+                <!-- 绑定到maven lifecicle-->
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+```
 
 - todo
 
 ## 文件目录
-```java
+```
 |-- waynboot-admin-api             // 运营后台api模块，提供后台项目api接口
 |-- waynboot-common                // 通用模块，包含项目核心基础类
 |-- waynboot-data                  // 数据模块，通用中间件数据访问
@@ -245,7 +321,7 @@ public void test(){
 |-- pom.xml                        // maven父项目依赖，定义子项目依赖版本
 |-- ...
 ```
- 
+
 ## 开发部署
 ```
 # 1. 克隆项目
