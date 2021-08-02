@@ -16,13 +16,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class ThreadPoolConfig {
     // 核心线程池大小
-    private int corePoolSize = 200;
+    private int corePoolSize = 10;
 
     // 最大可创建的线程数
-    private int maxPoolSize = 400;
+    private int maxPoolSize = 100;
 
     // 队列最大长度
-    private int queueCapacity = 1000;
+    private int queueCapacity = 200;
 
     // 线程池维护线程所允许的空闲时间
     private int keepAliveSeconds = 300;
@@ -34,6 +34,7 @@ public class ThreadPoolConfig {
         executor.setCorePoolSize(corePoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setKeepAliveSeconds(keepAliveSeconds);
+        executor.setThreadNamePrefix("homeIndexThread-");
         // 线程池对拒绝任务(无线程可用)的处理策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return executor;
