@@ -44,6 +44,7 @@ import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.OrderUnpaidTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -54,7 +55,6 @@ import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,32 +77,22 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
 
-    @Autowired
     private RedisCache redisCache;
-    @Autowired
     private IAddressService iAddressService;
-    @Autowired
     private ICartService iCartService;
-    @Autowired
     private IOrderGoodsService iOrderGoodsService;
-    @Autowired
     private IGoodsProductService iGoodsProductService;
-    @Autowired
     private IGoodsService iGoodsService;
-    @Autowired
     private WxPayService wxPayService;
-    @Autowired
     private IMemberService iMemberService;
-    @Autowired
     private OrderMapper orderMapper;
-    @Autowired
     private TaskService taskService;
-    @Autowired
     private IMailService iMailService;
-    @Autowired
     private RabbitTemplate rabbitTemplate;
+    private AlipayConfig alipayConfig;
 
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
@@ -168,7 +158,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         success.add("uncomment", uncomment);
         return success;
     }
-
 
     @Override
     public R asyncSubmit(OrderVO orderVO) {
@@ -360,9 +349,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return R.success().add("orderId", order.getId());
     }
 
-    @Autowired
-    private AlipayConfig alipayConfig;
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public R prepay(String orderSn, Integer payType, HttpServletRequest request) {
@@ -489,7 +475,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     return R.error("订单不能支付");
                 }
             case ALI_TEST:
-                // todo 暂时没有实现支付宝支付，直接更新支付状态为已支付
+                // 支付宝test，直接更新支付状态为已支付
                 order.setPayId("xxxxx0987654321-ali");
                 order.setPayTime(LocalDateTime.now());
                 order.setOrderStatus(OrderUtil.STATUS_PAY);
