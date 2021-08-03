@@ -6,8 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.wayn.common.base.entity.ShopBaseEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -22,7 +21,11 @@ import java.math.BigDecimal;
  * @author wayn
  * @since 2020-07-06
  */
-@Data
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @TableName(value = "shop_goods", autoResultMap = true)
 public class Goods extends ShopBaseEntity implements Serializable {
