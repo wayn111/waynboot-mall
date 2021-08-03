@@ -38,6 +38,14 @@
         from shop_goods
     </sql>
 
+    <sql id="selectHomeIndex">
+        select id,
+               goods_sn, name, category_id, brand_id, keywords, brief, is_on_sale, sort, pic_url,
+               share_url, is_new, is_hot, unit, counter_price, retail_price, actual_sales, virtual_sales,
+               create_time, update_time, del_flag
+        from shop_goods
+    </sql>
+
     <select id="selectGoodsListPage" resultMap="ShopGoodsResult">
         <include refid="selectGoodsVo"/>
         <where>
@@ -135,6 +143,21 @@
                 </foreach>
                 )
             </if>
+        </where>
+    </select>
+
+    <select id="selectHomeIndex" resultType="com.wayn.common.core.domain.shop.Goods">
+        <include refid="selectHomeIndex"/>
+        <where>
+            del_flag = 0
+            and is_on_sale = 1
+            <if test="isNew == true">
+                and is_new = #{isNew}
+            </if>
+            <if test="isHot == true">
+                and is_hot = #{isHot}
+            </if>
+            order by create_time desc limit 10
         </where>
     </select>
 </mapper>

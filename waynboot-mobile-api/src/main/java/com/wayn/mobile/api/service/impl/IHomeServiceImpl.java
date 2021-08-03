@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Banner;
 import com.wayn.common.core.domain.shop.Diamond;
@@ -15,28 +15,28 @@ import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.api.service.IHomeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class IHomeServiceImpl implements IHomeService {
 
-    private static final String SHOP_INDEX_BANNER_LIST = "shop_index_banner_list";
-    private static final String SHOP_INDEX_CATEGORY_LIST = "shop_index_category_list";
-    private static final String SHOP_INDEX_GOODS_NEW_LIST = "shop_index_goods_new_list";
-    private static final String SHOP_INDEX_GOODS_HOT_LIST = "shop_index_goods_hot_list";
+    private static final String SHOP_HOME_INDEX_HASH = "shop_home_index_hash";
 
     private IBannerService iBannerService;
     private ICategoryService iCategoryService;
     private IGoodsService iGoodsService;
     private RedisCache redisCache;
+    private RedisTemplate<String, Object> redisTemplate;
     private IDiamondService iDiamondService;
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
@@ -44,39 +44,40 @@ public class IHomeServiceImpl implements IHomeService {
     @Override
     public R getHomeIndexDataCompletableFuture() {
         R success = R.success();
+        Map<String, Object> shopHomeIndexHash = redisCache.getCacheMap("shop_home_index_hash");
+        if (MapUtils.isNotEmpty(shopHomeIndexHash)) {
+            shopHomeIndexHash.forEach(success::add);
+            return success;
+        }
 
         List<CompletableFuture<Void>> list = new ArrayList<>(4);
-        CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(new QueryWrapper<Banner>()
-                        .eq("status", 0)
-                        .orderByAsc("sort")), threadPoolTaskExecutor)
+        CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(
+                () -> iBannerService.list(Wrappers.lambdaQuery(Banner.class).eq(Banner::getStatus, 0).orderByAsc(Banner::getSort)), threadPoolTaskExecutor)
                 .thenAccept(data -> {
-                    redisCache.setCacheObject(SHOP_INDEX_BANNER_LIST, data, 3600, TimeUnit.MINUTES);
-                    success.add("bannerList", data);
+                    String key = "bannerList";
+                    redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
+                    success.add(key, data);
                 });
-        CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iDiamondService.list(new QueryWrapper<Diamond>()
-                        .orderByAsc("sort")
-                        .last("limit 10")), threadPoolTaskExecutor)
+        CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(
+                () -> iDiamondService.list(Wrappers.lambdaQuery(Diamond.class).orderByAsc(Diamond::getSort).last("limit 10")), threadPoolTaskExecutor)
                 .thenAccept(data -> {
-                    redisCache.setCacheObject(SHOP_INDEX_CATEGORY_LIST, data, 3600, TimeUnit.MINUTES);
-                    success.add("categoryList", data);
+                    String key = "categoryList";
+                    redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
+                    success.add(key, data);
                 });
-        CompletableFuture<Void> f3 = CompletableFuture.supplyAsync(() -> iGoodsService.list(new QueryWrapper<Goods>()
-                        .eq("is_new", true)
-                        .eq("is_on_sale", true)
-                        .orderByAsc("create_time")
-                        .last("limit 6")), threadPoolTaskExecutor)
+        CompletableFuture<Void> f3 = CompletableFuture.supplyAsync(
+                () -> iGoodsService.selectHomeIndexGoods(Goods.builder().isNew(true).build()))
                 .thenAccept(data -> {
-                    redisCache.setCacheObject(SHOP_INDEX_GOODS_NEW_LIST, data, 3600, TimeUnit.MINUTES);
-                    success.add("newGoodsList", data);
+                    String key = "newGoodsList";
+                    redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
+                    success.add(key, data);
                 });
-        CompletableFuture<Void> f4 = CompletableFuture.supplyAsync(() -> iGoodsService.list(new QueryWrapper<Goods>()
-                        .eq("is_hot", true)
-                        .eq("is_on_sale", true)
-                        .orderByAsc("create_time")
-                        .last("limit 6")), threadPoolTaskExecutor)
+        CompletableFuture<Void> f4 = CompletableFuture.supplyAsync(
+                () -> iGoodsService.selectHomeIndexGoods(Goods.builder().isHot(true).build()))
                 .thenAccept(data -> {
-                    redisCache.setCacheObject(SHOP_INDEX_GOODS_HOT_LIST, data, 3600, TimeUnit.MINUTES);
-                    success.add("hotGoodsList", data);
+                    String key = "hotGoodsList";
+                    redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
+                    success.add(key, data);
                 });
         list.add(f1);
         list.add(f2);
