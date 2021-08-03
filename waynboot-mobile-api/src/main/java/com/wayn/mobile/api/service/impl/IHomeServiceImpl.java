@@ -21,6 +21,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +32,8 @@ import java.util.concurrent.CompletableFuture;
 public class IHomeServiceImpl implements IHomeService {
 
     private static final String SHOP_HOME_INDEX_HASH = "shop_home_index_hash";
+    private static final String SHOP_HOME_INDEX_HASH_EXPIRETIME_FIELD = "expireTime";
+    private static final long SHOP_HOME_INDEX_HASH_EXPIRETIME = 60 * 60 * 24 * 1000; // 过期时间,默认一天
 
     private IBannerService iBannerService;
     private ICategoryService iCategoryService;
@@ -44,12 +47,15 @@ public class IHomeServiceImpl implements IHomeService {
     @Override
     public R getHomeIndexDataCompletableFuture() {
         R success = R.success();
-        Map<String, Object> shopHomeIndexHash = redisCache.getCacheMap("shop_home_index_hash");
-        if (MapUtils.isNotEmpty(shopHomeIndexHash)) {
-            shopHomeIndexHash.forEach(success::add);
+        Map<String, Object> shopHomeIndexHash = redisCache.getCacheMap(SHOP_HOME_INDEX_HASH);
+        // 当缓存中存在数据,并且过期时间不为空而且小于等于过期时间则直接从缓存中去除数据
+        if (MapUtils.isNotEmpty(shopHomeIndexHash) && shopHomeIndexHash.containsKey(SHOP_HOME_INDEX_HASH_EXPIRETIME_FIELD)) {
+            long time = (long) shopHomeIndexHash.get(SHOP_HOME_INDEX_HASH_EXPIRETIME_FIELD);
+            if ((new Date().getTime() - time) <= SHOP_HOME_INDEX_HASH_EXPIRETIME) {
+                shopHomeIndexHash.forEach(success::add);
+            }
             return success;
         }
-
         List<CompletableFuture<Void>> list = new ArrayList<>(4);
         CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(
                 () -> iBannerService.list(Wrappers.lambdaQuery(Banner.class).eq(Banner::getStatus, 0).orderByAsc(Banner::getSort)), threadPoolTaskExecutor)
@@ -84,6 +90,8 @@ public class IHomeServiceImpl implements IHomeService {
         list.add(f3);
         list.add(f4);
         CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
+        // 通过hash的field设置过期时间，防止过期时间设置失败导致缓存无法删除
+        redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, SHOP_HOME_INDEX_HASH_EXPIRETIME_FIELD, new Date().getTime());
         return success;
     }
 
