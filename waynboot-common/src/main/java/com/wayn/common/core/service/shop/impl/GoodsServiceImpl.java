@@ -55,6 +55,13 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         return goodsMapper.selectGoodsListPage(page, goods);
     }
 
+
+    @Override
+    public List<Goods> selectHomeIndexGoods(Goods goods) {
+        return goodsMapper.selectHomeIndex(goods);
+    }
+
+
     @Override
     public IPage<Goods> listColumnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
         return goodsMapper.selectColumnBindGoodsListPage(page, goods, columnGoodsIds);
