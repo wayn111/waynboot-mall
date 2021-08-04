@@ -197,6 +197,14 @@ public class RedisCache {
         redisTemplate.opsForHash().put(key, hKey, value);
     }
 
+    public <T> void delCacheMapValue(final String key, final String hKey) {
+        redisTemplate.opsForHash().delete(key, hKey);
+    }
+
+    public long incrByCacheMapValue(final String key, final String hKey, long value) {
+        return redisTemplate.opsForHash().increment(key, hKey, value);
+    }
+
     /**
      * 获取Hash中的数据
      *
