@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RabbitListener(queues = "EmailDirectQueue")
@@ -38,9 +37,15 @@ public class EmailDirectReceiver {
         String msgId = message.getMessageProperties().getHeader("spring_returned_message_correlation");
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         // 消费者消费消息时幂等性处理
-        if (redisCache.getCacheMap("email_consumer_set").containsKey(msgId)) {
+        if (redisCache.getCacheMap("email_consumer_map").containsKey(msgId)) {
             // redis中包含该 key，说明该消息已经被消费过
-            log.info(msgId + ":消息已经被消费");
+            log.error("msgId: {}，消息已经被消费", msgId);
+            channel.basicAck(deliveryTag, false);// 确认消息已消费
+            return;
+        }
+        int retryCount = 3;
+        if (redisCache.incrByCacheMapValue("email_consumer_map", msgId, 1) > retryCount) {
+            log.error("msgId: {}，已经消费{}次，超过最大消费次数！", msgId, retryCount);
             channel.basicAck(deliveryTag, false);// 确认消息已消费
             return;
         }
@@ -68,8 +73,7 @@ public class EmailDirectReceiver {
             }
             // multiple参数：确认收到消息，false只确认当前consumer一个消息收到，true确认所有consumer获得的消息
             channel.basicAck(deliveryTag, false);
-            redisCache.setCacheMapValue("email_consumer_set", msgId, "email has send");
-            redisCache.expire("email_consumer_set", 180, TimeUnit.SECONDS);
+            redisCache.delCacheMapValue("email_consumer_map", msgId);
         } catch (Exception e) {
             channel.basicNack(deliveryTag, false, true);
             log.error(e.getMessage(), e);
