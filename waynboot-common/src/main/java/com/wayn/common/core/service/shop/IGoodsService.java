@@ -31,6 +31,14 @@ public interface IGoodsService extends IService<Goods> {
      */
     IPage<Goods> listPage(Page<Goods> page, Goods goods);
 
+    /**
+     * 首页查询商品信息
+     *
+     * @param goods 查询参数
+     * @return 商品列表
+     */
+    List<Goods> selectHomeIndexGoods(Goods goods);
+
     IPage<Goods> listColumnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
 
     IPage<Goods> listColumnUnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);

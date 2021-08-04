@@ -27,4 +27,6 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     IPage<Goods> selectColumnBindGoodsListPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
 
     IPage<Goods> selectColumnUnBindGoodsListPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
+
+    List<Goods> selectHomeIndex(Goods goods);
 }
