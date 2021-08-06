@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("elastic")
-public class ElasticController {
+public class ElasticTestController {
 
     @Autowired
     private ElasticDocument elasticDocument;
