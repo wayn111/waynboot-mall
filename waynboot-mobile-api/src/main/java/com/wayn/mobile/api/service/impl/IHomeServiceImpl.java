@@ -53,8 +53,8 @@ public class IHomeServiceImpl implements IHomeService {
             long time = (long) shopHomeIndexHash.get(SHOP_HOME_INDEX_HASH_EXPIRETIME_FIELD);
             if ((new Date().getTime() - time) <= SHOP_HOME_INDEX_HASH_EXPIRETIME) {
                 shopHomeIndexHash.forEach(success::add);
+                return success;
             }
-            return success;
         }
         List<CompletableFuture<Void>> list = new ArrayList<>(4);
         CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(
