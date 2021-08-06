@@ -76,32 +76,32 @@ public class GoodsController extends BaseController {
             return R.error("正在同步，请稍等");
         }
         boolean flag = false;
-        redisCache.setCacheObject(SysConstants.REDIS_ES_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
-        try {
+        redisCache.setCacheObject(SysConstants.REDIS_ES_GOODS_INDEX, true, 30, TimeUnit.MINUTES);
+        try (InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME)) {
             elasticDocument.deleteIndex(SysConstants.ES_GOODS_INDEX);
-            InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
-            if (elasticDocument.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
-                List<Goods> list = iGoodsService.list();
-                List<ElasticEntity> entities = new ArrayList<>();
-                for (Goods goods : list) {
-                    ElasticEntity elasticEntity = new ElasticEntity();
-                    Map<String, Object> map = new HashMap<>();
-                    elasticEntity.setId(goods.getId().toString());
-                    map.put("id", goods.getId());
-                    map.put("name", goods.getName());
-                    map.put("sales", goods.getActualSales() + goods.getVirtualSales());
-                    map.put("isHot", goods.getIsHot());
-                    map.put("isNew", goods.getIsNew());
-                    map.put("countPrice", goods.getCounterPrice());
-                    map.put("retailPrice", goods.getRetailPrice());
-                    map.put("keyword", goods.getKeywords().split(","));
-                    map.put("isOnSale", goods.getIsOnSale());
-                    map.put("createTime", goods.getCreateTime());
-                    elasticEntity.setData(map);
-                    entities.add(elasticEntity);
-                }
-                flag = elasticDocument.insertBatch("goods", entities);
+            if (!elasticDocument.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
+                return R.error("创建索引失败！");
             }
+            List<Goods> list = iGoodsService.list();
+            List<ElasticEntity> entities = new ArrayList<>();
+            for (Goods goods : list) {
+                ElasticEntity elasticEntity = new ElasticEntity();
+                Map<String, Object> map = new HashMap<>();
+                elasticEntity.setId(goods.getId().toString());
+                map.put("id", goods.getId());
+                map.put("name", goods.getName());
+                map.put("sales", goods.getActualSales() + goods.getVirtualSales());
+                map.put("isHot", goods.getIsHot());
+                map.put("isNew", goods.getIsNew());
+                map.put("countPrice", goods.getCounterPrice());
+                map.put("retailPrice", goods.getRetailPrice());
+                map.put("keyword", goods.getKeywords().split(","));
+                map.put("isOnSale", goods.getIsOnSale());
+                map.put("createTime", goods.getCreateTime());
+                elasticEntity.setData(map);
+                entities.add(elasticEntity);
+            }
+            flag = elasticDocument.insertBatch("goods", entities);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {

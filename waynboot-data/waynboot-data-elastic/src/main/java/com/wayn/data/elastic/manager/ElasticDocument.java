@@ -1,7 +1,10 @@
 package com.wayn.data.elastic.manager;
 
 import com.alibaba.fastjson.JSON;
+import com.wayn.data.elastic.config.ElasticConfig;
+import com.wayn.data.elastic.exception.ElasticException;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -30,6 +33,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,32 +43,27 @@ import java.util.List;
 public class ElasticDocument {
 
     @Autowired
-    RestHighLevelClient restHighLevelClient;
+    private ElasticConfig elasticConfig;
+
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
 
     /**
      * 创建索引
      *
      * @param idxName 缩影名称
-     * @param idxSQL  缩影定义
+     * @param idxSQL  索引创建语句
      */
-    public boolean createIndex(String idxName, String idxSQL) {
-        try {
-            if (this.indexExist(idxName)) {
-                log.error(" idxName={} 已经存在,idxSql={}", idxName, idxSQL);
-                return false;
-            }
-            CreateIndexRequest request = new CreateIndexRequest(idxName);
-            buildSetting(request);
-            request.mapping(idxSQL, XContentType.JSON);
-            // request.settings() 手工指定Setting
-            CreateIndexResponse res = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
-            if (!res.isAcknowledged()) {
-                return false;
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);;
+    public boolean createIndex(String idxName, String idxSQL) throws IOException {
+        if (indexExist(idxName)) {
+            throw new ElasticException(String.format("idxName=%s 已经存在,idxSql=%s", idxName, idxSQL));
         }
-        return true;
+        CreateIndexRequest request = new CreateIndexRequest(idxName);
+        buildSetting(request);
+        request.mapping(idxSQL, XContentType.JSON);
+        // request.settings() 手工指定Setting
+        CreateIndexResponse res = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
+        return res.isAcknowledged();
     }
 
     /**
@@ -72,9 +71,9 @@ public class ElasticDocument {
      *
      * @param idxName 索引名称
      * @return boolean
-     * @throws Exception 异常
+     * @throws IOException 异常
      */
-    public boolean indexExist(String idxName) throws Exception {
+    public boolean indexExist(String idxName) throws IOException {
         GetIndexRequest request = new GetIndexRequest(idxName);
         request.local(false);
         request.humanReadable(true);
@@ -84,23 +83,13 @@ public class ElasticDocument {
     }
 
     /**
-     * 断某个index是否存在
+     * 设置分片和副本
      *
-     * @param idxName index名
-     * @return boolean
-     */
-    public boolean isExistsIndex(String idxName) throws Exception {
-        return restHighLevelClient.indices().exists(new GetIndexRequest(idxName), RequestOptions.DEFAULT);
-    }
-
-    /**
-     * 设置分片
-     *
-     * @param request
+     * @param request 创建索引请求
      */
     public void buildSetting(CreateIndexRequest request) {
-        request.settings(Settings.builder().put("index.number_of_shards", 3)
-                .put("index.number_of_replicas", 2));
+        request.settings(Settings.builder().put("index.number_of_shards", elasticConfig.getShards())
+                .put("index.number_of_replicas", elasticConfig.getReplicas()));
     }
 
     /**
@@ -112,7 +101,6 @@ public class ElasticDocument {
         log.info("Data : id={},entity={}", entity.getId(), JSON.toJSONString(entity.getData()));
         request.id(entity.getId());
         request.source(entity.getData(), XContentType.JSON);
-        // request.source(JSON.toJSONString(entity.getData()), XContentType.JSON);
         try {
             IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
             ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
