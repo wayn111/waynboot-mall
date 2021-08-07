@@ -1,8 +1,12 @@
 package com.wayn.common.constant;
 
+/**
+ * 系统常量
+ */
 public class SysConstants {
 
-    public static final int RESULT_SUCCESS_CODE = 200;
+    // ------------------------------------------------ 用户常量 ------------------------------------------------------------------------
+    public static final String DEFAULT_AVATAR = "http://cdn.wayn.xin/091fffcf8e8c25ed8d2cb926be60a16a.png";
 
     /**
      * 用户默认密码
@@ -35,6 +39,7 @@ public class SysConstants {
      */
     public static final String TOKEN_PREFIX = "Bearer ";
 
+    // ------------------------------------------------ 菜单常量 ------------------------------------------------------------------------
     /**
      * 类型（M目录 C菜单 F按钮）
      */
@@ -48,6 +53,8 @@ public class SysConstants {
      */
     public static final String MENU_TYPE_F = "F";
 
+
+    // ------------------------------------------------ 返回结果常量 ------------------------------------------------------------------------
     /**
      * 校验返回结果码 0 不存在 1 已经存在
      */
@@ -66,18 +73,19 @@ public class SysConstants {
      * string类型boolean返回值，失败默认为error
      */
     public final static String STRING_FALSE = "false";
+
+    // ------------------------------------------------ es常量 ------------------------------------------------------------------------
+    /**
+     * 商品的索引名称
+     */
     public static final String ES_GOODS_INDEX = "goods";
-    public static final String REDIS_ES_GOODS_INDEX = "es_goods";
+    /**
+     * 商品索引创建缓存，创建成功后删除
+     */
+    public static final String ES_GOODS_INDEX_KEY = "es_goods";
     /**
      * es商品索引的创建语句所在文件位置
      */
     public static String ES_INDEX_GOODS_FILENAME = "/es/index/goods.json";
-
-    /**
-     * string类型boolean返回值，失败后返回自定义错误消息
-     */
-    public static String STRING_FALSE_MSG(String msg) {
-        return msg;
-    }
 
 }

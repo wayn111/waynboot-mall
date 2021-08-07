@@ -1,5 +1,8 @@
 package com.wayn.common.constant;
 
+/**
+ * 常量
+ */
 public class Constants {
     /**
      * 字符编码

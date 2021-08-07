@@ -5,7 +5,7 @@ package com.wayn.common.enums;
  *
  * @author wayn
  */
-public enum Operator {
+public enum OperatorEnum {
     ADD("新建", "add"),
     UPDATE("更新", "update"),
     DELETE("删除", "delete"),
@@ -22,7 +22,7 @@ public enum Operator {
     String name;
     String code;
 
-    Operator(String name, String code) {
+    OperatorEnum(String name, String code) {
         this.name = name;
         this.code = code;
     }
@@ -39,7 +39,7 @@ public enum Operator {
         return code;
     }
 
-    public Operator setCode(String code) {
+    public OperatorEnum setCode(String code) {
         this.code = code;
         return this;
     }

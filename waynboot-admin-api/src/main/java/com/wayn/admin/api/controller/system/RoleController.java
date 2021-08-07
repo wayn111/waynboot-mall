@@ -6,6 +6,7 @@ import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Role;
 import com.wayn.common.core.service.system.IRoleService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.common.util.security.SecurityUtils;
@@ -43,9 +44,9 @@ public class RoleController extends BaseController {
     @PostMapping
     public R addRole(@Validated @RequestBody Role role) {
         if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleNameUnique(role))) {
-            return R.error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("新增角色[%s]失败，角色名称已存在", role.getRoleName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleKeyUnique(role))) {
-            return R.error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("新增角色[%s]失败，角色权限已存在", role.getRoleName())));
         }
         role.setCreateBy(SecurityUtils.getUsername());
         role.setCreateTime(new Date());
@@ -58,9 +59,9 @@ public class RoleController extends BaseController {
     public R updateRole(@Validated @RequestBody Role role) {
         iRoleService.checkRoleAllowed(role);
         if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleNameUnique(role))) {
-            return R.error("更新角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新角色[%s]失败，角色名称已存在", role.getRoleName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iRoleService.checkRoleKeyUnique(role))) {
-            return R.error("更新角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新角色[%s]失败，角色权限已存在", role.getRoleName())));
         }
         role.setUpdateBy(SecurityUtils.getUsername());
         role.setUpdateTime(new Date());
@@ -94,6 +95,6 @@ public class RoleController extends BaseController {
     @GetMapping("/export")
     public R export(Role role) {
         List<Role> list = iRoleService.list(role);
-        return R.success(ExcelUtil.exportExcel(list, Role.class, "角色数据.xls", WaynConfig.getDownloadPath()));
+        return R.success().add("filepath", ExcelUtil.exportExcel(list, Role.class, "角色数据.xls", WaynConfig.getDownloadPath()));
     }
 }

@@ -3,7 +3,7 @@ package com.wayn.common.core.service.shop.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.binarywang.wxpay.service.WxPayService;
+import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
@@ -11,11 +11,11 @@ import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.util.OrderUtil;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,23 +27,14 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> implements IAdminOrderService {
 
-    @Autowired
     private AdminOrderMapper adminOrderMapper;
-    //    @Autowired
-    private WxPayService wxPayService;
-    @Autowired
     private IOrderGoodsService iOrderGoodsService;
-    @Autowired
     private IGoodsProductService iGoodsProductService;
-    @Autowired
     private IMemberService iMemberService;
-    @Autowired
     private IMailService iMailService;
-
-    @Value("${wayn.adminUrl}")
-    private String adminUrl;
 
     @Override
     public IPage<Order> listPage(IPage<Order> page, Order order) {
@@ -60,7 +51,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
 
         //  如果订单不是退款状态，则不能退款
         if (!order.getOrderStatus().equals(OrderUtil.STATUS_REFUND)) {
-            return R.error("订单不能确认收货");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
         }
 
         // 微信退款
@@ -123,7 +114,8 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         // 注意订单号只发后6位
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            iMailService.sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email, adminUrl + "/message/email");
+            iMailService.sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email,
+                    WaynConfig.getAdminUrl() + "/message/email");
         }
         // logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
         return R.success();
@@ -141,7 +133,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
 
         // 如果订单不是退款状态，则不能退款
         if (!order.getOrderStatus().equals(OrderUtil.STATUS_PAY)) {
-            return R.error("订单不能确认收货");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_SHIP_ERROR);
         }
 
         order.setOrderStatus(OrderUtil.STATUS_SHIP);
@@ -155,7 +147,9 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
-            iMailService.sendEmail("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14) + "，请注意查收", order.getOrderSn().substring(8, 14), email, adminUrl + "/message/email");
+            iMailService.sendEmail("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14)
+                    + "，请注意查收", order.getOrderSn().substring(8, 14), email, WaynConfig.getAdminUrl()
+                    + "/message/email");
         }
         return R.success();
     }

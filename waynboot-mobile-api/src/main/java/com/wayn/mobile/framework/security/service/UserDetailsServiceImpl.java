@@ -3,7 +3,7 @@ package com.wayn.mobile.framework.security.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
-import com.wayn.common.enums.UserStatus;
+import com.wayn.common.enums.UserStatusEnum;
 import com.wayn.common.util.ip.IpUtils;
 import com.wayn.mobile.framework.config.ThreadPoolConfig;
 import com.wayn.mobile.framework.security.LoginUserDetail;
@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             log.info("登录用户：{} 不存在.", mobile);
             throw new UsernameNotFoundException("登录用户：" + mobile + " 不存在");
         }
-        if (UserStatus.DISABLE.getCode().equals(member.getStatus())) {
+        if (UserStatusEnum.DISABLE.getCode().equals(member.getStatus())) {
             log.info("登录用户：{} 已经被停用.", mobile);
             throw new DisabledException("登录用户：" + mobile + " 不存在");
         }

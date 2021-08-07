@@ -38,6 +38,6 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         response.setStatus(200);
         // 将登录失败信息打包成json格式返回
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().print(JsonUtil.marshal(R.success("退出成功")));
+        response.getWriter().print(JsonUtil.marshal(R.success()));
     }
 }

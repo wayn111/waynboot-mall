@@ -1,9 +1,8 @@
-package com.wayn.mobile.framework.manager.exception;
+package com.wayn.common.exception;
 
-import com.wayn.common.exception.BusinessException;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -17,8 +16,6 @@ import java.util.Objects;
 
 /**
  * 全局异常处理器
- *
- * @author ruoyi
  */
 @Slf4j
 @RestControllerAdvice
@@ -31,7 +28,7 @@ public class GlobalExceptionHandler {
     public R businessException(BusinessException e) {
         log.error(e.getMessage(), e);
         if (Objects.isNull(e.getCode())) {
-            return R.error(e.getMessage());
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(e.getMessage()));
         }
         return R.error(e.getCode(), e.getMessage());
     }
@@ -42,7 +39,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public R usernameNotFoundException(UsernameNotFoundException e) {
         log.error(e.getMessage(), e);
-        return R.error(e.getMessage());
+        return R.error(ReturnCodeEnum.USER_NOT_EXISTS_ERROR);
     }
 
     /**
@@ -52,7 +49,7 @@ public class GlobalExceptionHandler {
     public R validExceptionHandler(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
         String message = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
-        return R.error(message);
+        return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(message));
     }
 
     /**
@@ -61,7 +58,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public R badCredentialsException(BadCredentialsException e) {
         log.error(e.getMessage(), e);
-        return R.error("用户名或者密码错误");
+        return R.error(ReturnCodeEnum.USER_ACCOUNT_PASSWORD_ERROR);
     }
 
     /**
@@ -70,7 +67,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public R handlerNoFoundException(Exception e) {
         log.error(e.getMessage(), e);
-        return R.error(HttpStatus.NOT_FOUND.value(), "路径不存在，请检查路径是否正确");
+        return R.error(ReturnCodeEnum.NOT_FOUND);
     }
 
     /**
@@ -79,7 +76,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public R handleAuthorizationException(AccessDeniedException e) {
         log.error(e.getMessage());
-        return R.error(HttpStatus.FORBIDDEN.value(), "没有权限，请联系管理员授权");
+        return R.error(ReturnCodeEnum.UNAUTHORIZED);
     }
 
     /**
@@ -88,7 +85,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public R handleAuthenticationException(AuthenticationException e) {
         log.error(e.getMessage());
-        return R.error(HttpStatus.FORBIDDEN.value(), "认证失败，请联系管理员授权");
+        return R.error(ReturnCodeEnum.FORBIDDEN);
     }
 
 
@@ -98,6 +95,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public R handleException(Exception e) {
         log.error(e.getMessage(), e);
-        return R.error(e.getMessage());
+        return R.error();
     }
 }
