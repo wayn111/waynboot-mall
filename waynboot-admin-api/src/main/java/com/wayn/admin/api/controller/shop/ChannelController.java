@@ -4,6 +4,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Channel;
 import com.wayn.common.core.service.shop.IChannelService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -27,9 +28,11 @@ public class ChannelController extends BaseController {
     @PostMapping
     public R addChannel(@Validated @RequestBody Channel channel) {
         if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelNameUnique(channel))) {
-            return R.error("新增栏目'" + channel.getName() + "'失败，栏目名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("新增栏目名称[%s]失败，栏目名称已存在", channel.getName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelCodeUnique(channel))) {
-            return R.error("新增编码'" + channel.getCode() + "'失败，栏目编码已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("新增栏目编码[%s]失败，栏目编码已存在", channel.getName())));
         }
         channel.setCreateTime(new Date());
         return R.result(iChannelService.save(channel));
@@ -38,9 +41,11 @@ public class ChannelController extends BaseController {
     @PutMapping
     public R updateChannel(@Validated @RequestBody Channel channel) {
         if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelNameUnique(channel))) {
-            return R.error("更新栏目'" + channel.getName() + "'失败，栏目名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("更新栏目名称[%s]失败，栏目名称已存在", channel.getName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelCodeUnique(channel))) {
-            return R.error("更新编码'" + channel.getCode() + "'失败，栏目编码已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("更新栏目编码[%s]失败，栏目编码已存在", channel.getName())));
         }
         channel.setUpdateTime(new Date());
         return R.result(iChannelService.updateById(channel));

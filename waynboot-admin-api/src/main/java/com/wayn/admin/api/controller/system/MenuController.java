@@ -6,6 +6,7 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Menu;
 import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IMenuService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.security.SecurityUtils;
@@ -69,7 +70,7 @@ public class MenuController extends BaseController {
     @PostMapping
     public R addRole(@Validated @RequestBody Menu menu) {
         if (SysConstants.NOT_UNIQUE.equals(iMenuService.checkMenuNameUnique(menu))) {
-            return R.error("新增菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("新增菜单[%s]失败，菜单名称已存在", menu.getMenuName())));
         }
         menu.setCreateBy(SecurityUtils.getUsername());
         menu.setCreateTime(new Date());
@@ -81,7 +82,7 @@ public class MenuController extends BaseController {
     @PutMapping
     public R updateRole(@Validated @RequestBody Menu menu) {
         if (SysConstants.NOT_UNIQUE.equals(iMenuService.checkMenuNameUnique(menu))) {
-            return R.error("更新菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新菜单[%s]失败，菜单名称已存在", menu.getMenuName())));
         }
         menu.setUpdateBy(SecurityUtils.getUsername());
         menu.setUpdateTime(new Date());
@@ -100,10 +101,10 @@ public class MenuController extends BaseController {
     @DeleteMapping("/{menuId}")
     public R deleteMenu(@PathVariable Long menuId) {
         if (iMenuService.hasChildByMenuId(menuId)) {
-            return R.error("存在子菜单,不允许删除");
+            return R.error(ReturnCodeEnum.MENU_HAS_SUB_MENU_ERROR);
         }
         if (iMenuService.checkMenuExistRole(menuId)) {
-            return R.error("菜单已分配,不允许删除");
+            return R.error(ReturnCodeEnum.MENU_HAS_DISTRIBUTE_ERROR);
         }
         return R.result(iMenuService.removeById(menuId));
     }

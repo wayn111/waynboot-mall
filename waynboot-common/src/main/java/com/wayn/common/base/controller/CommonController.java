@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.wayn.common.base.service.UploadService;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.domain.vo.Base64FileVO;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUploadUtil;
@@ -101,7 +102,7 @@ public class CommonController {
             return R.success().add("url", fileUrl).add("fileName", fileName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return R.error(e.getMessage());
+            return R.error(ReturnCodeEnum.UPLOAD_ERROR);
         }
     }
 
@@ -122,7 +123,7 @@ public class CommonController {
             return R.success().add("url", fileUrl).add("fileName", fileName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return R.error(e.getMessage());
+            return R.error(ReturnCodeEnum.UPLOAD_ERROR);
         }
     }
 
@@ -150,7 +151,7 @@ public class CommonController {
             return R.success().add("fileList", fileList);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return R.error(e.getMessage());
+            return R.error(ReturnCodeEnum.UPLOAD_ERROR);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.wayn.common.util;
 
+import com.wayn.common.enums.ReturnCodeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
@@ -15,39 +16,38 @@ public class R implements Serializable {
 
     public static R success() {
         R r = new R();
-        r.code = 200;
-        r.msg = "请求成功";
+        r.code = ReturnCodeEnum.SUCCESS.getCode();
+        r.msg = ReturnCodeEnum.SUCCESS.getMsg();
         return r;
     }
 
-    public static R success(String msg) {
+    public static R success(ReturnCodeEnum ReturnCodeEnum) {
         R r = new R();
-        r.code = 200;
-        r.msg = msg;
+        r.code = ReturnCodeEnum.getCode();
+        r.msg = ReturnCodeEnum.getMsg();
         return r;
     }
 
     public static R error() {
         R r = new R();
-        r.code = 500;
-        r.msg = "请求失败";
+        r.code = ReturnCodeEnum.ERROR.getCode();
+        r.msg = ReturnCodeEnum.ERROR.getMsg();
         return r;
     }
 
     public static R result(boolean b) {
-        if (b) return R.success();
-        return R.error();
+        return b ? R.success() : R.error();
     }
 
-    public static R result(boolean b, String msg) {
-        if (b) return R.success();
-        return R.error(msg);
+    public static R result(boolean b, ReturnCodeEnum returnCodeEnum) {
+        return b ? R.success() : R.error(returnCodeEnum);
     }
 
-    public static R error(String msg) {
+
+    public static R error(ReturnCodeEnum returnCodeEnum) {
         R r = new R();
-        r.code = 500;
-        r.msg = msg;
+        r.code = returnCodeEnum.getCode();
+        r.msg = returnCodeEnum.getMsg();
         return r;
     }
 

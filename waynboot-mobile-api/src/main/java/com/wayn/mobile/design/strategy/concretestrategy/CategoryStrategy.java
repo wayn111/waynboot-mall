@@ -9,7 +9,6 @@ import com.wayn.mobile.design.strategy.strategy.DiamondJumpType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ public class CategoryStrategy implements DiamondJumpType {
 
     @Override
     public List<Goods> getGoods(Page<Goods> page, Diamond diamond) {
-        List<Long> cateList = Arrays.asList(diamond.getValueId());
+        List<Long> cateList = List.of(diamond.getValueId());
         return goodsMapper.selectGoodsListPageByl2CateId(page, cateList).getRecords();
     }
 

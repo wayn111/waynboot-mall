@@ -6,6 +6,7 @@ import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IUserService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUploadUtil;
@@ -53,7 +54,7 @@ public class ProfileController {
             tokenService.refreshToken(loginUser);
             return R.success();
         }
-        return R.error("修改个人信息异常，请联系管理员");
+        return R.error();
     }
 
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
@@ -63,10 +64,10 @@ public class ProfileController {
         String password = loginUser.getPassword();
 
         if (!SecurityUtils.matchesPassword(oldPassword, password)) {
-            return R.error("旧密码错误");
+            return R.error(ReturnCodeEnum.USER_OLD_PASSWORD_ERROR);
         }
         if (SecurityUtils.matchesPassword(newPassword, password)) {
-            return R.error("新密码不能与旧密码相同");
+            return R.error(ReturnCodeEnum.USER_NEW_OLD_PASSWORD_NOT_SAME_ERROR);
         }
         boolean result = iUserService.update().set("password", SecurityUtils.encryptPassword(newPassword)).update();
         if (result) {
@@ -75,7 +76,7 @@ public class ProfileController {
             tokenService.refreshToken(loginUser);
             return R.success();
         }
-        return R.error("修改密码异常，请联系管理员");
+        return R.error();
     }
 
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
@@ -95,6 +96,6 @@ public class ProfileController {
                 return success;
             }
         }
-        return R.error("上传图片异常，请联系管理员");
+        return R.error(ReturnCodeEnum.UPLOAD_ERROR);
     }
 }

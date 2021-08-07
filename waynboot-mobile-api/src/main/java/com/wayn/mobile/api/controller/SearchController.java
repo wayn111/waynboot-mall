@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotEmpty;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +63,7 @@ public class SearchController extends BaseController {
     private ElasticDocument elasticDocument;
 
     @GetMapping("result")
-    public R list(SearchVO searchVO) throws IOException {
+    public R list(SearchVO searchVO) {
         Long memberId = MobileSecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();
         Boolean filterNew = searchVO.getFilterNew();
