@@ -12,11 +12,12 @@ import com.wayn.common.util.file.FileUtils;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
 import com.wayn.data.redis.manager.RedisCache;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,13 +36,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @RequestMapping("/shop/goods")
+@AllArgsConstructor
 public class GoodsController extends BaseController {
 
-    @Autowired
     private IGoodsService iGoodsService;
-    @Autowired
     private ElasticDocument elasticDocument;
-    @Autowired
     private RedisCache redisCache;
 
     @GetMapping("/list")
@@ -51,12 +50,12 @@ public class GoodsController extends BaseController {
     }
 
     @PostMapping
-    public R addGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
+    public R addGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
         return iGoodsService.saveGoodsRelated(goodsSaveRelatedVO);
     }
 
     @PutMapping
-    public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
+    public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
         return iGoodsService.updateGoodsRelated(goodsSaveRelatedVO);
     }
 
@@ -66,7 +65,7 @@ public class GoodsController extends BaseController {
     }
 
     @DeleteMapping("{goodsId}")
-    public R deleteGoods(@PathVariable Long goodsId) {
+    public R deleteGoods(@PathVariable Long goodsId) throws IOException {
         return R.result(iGoodsService.deleteGoodsRelatedByGoodsId(goodsId));
     }
 
