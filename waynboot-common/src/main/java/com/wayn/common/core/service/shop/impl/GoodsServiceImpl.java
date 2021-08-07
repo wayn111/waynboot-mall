@@ -10,11 +10,12 @@ import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.core.service.shop.*;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,24 +31,14 @@ import java.util.*;
  * @since 2020-07-06
  */
 @Service
+@AllArgsConstructor
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements IGoodsService {
 
-    @Autowired
     private GoodsMapper goodsMapper;
-
-    @Autowired
     private IGoodsProductService iGoodsProductService;
-
-    @Autowired
     private IGoodsAttributeService iGoodsAttributeService;
-
-    @Autowired
     private IGoodsSpecificationService iGoodsSpecificationService;
-
-    @Autowired
     private ICategoryService iCategoryService;
-
-    @Autowired
     private ElasticDocument elasticDocument;
 
     @Override
@@ -103,7 +94,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
         GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
         if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
-            return R.error("添加商品'" + goods.getName() + "'失败，商品名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("添加商品[%s]失败，商品名称已存在", goods.getName())));
         }
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
@@ -138,7 +129,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             }
             return goodsProduct.getDefaultSelected();
         }).count() > 1) {
-            return R.error("商品规格只能选择一个启用默认选中");
+            return R.error(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
         }
 
         // 保存商品规格
@@ -186,7 +177,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
         GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
         if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
-            return R.error("更新商品'" + goods.getName() + "'失败，商品名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新商品[%s]失败，商品名称已存在", goods.getName())));
         }
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
@@ -219,7 +210,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         }
         // 判断启用默认选中的规格是否超过一个
         if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).count() > 1) {
-            return R.error("商品规格只能选择一个启用默认选中");
+            return R.error(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
         }
 
         // 更新商品规格

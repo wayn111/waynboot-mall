@@ -5,7 +5,7 @@ import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.enums.UserStatus;
+import com.wayn.common.enums.UserStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -44,7 +46,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             log.info("登录用户：{} 不存在.", username);
             throw new UsernameNotFoundException("登录用户：" + username + " 不存在");
         }
-        if (UserStatus.DISABLE.getCode() == user.getUserStatus()) {
+        if (Objects.equals(UserStatusEnum.DISABLE.getCode(), user.getUserStatus())) {
             log.info("登录用户：{} 已经被停用.", username);
             throw new DisabledException("登录用户：" + username + " 不存在");
         }

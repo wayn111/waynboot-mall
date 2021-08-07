@@ -6,6 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Dict;
 import com.wayn.common.core.service.system.IDictService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.security.SecurityUtils;
 import io.swagger.annotations.Api;
@@ -55,9 +56,11 @@ public class DictDataController extends BaseController {
     @PostMapping
     public R addDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
-            return R.error("新增标签名'" + dict.getName() + "'失败，标签名已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("新增标签名[%s]失败，标签名已存在", dict.getName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {
-            return R.error("新增标签值'" + dict.getValue() + "'失败，标签值已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("新增标签值[%s]失败，标签值已存在", dict.getValue())));
         }
         dict.setCreateBy(SecurityUtils.getUsername());
         dict.setCreateTime(new Date());
@@ -69,9 +72,11 @@ public class DictDataController extends BaseController {
     @PutMapping
     public R updateDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
-            return R.error("更新标签名'" + dict.getName() + "'失败，标签名已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("更新标签名[%s]失败，标签名已存在", dict.getName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {
-            return R.error("更新标签值'" + dict.getValue() + "'失败，标签值已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR
+                    .setMsg(String.format("更新标签值[%s]失败，标签值已存在", dict.getValue())));
         }
         dict.setUpdateBy(SecurityUtils.getUsername());
         dict.setUpdateTime(new Date());

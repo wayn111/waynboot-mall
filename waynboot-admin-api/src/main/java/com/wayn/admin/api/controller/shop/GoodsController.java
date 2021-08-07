@@ -7,6 +7,7 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.service.shop.IGoodsService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUtils;
 import com.wayn.data.elastic.manager.ElasticDocument;
@@ -72,11 +73,11 @@ public class GoodsController extends BaseController {
 
     @PostMapping("syncEs")
     public R syncEs() {
-        if (redisCache.getCacheObject(SysConstants.REDIS_ES_GOODS_INDEX) != null) {
-            return R.error("正在同步，请稍等");
+        if (redisCache.getCacheObject(SysConstants.ES_GOODS_INDEX_KEY) != null) {
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("正在同步，请稍等"));
         }
         boolean flag = false;
-        redisCache.setCacheObject(SysConstants.REDIS_ES_GOODS_INDEX, true, 3, TimeUnit.MINUTES);
+        redisCache.setCacheObject(SysConstants.ES_GOODS_INDEX_KEY, true, 3, TimeUnit.MINUTES);
         try {
             elasticDocument.deleteIndex(SysConstants.ES_GOODS_INDEX);
             InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
@@ -105,7 +106,7 @@ public class GoodsController extends BaseController {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            redisCache.deleteObject(SysConstants.REDIS_ES_GOODS_INDEX);
+            redisCache.deleteObject(SysConstants.ES_GOODS_INDEX_KEY);
         }
         return R.result(flag);
     }
