@@ -24,7 +24,6 @@ public class ElasticConfig {
     @Value("${es.replicas}")
     public int replicas;
 
-
     @Bean
     public RestClientBuilder restClientBuilder() {
         return RestClient.builder(makeHttpHost());

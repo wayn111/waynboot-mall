@@ -14,10 +14,11 @@ import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -30,31 +31,20 @@ import java.util.*;
  * @since 2020-07-06
  */
 @Service
+@AllArgsConstructor
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements IGoodsService {
 
-    @Autowired
     private GoodsMapper goodsMapper;
-
-    @Autowired
     private IGoodsProductService iGoodsProductService;
-
-    @Autowired
     private IGoodsAttributeService iGoodsAttributeService;
-
-    @Autowired
     private IGoodsSpecificationService iGoodsSpecificationService;
-
-    @Autowired
     private ICategoryService iCategoryService;
-
-    @Autowired
     private ElasticDocument elasticDocument;
 
     @Override
     public IPage<Goods> listPage(Page<Goods> page, Goods goods) {
         return goodsMapper.selectGoodsListPage(page, goods);
     }
-
 
     @Override
     public List<Goods> selectHomeIndexGoods(Goods goods) {
@@ -97,7 +87,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
+    public R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
         Goods goods = goodsSaveRelatedVO.getGoods();
         GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
         GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
@@ -148,8 +138,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 保存商品货品
         iGoodsProductService.saveBatch(Arrays.asList(products));
 
-        // baseElasticService.syncGoods2Es(goods);
-        return R.success();
+        return R.result(syncGoods2Es(goods));
     }
 
     @Override
@@ -164,7 +153,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean deleteGoodsRelatedByGoodsId(Long goodsId) {
+    public boolean deleteGoodsRelatedByGoodsId(Long goodsId) throws IOException {
         removeById(goodsId);
         iGoodsSpecificationService.remove(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
         iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
@@ -177,8 +166,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
+    public R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
         Goods goods = goodsSaveRelatedVO.getGoods();
         GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
         List<GoodsAttribute> updateAttributes = new ArrayList<>();
@@ -231,8 +221,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 更新商品货品
         iGoodsProductService.updateBatchById(Arrays.asList(products));
 
-        syncGoods2Es(goods);
-        return R.success();
+        return R.result(syncGoods2Es(goods));
     }
 
     @Override
@@ -250,7 +239,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
      *
      * @param goods 商品信息
      */
-    public void syncGoods2Es(Goods goods) {
+    public boolean syncGoods2Es(Goods goods) throws IOException {
         // 同步es
         ElasticEntity elasticEntity = new ElasticEntity();
         elasticEntity.setId(goods.getId().toString());
@@ -263,9 +252,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("isOnSale", goods.getIsOnSale());
         map.put("createTime", goods.getCreateTime());
         elasticEntity.setData(map);
-        boolean one = elasticDocument.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
-        if (!one) {
+        if (!elasticDocument.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity)) {
             throw new BusinessException("商品同步es失败");
         }
+        return true;
     }
 }
