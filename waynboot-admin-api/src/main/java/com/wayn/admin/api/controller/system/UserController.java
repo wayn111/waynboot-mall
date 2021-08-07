@@ -9,6 +9,7 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.service.system.IRoleService;
 import com.wayn.common.core.service.system.IUserService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.common.util.security.SecurityUtils;
@@ -62,11 +63,11 @@ public class UserController extends BaseController {
     @PostMapping
     public R addUser(@Validated @RequestBody User user) {
         if (SysConstants.NOT_UNIQUE.equals(iUserService.checkUserNameUnique(user.getUserName()))) {
-            return R.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，登录账号已存在", user.getUserName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
-            return R.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，手机号码已存在", user.getUserName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkEmailUnique(user))) {
-            return R.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，邮箱账号已存在", user.getUserName())));
         }
         user.setAvatar("http://cdn.wayn.xin/80af3951523e76f4818ac7fff1223808.jpeg");
         user.setCreateBy(SecurityUtils.getUsername());
@@ -81,9 +82,9 @@ public class UserController extends BaseController {
     public R updateUser(@Validated @RequestBody User user) {
         iUserService.checkUserAllowed(user);
         if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
-            return R.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，手机号码已存在", user.getUserName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkEmailUnique(user))) {
-            return R.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，邮箱账号已存在", user.getUserName())));
         }
         user.setUpdateBy(SecurityUtils.getUsername());
         user.setUpdateTime(new Date());
@@ -121,7 +122,7 @@ public class UserController extends BaseController {
     public R export(User user) {
         List<User> list = iUserService.list(user);
         list.forEach(item -> item.setDeptName(item.getDept().getDeptName()));
-        return R.success(ExcelUtil.exportExcel(list, User.class, "用户数据.xls", WaynConfig.getDownloadPath()));
+        return R.success().add("filepath", ExcelUtil.exportExcel(list, User.class, "用户数据.xls", WaynConfig.getDownloadPath()));
     }
 
     @PreAuthorize("@ss.hasPermi('system:user:import')")
@@ -133,11 +134,11 @@ public class UserController extends BaseController {
         List<User> list = new ExcelImportService().importExcelByIs(inputstream, User.class, params, false).getList();
         for (User user : list) {
             if (SysConstants.NOT_UNIQUE.equals(iUserService.checkUserNameUnique(user.getUserName()))) {
-                return R.error("导入用户'" + user.getUserName() + "'失败，登录账号已存在");
+                return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，登录账号已存在", user.getUserName())));
             } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkPhoneUnique(user))) {
-                return R.error("导入用户'" + user.getUserName() + "'失败，手机号码已存在");
+                return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，手机号码已存在", user.getUserName())));
             } else if (SysConstants.NOT_UNIQUE.equals(iUserService.checkEmailUnique(user))) {
-                return R.error("导入用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+                return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("导入用户[%s]失败，邮箱账号已存在", user.getUserName())));
             }
             user.setDeptId(101L);
             user.setCreateBy(SecurityUtils.getUsername());
@@ -145,6 +146,6 @@ public class UserController extends BaseController {
             user.setPassword(SecurityUtils.encryptPassword(SysConstants.DEFAULT_PASSWORD));
         }
         iUserService.saveBatch(list);
-        return R.success("导入用户数据成功");
+        return R.success();
     }
 }

@@ -9,11 +9,12 @@ import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.model.LoginObj;
 import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IMenuService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wf.captcha.SpecCaptcha;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,21 +23,12 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@AllArgsConstructor
 public class LoginController {
-
-    @Autowired
     private LoginService loginService;
-
-    @Autowired
     private TokenService tokenService;
-
-    @Autowired
     private SysPermissionService sysPermissionService;
-
-    @Autowired
     private IMenuService iMenuService;
-
-    @Autowired
     private RedisCache redisCache;
 
     @PostMapping("/login")
@@ -45,7 +37,7 @@ public class LoginController {
         String redisCode = redisCache.getCacheObject(loginObj.getKey());
         // 判断验证码
         if (loginObj.getCode() == null || !redisCode.equals(loginObj.getCode().trim().toLowerCase())) {
-            return R.error("验证码不正确");
+            return R.error(ReturnCodeEnum.USER_VERIFY_CODE_ERROR);
         }
         // 删除验证码
         redisCache.deleteObject(loginObj.getKey());

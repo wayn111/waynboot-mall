@@ -8,7 +8,6 @@ import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.util.R;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +57,7 @@ public interface IGoodsService extends IService<Goods> {
      * @param goodsSaveRelatedVO 商品保存关联VO对象
      * @return R
      */
-    R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException;
+    R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO);
 
     /**
      * 校验商品名称是否唯一
@@ -74,7 +73,7 @@ public interface IGoodsService extends IService<Goods> {
      * @param goodsId 商品ID
      * @return boolean
      */
-    boolean deleteGoodsRelatedByGoodsId(Long goodsId) throws IOException;
+    boolean deleteGoodsRelatedByGoodsId(Long goodsId);
 
     /**
      * 更新商品相关对象
@@ -82,7 +81,7 @@ public interface IGoodsService extends IService<Goods> {
      * @param goodsSaveRelatedVO 商品保存关联VO对象
      * @return R
      */
-    R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException;
+    R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO);
 
     /**
      * 根据二级分类Id集合获取对应商品
@@ -94,4 +93,6 @@ public interface IGoodsService extends IService<Goods> {
     R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList);
 
     List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO);
+
+    IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList);
 }

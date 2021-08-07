@@ -1,6 +1,6 @@
 package com.wayn.common.annotation;
 
-import com.wayn.common.enums.Operator;
+import com.wayn.common.enums.OperatorEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,7 +25,7 @@ public @interface Log {
      *
      * @return
      */
-    Operator operator() default Operator.SELECT;
+    OperatorEnum operator() default OperatorEnum.SELECT;
 
     /**
      * 是否记录请求参数

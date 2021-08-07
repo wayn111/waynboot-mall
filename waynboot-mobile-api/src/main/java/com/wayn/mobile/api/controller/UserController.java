@@ -7,6 +7,7 @@ import com.wayn.common.core.domain.vo.ProfileVO;
 import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.core.service.tool.IMailConfigService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
@@ -111,12 +112,12 @@ public class UserController {
     @PostMapping("updatePassword")
     public R updatePassword(@RequestBody RegistryObj registryObj) {
         if (!StringUtils.equalsIgnoreCase(registryObj.getPassword(), registryObj.getConfirmPassword())) {
-            return R.error("两次密码输入不相符");
+            return R.error(ReturnCodeEnum.USER_TWO_PASSWORD_NOT_SAME_ERROR);
         }
         String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
         // 判断邮箱验证码
         if (registryObj.getEmailCode() == null || !redisEmailCode.equals(registryObj.getEmailCode().trim().toLowerCase())) {
-            return R.error("邮箱验证码不正确");
+            return R.error(ReturnCodeEnum.USER_EMAIL_CODE_ERROR);
         }
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Member member = loginUser.getMember();

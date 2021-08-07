@@ -1,5 +1,6 @@
 package com.wayn.admin.framework.security.service;
 
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.json.JsonUtil;
 import lombok.SneakyThrows;
@@ -25,6 +26,6 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
         response.setStatus(500);
         //将 登录失败 信息打包成json格式返回
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().print(JsonUtil.marshal(R.error("用户账号或密码错误")));
+        response.getWriter().print(JsonUtil.marshal(R.error(ReturnCodeEnum.USER_ACCOUNT_PASSWORD_ERROR)));
     }
 }

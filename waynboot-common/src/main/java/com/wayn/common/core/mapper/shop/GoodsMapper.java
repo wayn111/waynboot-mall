@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface GoodsMapper extends BaseMapper<Goods> {
 
-    IPage<Goods> selectGoodsListPage(Page<Goods> page,Goods goods);
+    IPage<Goods> selectGoodsListPage(Page<Goods> page, Goods goods);
 
     IPage<Goods> selectGoodsListPageByl2CateId(Page<Goods> page, List<Long> cateList);
 
@@ -29,4 +29,6 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     IPage<Goods> selectColumnUnBindGoodsListPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
 
     List<Goods> selectHomeIndex(Goods goods);
+
+    IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList);
 }

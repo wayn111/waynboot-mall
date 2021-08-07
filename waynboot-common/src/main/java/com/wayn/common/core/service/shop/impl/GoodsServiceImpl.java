@@ -10,6 +10,7 @@ import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.core.service.shop.*;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
@@ -18,7 +19,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -45,6 +45,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public IPage<Goods> listPage(Page<Goods> page, Goods goods) {
         return goodsMapper.selectGoodsListPage(page, goods);
     }
+
 
     @Override
     public List<Goods> selectHomeIndexGoods(Goods goods) {
@@ -87,13 +88,13 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
+    public R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
         Goods goods = goodsSaveRelatedVO.getGoods();
         GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
         GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
         GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
         if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
-            return R.error("添加商品'" + goods.getName() + "'失败，商品名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("添加商品[%s]失败，商品名称已存在", goods.getName())));
         }
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
@@ -128,7 +129,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             }
             return goodsProduct.getDefaultSelected();
         }).count() > 1) {
-            return R.error("商品规格只能选择一个启用默认选中");
+            return R.error(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
         }
 
         // 保存商品规格
@@ -138,7 +139,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 保存商品货品
         iGoodsProductService.saveBatch(Arrays.asList(products));
 
-        return R.result(syncGoods2Es(goods));
+        // baseElasticService.syncGoods2Es(goods);
+        return R.success();
     }
 
     @Override
@@ -153,7 +155,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean deleteGoodsRelatedByGoodsId(Long goodsId) throws IOException {
+    public boolean deleteGoodsRelatedByGoodsId(Long goodsId) {
         removeById(goodsId);
         iGoodsSpecificationService.remove(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
         iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
@@ -166,9 +168,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
+    public R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
         Goods goods = goodsSaveRelatedVO.getGoods();
         GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
         List<GoodsAttribute> updateAttributes = new ArrayList<>();
@@ -176,7 +177,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
         GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
         if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
-            return R.error("更新商品'" + goods.getName() + "'失败，商品名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新商品[%s]失败，商品名称已存在", goods.getName())));
         }
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
@@ -209,7 +210,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         }
         // 判断启用默认选中的规格是否超过一个
         if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).count() > 1) {
-            return R.error("商品规格只能选择一个启用默认选中");
+            return R.error(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
         }
 
         // 更新商品规格
@@ -221,7 +222,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 更新商品货品
         iGoodsProductService.updateBatchById(Arrays.asList(products));
 
-        return R.result(syncGoods2Es(goods));
+        syncGoods2Es(goods);
+        return R.success();
     }
 
     @Override
@@ -234,12 +236,17 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         return goodsMapper.searchResult(page, searchVO);
     }
 
+    @Override
+    public IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList) {
+        return goodsMapper.selectColumnGoodsPage(page, goodsIdList);
+    }
+
     /**
      * 同步商品信息到es中
      *
      * @param goods 商品信息
      */
-    public boolean syncGoods2Es(Goods goods) throws IOException {
+    public void syncGoods2Es(Goods goods) {
         // 同步es
         ElasticEntity elasticEntity = new ElasticEntity();
         elasticEntity.setId(goods.getId().toString());
@@ -252,9 +259,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("isOnSale", goods.getIsOnSale());
         map.put("createTime", goods.getCreateTime());
         elasticEntity.setData(map);
-        if (!elasticDocument.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity)) {
+        boolean one = elasticDocument.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity);
+        if (!one) {
             throw new BusinessException("商品同步es失败");
         }
-        return true;
     }
 }

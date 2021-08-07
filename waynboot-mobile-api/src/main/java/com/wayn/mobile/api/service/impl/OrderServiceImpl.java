@@ -1,7 +1,6 @@
 package com.wayn.mobile.api.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -9,6 +8,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
@@ -21,14 +21,13 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.Constants;
-import com.wayn.common.constant.ErrorCode;
-import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.util.OrderHandleOption;
 import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.enums.PayTypeEnum;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.task.TaskService;
 import com.wayn.common.util.IdUtil;
@@ -102,6 +101,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         IPage<Order> orderIPage = orderMapper.selectOrderListPage(page, order, orderStatus);
         List<Order> orderList = orderIPage.getRecords();
         List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
+        List<Long> idList = orderList.stream().map(Order::getId).collect(Collectors.toList());
+        Map<Long, List<OrderGoods>> orderGoodsListMap = iOrderGoodsService
+                .list(Wrappers.lambdaQuery(OrderGoods.class).in(CollectionUtils.isNotEmpty(idList), OrderGoods::getOrderId, idList))
+                .stream().collect(Collectors.groupingBy(OrderGoods::getOrderId));
+
         for (Order o : orderList) {
             Map<String, Object> orderVo = new HashMap<>();
             orderVo.put("id", o.getId());
@@ -111,7 +115,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderVo.put("handleOption", OrderUtil.build(o));
             orderVo.put("aftersaleStatus", o.getAftersaleStatus());
 
-            List<OrderGoods> orderGoodsList = iOrderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", o.getId()));
+            List<OrderGoods> orderGoodsList = orderGoodsListMap.get(o.getId());
             List<Map<String, Object>> orderGoodsVoList = new ArrayList<>(orderGoodsList.size());
             for (OrderGoods orderGoods : orderGoodsList) {
                 Map<String, Object> orderGoodsVo = new HashMap<>();
@@ -354,21 +358,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R prepay(String orderSn, Integer payType, HttpServletRequest request) {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
-        String checkMsg = checkOrderOperator(order);
-        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
-            return R.error(checkMsg);
+        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
+        if (!returnCodeEnum.equals(ReturnCodeEnum.SUCCESS)) {
+            return R.error(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isPay()) {
-            return R.error("订单不能支付");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
         }
         // 设置支付方式
         order.setPayType(payType);
         Member member = iMemberService.getById(MobileSecurityUtils.getUserId());
         String openid = member.getWeixinOpenid();
         if (openid == null) {
-            return R.error("订单不能支付");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
         }
         WxPayMpOrderResult result;
         try {
@@ -387,7 +391,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.success().add("result", result);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return R.error("订单不能支付");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
         }
     }
 
@@ -398,19 +402,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         Long userId = order.getUserId();
-        String checkMsg = checkOrderOperator(order);
-        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
-            return R.error(checkMsg);
+        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
+        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
+            return R.error(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isPay()) {
-            return R.error("订单不能支付");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
         }
         // 保存支付方式
-        boolean update = update().set("pay_type", payType).eq("order_sn", orderSn).update();
+        boolean update = lambdaUpdate()
+                .set(Order::getPayType, payType)
+                .eq(Order::getOrderSn, orderSn).update();
         if (!update) {
-            return R.error("订单设置支付类型失败！");
+            return R.error(ReturnCodeEnum.ORDER_SET_PAY_ERROR);
         }
         switch (Objects.requireNonNull(PayTypeEnum.of(payType))) {
             case WX:
@@ -431,7 +437,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     return R.success().add("result", result);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
-                    return R.error("订单不能支付");
+                    return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
                 }
             case ALI:
                 // 初始化
@@ -471,8 +477,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     return R.success().add("form", form);
                 } catch (AlipayApiException e) {
                     log.error(e.getMessage(), e);
-                    ;
-                    return R.error("订单不能支付");
+                    return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
                 }
             case ALI_TEST:
                 // 支付宝test，直接更新支付状态为已支付
@@ -481,7 +486,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 order.setOrderStatus(OrderUtil.STATUS_PAY);
                 order.setUpdateTime(new Date());
                 if (!updateById(order)) {
-                    return R.error("更新数据已失效");
+                    return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
                 }
 
                 // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
@@ -496,31 +501,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 taskService.removeTask(new OrderUnpaidTask(order.getId()));
                 return R.success();
             default:
-                return R.error("不支持的支付类型！");
+                return R.error(ReturnCodeEnum.ORDER_NOT_SUPPORT_PAYWAY_ERROR);
         }
     }
 
     @Override
-    public R wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
-        String xmlResult;
+    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
+        String xmlResult = null;
         try {
             xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
+            log.error(WxPayNotifyResponse.fail(e.getMessage()), e);
         }
 
-        WxPayOrderNotifyResult result;
+        WxPayOrderNotifyResult result = null;
         try {
             result = wxPayService.parseOrderNotifyResult(xmlResult);
 
             if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
                 log.error(xmlResult);
-                throw new WxPayException("微信通知支付失败！");
             }
         } catch (WxPayException e) {
             log.error(e.getMessage(), e);
-            return R.error(WxPayNotifyResponse.fail(e.getMessage()));
         }
 
         log.info("处理腾讯支付平台的订单支付, {}", result.getReturnMsg());
@@ -532,17 +534,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String totalFee = BaseWxPayResult.fenToYuan(result.getTotalFee());
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         if (order == null) {
-            return R.error(WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn));
+            log.error("微信支付回调：订单不存在，orderSn：{}", orderSn);
+            return;
         }
 
         // 检查这个订单是否已经处理过
         if (OrderUtil.hasPayed(order)) {
-            return R.error(WxPayNotifyResponse.success("订单已经处理成功!"));
+            log.error("微信支付回调：订单已经处理过了，orderSn：{}", orderSn);
+            return;
         }
 
         // 检查支付订单金额
         if (!totalFee.equals(order.getActualPrice().toString())) {
-            return R.error(WxPayNotifyResponse.fail(order.getOrderSn() + " : 支付金额不符合 totalFee=" + totalFee));
+            log.error("微信支付回调: 支付金额不符合，orderSn：{}，totalFee：{}", order.getOrderSn(), totalFee);
+            return;
         }
 
         order.setPayId(payId);
@@ -550,7 +555,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setOrderStatus(OrderUtil.STATUS_PAY);
         order.setUpdateTime(new Date());
         if (!updateById(order)) {
-            return R.error(WxPayNotifyResponse.fail("更新数据已失效"));
+            log.error("微信支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
+            return;
         }
 
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
@@ -562,86 +568,84 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         redisCache.deleteZsetObject("order_zset", order.getId());
         // 取消订单超时未支付任务
         taskService.removeTask(new OrderUnpaidTask(order.getId()));
-        return R.error(WxPayNotifyResponse.success("处理成功!"));
     }
 
     @Override
-    public R aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
+    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
         //将异步通知中收到的所有参数都存放到map中
         Map<String, String[]> parameterMap = request.getParameterMap();
         Map<String, String> paramsMap = new HashMap<>();
         parameterMap.forEach((s, strings) -> {
             paramsMap.put(s, strings[0]);
         });
-        try {
-            boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, alipayConfig.getAlipayPublicKey(), alipayConfig.getCharset(), alipayConfig.getSigntype()); //调用SDK验证签名
-            if (signVerified) {
-                // 验签成功后，按照支付结果异步通知中的描述，对支付结果中的业务内容进行二次校验，校验成功后在response中返回success并继续商户自身业务处理，校验失败返回failure
-                String orderSn = request.getParameter("orderSn");
-                Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
-                if (order == null) {
-                    return R.error(WxPayNotifyResponse.fail("订单不存在 sn=" + orderSn));
-                }
-
-                // 检查这个订单是否已经处理过
-                if (OrderUtil.hasPayed(order)) {
-                    return R.error(WxPayNotifyResponse.success("订单已经处理成功!"));
-                }
-
-                order.setPayId("0xsdfsadfas-ali");
-                order.setPayTime(LocalDateTime.now());
-                order.setOrderStatus(OrderUtil.STATUS_PAY);
-                order.setUpdateTime(new Date());
-                if (!updateById(order)) {
-                    return R.error(WxPayNotifyResponse.fail("更新数据已失效"));
-                }
-
-                // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-                String email = iMemberService.getById(order.getUserId()).getEmail();
-                if (StringUtils.isNotBlank(email)) {
-                    iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
-                }
-                // 删除redis中订单id
-                redisCache.deleteZsetObject("order_zset", order.getId());
-                // 取消订单超时未支付任务
-                taskService.removeTask(new OrderUnpaidTask(order.getId()));
-                return R.success(WxPayNotifyResponse.success("处理成功!"));
-            } else {
-                // 验签失败则记录异常日志，并在response中返回failure.
-                return R.error("验签失败");
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return R.error(String.format("支付宝支付回调失败, req: %s", JSONObject.toJSONString(request.getParameterMap())));
+        // 调用SDK验证签名
+        boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, alipayConfig.getAlipayPublicKey(), alipayConfig.getCharset(), alipayConfig.getSigntype());
+        if (!signVerified) {
+            log.error("支付宝支付回调：验签失败");
+            return;
         }
+        log.info("支付宝支付回调：开始");
+        // 验签成功后，按照支付结果异步通知中的描述，对支付结果中的业务内容进行二次校验，校验成功后在response中返回success并继续商户自身业务处理，校验失败返回failure
+        String orderSn = request.getParameter("orderSn");
+        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
+        if (order == null) {
+            log.error("支付宝支付回调：订单不存在，orderSn：{}", orderSn);
+            return;
+        }
+
+        // 检查这个订单是否已经处理过
+        if (OrderUtil.hasPayed(order)) {
+            log.error("支付宝支付回调：订单已经处理过了，orderSn：{}", orderSn);
+            return;
+        }
+
+        order.setPayId("0xsdfsadfas-ali");
+        order.setPayTime(LocalDateTime.now());
+        order.setOrderStatus(OrderUtil.STATUS_PAY);
+        order.setUpdateTime(new Date());
+        if (!updateById(order)) {
+            log.error("支付宝支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
+            return;
+        }
+
+        // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
+        String email = iMemberService.getById(order.getUserId()).getEmail();
+        if (StringUtils.isNotBlank(email)) {
+            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+        }
+        // 删除redis中订单id
+        redisCache.deleteZsetObject("order_zset", order.getId());
+        // 取消订单超时未支付任务
+        taskService.removeTask(new OrderUnpaidTask(order.getId()));
+        log.info("支付宝支付回调：结束");
     }
 
     @Override
     public R searchResult(String orderSn) {
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         if (order == null) {
-            return R.error(ErrorCode.ORDER_NOT_EXISTS_ERROR, "订单不存在，编号：" + orderSn);
+            return R.error(ReturnCodeEnum.ORDER_NOT_EXISTS_ERROR);
         }
 
         // 检查这个订单是否已经处理过
         if (!OrderUtil.isCreateStatus(order)) {
-            return R.error(ErrorCode.ORDER_NOT_EXISTS_ERROR, "订单创建失败!");
+            return R.error(ReturnCodeEnum.ORDER_HAS_CREATED_ERROR);
         }
-        return R.success("订单创建成功!");
+        return R.success();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public R cancel(Long orderId) {
         Order order = getById(orderId);
-        String checkMsg = checkOrderOperator(order);
-        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
-            return R.error(checkMsg);
+        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
+        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
+            return R.error(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isCancel()) {
-            return R.error("订单不能取消");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_CANCAL_ERROR);
         }
 
         // 设置订单已取消状态
@@ -669,14 +673,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public R refund(Long orderId) {
         Order order = getById(orderId);
-        String checkMsg = checkOrderOperator(order);
-        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
-            return R.error(checkMsg);
+        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
+        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
+            return R.error(returnCodeEnum);
         }
 
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isRefund()) {
-            return R.error("订单不能取消");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
         }
 
         // 设置订单申请退款状态
@@ -699,14 +703,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Transactional(rollbackFor = Exception.class)
     public R delete(Long orderId) {
         Order order = getById(orderId);
-        String checkMsg = checkOrderOperator(order);
-        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
-            return R.error(checkMsg);
+        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
+        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
+            return R.error(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isDelete()) {
-            return R.error("订单不能删除");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_DELETE_ERROR);
         }
         // 删除订单
         removeById(orderId);
@@ -718,14 +722,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public R confirm(Long orderId) {
         Order order = getById(orderId);
-        String checkMsg = checkOrderOperator(order);
-        if (!SysConstants.STRING_TRUE.equals(checkMsg)) {
-            return R.error(checkMsg);
+        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
+        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
+            return R.error(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isConfirm()) {
-            return R.error("订单不能确认收货");
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_CONFIRM_ERROR);
         }
         // 更改订单状态为已收货
         order.setOrderStatus(OrderUtil.STATUS_CONFIRM);
@@ -741,15 +745,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @param order 订单详情
      * @return 成功返回<code>SysConstants.STRING_TRUE</code>，失败返回<code>SysConstants.STRING_FALSE</code>，或者自定义消息
      */
-    private String checkOrderOperator(Order order) {
+    private ReturnCodeEnum checkOrderOperator(Order order) {
         Long userId = MobileSecurityUtils.getUserId();
         if (Objects.isNull(order)) {
-            return SysConstants.STRING_FALSE;
+            return ReturnCodeEnum.USER_NOT_EXISTS_ERROR;
         }
         if (!order.getUserId().equals(userId)) {
-            return SysConstants.STRING_FALSE_MSG("用户ID不一致");
+            return ReturnCodeEnum.ORDER_USER_NOT_SAME_ERROR;
         }
-        return SysConstants.STRING_TRUE;
+        return ReturnCodeEnum.SUCCESS;
     }
 
     /*public void releaseCoupon(Long orderId) {
