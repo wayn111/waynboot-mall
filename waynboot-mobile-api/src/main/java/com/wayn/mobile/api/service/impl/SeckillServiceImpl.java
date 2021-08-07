@@ -5,7 +5,7 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Seckill;
 import com.wayn.mobile.api.mapper.SeckillMapper;
 import com.wayn.mobile.api.service.ISeckillService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +20,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2020-08-04
  */
 @Service
+@AllArgsConstructor
 public class SeckillServiceImpl extends ServiceImpl<SeckillMapper, Seckill> implements ISeckillService {
 
-    @Autowired
-    private SeckillMapper seckillMapper;
-
     private final AtomicInteger atomicInteger = new AtomicInteger(0);
+    private SeckillMapper seckillMapper;
 
     /**
      * 使用
@@ -38,7 +37,7 @@ public class SeckillServiceImpl extends ServiceImpl<SeckillMapper, Seckill> impl
     public R updateSec(Long id) {
         Seckill seckill = getById(id);
         if (seckill.getNumber() <= 0) {
-            return R.error("sale out");
+            return R.error();
         }
         Integer newNum = seckill.getNumber() - 1;
         Integer oldVersion = seckill.getVersion();
@@ -56,7 +55,7 @@ public class SeckillServiceImpl extends ServiceImpl<SeckillMapper, Seckill> impl
     public R updateSec1(Long id) {
         Seckill seckill = getById(id);
         if (seckill.getNumber() <= 0) {
-            return R.error("sale out");
+            return R.error();
         }
         Integer oldNum = seckill.getNumber();
         Integer newNum = seckill.getNumber() - 1;

@@ -3,6 +3,7 @@ package com.wayn.admin.api.controller.tool;
 import com.wayn.common.core.domain.tool.EmailConfig;
 import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,16 @@ public class EmailConfigController {
     public R update(@Valid @RequestBody EmailConfig emailConfig) {
         emailConfig.setId(1L);
         mailConfigService.updateById(emailConfig);
-        return R.success("修改成功");
+        return R.success();
     }
 
     @PostMapping("send")
     public R sendMail(@Valid @RequestBody SendMailVO mailVO) {
         EmailConfig emailConfig = mailConfigService.getById(1L);
         if (!mailConfigService.checkMailConfig(emailConfig)) {
-            return R.error("邮件信息未配置完全，请先填写配置信息");
+            return R.error(ReturnCodeEnum.TOOL_EMAIL_ERROR);
         }
         MailUtil.sendMail(emailConfig, mailVO, false);
-        return R.success("发送成功，请等待");
+        return R.success();
     }
 }
