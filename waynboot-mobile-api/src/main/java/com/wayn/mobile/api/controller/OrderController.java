@@ -2,6 +2,7 @@ package com.wayn.mobile.api.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Order;
@@ -67,15 +68,15 @@ public class OrderController extends BaseController {
     }
 
     @PostMapping("wxPayNotify")
-    public R wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
+    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
         log.info("微信paySuccess通知数据记录：req：{}", JSONObject.toJSONString(request.getParameterMap()));
-        return iOrderService.wxPayNotify(request, response);
+        iOrderService.wxPayNotify(request, response);
     }
 
     @PostMapping("aliPayNotify")
-    public R aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
+    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
         log.info("支付宝paySuccess通知数据记录：req: {}", JSONObject.toJSONString(request.getParameterMap()));
-        return iOrderService.aliPayNotify(request, response);
+        iOrderService.aliPayNotify(request, response);
     }
 
     @GetMapping("searchResult/{orderSn}")

@@ -6,6 +6,7 @@ import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Dict;
 import com.wayn.common.core.service.system.IDictService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.common.util.security.SecurityUtils;
@@ -43,10 +44,11 @@ public class DictTypeController extends BaseController {
     @PostMapping
     public R addDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
-            return R.error("新增字典名称'" + dict.getName() + "'失败，字典名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("新增字典名称[%s]失败，字典名称已存在", dict.getName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {
-            return R.error("新增字典类型'" + dict.getValue() + "'失败，字典类型已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("新增字典类型[%s]失败，字典类型已存在", dict.getValue())));
         }
+
         dict.setCreateBy(SecurityUtils.getUsername());
         dict.setCreateTime(new Date());
         return R.result(iDictService.save(dict));
@@ -57,9 +59,9 @@ public class DictTypeController extends BaseController {
     @PutMapping
     public R updateDict(@Validated @RequestBody Dict dict) {
         if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictNameUnique(dict))) {
-            return R.error("更新字典名称'" + dict.getName() + "'失败，字典名称已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新字典名称[%s]失败，字典名称已存在", dict.getName())));
         } else if (SysConstants.NOT_UNIQUE.equals(iDictService.checkDictValueUnique(dict))) {
-            return R.error("更新字典类型'" + dict.getValue() + "'失败，字典类型已存在");
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新字典类型[%s]失败，字典类型已存在", dict.getValue())));
         }
         dict.setUpdateBy(SecurityUtils.getUsername());
         dict.setUpdateTime(new Date());
@@ -85,6 +87,6 @@ public class DictTypeController extends BaseController {
     @GetMapping("/export")
     public R export(Dict dict) {
         List<Dict> list = iDictService.list(dict);
-        return R.success(ExcelUtil.exportExcel(list, Dict.class, "字典数据.xls", WaynConfig.getDownloadPath()));
+        return R.success().add("filepath", ExcelUtil.exportExcel(list, Dict.class, "字典数据.xls", WaynConfig.getDownloadPath()));
     }
 }

@@ -7,6 +7,7 @@ import com.wayn.common.core.domain.tool.EmailConfig;
 import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.core.service.tool.IMailConfigService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
@@ -49,13 +50,13 @@ public class LoginController {
     @PostMapping("/registry")
     public R registry(@RequestBody RegistryObj registryObj) {
         if (!StringUtils.equalsIgnoreCase(registryObj.getPassword(), registryObj.getConfirmPassword())) {
-            return R.error("两次密码输入不相符");
+            return R.error(ReturnCodeEnum.USER_TWO_PASSWORD_NOT_SAME_ERROR);
         }
         // 验证手机号是否唯一
         int count = iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
         iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
         if (count > 0) {
-            return R.error("手机号已注册，请更换手机号");
+            return R.error(ReturnCodeEnum.USER_PHONE_HAS_REGISTER_ERROR);
         }
 
         // String redisCode = redisCache.getCacheObject(registryObj.getKey());
@@ -69,13 +70,13 @@ public class LoginController {
         String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
         // 判断邮箱验证码
         if (registryObj.getEmailCode() == null || !redisEmailCode.equals(registryObj.getEmailCode().trim().toLowerCase())) {
-            return R.error("邮箱验证码不正确");
+            return R.error(ReturnCodeEnum.USER_EMAIL_CODE_ERROR);
         }
         // 删除验证码
         redisCache.deleteObject(registryObj.getEmailKey());
         Member member = new Member();
         member.setNickname("昵称" + new Date().getTime() / 1000);
-        String avatar = "http://cdn.wayn.xin/091fffcf8e8c25ed8d2cb926be60a16a.png";
+        String avatar = SysConstants.DEFAULT_AVATAR;
         member.setAvatar(avatar);
         member.setMobile(registryObj.getMobile());
         member.setEmail(registryObj.getEmail());

@@ -1,5 +1,6 @@
 package com.wayn.mobile.api.service;
 
+import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Order;
@@ -9,7 +10,6 @@ import com.wayn.message.core.messsage.OrderDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 
 /**
  * <p>
@@ -75,9 +75,9 @@ public interface IOrderService extends IService<Order> {
      * @param response 响应
      * @return r
      */
-    R wxPayNotify(HttpServletRequest request, HttpServletResponse response);
+    void wxPayNotify(HttpServletRequest request, HttpServletResponse response);
 
-    R aliPayNotify(HttpServletRequest request, HttpServletResponse response);
+    void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException;
 
     /**
      * 测试支付成功回调

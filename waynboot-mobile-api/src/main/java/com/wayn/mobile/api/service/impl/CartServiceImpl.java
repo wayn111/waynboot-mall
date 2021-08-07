@@ -3,11 +3,13 @@ package com.wayn.mobile.api.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
@@ -25,6 +27,7 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,15 +43,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
 
-    private ICartService iCartService;
-
     private IGoodsService iGoodsService;
 
     private IGoodsProductService iGoodsProductService;
 
     @Override
     public Cart checkExistsGoods(Long userId, Long goodsId, Long productId) {
-        return iCartService.getOne(new QueryWrapper<Cart>()
+        return getOne(new QueryWrapper<Cart>()
                 .eq("user_id", userId)
                 .eq("goods_id", goodsId)
                 .eq("product_id", productId));
@@ -60,18 +61,18 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         Long productId = cart.getProductId();
         Integer number = cart.getNumber();
         if (!ObjectUtils.allNotNull(goodsId, productId, number) || number <= 0) {
-            return R.error("参数错误");
+            return R.error(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
         }
         Goods goods = iGoodsService.getById(goodsId);
         if (!goods.getIsOnSale()) {
-            return R.error("商品已经下架");
+            return R.error(ReturnCodeEnum.GOODS_HAS_OFFSHELF_ERROR);
         }
         Long userId = MobileSecurityUtils.getLoginUser().getMember().getId();
         GoodsProduct product = iGoodsProductService.getById(productId);
         Cart existsCart = checkExistsGoods(userId, goodsId, productId);
         if (Objects.isNull(existsCart)) {
             if (Objects.isNull(product) || product.getNumber() < number) {
-                return R.error("库存不足");
+                return R.error(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
             }
 
             cart.setGoodsSn(goods.getGoodsSn());
@@ -91,7 +92,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         } else {
             int num = existsCart.getNumber() + number;
             if (num > product.getNumber()) {
-                return R.error("库存不足");
+                return R.error(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
             }
             existsCart.setNumber(num);
             cart.setUpdateTime(LocalDateTime.now());
@@ -104,7 +105,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public R goodsCount() {
-        Long userId = MobileSecurityUtils.getUserIdNonException();
+        Long userId = MobileSecurityUtils.getUserId();
         int count = count(new QueryWrapper<Cart>().eq("user_id", userId));
         return R.success().add("count", count);
     }
@@ -112,12 +113,18 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     @Override
     public R list(Long userId) {
         List<Cart> cartList = list(new QueryWrapper<Cart>().eq("user_id", userId));
+        List<Long> goodsIdList = cartList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
+        Map<Long, Goods> goodsIdMap = iGoodsService
+                .list(Wrappers.lambdaQuery(Goods.class)
+                        .in(CollectionUtils.isNotEmpty(goodsIdList), Goods::getId, goodsIdList))
+                .stream().collect(Collectors.toMap(Goods::getId, goods -> goods));
+
         JSONArray array = new JSONArray();
         for (Cart cart : cartList) {
             JSONObject jsonObject = new JSONObject();
             try {
                 MyBeanUtil.copyProperties2Map(cart, jsonObject);
-                Goods goods = iGoodsService.getById(cart.getGoodsId());
+                Goods goods = goodsIdMap.get(cart.getGoodsId());
                 if (goods.getIsNew()) {
                     jsonObject.put("tag", "新品");
                 }
@@ -134,14 +141,15 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public R changeNum(Long cartId, Integer number) {
-        Cart cart = iCartService.getById(cartId);
+        Cart cart = getById(cartId);
         Long productId = cart.getProductId();
         GoodsProduct goodsProduct = iGoodsProductService.getById(productId);
         Integer productNumber = goodsProduct.getNumber();
         if (number > productNumber) {
             throw new BusinessException(String.format("库存不足，该商品只剩%d件了", productNumber));
         }
-        return R.result(update().setSql("number = " + number).eq("id", cartId).update(), "修改失败");
+        boolean update = lambdaUpdate().setSql("number = " + number).eq(Cart::getId, cartId).update();
+        return R.result(update);
     }
 
     @Override
