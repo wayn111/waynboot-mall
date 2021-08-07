@@ -15,10 +15,10 @@ import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.CartMapper;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.IntrospectionException;
@@ -37,15 +37,13 @@ import java.util.stream.Collectors;
  * @since 2020-08-03
  */
 @Service
+@AllArgsConstructor
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
 
-    @Autowired
     private ICartService iCartService;
 
-    @Autowired
     private IGoodsService iGoodsService;
 
-    @Autowired
     private IGoodsProductService iGoodsProductService;
 
     @Override
@@ -101,21 +99,19 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 return R.error();
             }
         }
-        return goodsCount();
+        return R.success();
     }
 
     @Override
     public R goodsCount() {
         Long userId = MobileSecurityUtils.getUserIdNonException();
-        List<Cart> cartList = list(new QueryWrapper<Cart>()
-                .eq("user_id", userId));
-        return R.success().add("count", cartList.size());
+        int count = count(new QueryWrapper<Cart>().eq("user_id", userId));
+        return R.success().add("count", count);
     }
 
     @Override
     public R list(Long userId) {
-        List<Cart> cartList = list(new QueryWrapper<Cart>()
-                .eq("user_id", userId));
+        List<Cart> cartList = list(new QueryWrapper<Cart>().eq("user_id", userId));
         JSONArray array = new JSONArray();
         for (Cart cart : cartList) {
             JSONObject jsonObject = new JSONObject();
@@ -129,7 +125,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                     jsonObject.put("tag", "热品");
                 }
             } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-                log.error(e.getMessage(), e);;
+                log.error(e.getMessage(), e);
             }
             array.add(jsonObject);
         }
@@ -161,6 +157,6 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             defaultProduct = products.get(0);
         }
         cart.setProductId(defaultProduct.getId());
-        return add(cart);
+        return this.add(cart);
     }
 }

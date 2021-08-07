@@ -93,4 +93,6 @@ public interface IGoodsService extends IService<Goods> {
     R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList);
 
     List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO);
+
+    IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList);
 }
