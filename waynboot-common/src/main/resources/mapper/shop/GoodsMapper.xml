@@ -38,7 +38,7 @@
         from shop_goods
     </sql>
 
-    <sql id="selectHomeIndex">
+    <sql id="goods_info">
         select id,
                goods_sn, name, category_id, brand_id, keywords, brief, is_on_sale, sort, pic_url,
                share_url, is_new, is_hot, unit, counter_price, retail_price, actual_sales, virtual_sales,
@@ -47,7 +47,7 @@
     </sql>
 
     <select id="selectGoodsListPage" resultMap="ShopGoodsResult">
-        <include refid="selectGoodsVo"/>
+        <include refid="goods_info"/>
         <where>
             del_flag = 0
             and is_on_sale = 1
@@ -66,12 +66,12 @@
             <if test="goods.endTime != null and goods.endTime != ''">
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{goods.endTime},'%Y-%m-%d')
             </if>
-            order by create_time desc
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectGoodsListPageByl2CateId" resultMap="ShopGoodsResult">
-        <include refid="selectGoodsVo"/>
+        <include refid="goods_info"/>
         <where>
             del_flag = 0
             and is_on_sale = 1
@@ -81,12 +81,12 @@
                     #{listItem}
                 </foreach>
             </if>
-            order by create_time desc
         </where>
+        order by create_time desc
     </select>
 
     <select id="searchResult" resultMap="ShopGoodsResult">
-        <include refid="selectGoodsVo"/>
+        <include refid="goods_info"/>
         <where>
             del_flag = 0
             and is_on_sale = 1
@@ -103,7 +103,7 @@
     </select>
 
     <select id="selectColumnBindGoodsListPage" resultMap="ShopGoodsResult">
-        <include refid="selectGoodsVo"/>
+        <include refid="goods_info"/>
         <where>
             del_flag = 0
             and is_on_sale = 1
@@ -125,7 +125,7 @@
     </select>
 
     <select id="selectColumnUnBindGoodsListPage" resultMap="ShopGoodsResult">
-        <include refid="selectGoodsVo"/>
+        <include refid="goods_info"/>
         <where>
             del_flag = 0
             and is_on_sale = 1
@@ -146,8 +146,8 @@
         </where>
     </select>
 
-    <select id="selectHomeIndex" resultType="com.wayn.common.core.domain.shop.Goods">
-        <include refid="selectHomeIndex"/>
+    <select id="selectHomeIndex" resultMap="ShopGoodsResult">
+        <include refid="goods_info"/>
         <where>
             del_flag = 0
             and is_on_sale = 1
@@ -159,5 +159,21 @@
             </if>
             order by create_time desc limit 10
         </where>
+    </select>
+
+    <select id="selectColumnGoodsPage" resultMap="ShopGoodsResult">
+        <include refid="goods_info"/>
+        <where>
+            del_flag = 0
+            and is_on_sale = 1
+            <if test="goodsIdList != null and goodsIdList.size() > 0">
+                and id in (
+                <foreach collection="goodsIdList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+        order by create_time desc
     </select>
 </mapper>

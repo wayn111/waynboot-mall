@@ -9,6 +9,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
@@ -102,6 +103,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         IPage<Order> orderIPage = orderMapper.selectOrderListPage(page, order, orderStatus);
         List<Order> orderList = orderIPage.getRecords();
         List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
+        List<Long> idList = orderList.stream().map(Order::getId).collect(Collectors.toList());
+        Map<Long, List<OrderGoods>> orderGoodsListMap = iOrderGoodsService
+                .list(Wrappers.lambdaQuery(OrderGoods.class).in(CollectionUtils.isNotEmpty(idList), OrderGoods::getOrderId, idList))
+                .stream().collect(Collectors.groupingBy(OrderGoods::getOrderId));
+
         for (Order o : orderList) {
             Map<String, Object> orderVo = new HashMap<>();
             orderVo.put("id", o.getId());
@@ -111,7 +117,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderVo.put("handleOption", OrderUtil.build(o));
             orderVo.put("aftersaleStatus", o.getAftersaleStatus());
 
-            List<OrderGoods> orderGoodsList = iOrderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", o.getId()));
+            List<OrderGoods> orderGoodsList = orderGoodsListMap.get(o.getId());
             List<Map<String, Object>> orderGoodsVoList = new ArrayList<>(orderGoodsList.size());
             for (OrderGoods orderGoods : orderGoodsList) {
                 Map<String, Object> orderGoodsVo = new HashMap<>();
