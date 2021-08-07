@@ -6,7 +6,7 @@ import com.wayn.common.core.domain.shop.Category;
 import com.wayn.common.core.domain.vo.VanTreeSelectVo;
 import com.wayn.common.core.mapper.shop.CategoryMapper;
 import com.wayn.common.core.service.shop.ICategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +21,10 @@ import java.util.stream.Collectors;
  * @since 2020-06-26
  */
 @Service
+@AllArgsConstructor
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements ICategoryService {
 
-    @Autowired
     private CategoryMapper categoryMapper;
-
 
     @Override
     public List<Category> list(Category category) {
@@ -35,14 +34,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Override
     public List<VanTreeSelectVo> selectL1Category() {
         List<Category> categoryList = list(new QueryWrapper<Category>().eq("level", "L1").orderByAsc("sort"));
-        List<VanTreeSelectVo> vanTreeSelectVos = categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
-        return vanTreeSelectVos;
+        return categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
     }
 
     @Override
     public List<VanTreeSelectVo> selectCategoryByPid(Long id) {
         List<Category> categoryList = list(new QueryWrapper<Category>().eq("pid", id).orderByAsc("sort"));
-        List<VanTreeSelectVo> vanTreeSelectVos = categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
-        return vanTreeSelectVos;
+        return categoryList.stream().map(VanTreeSelectVo::new).collect(Collectors.toList());
     }
 }

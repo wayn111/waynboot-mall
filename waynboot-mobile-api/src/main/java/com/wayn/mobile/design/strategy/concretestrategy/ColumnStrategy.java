@@ -29,11 +29,10 @@ public class ColumnStrategy implements DiamondJumpType {
 
     @Override
     public List<Goods> getGoods(Page<Goods> page, Diamond diamond) {
-        List<ColumnGoodsRelation> goodsRelationList = iColumnGoodsRelationService.list(new QueryWrapper<ColumnGoodsRelation>()
-                .eq("column_id", diamond.getValueId()));
+        List<ColumnGoodsRelation> goodsRelationList = iColumnGoodsRelationService
+                .list(new QueryWrapper<ColumnGoodsRelation>().eq("column_id", diamond.getValueId()));
         List<Long> goodsIdList = goodsRelationList.stream().map(ColumnGoodsRelation::getGoodsId).collect(Collectors.toList());
-        Page<Goods> goodsPage = iGoodsService.page(page, new QueryWrapper<Goods>().in("id", goodsIdList).eq("is_on_sale", true));
-        return goodsPage.getRecords();
+        return iGoodsService.selectColumnGoodsPage(page, goodsIdList).getRecords();
     }
 
     @Override

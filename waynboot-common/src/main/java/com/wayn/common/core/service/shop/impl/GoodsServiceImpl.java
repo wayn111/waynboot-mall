@@ -245,6 +245,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         return goodsMapper.searchResult(page, searchVO);
     }
 
+    @Override
+    public IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList) {
+        return goodsMapper.selectColumnGoodsPage(page, goodsIdList);
+    }
+
     /**
      * 同步商品信息到es中
      *
