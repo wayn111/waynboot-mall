@@ -10,10 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -67,7 +64,7 @@ public class OrderDirectReceiver {
             multiValueMap.add("order", msgObject.get("order"));
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
-            if (response.getStatusCode().value() != 200) {
+            if (response.getStatusCode().value() != HttpStatus.OK.value()) {
                 throw new Exception("下单失败 ：" + msgObject);
             }
             JSONObject jsonObject = JSONObject.parseObject(response.getBody());

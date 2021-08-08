@@ -23,7 +23,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint, S
         int code = HttpStatus.UNAUTHORIZED.value();
         String msg = String.format("请求访问：%s，认证失败，无法访问系统资源", request.getRequestURI());
         try {
-            response.setStatus(200);
+            response.setStatus(HttpStatus.OK.value());
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
             response.getWriter().print(JsonUtil.marshal(R.error(code, msg)));

@@ -10,10 +10,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -64,7 +61,7 @@ public class EmailDirectReceiver {
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
-            if (response.getStatusCode().value() != 200) {
+            if (response.getStatusCode().value() != HttpStatus.OK.value()) {
                 throw new Exception("邮件发送失败 ：" + testMessage);
             }
             JSONObject jsonObject = JSONObject.parseObject(response.getBody());
