@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dev,druid
   thymeleaf:
     cache: false
     suffix: .html
