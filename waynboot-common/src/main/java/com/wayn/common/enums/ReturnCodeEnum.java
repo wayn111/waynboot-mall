@@ -55,18 +55,24 @@ public enum ReturnCodeEnum {
 
     GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR(5301, "商品规格只能选择一个启用默认选中"),
     GOODS_HAS_OFFSHELF_ERROR(5302, "商品已经下架"),
-    GOODS_STOCK_NOT_ENOUGH_ERROR(5302, "商品库存不足"),
+    GOODS_STOCK_NOT_ENOUGH_ERROR(5303, "商品库存不足"),
 
     DEPT_HAS_SUB_DEPT_ERROR(5401, "存在下级部门,不允许删除"),
-    DEPT_HAS_USER_ERROR(5401, "部门存在用户,不允许删除"),
+    DEPT_HAS_USER_ERROR(5402, "部门存在用户,不允许删除"),
 
     MENU_HAS_SUB_MENU_ERROR(5501, "存在子菜单,不允许删除"),
     MENU_HAS_DISTRIBUTE_ERROR(5502, "菜单已分配,不允许删除"),
 
     TOOL_EMAIL_ERROR(5601, "邮件信息未配置完全，请先填写配置信息"),
     TOOL_QINIU_NOT_EXISTS_ERROR(5602, "七牛云配置不存在"),
-    TOOL_QINIU_CONFIG_ERROR(5602, "七牛云配置错误"),
+    TOOL_QINIU_CONFIG_ERROR(5603, "七牛云配置错误"),
 
+
+    /**
+     * 6xxx，中间件异常
+     */
+    REDIS_CONNECTION_TIMEOUT_ERROR(6001, "redis连接超时"),
+    ES_CONNECTION_TIMEOUT_ERROR(6002, "es连接超时"),
     ;
     private int code;
     private String msg;
