@@ -7,6 +7,7 @@ import com.wayn.mobile.framework.security.service.TokenService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -35,7 +36,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
             tokenService.delLoginUser(loginUser.getToken());
         }
         // 设置状态码
-        response.setStatus(200);
+        response.setStatus(HttpStatus.OK.value());
         // 将登录失败信息打包成json格式返回
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().print(JsonUtil.marshal(R.success()));
