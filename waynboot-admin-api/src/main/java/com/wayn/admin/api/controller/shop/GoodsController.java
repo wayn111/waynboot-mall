@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class GoodsController extends BaseController {
     }
 
     @PutMapping
-    public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
+    public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
         return iGoodsService.updateGoodsRelated(goodsSaveRelatedVO);
     }
 
@@ -67,7 +68,7 @@ public class GoodsController extends BaseController {
     }
 
     @DeleteMapping("{goodsId}")
-    public R deleteGoods(@PathVariable Long goodsId) {
+    public R deleteGoods(@PathVariable Long goodsId) throws IOException {
         return R.result(iGoodsService.deleteGoodsRelatedByGoodsId(goodsId));
     }
 
