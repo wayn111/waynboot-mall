@@ -20,9 +20,6 @@ public class DruidProperties {
     @Value("${spring.datasource.druid.maxActive}")
     private int maxActive;
 
-    @Value("${spring.datasource.druid.maxWait}")
-    private int maxWait;
-
     @Value("${spring.datasource.druid.timeBetweenEvictionRunsMillis}")
     private int timeBetweenEvictionRunsMillis;
 
@@ -49,9 +46,6 @@ public class DruidProperties {
         datasource.setInitialSize(initialSize);
         datasource.setMaxActive(maxActive);
         datasource.setMinIdle(minIdle);
-
-        /** 配置获取连接等待超时的时间 */
-        datasource.setMaxWait(maxWait);
 
         /** 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 */
         datasource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);

@@ -2,13 +2,13 @@
 spring:
   datasource:
     druid:
-      initialSize: 40
+      initialSize: 10
       # 最小连接池数量
-      minIdle: 40
+      minIdle: 10
       # 最大连接池数量
-      maxActive: 60
+      maxActive: 50
       # 配置获取连接等待超时的时间
-      maxWait: 60000
+      # maxWait: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
       timeBetweenEvictionRunsMillis: 60000
       # 配置一个连接在池中最小生存的时间，单位是毫秒
@@ -16,7 +16,7 @@ spring:
       # 配置一个连接在池中最大生存的时间，单位是毫秒
       maxEvictableIdleTimeMillis: 900000
       # 配置检测连接是否有效
-      validationQuery: SELECT 1 FROM DUAL
+      validationQuery: SELECT 1
       testWhileIdle: true
       testOnBorrow: false
       testOnReturn: false

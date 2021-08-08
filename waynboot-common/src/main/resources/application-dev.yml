@@ -49,6 +49,8 @@ es:
   host: huawei.wayn.ltd
   port: 9200
   scheme: http
+  shards: 3
+  replicas: 2
 
 # alipay 需要自行申请支付宝的沙箱账号、申请appID，并依次配置AppID、密钥、公钥，否则无法发起支付宝支付。
 alipay:
