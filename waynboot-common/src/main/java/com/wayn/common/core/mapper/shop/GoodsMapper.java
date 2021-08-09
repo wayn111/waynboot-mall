@@ -30,5 +30,5 @@ public interface GoodsMapper extends BaseMapper<Goods> {
 
     List<Goods> selectHomeIndex(Goods goods);
 
-    IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList);
+    IPage<Goods> selectColumnGoodsPage(Page<Goods> page, Long columnId);
 }

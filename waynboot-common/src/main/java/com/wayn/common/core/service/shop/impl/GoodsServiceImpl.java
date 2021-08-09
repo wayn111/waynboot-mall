@@ -237,8 +237,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList) {
-        return goodsMapper.selectColumnGoodsPage(page, goodsIdList);
+    public IPage<Goods> selectColumnGoodsPageByColumnId(Page<Goods> page, Long columnId) {
+        return goodsMapper.selectColumnGoodsPage(page, columnId);
     }
 
     /**

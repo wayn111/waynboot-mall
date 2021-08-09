@@ -165,14 +165,8 @@
         <include refid="goods_info"/>
         <where>
             del_flag = 0
-            and is_on_sale = 1
-            <if test="goodsIdList != null and goodsIdList.size() > 0">
-                and id in (
-                <foreach collection="goodsIdList" item="item" separator=",">
-                    #{item}
-                </foreach>
-                )
-            </if>
+            AND is_on_sale = 1
+            AND id in ( SELECT goods_id FROM shop_column_goods_relation r WHERE r.column_id = #{columnId} )
         </where>
         order by create_time desc
     </select>
