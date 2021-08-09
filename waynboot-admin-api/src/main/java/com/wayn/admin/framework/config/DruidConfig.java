@@ -20,7 +20,7 @@ public class DruidConfig {
 
 
     @Bean
-    @ConfigurationProperties("spring.datasource.druid.master")
+    @ConfigurationProperties("spring.datasource.master")
     public DataSource dataSource(DruidProperties druidProperties) {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
         return druidProperties.dataSource(dataSource);

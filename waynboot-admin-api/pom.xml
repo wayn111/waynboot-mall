@@ -17,6 +17,14 @@
     </properties>
 
     <dependencies>
+
+        <!--阿里数据库连接池 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
@@ -95,9 +103,9 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.wayn.AdminApplication</mainClass>
                     <layout>ZIP</layout>
-<!--                    <commandlineArguments>-->
-<!--                        -parameters-->
-<!--                    </commandlineArguments>-->
+                    <!--                    <commandlineArguments>-->
+                    <!--                        -parameters-->
+                    <!--                    </commandlineArguments>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -108,16 +116,16 @@
                 </executions>
             </plugin>
 
-            <plugin>
+            <!--<plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <!--配置基本镜像-->
+                    &lt;!&ndash;配置基本镜像&ndash;&gt;
                     <from>
                         <image>${docker-from-image-name}</image>
                     </from>
-                    <!--配置最终推送的地址，仓库名，镜像名-->
+                    &lt;!&ndash;配置最终推送的地址，仓库名，镜像名&ndash;&gt;
                     <to>
                         <image>registry.cn-shanghai.aliyuncs.com/${aliyun-docker-namespace}/${project.artifactId}
                         </image>
@@ -142,7 +150,7 @@
                     </container>
                 </configuration>
 
-                <!-- 绑定到maven lifecicle-->
+                &lt;!&ndash; 绑定到maven lifecicle&ndash;&gt;
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -151,7 +159,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 
