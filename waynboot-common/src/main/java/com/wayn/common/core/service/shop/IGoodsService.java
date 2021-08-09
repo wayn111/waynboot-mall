@@ -95,5 +95,12 @@ public interface IGoodsService extends IService<Goods> {
 
     List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO);
 
-    IPage<Goods> selectColumnGoodsPage(Page<Goods> page, List<Long> goodsIdList);
+    /**
+     * 根据栏目ID查询栏目下商品
+     *
+     * @param page     分页参数
+     * @param columnId 栏目ID
+     * @return 分页对象
+     */
+    IPage<Goods> selectColumnGoodsPageByColumnId(Page<Goods> page, Long columnId);
 }
