@@ -11,7 +11,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dev,hikari
   thymeleaf:
     cache: false
     suffix: .html

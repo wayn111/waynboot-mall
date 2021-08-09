@@ -44,7 +44,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
             chain.doFilter(request, response);
-        } catch (RedisConnectionFailureException exception) {
+        } catch (RedisConnectionFailureException exception) { // 处理redis连接超时异常
             response.setStatus(HttpStatus.OK.value());
             response.setContentType("application/json");
             response.setCharacterEncoding(Constants.UTF_ENCODING);

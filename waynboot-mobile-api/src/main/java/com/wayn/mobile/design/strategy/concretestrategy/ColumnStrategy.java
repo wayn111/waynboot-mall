@@ -1,8 +1,6 @@
 package com.wayn.mobile.design.strategy.concretestrategy;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.core.domain.shop.ColumnGoodsRelation;
 import com.wayn.common.core.domain.shop.Diamond;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.service.shop.IColumnGoodsRelationService;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 栏目跳转策略
@@ -29,10 +26,7 @@ public class ColumnStrategy implements DiamondJumpType {
 
     @Override
     public List<Goods> getGoods(Page<Goods> page, Diamond diamond) {
-        List<ColumnGoodsRelation> goodsRelationList = iColumnGoodsRelationService
-                .list(new QueryWrapper<ColumnGoodsRelation>().eq("column_id", diamond.getValueId()));
-        List<Long> goodsIdList = goodsRelationList.stream().map(ColumnGoodsRelation::getGoodsId).collect(Collectors.toList());
-        return iGoodsService.selectColumnGoodsPage(page, goodsIdList).getRecords();
+        return iGoodsService.selectColumnGoodsPageByColumnId(page, diamond.getValueId()).getRecords();
     }
 
     @Override

@@ -1,0 +1,22 @@
+# hikari数据源配置
+spring:
+  datasource:
+    hikari:
+      poolName: hikariCP
+      minimumIdle: 10
+      maximumPoolSize: 50
+      autoCommit: true
+      idleTimeout: 10000
+      maxLifetime: 30000
+      connectionTimeout: 30000
+      connectionTestQuery: SELECT 1
+      cachePrepStmts: true
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      useServerPrepStmts: true
+      useLocalSessionState: true
+      rewriteBatchedStatements: true
+      cacheResultSetMetadata: true
+      cacheServerConfiguration: true
+      elideSetAutoCommits: true
+      maintainTimeStats: false
