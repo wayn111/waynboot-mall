@@ -12,12 +12,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class AsyncExecutorUtil {
 
-    private static Timer timer = null;
+    private static Timer timer;
 
     static {
-        if (timer == null) {
-            timer = new Timer("timer-executor-thread");
-        }
+        timer = new Timer("timer-executor-thread");
     }
 
 
