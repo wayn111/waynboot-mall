@@ -350,7 +350,7 @@ h5商城api:
 - 注册一个账号
 - 然后登陆
 
-演示地址：http://www.wayn.ltd
+演示地址：https://www.wayn.ltd
 
 ## 演示图
 
