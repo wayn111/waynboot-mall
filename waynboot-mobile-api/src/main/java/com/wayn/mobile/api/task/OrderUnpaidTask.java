@@ -1,6 +1,6 @@
 package com.wayn.mobile.api.task;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.shop.OrderGoods;
 import com.wayn.common.core.service.shop.IGoodsProductService;
@@ -61,7 +61,9 @@ public class OrderUnpaidTask extends Task {
             if (num == null || num <= 0) {
                 break;
             }
-            Order order = orderService.getOne(new QueryWrapper<Order>().eq("order_status", OrderUtil.STATUS_CREATE).eq("id", orderId));
+            Order order = orderService.getOne(Wrappers.lambdaQuery(Order.class)
+                    .eq(Order::getOrderStatus, OrderUtil.STATUS_CREATE)
+                    .eq(Order::getId, orderId));
             if (Objects.isNull(order) || !OrderUtil.isCreateStatus(order)) {
                 break;
             }
@@ -75,7 +77,8 @@ public class OrderUnpaidTask extends Task {
             }
 
             // 商品货品数量增加
-            List<OrderGoods> orderGoodsList = orderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
+            List<OrderGoods> orderGoodsList = orderGoodsService.list(Wrappers.lambdaQuery(OrderGoods.class)
+                    .eq(OrderGoods::getOrderId, orderId));
             for (OrderGoods orderGoods : orderGoodsList) {
                 Long productId = orderGoods.getProductId();
                 Integer number = orderGoods.getNumber();
