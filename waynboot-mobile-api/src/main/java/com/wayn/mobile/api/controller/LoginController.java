@@ -1,6 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.domain.tool.EmailConfig;
@@ -53,7 +54,7 @@ public class LoginController {
             return R.error(ReturnCodeEnum.USER_TWO_PASSWORD_NOT_SAME_ERROR);
         }
         // 验证手机号是否唯一
-        int count = iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
+        long count = iMemberService.count(Wrappers.lambdaQuery(Member.class).eq(Member::getMobile, registryObj.getMobile()));
         iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
         if (count > 0) {
             return R.error(ReturnCodeEnum.USER_PHONE_HAS_REGISTER_ERROR);

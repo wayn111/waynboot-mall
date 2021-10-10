@@ -1,10 +1,10 @@
 package com.wayn.common.core.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Dept;
-import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.domain.vo.TreeVO;
 import com.wayn.common.core.mapper.system.DeptMapper;
 import com.wayn.common.core.service.system.IDeptService;
@@ -45,14 +45,12 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 
     @Override
     public boolean hasChildByDeptId(Long deptId) {
-        int count = count(new QueryWrapper<Dept>().eq("parent_id", deptId));
-        return count > 0;
+        return count(Wrappers.lambdaQuery(Dept.class).eq(Dept::getParentId, deptId)) > 0;
     }
 
     @Override
     public boolean checkDeptExistUser(Long deptId) {
-        int count = iUserService.count(new QueryWrapper<User>().eq("dept_id", deptId));
-        return count > 0;
+        return count(Wrappers.lambdaQuery(Dept.class).eq(Dept::getDeptId, deptId)) > 0;
     }
 
     @Override

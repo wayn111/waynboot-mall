@@ -2,6 +2,7 @@ package com.wayn.common.core.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.constant.SysConstants;
@@ -49,7 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public String checkUserNameUnique(String userName) {
-        int count = count(new QueryWrapper<User>().eq("user_name", userName));
+        long count = count(Wrappers.lambdaQuery(User.class).eq(User::getUserName, userName));
         if (count > 0) {
             return SysConstants.NOT_UNIQUE;
         }
