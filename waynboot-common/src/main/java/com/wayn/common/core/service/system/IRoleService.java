@@ -19,6 +19,7 @@ public interface IRoleService extends IService<Role> {
 
     /**
      * 查询角色列表
+     *
      * @param role 查询参数
      * @return 角色列表
      */
@@ -93,5 +94,5 @@ public interface IRoleService extends IService<Role> {
      * @param roleId 角色id
      * @return int
      */
-    int countUserRoleByRoleId(Long roleId);
+    long countUserRoleByRoleId(Long roleId);
 }
