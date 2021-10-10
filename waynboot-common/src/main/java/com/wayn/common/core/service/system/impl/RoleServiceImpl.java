@@ -2,6 +2,7 @@ package com.wayn.common.core.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.constant.SysConstants;
@@ -93,7 +94,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         for (Long roleId : roleIds) {
             checkRoleAllowed(new Role(roleId));
             Role role = getById(roleId);
-            int count = countUserRoleByRoleId(roleId);
+            long count = countUserRoleByRoleId(roleId);
             if (count > 0) {
                 throw new BusinessException(String.format("%1$s已分配,不能删除", role.getRoleName()));
             }
@@ -102,8 +103,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public int countUserRoleByRoleId(Long roleId) {
-        return iUserRoleService.count(new QueryWrapper<UserRole>().eq("role_id", roleId));
+    public long countUserRoleByRoleId(Long roleId) {
+        return iUserRoleService.count(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, roleId));
     }
 
     @Override
