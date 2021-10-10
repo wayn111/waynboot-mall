@@ -1,6 +1,7 @@
 package com.wayn.common.core.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Menu;
@@ -118,14 +119,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     @Override
     public boolean hasChildByMenuId(Long menuId) {
-        int count = count(new QueryWrapper<Menu>().eq("parent_id", menuId));
-        return count > 0;
+        return count(Wrappers.lambdaQuery(Menu.class).eq(Menu::getParentId, menuId)) > 0;
     }
 
     @Override
     public boolean checkMenuExistRole(Long menuId) {
-        int count = iRoleMenuService.count(new QueryWrapper<RoleMenu>().eq("menu_id", menuId));
-        return count > 0;
+        return count(Wrappers.lambdaQuery(Menu.class).eq(Menu::getMenuId, menuId)) > 0;
     }
 
     /**

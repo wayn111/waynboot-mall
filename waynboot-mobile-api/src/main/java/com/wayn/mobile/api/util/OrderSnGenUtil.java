@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.util;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.util.spring.SpringContextUtil;
 import com.wayn.mobile.api.service.IOrderService;
@@ -32,11 +32,12 @@ public class OrderSnGenUtil {
      * @param userId 用户ID
      * @return 该用户今日第几次下单
      */
-    public static int countByOrderSn(Long userId) {
+    public static long countByOrderSn(Long userId) {
         IOrderService orderService = SpringContextUtil.getBean(IOrderService.class);
-        return orderService.count(new QueryWrapper<Order>().eq("user_id", userId)
-                .gt("create_time", LocalDate.now())
-                .lt("create_time", LocalDate.now().plusDays(1)));
+        return orderService.count(Wrappers.lambdaQuery(Order.class)
+                .eq(Order::getUserId, userId)
+                .gt(Order::getCreateTime, LocalDate.now())
+                .lt(Order::getCreateTime, LocalDate.now().plusDays(1)));
     }
 
     /**
