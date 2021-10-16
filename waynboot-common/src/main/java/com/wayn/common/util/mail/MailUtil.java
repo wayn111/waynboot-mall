@@ -39,16 +39,17 @@ public class MailUtil {
                 properties.put("mail.smtp.ssl.socketFactory", sf);
                 // 设置系统属性
                 properties.setProperty("mail.smtp.host", host);
+                properties.setProperty("mail.transport.protocol", "smtp");
                 properties.setProperty("mail.smtp.port", emailConfig.getPort());
                 properties.put("mail.smtp.auth", "true");
-                //获取发送邮件会话、获取第三方登录授权码
+                // 获取发送邮件会话、获取第三方登录授权码
                 Session session = Session.getDefaultInstance(properties, new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(from, emailConfig.getPass());
                     }
                 });
-                // session.setDebug(true);
+                session.setDebug(true);
                 // 创建默认的 MimeMessage 对象
                 MimeMessage message = new MimeMessage(session);
                 MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
