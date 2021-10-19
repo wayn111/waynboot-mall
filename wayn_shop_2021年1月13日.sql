@@ -3412,6 +3412,7 @@ CREATE TABLE `shop_order`  (
   `actual_price` decimal(10, 2) NOT NULL COMMENT '实付费用， = order_price - integral_price',
   `pay_id` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '微信付款编号',
   `pay_time` datetime(0) NULL DEFAULT NULL COMMENT '微信付款时间',
+  `pay_type` tinyint(1) NULL DEFAULT NULL COMMENT '支付方式 1微信 2支付宝',
   `ship_sn` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '发货编号',
   `ship_channel` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '发货快递公司',
   `ship_time` datetime(0) NULL DEFAULT NULL COMMENT '发货开始时间',
