@@ -24,4 +24,10 @@ public class LoginObj {
      * 验证码 key
      */
     private String key;
+
+
+    /**
+     * 滑块验证码，后台二次校验参数
+     */
+    private String captchaVerification;
 }
