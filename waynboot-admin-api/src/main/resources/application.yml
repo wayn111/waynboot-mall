@@ -53,7 +53,7 @@ wayn:
   version: 1.1.0
   email: 166738430@qq.com
   uploadDir: /opt/wayn/upload # linux下文件上传目录
-#  uploadDir: D:/wayn/upload # windows下文件上传目录
+  #  uploadDir: D:/wayn/upload # windows下文件上传目录
   adminUrl: http://mall.wayn.ltd:81
   mobileUrl: http://mall.wayn.ltd:82
 
@@ -90,3 +90,23 @@ shop:
         name: "FEDEX联邦(国内件)"
       - code: "FEDEX_GJ"
         name: "FEDEX联邦(国际件)"
+
+#滑块验证码配置
+aj:
+  captcha:
+    aes-status: true
+    cache-type: redis
+    font-size: 25
+    font-style: 1
+    history-data-clear-enable: false
+    interference-options: 0
+    jigsaw: classpath:images/capthcha
+    req-check-minute-limit: 60
+    req-frequency-limit-enable: true
+    req-get-lock-limit: 2
+    req-get-lock-seconds: 360
+    req-get-minute-limit: 30
+    req-verify-minute-limit: 60
+    slip-offset: 5
+    type: default
+    water-mark: wayn
