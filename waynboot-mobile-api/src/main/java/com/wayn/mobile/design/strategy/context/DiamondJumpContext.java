@@ -13,7 +13,7 @@ import java.util.Map;
 @Component
 public class DiamondJumpContext {
 
-    private Map<Integer, DiamondJumpType> map = new HashMap<>();
+    private final Map<Integer, DiamondJumpType> map = new HashMap<>();
 
     /**
      * 由spring自动注入DiamondJumpType子类
