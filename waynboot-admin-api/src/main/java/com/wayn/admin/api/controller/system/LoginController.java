@@ -70,8 +70,7 @@ public class LoginController {
         return success.add("routers", iMenuService.buildMenus(menus));
     }
 
-    @ResponseBody
-    @RequestMapping("/captcha")
+    @GetMapping("/captcha")
     public R captcha() {
         SpecCaptcha specCaptcha = new SpecCaptcha(100, 43, 4);
         String verCode = specCaptcha.text().toLowerCase();
