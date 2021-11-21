@@ -4,9 +4,9 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     # 主库数据源
     master:
-      url: jdbc:mysql://waynmysql.mysql.rds.aliyuncs.com:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      url: jdbc:mysql://121.89.238.61:3307/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
       username: wayn
-      password: heGE@@201011
+      password: admin@@123456
     # 从库数据源
     slave:
       # 从数据源开关/默认关闭
@@ -34,7 +34,7 @@ spring:
   #        - 127.0.0.1:1686
   #配置rabbitMq 服务器
   rabbitmq:
-    host: wayn.ltd
+    host: huawei.wayn.ltd
     port: 5672
     username: guest
     password: guest

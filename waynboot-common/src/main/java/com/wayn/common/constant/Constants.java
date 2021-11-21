@@ -34,4 +34,6 @@ public class Constants {
      * 排序方式 asc或者desc
      */
     public static final String SORT_ORDER = "sortOrder";
+
+    public static final String LOG_PREFIX = "----------------------------------";
 }

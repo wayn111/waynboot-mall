@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev,druid
+    active: dev,druid,express
   thymeleaf:
     cache: false
     suffix: .html
@@ -56,40 +56,17 @@ wayn:
   #  uploadDir: D:/wayn/upload # windows下文件上传目录
   adminUrl: http://mall.wayn.ltd:81
   mobileUrl: http://mall.wayn.ltd:82
+  ssh-proxy: # ssh端口代理设置，eg:通过ssh连接公网服务器，在通过端口转发访问内网服务器的服务
+    enabled: false                      # 是否启用
+    host:                               # 服务器host
+    port:                               # 服务器port
+    username:                           # 服务器登陆用户名称
+    password:                           # 服务器登陆用户密码
+    localPort:                          # 代理本地端口
+    remoteHost:                         # 需要代理的服务host
+    remotePort:                         # 需要代理的服务port
 
-# 快递列表
-shop:
-  express:
-    enable: false
-    appId: "XXXXXXXXX"
-    appKey: "XXXXXXXXXXXXXXXXXXXXXXXXX"
-    vendors:
-      - code: "ZTO"
-        name: "中通快递"
-      - code: "YTO"
-        name: "圆通速递"
-      - code: "YD"
-        name: "韵达速递"
-      - code: "YZPY"
-        name: "邮政快递包裹"
-      - code: "EMS"
-        name: "EMS"
-      - code: "DBL"
-        name: "德邦快递"
-      - code: "FAST"
-        name: "快捷快递"
-      - code: "ZJS"
-        name: "宅急送"
-      - code: "TNT"
-        name: "TNT快递"
-      - code: "UPS"
-        name: "UPS"
-      - code: "DHL"
-        name: "DHL"
-      - code: "FEDEX"
-        name: "FEDEX联邦(国内件)"
-      - code: "FEDEX_GJ"
-        name: "FEDEX联邦(国际件)"
+
 
 #滑块验证码配置
 aj:
