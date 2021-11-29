@@ -28,7 +28,7 @@ public class MobileSecurityUtils {
         try {
             return getLoginUser().getMember().getId();
         } catch (Exception e) {
-            throw new BusinessException("获取用户ID异常", HttpStatus.UNAUTHORIZED.value());
+            return null;
         }
     }
 
