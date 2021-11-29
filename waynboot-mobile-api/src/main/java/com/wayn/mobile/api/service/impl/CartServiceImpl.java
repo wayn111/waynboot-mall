@@ -106,6 +106,10 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     @Override
     public R goodsCount() {
         Long userId = MobileSecurityUtils.getUserId();
+        // 用户未登录时，直接返回0
+        if (userId == null) {
+            return R.success().add("count", 0);
+        }
         long count = count(Wrappers.lambdaQuery(Cart.class).eq(Cart::getUserId, userId));
         return R.success().add("count", count);
     }
@@ -114,12 +118,15 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     public R list(Long userId) {
         List<Cart> cartList = list(new QueryWrapper<Cart>().eq("user_id", userId));
         List<Long> goodsIdList = cartList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
+        JSONArray array = new JSONArray();
+
+        if (CollectionUtils.isEmpty(goodsIdList)) {
+            return R.success().add("data", array);
+        }
         Map<Long, Goods> goodsIdMap = iGoodsService
-                .list(Wrappers.lambdaQuery(Goods.class)
-                        .in(CollectionUtils.isNotEmpty(goodsIdList), Goods::getId, goodsIdList))
+                .list(Wrappers.lambdaQuery(Goods.class).in(CollectionUtils.isNotEmpty(goodsIdList), Goods::getId, goodsIdList))
                 .stream().collect(Collectors.toMap(Goods::getId, goods -> goods));
 
-        JSONArray array = new JSONArray();
         for (Cart cart : cartList) {
             JSONObject jsonObject = new JSONObject();
             try {
