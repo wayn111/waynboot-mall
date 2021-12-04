@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * 自定义DispatcherServlet，记录请求响应日志
@@ -45,6 +46,22 @@ public class WaynDispatcherServlet extends DispatcherServlet {
         LogMessage log = new LogMessage();
         log.setHttpStatus(responseToCache.getStatus());
         log.setHttpMethod(requestToCache.getMethod());
+        Map<String, String[]> parameterMap = requestToCache.getParameterMap();
+        StringBuilder parameter = new StringBuilder("[");
+        int size = parameterMap.size();
+        int count = 0;
+        for (Map.Entry<String, String[]> stringEntry : parameterMap.entrySet()) {
+            count++;
+            parameter.append(stringEntry.getKey());
+            parameter.append(":");
+            parameter.append(stringEntry.getValue()[0]);
+            if (count < size) {
+                parameter.append(",");
+            } else {
+                parameter.append("]");
+            }
+        }
+        log.setReqParameter(parameter.toString());
         log.setPath(requestToCache.getRequestURI());
         log.setClientIp(requestToCache.getRemoteAddr());
         log.setJavaMethod(handler.toString());

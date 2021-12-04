@@ -14,6 +14,8 @@ public class LogMessage implements Serializable {
     private Integer httpStatus;
     private String httpMethod;
     private String path;
+    private String reqParameter;
+
     private long executionTime;
     private String clientIp;
     private String javaMethod;
@@ -25,6 +27,7 @@ public class LogMessage implements Serializable {
                 .add("httpStatus=" + httpStatus)
                 .add("httpMethod='" + httpMethod + "'")
                 .add("path='" + path + "'")
+                .add("reqParameter=" + reqParameter)
                 .add("executionTime=" + executionTime)
                 .add("clientIp='" + clientIp + "'")
                 .add("javaMethod='" + javaMethod + "'")
