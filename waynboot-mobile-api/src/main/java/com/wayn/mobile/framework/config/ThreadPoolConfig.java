@@ -1,6 +1,7 @@
 package com.wayn.mobile.framework.config;
 
-import com.wayn.common.util.Threads;
+import com.wayn.common.util.ThreadUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * 线程池配置，各系统分开使用
  **/
+@Slf4j
 @Configuration
 public class ThreadPoolConfig {
     // 核心线程池大小
@@ -62,7 +64,7 @@ public class ThreadPoolConfig {
             @Override
             protected void afterExecute(Runnable r, Throwable t) {
                 super.afterExecute(r, t);
-                Threads.printException(r, t);
+                ThreadUtil.printException(r, t);
             }
         };
     }
