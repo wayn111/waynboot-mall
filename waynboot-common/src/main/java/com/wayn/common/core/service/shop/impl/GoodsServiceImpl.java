@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
-import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.enums.ReturnCodeEnum;
@@ -232,13 +231,18 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO) {
-        return goodsMapper.searchResult(page, searchVO);
+    public List<Goods> searchResult(List<?> goodsIdList) {
+        return goodsMapper.selectHomeGoodsListByIds(goodsIdList);
     }
 
     @Override
     public IPage<Goods> selectColumnGoodsPageByColumnId(Page<Goods> page, Long columnId) {
         return goodsMapper.selectColumnGoodsPage(page, columnId);
+    }
+
+    @Override
+    public List<Goods> selectGoodsByIds(List<Long> goodsIdList) {
+        return goodsMapper.selectGoodsListByIds(goodsIdList);
     }
 
     /**

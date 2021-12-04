@@ -11,6 +11,7 @@ import com.wayn.common.core.domain.shop.Keyword;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IKeywordService;
+import com.wayn.common.util.AsyncExecutorUtil;
 import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.mobile.api.domain.SearchHistory;
@@ -34,8 +35,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -64,7 +67,7 @@ public class SearchController extends BaseController {
     private ElasticDocument elasticDocument;
 
     @GetMapping("result")
-    public R list(SearchVO searchVO) throws IOException {
+    public R result(SearchVO searchVO) throws IOException {
         Long memberId = MobileSecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();
         Boolean filterNew = searchVO.getFilterNew();
@@ -125,13 +128,19 @@ public class SearchController extends BaseController {
             return R.success().add("goods", Collections.emptyList());
         }
         // 根据es中返回商品ID查询商品详情并保持es中的排序
-        List<Goods> goodsList = iGoodsService.list(new QueryWrapper<Goods>().in("id", goodsIdList)
-                .last("order by FIELD(id," + StringUtils.join(goodsIdList, ",") + ") asc"));
-        if (goodsList.size() > 0) {
-            searchHistory.setHasGoods(true);
-            iSearchHistoryService.save(searchHistory);
+        List<Goods> goodsList = iGoodsService.searchResult(goodsIdList);
+        Map<Integer, Goods> goodsMap = goodsList.stream().collect(Collectors.toMap(goods -> Math.toIntExact(goods.getId()), o -> o));
+        List<Goods> returnGoodsList = new ArrayList<>(goodsList.size());
+        for (Integer goodsId : goodsIdList) {
+            returnGoodsList.add(goodsMap.get(goodsId));
         }
-        return R.success().add("goods", goodsList);
+        if (CollectionUtils.isNotEmpty(goodsList)) {
+            AsyncExecutorUtil.executor(() -> {
+                searchHistory.setHasGoods(true);
+                iSearchHistoryService.save(searchHistory);
+            });
+        }
+        return R.success().add("goods", returnGoodsList);
     }
 
     /**

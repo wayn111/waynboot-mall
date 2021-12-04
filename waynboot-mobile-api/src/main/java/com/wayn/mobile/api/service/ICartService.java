@@ -1,5 +1,6 @@
 package com.wayn.mobile.api.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
@@ -48,7 +49,7 @@ public interface ICartService extends IService<Cart> {
      * @param userId 用户ID
      * @return R
      */
-    R list(Long userId);
+    R list(Page<Cart> page, Long userId);
 
     /**
      * 改变购物车商品数量
@@ -61,6 +62,7 @@ public interface ICartService extends IService<Cart> {
 
     /**
      * 添加商品的默认选中货品至购物车
+     *
      * @param cart 购物车对象
      * @return r
      */

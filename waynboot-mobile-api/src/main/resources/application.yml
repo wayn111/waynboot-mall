@@ -1,5 +1,6 @@
 server:
   port: 82
+  shutdown: graceful # 优雅关机
 #  https配置，放开HttpsConfiguration文件注释即可
 #  port: 443
 #  ssl:
@@ -23,6 +24,8 @@ spring:
       file-size-threshold: 5MB
       max-file-size: 200MB
       max-request-size: 200MB
+  jackson:
+    default-property-inclusion: non_null # 接口返回字段值为null的属性不展示
 
 # token配置
 token:
@@ -36,7 +39,7 @@ token:
 # 日志配置
 logging:
   level:
-    com.wayn: debug
+    com.wayn: info
     org.springframework: info
     com.baomidou: info
 
@@ -74,3 +77,8 @@ shop:
     # 商户证书文件路径
     # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
     key-path: xxxxx
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
