@@ -2,6 +2,7 @@ package com.wayn.mobile.api.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
@@ -31,7 +32,8 @@ public class CartController extends BaseController {
     @GetMapping("list")
     public R list() {
         Long userId = MobileSecurityUtils.getUserId();
-        return iCartService.list(userId);
+        Page<Cart> page = getPage();
+        return iCartService.list(page, userId);
     }
 
     @PostMapping

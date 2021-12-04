@@ -24,6 +24,8 @@ spring:
       file-size-threshold: 5MB
       max-file-size: 200MB
       max-request-size: 200MB
+  jackson:
+    default-property-inclusion: non_null # 接口返回字段值为null的属性不展示
 
 # token配置
 token:
@@ -37,7 +39,7 @@ token:
 # 日志配置
 logging:
   level:
-    com.wayn: debug
+    com.wayn: info
     org.springframework: info
     com.baomidou: info
 

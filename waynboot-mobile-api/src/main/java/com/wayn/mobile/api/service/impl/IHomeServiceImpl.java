@@ -41,14 +41,14 @@ public class IHomeServiceImpl implements IHomeService {
     private RedisCache redisCache;
     private RedisTemplate<String, Object> redisTemplate;
     private IDiamondService iDiamondService;
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    private ThreadPoolTaskExecutor homeThreadPoolTaskExecutor;
 
 
     @Override
     public R getHomeIndexDataCompletableFuture() {
         R success = R.success();
         Map<String, Object> shopHomeIndexHash = redisCache.getCacheMap(SHOP_HOME_INDEX_HASH);
-        // 当缓存中存在数据,并且过期时间不为空而且小于等于过期时间则直接从缓存中去除数据
+        // 当缓存中存在数据,并且过期时间不为空而且小于等于过期时间则直接从缓存中取出数据
         if (MapUtils.isNotEmpty(shopHomeIndexHash) && shopHomeIndexHash.containsKey(SHOP_HOME_INDEX_HASH_EXPIRETIME_FIELD)) {
             long time = (long) shopHomeIndexHash.get(SHOP_HOME_INDEX_HASH_EXPIRETIME_FIELD);
             if ((new Date().getTime() - time) <= SHOP_HOME_INDEX_HASH_EXPIRETIME) {
@@ -58,28 +58,28 @@ public class IHomeServiceImpl implements IHomeService {
         }
         List<CompletableFuture<Void>> list = new ArrayList<>(4);
         CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(
-                () -> iBannerService.list(Wrappers.lambdaQuery(Banner.class).eq(Banner::getStatus, 0).orderByAsc(Banner::getSort)), threadPoolTaskExecutor)
+                () -> iBannerService.list(Wrappers.lambdaQuery(Banner.class).eq(Banner::getStatus, 0).orderByAsc(Banner::getSort)), homeThreadPoolTaskExecutor)
                 .thenAccept(data -> {
                     String key = "bannerList";
                     redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
                     success.add(key, data);
                 });
         CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(
-                () -> iDiamondService.list(Wrappers.lambdaQuery(Diamond.class).orderByAsc(Diamond::getSort).last("limit 10")), threadPoolTaskExecutor)
+                () -> iDiamondService.list(Wrappers.lambdaQuery(Diamond.class).orderByAsc(Diamond::getSort).last("limit 10")), homeThreadPoolTaskExecutor)
                 .thenAccept(data -> {
                     String key = "categoryList";
                     redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
                     success.add(key, data);
                 });
         CompletableFuture<Void> f3 = CompletableFuture.supplyAsync(
-                () -> iGoodsService.selectHomeIndexGoods(Goods.builder().isNew(true).build()))
+                () -> iGoodsService.selectHomeIndexGoods(Goods.builder().isNew(true).build()), homeThreadPoolTaskExecutor)
                 .thenAccept(data -> {
                     String key = "newGoodsList";
                     redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
                     success.add(key, data);
                 });
         CompletableFuture<Void> f4 = CompletableFuture.supplyAsync(
-                () -> iGoodsService.selectHomeIndexGoods(Goods.builder().isHot(true).build()))
+                () -> iGoodsService.selectHomeIndexGoods(Goods.builder().isHot(true).build()), homeThreadPoolTaskExecutor)
                 .thenAccept(data -> {
                     String key = "hotGoodsList";
                     redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);

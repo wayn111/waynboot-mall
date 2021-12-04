@@ -4,7 +4,7 @@ package com.wayn.mobile.design.strategy;
  * 金刚位跳转类型枚举
  */
 public enum JumpTypeEnum {
-    // 栏目i
+    // 栏目
     COLUMN(0),
     // 分类
     CATEGORY(1)
