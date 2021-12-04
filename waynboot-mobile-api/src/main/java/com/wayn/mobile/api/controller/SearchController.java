@@ -11,11 +11,11 @@ import com.wayn.common.core.domain.shop.Keyword;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IKeywordService;
-import com.wayn.common.util.AsyncExecutorUtil;
 import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
+import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,10 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -135,9 +132,12 @@ public class SearchController extends BaseController {
             returnGoodsList.add(goodsMap.get(goodsId));
         }
         if (CollectionUtils.isNotEmpty(goodsList)) {
-            AsyncExecutorUtil.executor(() -> {
-                searchHistory.setHasGoods(true);
-                iSearchHistoryService.save(searchHistory);
+            AsyncManager.me().execute(new TimerTask() {
+                @Override
+                public void run() {
+                    searchHistory.setHasGoods(true);
+                    iSearchHistoryService.save(searchHistory);
+                }
             });
         }
         return R.success().add("goods", returnGoodsList);
