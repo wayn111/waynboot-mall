@@ -1,6 +1,6 @@
 server:
   port: 85
-
+  shutdown: graceful # 优雅关机
 spring:
   redis:
     host: huawei.wayn.ltd
