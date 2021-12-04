@@ -1,5 +1,6 @@
 server:
   port: 81
+  shutdown: graceful # 优雅关机
 
 spring:
   profiles:

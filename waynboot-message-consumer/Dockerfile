@@ -8,6 +8,6 @@ RUN bash -c 'touch /opt/waynboot-mall/waynboot-message-consumer-1.1.0.jar'
 # 声明服务运行在8080端口
 EXPOSE 85
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", "-jar", "-Xms812m", "-Xmx812m", "-Xss512k",  "/opt/waynboot-mall/waynboot-message-consumer-1.1.0.jar"]
+ENTRYPOINT ["sh", "-c", "exec java -jar -Xms812m -Xmx812m -Xss512k /opt/waynboot-mall/waynboot-message-consumer-1.1.0.jar"]
 # 指定维护者的名字
 MAINTAINER wayn111

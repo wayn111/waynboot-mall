@@ -46,8 +46,15 @@
         from shop_goods
     </sql>
 
+    <sql id="home_goods_info">
+        select id,
+               goods_sn, name, pic_url,
+               counter_price, retail_price, actual_sales, virtual_sales
+        from shop_goods
+    </sql>
+
     <select id="selectGoodsListPage" resultMap="ShopGoodsResult">
-        <include refid="goods_info"/>
+        <include refid="home_goods_info"/>
         <where>
             del_flag = 0
             and is_on_sale = 1
@@ -85,20 +92,14 @@
         order by create_time desc
     </select>
 
-    <select id="searchResult" resultMap="ShopGoodsResult">
-        <include refid="goods_info"/>
+    <select id="selectHomeGoodsListByIds" resultMap="ShopGoodsResult">
+        <include refid="home_goods_info"/>
         <where>
-            del_flag = 0
-            and is_on_sale = 1
-            <if test="searchVO.keyword != null and searchVO.keyword != ''">
-                AND (name like concat('%', #{searchVO.keyword}, '%') OR keywords like concat('%', #{searchVO.keyword}, '%'))
-            </if>
-            <if test="searchVO.isNew != null and searchVO.isNew == true">
-                order by is_new desc
-            </if>
-            <if test="searchVO.isHot != null and searchVO.isHot == true">
-                order by is_hot desc
-            </if>
+            id in (
+            <foreach collection="goodsIdList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
         </where>
     </select>
 
@@ -169,5 +170,15 @@
             AND id in ( SELECT goods_id FROM shop_column_goods_relation r WHERE r.column_id = #{columnId} )
         </where>
         order by create_time desc
+    </select>
+    <select id="selectGoodsListByIds" resultType="com.wayn.common.core.domain.shop.Goods">
+        <include refid="goods_info"/>
+        <where>
+            id in (
+            <foreach collection="goodsIdList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
     </select>
 </mapper>
