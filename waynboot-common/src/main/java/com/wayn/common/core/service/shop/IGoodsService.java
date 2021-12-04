@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
-import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.util.R;
 
 import java.io.IOException;
@@ -93,7 +92,13 @@ public interface IGoodsService extends IService<Goods> {
      */
     R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList);
 
-    List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO);
+    /**
+     * 查询商品展示
+     *
+     * @param goodsIdList
+     * @return
+     */
+    List<Goods> searchResult(List<?> goodsIdList);
 
     /**
      * 根据栏目ID查询栏目下商品
@@ -103,4 +108,6 @@ public interface IGoodsService extends IService<Goods> {
      * @return 分页对象
      */
     IPage<Goods> selectColumnGoodsPageByColumnId(Page<Goods> page, Long columnId);
+
+    List<Goods> selectGoodsByIds(List<Long> goodsIdList);
 }
