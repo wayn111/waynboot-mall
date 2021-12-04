@@ -3,7 +3,9 @@ package com.wayn.mobile.api.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.shop.GoodsProduct;
@@ -46,6 +48,8 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     private IGoodsService iGoodsService;
 
     private IGoodsProductService iGoodsProductService;
+
+    private CartMapper cartMapper;
 
     @Override
     public Cart checkExistsGoods(Long userId, Long goodsId, Long productId) {
@@ -115,17 +119,16 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     }
 
     @Override
-    public R list(Long userId) {
-        List<Cart> cartList = list(new QueryWrapper<Cart>().eq("user_id", userId));
+    public R list(Page<Cart> page, Long userId) {
+        IPage<Cart> goodsIPage = cartMapper.selectCartPageList(page, userId);
+        List<Cart> cartList = goodsIPage.getRecords();
         List<Long> goodsIdList = cartList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
-        JSONArray array = new JSONArray();
 
+        JSONArray array = new JSONArray();
         if (CollectionUtils.isEmpty(goodsIdList)) {
             return R.success().add("data", array);
         }
-        Map<Long, Goods> goodsIdMap = iGoodsService
-                .list(Wrappers.lambdaQuery(Goods.class).in(CollectionUtils.isNotEmpty(goodsIdList), Goods::getId, goodsIdList))
-                .stream().collect(Collectors.toMap(Goods::getId, goods -> goods));
+        Map<Long, Goods> goodsIdMap = iGoodsService.selectGoodsByIds(goodsIdList).stream().collect(Collectors.toMap(Goods::getId, goods -> goods));
 
         for (Cart cart : cartList) {
             JSONObject jsonObject = new JSONObject();

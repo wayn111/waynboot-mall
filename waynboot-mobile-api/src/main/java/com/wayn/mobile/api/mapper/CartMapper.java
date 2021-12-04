@@ -1,6 +1,8 @@
 package com.wayn.mobile.api.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.mobile.api.domain.Cart;
 
 /**
@@ -13,4 +15,5 @@ import com.wayn.mobile.api.domain.Cart;
  */
 public interface CartMapper extends BaseMapper<Cart> {
 
+    IPage<Cart> selectCartPageList(Page<Cart> page, Long userId);
 }

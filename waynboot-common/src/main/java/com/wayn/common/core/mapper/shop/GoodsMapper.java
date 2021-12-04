@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.core.domain.vo.SearchVO;
 
 import java.util.List;
 
@@ -22,7 +21,9 @@ public interface GoodsMapper extends BaseMapper<Goods> {
 
     IPage<Goods> selectGoodsListPageByl2CateId(Page<Goods> page, List<Long> cateList);
 
-    List<Goods> searchResult(Page<SearchVO> page, SearchVO searchVO);
+    List<Goods> selectHomeGoodsListByIds(List<?> goodsIdList);
+
+    List<Goods> selectGoodsListByIds(List<?> goodsIdList);
 
     IPage<Goods> selectColumnBindGoodsListPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds);
 

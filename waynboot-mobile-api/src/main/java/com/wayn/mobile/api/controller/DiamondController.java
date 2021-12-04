@@ -30,7 +30,6 @@ public class DiamondController extends BaseController {
         Page<Goods> page = getPage();
         Diamond diamond = iDiamondService.getById(diamondId);
         DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(diamond.getJumpType());
-        if (diamondJumpType == null) throw new AssertionError();
         List<Goods> goods = diamondJumpType.getGoods(page, diamond);
         return R.success().add("diamond", diamond).add("goods", goods);
     }
