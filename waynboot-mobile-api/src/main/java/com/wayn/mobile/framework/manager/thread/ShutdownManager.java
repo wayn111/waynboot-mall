@@ -1,7 +1,7 @@
 package com.wayn.mobile.framework.manager.thread;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.wayn.common.constant.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -11,9 +11,9 @@ import javax.annotation.PreDestroy;
  *
  * @author ruoyi
  */
+@Slf4j
 @Component
 public class ShutdownManager {
-    private static final Logger logger = LoggerFactory.getLogger("sys-user");
 
     @PreDestroy
     public void destroy() {
@@ -25,10 +25,10 @@ public class ShutdownManager {
      */
     private void shutdownAsyncManager() {
         try {
-            logger.info("====关闭后台任务任务线程池====");
+            log.info(Constants.LOG_PREFIX + "AsyncManager shutdown" + Constants.LOG_PREFIX);
             AsyncManager.me().shutdown();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

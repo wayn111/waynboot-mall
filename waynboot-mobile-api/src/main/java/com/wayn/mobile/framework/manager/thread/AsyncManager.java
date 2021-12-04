@@ -1,7 +1,7 @@
 package com.wayn.mobile.framework.manager.thread;
 
 
-import com.wayn.common.util.Threads;
+import com.wayn.common.util.ThreadUtil;
 import com.wayn.common.util.spring.SpringContextUtil;
 
 import java.util.TimerTask;
@@ -57,6 +57,6 @@ public class AsyncManager {
      * 停止任务线程池
      */
     public void shutdown() {
-        Threads.shutdownAndAwaitTermination(executor);
+        ThreadUtil.shutdownAndAwaitTermination(executor);
     }
 }

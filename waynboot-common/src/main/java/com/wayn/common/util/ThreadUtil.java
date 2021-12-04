@@ -9,8 +9,8 @@ import java.util.concurrent.*;
  * 线程相关工具类.
  *
  */
-public class Threads {
-    private static final Logger logger = LoggerFactory.getLogger(Threads.class);
+public class ThreadUtil {
+    private static final Logger logger = LoggerFactory.getLogger(ThreadUtil.class);
 
     /**
      * sleep等待,单位为毫秒
