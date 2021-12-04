@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class ThreadPoolConfig {
     // 核心线程池大小
-    private int corePoolSize = 10;
+    private int corePoolSize = 20;
 
     // 最大可创建的线程数
     private int maxPoolSize = 100;
@@ -27,14 +27,27 @@ public class ThreadPoolConfig {
     // 线程池维护线程所允许的空闲时间
     private int keepAliveSeconds = 300;
 
-    @Bean(name = "threadPoolTaskExecutor")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+    @Bean(name = "homeThreadPoolTaskExecutor")
+    public ThreadPoolTaskExecutor homeThreadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setMaxPoolSize(maxPoolSize);
         executor.setCorePoolSize(corePoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setKeepAliveSeconds(keepAliveSeconds);
-        executor.setThreadNamePrefix("homeIndexThread-");
+        executor.setThreadNamePrefix("homeThread-");
+        // 线程池对拒绝任务(无线程可用)的处理策略
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        return executor;
+    }
+
+    @Bean(name = "categoryThreadPoolTaskExecutor")
+    public ThreadPoolTaskExecutor categoryThreadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setCorePoolSize(corePoolSize);
+        executor.setQueueCapacity(queueCapacity);
+        executor.setKeepAliveSeconds(keepAliveSeconds);
+        executor.setThreadNamePrefix("categoryThread-");
         // 线程池对拒绝任务(无线程可用)的处理策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return executor;
@@ -45,8 +58,7 @@ public class ThreadPoolConfig {
      */
     @Bean(name = "scheduledExecutorService")
     protected ScheduledExecutorService scheduledExecutorService() {
-        return new ScheduledThreadPoolExecutor(corePoolSize,
-                new BasicThreadFactory.Builder().namingPattern("schedule-pool-%d").daemon(true).build()) {
+        return new ScheduledThreadPoolExecutor(corePoolSize, new BasicThreadFactory.Builder().namingPattern("schedule-pool-%d").daemon(true).build()) {
             @Override
             protected void afterExecute(Runnable r, Throwable t) {
                 super.afterExecute(r, t);
