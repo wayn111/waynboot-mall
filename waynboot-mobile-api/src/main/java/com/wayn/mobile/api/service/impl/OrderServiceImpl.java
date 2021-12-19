@@ -6,6 +6,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -161,6 +162,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         success.add("unrecv", unrecv);
         success.add("uncomment", uncomment);
         return success;
+    }
+
+    @Override
+    public R getOrderDetailByOrderSn(String orderSn) {
+        R success = R.success();
+        LambdaQueryWrapper<Order> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(Order::getOrderSn, orderSn);
+        Order order = getOne(queryWrapper);
+        return success.add("order", order);
     }
 
     @Override
