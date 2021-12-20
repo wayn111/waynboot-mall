@@ -72,16 +72,16 @@
                 </executions>
             </plugin>
 
-            <plugin>
+            <!--<plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <!--配置基本镜像-->
+                    &lt;!&ndash;配置基本镜像&ndash;&gt;
                     <from>
                         <image>${docker-from-image-name}</image>
                     </from>
-                    <!--配置最终推送的地址，仓库名，镜像名-->
+                    &lt;!&ndash;配置最终推送的地址，仓库名，镜像名&ndash;&gt;
                     <to>
                         <image>registry.cn-shanghai.aliyuncs.com/${aliyun-docker-namespace}/${project.artifactId}
                         </image>
@@ -106,7 +106,7 @@
                     </container>
                 </configuration>
 
-                <!-- 绑定到maven lifecicle-->
+                &lt;!&ndash; 绑定到maven lifecicle&ndash;&gt;
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -115,7 +115,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 
