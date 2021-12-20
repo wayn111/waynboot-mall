@@ -62,8 +62,8 @@ wayn:
   email: 166738430@qq.com
   uploadDir: /opt/wayn/upload # linux下文件上传目录
 #  uploadDir: D:/wayn/upload # windows下文件上传目录
-  adminUrl: http://mall.wayn.ltd:81
-  mobileUrl: http://mall.wayn.ltd:82
+  adminUrl: http://localhost:81
+  mobileUrl: http://localhost:82
 
 # wx支付配置
 shop:
