@@ -16,7 +16,7 @@ spring:
       password:
 
   redis:
-    host: huawei.wayn.ltd
+    host: 122.112.205.44
     port: 1688
     password: admin@@123456
     database: 2
@@ -34,7 +34,7 @@ spring:
   #        - 127.0.0.1:1686
   #配置rabbitMq 服务器
   rabbitmq:
-    host: huawei.wayn.ltd
+    host: 122.112.205.44
     port: 5672
     username: guest
     password: guest
@@ -45,7 +45,7 @@ spring:
     publisher-returns: true
 
 es:
-  host: huawei.wayn.ltd
+  host: 122.112.205.44
   port: 9200
   scheme: http
   shards: 3

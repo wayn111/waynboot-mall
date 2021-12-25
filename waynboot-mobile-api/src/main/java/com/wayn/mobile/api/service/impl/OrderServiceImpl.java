@@ -1,11 +1,13 @@
 package com.wayn.mobile.api.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -23,6 +25,8 @@ import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.Constants;
 import com.wayn.common.core.domain.shop.*;
 import com.wayn.common.core.domain.vo.OrderVO;
+import com.wayn.common.core.domain.vo.order.OrderDetailVO;
+import com.wayn.common.core.domain.vo.order.OrderGoodsVO;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.util.OrderHandleOption;
 import com.wayn.common.core.util.OrderUtil;
@@ -161,6 +165,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         success.add("unrecv", unrecv);
         success.add("uncomment", uncomment);
         return success;
+    }
+
+    @Override
+    public R getOrderDetailByOrderSn(String orderSn) {
+        R success = R.success();
+        LambdaQueryWrapper<Order> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(Order::getOrderSn, orderSn);
+        Order order = getOne(queryWrapper);
+        OrderDetailVO orderDetailVO = new OrderDetailVO();
+        MyBeanUtil.copyProperties(order, orderDetailVO);
+        orderDetailVO.setOrderStatusText(OrderUtil.orderStatusText(order));
+        orderDetailVO.setPayTypeText(OrderUtil.payTypeText(order));
+        LambdaQueryWrapper<OrderGoods> queryWrapper1 = Wrappers.lambdaQuery(OrderGoods.class);
+        queryWrapper1.eq(OrderGoods::getOrderId, order.getId());
+        List<OrderGoods> list = iOrderGoodsService.list(queryWrapper1);
+        List<OrderGoodsVO> orderGoodsVOS = BeanUtil.copyToList(list, OrderGoodsVO.class);
+        orderDetailVO.setOrderGoodsVOList(orderGoodsVOS);
+        return success.add("order", orderDetailVO);
     }
 
     @Override

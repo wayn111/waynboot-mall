@@ -24,6 +24,11 @@ public class OrderController extends BaseController {
     @Autowired
     private IOrderService iOrderService;
 
+    @GetMapping("detail/{orderSn}")
+    public R detail(@PathVariable String orderSn) {
+        return iOrderService.getOrderDetailByOrderSn(orderSn);
+    }
+
     @GetMapping("list")
     public R list(@RequestParam(defaultValue = "0") Integer showType) {
         Page<Order> page = getPage();

@@ -79,6 +79,19 @@ public class OrderUtil {
         throw new IllegalStateException("orderStatus不支持");
     }
 
+    public static String payTypeText(Order order) {
+        Integer payType = order.getPayType();
+        if (payType == 1) {
+            return "微信";
+        } else if (payType == 2) {
+            return "支付宝";
+        } else if (payType == 3) {
+            return "TEST";
+        }
+        throw new IllegalStateException("payType不支持");
+
+    }
+
 
     public static OrderHandleOption build(Order order) {
         int status = order.getOrderStatus().intValue();
@@ -151,9 +164,7 @@ public class OrderUtil {
     }
 
     public static boolean hasPayed(Order order) {
-        return OrderUtil.STATUS_CREATE != order.getOrderStatus().shortValue()
-                && OrderUtil.STATUS_CANCEL != order.getOrderStatus().shortValue()
-                && OrderUtil.STATUS_AUTO_CANCEL != order.getOrderStatus().shortValue();
+        return OrderUtil.STATUS_CREATE != order.getOrderStatus().shortValue() && OrderUtil.STATUS_CANCEL != order.getOrderStatus().shortValue() && OrderUtil.STATUS_AUTO_CANCEL != order.getOrderStatus().shortValue();
     }
 
     public static boolean isPayStatus(Order order) {
