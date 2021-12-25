@@ -1,0 +1,41 @@
+version: '3'
+services:
+  waynboot-mobile-api:
+    image: adoptopenjdk:11-openj9
+    container_name: mobile
+    ports:
+      - "82"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./jars/waynboot-mobile-api-1.1.0.jar:/home/app/waynboot-mobile-api-1.1.0.jar
+    restart: always
+    command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-mobile-api-1.1.0.jar
+    network_mode: "host"
+    environment:
+      - TZ=Asia/Shanghai
+  waynboot-admin-api:
+    image: adoptopenjdk:11-openj9
+    container_name: admin
+    ports:
+      - "81"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./jars/waynboot-admin-api-1.1.0.jar:/home/app/waynboot-admin-api-1.1.0.jar
+    restart: always
+    command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-admin-api-1.1.0.jar
+    network_mode: "host"
+    environment:
+      - TZ=Asia/Shanghai
+  waynboot-message:
+    image: adoptopenjdk:11-openj9
+    container_name: message
+    ports:
+      - "85"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./jars/waynboot-message-consumer-1.1.0.jar:/home/app/waynboot-message-consumer-1.1.0.jar
+    restart: always
+    command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-message-consumer-1.1.0.jar
+    network_mode: "host"
+    environment:
+      - TZ=Asia/Shanghai
