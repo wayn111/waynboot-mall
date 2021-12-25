@@ -141,4 +141,5 @@ public interface IOrderService extends IService<Order> {
      */
     R statusCount();
 
+    R getOrderDetailByOrderSn(String orderSn);
 }
