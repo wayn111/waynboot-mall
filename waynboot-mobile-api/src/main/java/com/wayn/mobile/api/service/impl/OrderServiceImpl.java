@@ -175,6 +175,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         Order order = getOne(queryWrapper);
         OrderDetailVO orderDetailVO = new OrderDetailVO();
         MyBeanUtil.copyProperties(order, orderDetailVO);
+        orderDetailVO.setOrderStatusText(OrderUtil.orderStatusText(order));
+        orderDetailVO.setPayTypeText(OrderUtil.payTypeText(order));
         LambdaQueryWrapper<OrderGoods> queryWrapper1 = Wrappers.lambdaQuery(OrderGoods.class);
         queryWrapper1.eq(OrderGoods::getOrderId, order.getId());
         List<OrderGoods> list = iOrderGoodsService.list(queryWrapper1);
