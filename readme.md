@@ -422,7 +422,7 @@ QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlf
 ## todo
 
 - [x] dockers镜像部署(使用google jib部署方式)
-- [ ] 订单详情页面
+- [x] 订单详情页面
 - [ ] 商城资讯流
 - [ ] 联系客服
 - [ ] 秒杀专区
