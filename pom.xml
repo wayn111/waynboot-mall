@@ -36,23 +36,22 @@
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.5.7</spring-boot.version>
+        <spring-boot.version>2.5.8</spring-boot.version>
         <mysql.connector.java.version>8.0.25</mysql.connector.java.version>
         <lettuce.version>6.1.3.RELEASE</lettuce.version>
         <elasticsearch.version>7.13.4</elasticsearch.version>
-        <lombok.version>1.18.6</lombok.version>
-        <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
+        <mybatis-plus.version>3.5.0</mybatis-plus.version>
         <druid.version>1.2.8</druid.version>
         <commons.io.version>2.8.0</commons.io.version>
         <commons.collections.version>4.4</commons.collections.version>
         <commons.fileupload.version>1.4</commons.fileupload.version>
-        <commons-lang3.version>3.11</commons-lang3.version>
-        <fastjson.version>1.2.78</fastjson.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <fastjson.version>1.2.79</fastjson.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <swagger.version>3.0.0</swagger.version>
         <easypoi.version>4.4.0</easypoi.version>
         <jwt.version>3.18.2</jwt.version>
-        <qiniu.version>7.8.0</qiniu.version>
+        <qiniu.version>7.9.1</qiniu.version>
         <mail.version>1.4.7</mail.version>
     </properties>
 
@@ -136,7 +135,6 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
                 <optional>true</optional>
             </dependency>
 
