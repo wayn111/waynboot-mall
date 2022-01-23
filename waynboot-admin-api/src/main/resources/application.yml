@@ -3,6 +3,8 @@ server:
   shutdown: graceful # 优雅关机
 
 spring:
+  application:
+    name: waynboot-admin-api
   profiles:
     active: dev,druid,express
   thymeleaf:
@@ -19,6 +21,11 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  boot:
+    admin:
+      client:
+        url: http://localhost:89
+
 
 # token配置
 token:
@@ -35,6 +42,20 @@ logging:
     com.wayn: debug
     org.springframework: info
     com.baomidou: info
+  file:
+    name: E:/home/${spring.application.name}/info.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    logfile:
+      external-file: ${logging.file.name}
+    health:
+      show-details: always
+
 
 # mybatis plus 配置
 mybatis-plus:
