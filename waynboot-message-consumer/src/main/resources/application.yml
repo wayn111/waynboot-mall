@@ -23,7 +23,8 @@ spring:
     listener:
       simple:
         acknowledge-mode: manual
-        prefetch: 100
+      direct:
+        acknowledge-mode: manual
 
 # 日志配置
 logging:
