@@ -39,6 +39,7 @@ import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.common.util.ip.IpUtils;
 import com.wayn.data.redis.manager.RedisCache;
+import com.wayn.message.core.constant.SysConstants;
 import com.wayn.message.core.messsage.OrderDTO;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.OrderMapper;
@@ -262,7 +263,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
                     .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
                     .build();
-            rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", message, correlationData);
+            rabbitTemplate.convertAndSend(SysConstants.ORDER_DIRECT_EXCHANGE, SysConstants.ORDER_DIRECT_ROUTING, message, correlationData);
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage(), e);
         }
