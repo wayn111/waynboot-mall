@@ -16,6 +16,7 @@
         <module>waynboot-message-consumer</module>
         <module>waynboot-message-core</module>
         <module>waynboot-data</module>
+        <module>com.wayn.monitor</module>
     </modules>
     <groupId>com.wayn</groupId>
     <artifactId>waynboot</artifactId>
@@ -53,6 +54,7 @@
         <jwt.version>3.18.3</jwt.version>
         <qiniu.version>7.9.1</qiniu.version>
         <mail.version>1.4.7</mail.version>
+        <spring-boot-admin.version>2.5.4</spring-boot-admin.version>
     </properties>
 
     <dependencies>
