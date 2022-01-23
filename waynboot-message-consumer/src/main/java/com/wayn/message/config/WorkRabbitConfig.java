@@ -27,4 +27,8 @@ public class WorkRabbitConfig {
         return new OrderDirectReceiver(2);
     }
 
+    @Bean
+    public OrderDirectReceiver orderWorkReceiver3() {
+        return new OrderDirectReceiver(3);
+    }
 }
