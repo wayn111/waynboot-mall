@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.8</version>
+        <version>2.5.9</version>
     </parent>
     <modules>
         <module>waynboot-common</module>
@@ -37,9 +37,8 @@
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.5.8</spring-boot.version>
+        <spring-boot.version>2.5.9</spring-boot.version>
         <mysql.connector.java.version>8.0.25</mysql.connector.java.version>
-        <lettuce.version>6.1.6.RELEASE</lettuce.version>
         <elasticsearch.version>7.13.4</elasticsearch.version>
         <mybatis-plus.version>3.5.0</mybatis-plus.version>
         <druid.version>1.2.8</druid.version>
@@ -49,7 +48,7 @@
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <fastjson.version>1.2.79</fastjson.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
-        <swagger.version>3.0.0</swagger.version>
+        <knife4j.version>3.0.3</knife4j.version>
         <easypoi.version>4.4.0</easypoi.version>
         <jwt.version>3.18.3</jwt.version>
         <qiniu.version>7.9.1</qiniu.version>
@@ -79,8 +78,8 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-redis</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
@@ -208,9 +207,10 @@
 
             <!--springfox swagger官方Starter-->
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${swagger.version}</version>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <!--在引用时请在maven中央仓库搜索3.X最新版本号-->
+                <version>${knife4j.version}</version>
             </dependency>
 
             <dependency>
