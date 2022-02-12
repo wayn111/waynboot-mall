@@ -107,11 +107,11 @@
             <version>1.3.0</version>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.hierynomus</groupId>
             <artifactId>sshj</artifactId>
             <version>0.32.0</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>de.codecentric</groupId>

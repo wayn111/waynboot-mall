@@ -53,7 +53,7 @@
         <jwt.version>3.18.3</jwt.version>
         <qiniu.version>7.9.1</qiniu.version>
         <mail.version>1.4.7</mail.version>
-        <spring-boot-admin.version>2.5.4</spring-boot-admin.version>
+        <spring-boot-admin.version>2.6.2</spring-boot-admin.version>
     </properties>
 
     <dependencies>
