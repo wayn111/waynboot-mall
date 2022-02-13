@@ -1,4 +1,4 @@
-package com.wayn;
+package com.wayn.monitor;
 
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;

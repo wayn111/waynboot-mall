@@ -17,6 +17,7 @@
         <module>waynboot-message-core</module>
         <module>waynboot-data</module>
         <module>waynboot-monitor</module>
+        <module>waynboot-job</module>
     </modules>
     <groupId>com.wayn</groupId>
     <artifactId>waynboot</artifactId>
@@ -54,6 +55,7 @@
         <qiniu.version>7.9.1</qiniu.version>
         <mail.version>1.4.7</mail.version>
         <spring-boot-admin.version>2.6.2</spring-boot-admin.version>
+        <xxl-job.version>2.3.0</xxl-job.version>
     </properties>
 
     <dependencies>
@@ -223,6 +225,12 @@
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>${mail.version}</version>
+            </dependency>
+            <!-- 分布式任务调度 -->
+            <dependency>
+                <groupId>com.xuxueli</groupId>
+                <artifactId>xxl-job-core</artifactId>
+                <version>${xxl-job.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
