@@ -11,45 +11,53 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 
 ## 技术特点
 
-1.  商城接口代码清晰、注释完善、模块拆分合理
-2.  使用Spring-Security进行访问权限控制
-3.  使用jwt进行接口授权验证 
-4.  ORM层使用Mybatis Plus提升开发效率
-5.  添加全局异常处理器，统一异常处理
-6.  添加https配置代码，支持https访问
-7.  集成七牛云存储配置，上传文件至七牛 
-8.  集成常用邮箱配置，方便发送邮件
-9.  集成druid连接池，进行sql监控
-10. 集成swagger，管理接口文档 
+11. 商城接口代码清晰、注释完善、模块拆分合理
+2. 使用Spring-Security进行访问权限控制
+3. 使用jwt进行接口授权验证 
+4. ORM层使用Mybatis Plus提升开发效率
+5. 添加全局异常处理器，统一异常处理
+6. 使用springboot admin进行服务监控
+7. 集成七牛云存储配置，上传文件至七牛 
+8. 集成常用邮箱配置，方便发送邮件
+9. 商城前台使用hikari连接池，提升性能，后台使用druid连接池，进行sql监控
+10. 使用knife4j增强swagger，管理接口文档 
 11. 添加策略模式使用示例，优化首页金刚区跳转逻辑
 12. 拆分出通用的数据访问模块，统一redis & elastic配置与访问
 13. 使用elasticsearch-rest-high-level-client客户端对elasticsearch进行操作
 14. 支持商品数据同步elasticsearch操作以及elasticsearch商品搜索
 15. RabbitMQ生产者发送消息采用异步confirm模式，消费者消费消息时需手动确认
 16. 下单处理过程引入rabbitMQ，异步生成订单记录，提高系统下单处理能力
-17.  引入google jib加速和简化构建Docker应用镜像
-18.  ...
+17. 引入google jib加速和简化构建Docker应用镜像
+18. ...
 
-## 难点整理
+## 问题整理
 ### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
 1. 下单时扣减，这个方案属于实时扣减，当有大量下单请求时，由于订单数小于请求数，会发生下单失败，但是无法防止短时间大量恶意请求占用库存，
 造成普通用户无法下单
 2. 支付成功扣减，这个方案可以预防恶意请求占用库存，但是会存在多个请求同时下单后，在支付回调中扣减库存失败，导致订单还是下单失败并且还要退还订单金额（这种请求就是订单数超过了库存数，无法发货，影响用户体验）
 3. 还是下单时扣减，但是对于未支付订单设置一个超时过期机制，比如下单时库存减一，生成订单后，对于未在15分钟内完成支付的订单，
 自动取消超期未支付订单并将库存加一，该方案基本满足了大部分使用场景
-4. 针对大流量下单场景，比如一分钟内五十万次下单请求，可以通过设置虚拟库存的方式减少下单接口对数据库的访问。具体来说就是把商品实际库存保存到redis中，
+4. 针对大流量下单场景，比如一分钟内五十万次下单请求，可以通过设置虚拟库存的方式减少下单接口对数据库的访问。具体来说就是把商品库存缓存到redis中，
 下单时配合lua脚本原子的get和decr商品库存数量（这一步就拦截了大部分请求），执行成功后在扣减实际库存
 
 ### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
 ```java
-// 1. 通过创建子线程继承Callable接口
-Callable<List<Banner>> bannerCall = () -> iBannerService.list(new QueryWrapper<Banner>().eq("status", 0).orderByAsc("sort"));
-// 2. 传入Callable的任务给FutureTask
-FutureTask<List<Banner>> bannerTask = new FutureTask<>(bannerCall);
-// 3. 放入线程池执行
-threadPoolTaskExecutor.submit(bannerTask);
-// 4. 最后可以在外部通过FutureTask的get方法异步获取执行结果 
-List<Banner> list = bannerTask.get()
+# 使用CompletableFuture异步查询
+List<CompletableFuture<Void>> list = new ArrayList<>();
+CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(Wrappers.lambdaQuery(Banner.class).eq(Banner::getStatus, 0).orderByAsc(Banner::getSort)), homeThreadPoolTaskExecutor).thenAccept(data -> {
+    String key = "bannerList";
+    redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
+    success.add(key, data);
+});
+CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iDiamondService.list(Wrappers.lambdaQuery(Diamond.class).orderByAsc(Diamond::getSort).last("limit 10")), homeThreadPoolTaskExecutor).thenAccept(data -> {
+    String key = "categoryList";
+    redisCache.setCacheMapValue(SHOP_HOME_INDEX_HASH, key, data);
+    success.add(key, data);
+});
+list.add(f1);
+list.add(f2);
+# 主线程等待子线程执行完毕
+CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
 ```
 
 ### 3. `ElasticSearch`搜索查询，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
@@ -309,6 +317,7 @@ public void test(){
 
 ## 文件目录
 ```
+|-- waynboot-monitor               // 监控模块
 |-- waynboot-admin-api             // 运营后台api模块，提供后台项目api接口
 |-- waynboot-common                // 通用模块，包含项目核心基础类
 |-- waynboot-data                  // 数据模块，通用中间件数据访问

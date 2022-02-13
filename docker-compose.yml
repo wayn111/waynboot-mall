@@ -7,12 +7,16 @@ services:
       - "82"
     volumes:
       - /etc/localtime:/etc/localtime
+      - /home/logs:/home/logs
+      - /opt/wayn/upload:/opt/wayn/upload
       - ./jars/waynboot-mobile-api-1.1.0.jar:/home/app/waynboot-mobile-api-1.1.0.jar
     restart: always
     command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-mobile-api-1.1.0.jar
     network_mode: "host"
     environment:
       - TZ=Asia/Shanghai
+      - LOG_PATH_PREFIX=/home/logs
+      - UPLOAD_DIR=/opt/wayn/upload
   waynboot-admin-api:
     image: adoptopenjdk:11-openj9
     container_name: admin
@@ -20,12 +24,16 @@ services:
       - "81"
     volumes:
       - /etc/localtime:/etc/localtime
+      - /home/logs:/home/logs
+      - /opt/wayn/upload:/opt/wayn/upload
       - ./jars/waynboot-admin-api-1.1.0.jar:/home/app/waynboot-admin-api-1.1.0.jar
     restart: always
     command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-admin-api-1.1.0.jar
     network_mode: "host"
     environment:
       - TZ=Asia/Shanghai
+      - LOG_PATH_PREFIX=/home/logs
+      - UPLOAD_DIR=/opt/wayn/upload
   waynboot-message:
     image: adoptopenjdk:11-openj9
     container_name: message
@@ -33,9 +41,26 @@ services:
       - "85"
     volumes:
       - /etc/localtime:/etc/localtime
+      - /home/logs:/home/logs
+      - /opt/wayn/upload:/opt/wayn/upload
       - ./jars/waynboot-message-consumer-1.1.0.jar:/home/app/waynboot-message-consumer-1.1.0.jar
     restart: always
     command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-message-consumer-1.1.0.jar
+    network_mode: "host"
+    environment:
+      - TZ=Asia/Shanghai
+      - LOG_PATH_PREFIX=/home/logs
+      - UPLOAD_DIR=/opt/wayn/upload
+  waynboot-monitor:
+    image: adoptopenjdk:11-openj9
+    container_name: monitor
+    ports:
+      - "89"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./jars/waynboot-monitor-1.1.0.jar:/home/app/waynboot-monitor-1.1.0.jar
+    restart: always
+    command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-monitor-1.1.0.jar
     network_mode: "host"
     environment:
       - TZ=Asia/Shanghai

@@ -14,7 +14,6 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: ${wayn.uploadDir}
       file-size-threshold: 5MB
       max-file-size: 200MB
       max-request-size: 200MB
@@ -43,7 +42,7 @@ logging:
     org.springframework: info
     com.baomidou: info
   file:
-    name: E:/home/${spring.application.name}/info.log
+    name: ${LOG_PATH_PREFIX:E:/home}/${spring.application.name}/info.log
 
 management:
   endpoints:
@@ -74,10 +73,9 @@ wayn:
   name: wayn
   version: 1.1.0
   email: 166738430@qq.com
-  #uploadDir: /opt/wayn/upload # linux下文件上传目录
-  uploadDir: D:/wayn/upload # windows下文件上传目录
-  adminUrl: http://127.0.0.1:81
-  mobileUrl: http://127.0.0.1:82
+  uploadDir: ${UPLOAD_DIR:D:/wayn/upload}
+  adminUrl: http://localhost:81
+  mobileUrl: http://localhost:82
   ssh-proxy: # ssh端口代理设置，eg:通过ssh连接公网服务器，在通过端口转发访问内网服务器的服务
     enabled: false                      # 是否启用
     host:                               # 服务器host
@@ -87,8 +85,6 @@ wayn:
     localPort:                          # 代理本地端口
     remoteHost:                         # 需要代理的服务host
     remotePort:                         # 需要代理的服务port
-
-
 
 #滑块验证码配置
 aj:

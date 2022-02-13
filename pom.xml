@@ -16,7 +16,7 @@
         <module>waynboot-message-consumer</module>
         <module>waynboot-message-core</module>
         <module>waynboot-data</module>
-        <module>com.wayn.monitor</module>
+        <module>waynboot-monitor</module>
     </modules>
     <groupId>com.wayn</groupId>
     <artifactId>waynboot</artifactId>
