@@ -22,7 +22,6 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: ${wayn.uploadDir}
       file-size-threshold: 5MB
       max-file-size: 200MB
       max-request-size: 200MB
@@ -49,7 +48,7 @@ logging:
     org.springframework: info
     com.baomidou: info
   file:
-    name: E:/home/${spring.application.name}/info.log
+    name: ${LOG_PATH_PREFIX:E:/home}/${spring.application.name}/info.log
 
 # mybatis plus 配置
 mybatis-plus:
@@ -68,8 +67,7 @@ wayn:
   name: wayn
   version: 1.1.0
   email: 166738430@qq.com
-  uploadDir: /opt/wayn/upload # linux下文件上传目录
-#  uploadDir: D:/wayn/upload # windows下文件上传目录
+  uploadDir: ${UPLOAD_DIR:D:/wayn/upload}
   adminUrl: http://localhost:81
   mobileUrl: http://localhost:82
 

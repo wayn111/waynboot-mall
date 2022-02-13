@@ -38,7 +38,7 @@ logging:
     com.wayn: debug
     org.springframework: info
   file:
-    name: E:/home/${spring.application.name}/info.log
+    name: ${LOG_PATH_PREFIX:E:/home}/${spring.application.name}/info.log
 
 management:
   endpoints:
