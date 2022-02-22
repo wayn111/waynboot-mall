@@ -56,6 +56,7 @@
         <mail.version>1.4.7</mail.version>
         <spring-boot-admin.version>2.6.2</spring-boot-admin.version>
         <xxl-job.version>2.3.0</xxl-job.version>
+        <hutool.version>5.7.20</hutool.version>
     </properties>
 
     <dependencies>
