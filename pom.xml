@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.9</version>
+        <version>2.5.10</version>
     </parent>
     <modules>
         <module>waynboot-common</module>
@@ -38,10 +38,10 @@
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>2.5.9</spring-boot.version>
+        <spring-boot.version>2.5.10</spring-boot.version>
         <mysql.connector.java.version>8.0.25</mysql.connector.java.version>
         <elasticsearch.version>7.13.4</elasticsearch.version>
-        <mybatis-plus.version>3.5.0</mybatis-plus.version>
+        <mybatis-plus.version>3.5.1</mybatis-plus.version>
         <druid.version>1.2.8</druid.version>
         <commons.io.version>2.8.0</commons.io.version>
         <commons.collections.version>4.4</commons.collections.version>
@@ -52,7 +52,7 @@
         <knife4j.version>3.0.3</knife4j.version>
         <easypoi.version>4.4.0</easypoi.version>
         <jwt.version>3.18.3</jwt.version>
-        <qiniu.version>7.9.1</qiniu.version>
+        <qiniu.version>7.9.3</qiniu.version>
         <mail.version>1.4.7</mail.version>
         <spring-boot-admin.version>2.6.2</spring-boot-admin.version>
         <xxl-job.version>2.3.0</xxl-job.version>
