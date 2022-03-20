@@ -22,6 +22,8 @@ spring:
     database: 2
     timeout: 5000
     expire: 400
+    lettuce:
+      shutdown-timeout: 100ms
   #    cluster:
   #      nodes:
   #        - 127.0.0.1:1681
