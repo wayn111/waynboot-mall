@@ -21,7 +21,7 @@ import java.util.Properties;
 @Slf4j
 public class MailUtil {
 
-    public static void sendMail(EmailConfig emailConfig, SendMailVO mailVO, boolean isHtml) {
+    public static void sendMail(EmailConfig emailConfig, SendMailVO mailVO, boolean isHtml, boolean ssl) {
         try {
             // 设置发件人
             String from = emailConfig.getFromUser();
@@ -32,15 +32,18 @@ public class MailUtil {
                 String host = emailConfig.getHost();
                 // 获取系统属性
                 Properties properties = System.getProperties();
+                properties.setProperty("mail.smtp.port", String.valueOf(emailConfig.getPort()));
                 // SSL加密
-                MailSSLSocketFactory sf = new MailSSLSocketFactory();
-                sf.setTrustAllHosts(true);
-                properties.put("mail.smtp.ssl.enable", "true");
-                properties.put("mail.smtp.ssl.socketFactory", sf);
+                if (ssl) {
+                    MailSSLSocketFactory sf = new MailSSLSocketFactory();
+                    sf.setTrustAllHosts(true);
+                    properties.put("mail.smtp.ssl.enable", "true");
+                    properties.put("mail.smtp.ssl.socketFactory", sf);
+                    properties.setProperty("mail.smtp.port", String.valueOf(emailConfig.getSslPort()));
+                }
                 // 设置系统属性
                 properties.setProperty("mail.smtp.host", host);
                 properties.setProperty("mail.transport.protocol", "smtp");
-                properties.setProperty("mail.smtp.port", emailConfig.getPort());
                 properties.put("mail.smtp.auth", "true");
                 // 获取发送邮件会话、获取第三方登录授权码
                 Session session = Session.getDefaultInstance(properties, new Authenticator() {
@@ -49,7 +52,7 @@ public class MailUtil {
                         return new PasswordAuthentication(from, emailConfig.getPass());
                     }
                 });
-                session.setDebug(true);
+                session.setDebug(false);
                 // 创建默认的 MimeMessage 对象
                 MimeMessage message = new MimeMessage(session);
                 MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -69,4 +72,18 @@ public class MailUtil {
         }
     }
 
+    public static void main(String[] args) {
+        EmailConfig emailConfig = new EmailConfig();
+        emailConfig.setFromUser("1669738430@qq.com");
+        emailConfig.setHost("smtp.qq.com");
+        emailConfig.setPass("vxhduzllgqfnjiif");
+        emailConfig.setPort(25);
+        emailConfig.setUser("wayn");
+
+        SendMailVO sendMailVO = new SendMailVO();
+        sendMailVO.setContent("123");
+        sendMailVO.setSubject("title");
+        sendMailVO.setTos(List.of("1669738430@qq.com"));
+        sendMail(emailConfig, sendMailVO, false, false);
+    }
 }

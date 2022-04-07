@@ -2,6 +2,8 @@ server:
   port: 85
   shutdown: graceful # 优雅关机
 spring:
+  application:
+    name: waynboot-message-consumer
   redis:
     host: 122.112.205.44
     port: 1688
@@ -24,9 +26,27 @@ spring:
       simple:
         acknowledge-mode: manual
         prefetch: 100
+  boot:
+    admin:
+      client:
+        url: http://localhost:89
+
 
 # 日志配置
 logging:
   level:
     com.wayn: debug
     org.springframework: info
+  file:
+    name: ${LOG_PATH_PREFIX:E:/home}/${spring.application.name}/info.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    logfile:
+      external-file: ${logging.file.name}
+    health:
+      show-details: always

@@ -43,12 +43,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.30</version>
         </dependency>
     </dependencies>
 </project>

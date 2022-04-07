@@ -39,6 +39,7 @@ import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.common.util.ip.IpUtils;
 import com.wayn.data.redis.manager.RedisCache;
+import com.wayn.message.core.constant.SysConstants;
 import com.wayn.message.core.messsage.OrderDTO;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.OrderMapper;
@@ -199,26 +200,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } else {
             checkedGoodsList = iCartService.listByIds(cartIdArr);
         }
-        List<Long> goodsIds = checkedGoodsList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
-        List<GoodsProduct> goodsProducts = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().in("goods_id", goodsIds));
-        Map<Long, GoodsProduct> goodsIdMap = goodsProducts.stream().collect(
-                Collectors.toMap(GoodsProduct::getId, goodsProduct -> goodsProduct));
-        // 商品货品数量减少
-        for (Cart checkGoods : checkedGoodsList) {
-            Long productId = checkGoods.getProductId();
-            Long goodsId = checkGoods.getGoodsId();
-            GoodsProduct product = goodsIdMap.get(productId);
-            int remainNumber = product.getNumber() - checkGoods.getNumber();
-            if (remainNumber < 0) {
-                Goods goods = iGoodsService.getById(goodsId);
-                String goodsName = goods.getName();
-                String[] specifications = product.getSpecifications();
-                throw new BusinessException(String.format("%s,%s 库存不足", goodsName, StringUtils.join(specifications, " ")));
-            }
-            if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
-                throw new BusinessException("商品货品库存减少失败");
-            }
-        }
 
         // 商品费用
         BigDecimal checkedGoodsPrice = new BigDecimal("0.00");
@@ -251,7 +232,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 异步下单
         String uid = IdUtil.getUid();
-        System.out.println(uid);
         CorrelationData correlationData = new CorrelationData(uid);
         Map<String, Object> map = new HashMap<>();
         map.put("order", orderDTO);
@@ -262,7 +242,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
                     .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
                     .build();
-            rabbitTemplate.convertAndSend("OrderDirectExchange", "OrderDirectRouting", message, correlationData);
+            rabbitTemplate.convertAndSend(SysConstants.ORDER_DIRECT_EXCHANGE, SysConstants.ORDER_DIRECT_ROUTING, message, correlationData);
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage(), e);
         }
@@ -289,6 +269,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             checkedGoodsList = iCartService.list(new QueryWrapper<Cart>().eq("checked", true).eq("user_id", userId));
         } else {
             checkedGoodsList = iCartService.listByIds(cartIdArr);
+        }
+
+        // 商品货品库存数量减少
+        List<Long> goodsIds = checkedGoodsList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
+        List<GoodsProduct> goodsProducts = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().in("goods_id", goodsIds));
+        Map<Long, GoodsProduct> goodsIdMap = goodsProducts.stream().collect(
+                Collectors.toMap(GoodsProduct::getId, goodsProduct -> goodsProduct));
+        for (Cart checkGoods : checkedGoodsList) {
+            Long productId = checkGoods.getProductId();
+            Long goodsId = checkGoods.getGoodsId();
+            GoodsProduct product = goodsIdMap.get(productId);
+            int remainNumber = product.getNumber() - checkGoods.getNumber();
+            if (remainNumber < 0) {
+                Goods goods = iGoodsService.getById(goodsId);
+                String goodsName = goods.getName();
+                String[] specifications = product.getSpecifications();
+                throw new BusinessException(String.format("%s,%s 库存不足", goodsName, StringUtils.join(specifications, " ")));
+            }
+            if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
+                throw new BusinessException("商品货品库存减少失败");
+            }
         }
 
         // 商品费用
@@ -341,7 +342,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
 
         Long orderId = order.getId();
-        List<OrderGoods> orderGoodsList = new ArrayList<>();
+        List<OrderGoods> orderGoodsList = new ArrayList<>(checkedGoodsList.size());
         // 添加订单商品表项
         for (Cart cartGoods : checkedGoodsList) {
             // 订单商品

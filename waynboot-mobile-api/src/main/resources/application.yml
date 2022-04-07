@@ -11,6 +11,8 @@ server:
 #http-port: 82
 
 spring:
+  application:
+    name: waynboot-mobile-api
   profiles:
     active: dev,hikari
   thymeleaf:
@@ -20,12 +22,15 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: ${wayn.uploadDir}
       file-size-threshold: 5MB
       max-file-size: 200MB
       max-request-size: 200MB
   jackson:
     default-property-inclusion: non_null # 接口返回字段值为null的属性不展示
+  boot:
+    admin:
+      client:
+        url: http://localhost:89
 
 # token配置
 token:
@@ -42,6 +47,8 @@ logging:
     com.wayn: info
     org.springframework: info
     com.baomidou: info
+  file:
+    name: ${LOG_PATH_PREFIX:E:/home}/${spring.application.name}/info.log
 
 # mybatis plus 配置
 mybatis-plus:
@@ -60,8 +67,7 @@ wayn:
   name: wayn
   version: 1.1.0
   email: 166738430@qq.com
-  uploadDir: /opt/wayn/upload # linux下文件上传目录
-#  uploadDir: D:/wayn/upload # windows下文件上传目录
+  uploadDir: ${UPLOAD_DIR:D:/wayn/upload}
   adminUrl: http://localhost:81
   mobileUrl: http://localhost:82
 
@@ -82,3 +88,8 @@ management:
     web:
       exposure:
         include: '*'
+  endpoint:
+    logfile:
+      external-file: ${logging.file.name}
+    health:
+      show-details: always
