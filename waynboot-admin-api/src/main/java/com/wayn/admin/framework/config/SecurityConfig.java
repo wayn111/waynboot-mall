@@ -65,11 +65,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //处理跨域请求中的Preflight请求(cors)，设置corsConfigurationSource后无需使用
                 // .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 // 对于登录login 验证码captchaImage 允许匿名访问
-                .antMatchers("/favicon.ico", "/login", "/favicon.ico").anonymous()
+                .antMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
                 .antMatchers("/slider/**").anonymous()
                 .antMatchers("/captcha/**").anonymous()
                 .antMatchers("/upload/**").anonymous()
                 .antMatchers("/common/download**").anonymous()
+                .antMatchers("/doc.html").anonymous()
                 .antMatchers("/swagger-ui/**").anonymous()
                 .antMatchers("/swagger-resources/**").anonymous()
                 .antMatchers("/webjars/**").anonymous()
