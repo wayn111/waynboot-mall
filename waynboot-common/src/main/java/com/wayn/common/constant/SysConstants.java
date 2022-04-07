@@ -9,6 +9,11 @@ public class SysConstants {
     public static final String DEFAULT_AVATAR = "http://cdn.wayn.xin/091fffcf8e8c25ed8d2cb926be60a16a.png";
 
     /**
+     * 缓存前缀, todo 统一项目缓存前缀
+     */
+    public static final String CACHE_PREFIX = "waynboot-mall:";
+
+    /**
      * 用户默认密码
      */
     public static final String DEFAULT_PASSWORD = "123456";
