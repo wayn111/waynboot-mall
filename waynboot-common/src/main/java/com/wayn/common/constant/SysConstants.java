@@ -24,7 +24,7 @@ public class SysConstants {
     /**
      * 验证码 redis key
      */
-    public static final String CAPTCHA_CODE_KEY = "captcha_codes:";
+    public static final String CAPTCHA_CODE_KEY = CACHE_PREFIX + "captcha_codes:";
     /**
      * 验证码有效期（分钟）
      */
@@ -32,12 +32,12 @@ public class SysConstants {
     /**
      * 登录用户 redis key
      */
-    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
+    public static final String LOGIN_TOKEN_KEY = CACHE_PREFIX + "login_tokens:";
 
     /**
      * 登录用户key
      */
-    public static final String SIGN_KEY = "login_user_key";
+    public static final String SIGN_KEY = CACHE_PREFIX + "login_user_key";
 
     /**
      * 令牌前缀
