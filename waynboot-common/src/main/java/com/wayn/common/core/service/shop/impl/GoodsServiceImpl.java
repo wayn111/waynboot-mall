@@ -12,6 +12,7 @@ import com.wayn.common.core.service.shop.*;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
+import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
 import lombok.AllArgsConstructor;
@@ -161,7 +162,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
         iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
         // 同步es
-        boolean one = elasticDocument.delete(SysConstants.ES_GOODS_INDEX, goodsId.toString());
+        boolean one = elasticDocument.delete(EsConstants.ES_GOODS_INDEX, goodsId.toString());
         if (!one) {
             throw new BusinessException("删除商品，同步es失败");
         }
@@ -263,7 +264,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         map.put("isOnSale", goods.getIsOnSale());
         map.put("createTime", goods.getCreateTime());
         elasticEntity.setData(map);
-        if (!elasticDocument.insertOrUpdateOne(SysConstants.ES_GOODS_INDEX, elasticEntity)) {
+        if (!elasticDocument.insertOrUpdateOne(EsConstants.ES_GOODS_INDEX, elasticEntity)) {
             throw new BusinessException("商品同步es失败");
         }
         return true;
