@@ -5,6 +5,7 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.util.jwt.JwtUtil;
+import com.wayn.data.redis.constant.CacheConstants;
 import com.wayn.data.redis.manager.RedisCache;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class TokenService {
         loginUser.setLoginTime(System.currentTimeMillis());
         loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_MINUTE);
         // 根据uuid将loginUser缓存
-        String userKey = SysConstants.LOGIN_TOKEN_KEY + loginUser.getToken();
+        String userKey = CacheConstants.LOGIN_TOKEN_KEY + loginUser.getToken();
         redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);
     }
 
@@ -99,7 +100,7 @@ public class TokenService {
      * @return 返回token的key
      */
     private String getTokenKey(String sign) {
-        return SysConstants.LOGIN_TOKEN_KEY + sign;
+        return CacheConstants.LOGIN_TOKEN_KEY + sign;
     }
 
 }
