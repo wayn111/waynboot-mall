@@ -41,7 +41,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .ignoringAntMatchers(
                         "/instances",
                         "/actuator/**"
-                )
-                .disable();
+                );
     }
 }
