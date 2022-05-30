@@ -23,7 +23,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:89
+        url: http://localhost:89/boot-admin
 
 
 # token配置
