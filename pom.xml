@@ -47,7 +47,7 @@
         <commons.collections.version>4.4</commons.collections.version>
         <commons.fileupload.version>1.4</commons.fileupload.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
-        <fastjson.version>1.2.79</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <knife4j.version>3.0.3</knife4j.version>
         <easypoi.version>4.4.0</easypoi.version>
