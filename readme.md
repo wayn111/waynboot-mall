@@ -312,6 +312,43 @@ public void test(){
             </plugin>
         </plugins>
 ```
+### 8. 生产环境Redis连接，长时间无响应被服务器断开问题，通过`lettuceConnectionFactory.resetConnection();`重置redis连接
+```java
+    @Autowired
+    private LettuceConnectionFactory lettuceConnectionFactory;
+    /**
+     * 获得缓存的基本对象。
+     *
+     * @param key 缓存键值
+     * @return 缓存键值对应的数据
+     */
+    public <T> T getCacheObject(final String key) {
+        try {
+            ValueOperations<String, T> operation = redisTemplate.opsForValue();
+            return operation.get(key);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return retryGetCacheObject(key, 1);
+        }
+    }
+
+    public <T> T retryGetCacheObject(final String key, int retryCount) {
+        try {
+            log.info("retryGetCacheObject, key:{}, retryCount:{}", key, retryCount);
+            if (retryCount <= 0) {
+                return null;
+            }
+            lettuceConnectionFactory.resetConnection();
+            Thread.sleep(200L);
+            retryCount--;
+            ValueOperations<String, T> operation = redisTemplate.opsForValue();
+            return operation.get(key);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return retryGetCacheObject(key, retryCount);
+        }
+    }
+```
 
 - todo
 

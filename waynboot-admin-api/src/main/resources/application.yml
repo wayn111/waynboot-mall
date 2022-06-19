@@ -23,7 +23,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:89
+        url: http://localhost:89/boot-admin
 
 
 # token配置
@@ -38,7 +38,7 @@ token:
 # 日志配置
 logging:
   level:
-    com.wayn: debug
+    com.wayn: info
     org.springframework: info
     com.baomidou: info
   file:

@@ -1,9 +1,19 @@
 server:
   port: 89
   shutdown: graceful # 优雅关机
-
+  servlet:
+    context-path: /boot-admin
 spring:
   security:
     user:
       name: user
       password: admin123
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS

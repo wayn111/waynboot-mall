@@ -1,6 +1,9 @@
 package com.wayn.data.redis.manager;
 
+import io.lettuce.core.RedisClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -18,11 +21,15 @@ import java.util.concurrent.TimeUnit;
  *
  * @author ruoyi
  **/
+@Slf4j
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
 @Component
 public class RedisCache {
     @Autowired
     public RedisTemplate redisTemplate;
+
+    @Autowired
+    private LettuceConnectionFactory lettuceConnectionFactory;
 
     /**
      * 缓存基本的对象，Integer、String、实体类等
@@ -86,9 +93,32 @@ public class RedisCache {
      * @return 缓存键值对应的数据
      */
     public <T> T getCacheObject(final String key) {
-        ValueOperations<String, T> operation = redisTemplate.opsForValue();
-        return operation.get(key);
+        try {
+            ValueOperations<String, T> operation = redisTemplate.opsForValue();
+            return operation.get(key);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return retryGetCacheObject(key, 1);
+        }
     }
+
+    public <T> T retryGetCacheObject(final String key, int retryCount) {
+        try {
+            log.info("retryGetCacheObject, key:{}, retryCount:{}", key, retryCount);
+            if (retryCount <= 0) {
+                return null;
+            }
+            lettuceConnectionFactory.resetConnection();
+            Thread.sleep(200L);
+            retryCount--;
+            ValueOperations<String, T> operation = redisTemplate.opsForValue();
+            return operation.get(key);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return retryGetCacheObject(key, retryCount);
+        }
+    }
+
 
     /**
      * 获取多个key的
