@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("message/email")
@@ -25,8 +25,8 @@ public class EmailController {
         SendMailVO sendMailVO = new SendMailVO();
         sendMailVO.setSubject(subject);
         sendMailVO.setContent(content);
-        sendMailVO.setTos(Arrays.asList(tos));
-        MailUtil.sendMail(emailConfig, sendMailVO, false);
+        sendMailVO.setTos(List.of(tos));
+        MailUtil.sendMail(emailConfig, sendMailVO, false, false);
         return R.success();
     }
 }

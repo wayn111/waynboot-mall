@@ -3,13 +3,13 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUtils;
+import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
 import com.wayn.data.redis.manager.RedisCache;
@@ -74,15 +74,15 @@ public class GoodsController extends BaseController {
 
     @PostMapping("syncEs")
     public R syncEs() {
-        if (redisCache.getCacheObject(SysConstants.ES_GOODS_INDEX_KEY) != null) {
+        if (redisCache.getCacheObject(EsConstants.ES_GOODS_INDEX_KEY) != null) {
             return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("正在同步，请稍等"));
         }
         boolean flag = false;
-        redisCache.setCacheObject(SysConstants.ES_GOODS_INDEX_KEY, true, 3, TimeUnit.MINUTES);
+        redisCache.setCacheObject(EsConstants.ES_GOODS_INDEX_KEY, true, 3, TimeUnit.MINUTES);
         try {
-            elasticDocument.deleteIndex(SysConstants.ES_GOODS_INDEX);
-            InputStream inputStream = this.getClass().getResourceAsStream(SysConstants.ES_INDEX_GOODS_FILENAME);
-            if (elasticDocument.createIndex(SysConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
+            elasticDocument.deleteIndex(EsConstants.ES_GOODS_INDEX);
+            InputStream inputStream = this.getClass().getResourceAsStream(EsConstants.ES_INDEX_GOODS_FILENAME);
+            if (elasticDocument.createIndex(EsConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
                 List<Goods> list = iGoodsService.list();
                 List<ElasticEntity> entities = new ArrayList<>();
                 for (Goods goods : list) {
@@ -102,12 +102,12 @@ public class GoodsController extends BaseController {
                     elasticEntity.setData(map);
                     entities.add(elasticEntity);
                 }
-                flag = elasticDocument.insertBatch("goods", entities);
+                flag = elasticDocument.insertBatch(EsConstants.ES_GOODS_INDEX, entities);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            redisCache.deleteObject(SysConstants.ES_GOODS_INDEX_KEY);
+            redisCache.deleteObject(EsConstants.ES_GOODS_INDEX_KEY);
         }
         return R.result(flag);
     }
