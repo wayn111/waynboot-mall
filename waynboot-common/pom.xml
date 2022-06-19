@@ -147,14 +147,14 @@
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-pay</artifactId>
-            <version>4.3.2.B</version>
+            <version>4.3.5.B</version>
         </dependency>
 
         <!--支付宝依赖-->
         <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
-            <version>4.23.11.ALL</version>
+            <version>4.31.12.ALL</version>
         </dependency>
 
         <dependency>
