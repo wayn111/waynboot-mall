@@ -3,6 +3,7 @@ package com.wayn.common.core.domain.vo.order;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = false)
 public class OrderGoodsVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8548938788899621492L;
     private Long id;
 

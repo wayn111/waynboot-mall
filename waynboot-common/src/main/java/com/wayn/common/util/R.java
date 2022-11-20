@@ -3,12 +3,14 @@ package com.wayn.common.util;
 import com.wayn.common.enums.ReturnCodeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 public class R implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5316597326293972581L;
     private int code;
     private String msg;

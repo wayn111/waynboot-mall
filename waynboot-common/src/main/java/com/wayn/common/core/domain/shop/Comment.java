@@ -9,6 +9,7 @@ import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class Comment extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2415577057902110771L;
 
     @TableId(type = IdType.AUTO)

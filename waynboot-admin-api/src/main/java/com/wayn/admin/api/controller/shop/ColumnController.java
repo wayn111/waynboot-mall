@@ -13,13 +13,12 @@ import com.wayn.common.core.service.shop.IColumnService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,11 +43,7 @@ public class ColumnController extends BaseController {
         IPage<Column> columnIPage = iColumnService.listPage(page, column);
         List<ColumnVO> columnVOS = columnIPage.getRecords().stream().map(item -> {
             ColumnVO columnVO = new ColumnVO();
-            try {
-                BeanUtils.copyProperties(columnVO, item);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                log.error(e.getMessage(), e);
-            }
+            BeanUtils.copyProperties(columnVO, item);
             Integer count = iColumnGoodsRelationService.getGoodsNum(item.getId());
             columnVO.setGoodsNum(count);
             return columnVO;

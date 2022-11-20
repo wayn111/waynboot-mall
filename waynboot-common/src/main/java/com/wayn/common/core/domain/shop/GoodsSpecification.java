@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class GoodsSpecification extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3623876658189050505L;
 
     @TableId(type = IdType.AUTO)

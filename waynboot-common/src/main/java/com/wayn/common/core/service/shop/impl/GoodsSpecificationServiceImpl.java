@@ -49,7 +49,7 @@ public class GoodsSpecificationServiceImpl extends ServiceImpl<GoodsSpecificatio
     }
 
 
-    private class VO {
+    private static class VO {
         private String name;
         private List<GoodsSpecification> valueList;
 

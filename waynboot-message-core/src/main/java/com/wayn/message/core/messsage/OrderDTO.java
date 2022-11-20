@@ -2,6 +2,7 @@ package com.wayn.message.core.messsage;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 public class OrderDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3237709318648096242L;
 
     /**

@@ -39,7 +39,7 @@ public interface IRoleService extends IService<Role> {
      * @param userId 用户id
      * @return 选中角色id列表
      */
-    public List<Integer> selectRoleListByUserId(Long userId);
+    List<Integer> selectRoleListByUserId(Long userId);
 
     /**
      * 校验角色名称是否唯一

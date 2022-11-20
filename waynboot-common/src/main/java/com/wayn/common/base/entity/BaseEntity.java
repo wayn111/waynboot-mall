@@ -1,11 +1,14 @@
 package com.wayn.common.base.entity;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,15 +17,18 @@ import java.util.Date;
  */
 @Data
 public class BaseEntity implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1956057929467119856L;
     /**
      * 创建者
      */
+    @ExcelIgnore
     private String createBy;
     /**
      * 创建时间
      */
-    @Excel(name = "创建时间", format="yyyy-MM-dd HH:mm:ss" ,width = 25)
+    @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
+    @ExcelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
@@ -30,18 +36,20 @@ public class BaseEntity implements Serializable {
     /**
      * 更新者
      */
+    @ExcelIgnore
     private String updateBy;
 
     /**
      * 更新时间
      */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     /**
      * 备注
      */
-    @Excel(name = "备注", width = 25)
+    @ExcelProperty(value = "备注")
     private String remark;
 
     /**
@@ -49,6 +57,7 @@ public class BaseEntity implements Serializable {
      */
     @JsonIgnore
     @TableField(exist = false)
+    @ExcelIgnore
     private String startTime;
 
     /**
@@ -56,5 +65,6 @@ public class BaseEntity implements Serializable {
      */
     @JsonIgnore
     @TableField(exist = false)
+    @ExcelIgnore
     private String endTime;
 }

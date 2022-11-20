@@ -10,6 +10,7 @@ import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -30,6 +31,7 @@ import java.math.BigDecimal;
 @TableName(value = "shop_goods", autoResultMap = true)
 public class Goods extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3591926398371563001L;
 
     @TableId(type = IdType.AUTO)

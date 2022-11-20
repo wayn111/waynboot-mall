@@ -1,5 +1,8 @@
 package com.wayn.common.core.service.system.impl;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.read.listener.PageReadListener;
+import com.alibaba.excel.read.listener.ReadListener;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -13,15 +16,19 @@ import com.wayn.common.core.mapper.system.RoleMapper;
 import com.wayn.common.core.mapper.system.UserMapper;
 import com.wayn.common.core.service.system.IUserRoleService;
 import com.wayn.common.core.service.system.IUserService;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
+import com.wayn.common.util.R;
+import com.wayn.common.util.security.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -101,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public String selectUserRoleGroup(String userName) {
         List<Role> list = roleMapper.selectRolesByUserName(userName);
-        StringBuffer idsStr = new StringBuffer();
+        StringBuilder idsStr = new StringBuilder();
         for (Role role : list) {
             idsStr.append(role.getRoleName()).append(",");
         }
@@ -109,5 +116,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return idsStr.substring(0, idsStr.length() - 1);
         }
         return idsStr.toString();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public R importUser(MultipartFile file) {
+        try (InputStream inputStream = file.getInputStream()) {
+            List<User> list = new ArrayList<>();
+            EasyExcel.read(inputStream, User.class, new PageReadListener<User>(dataList -> {
+                for (User user : dataList) {
+                    if (SysConstants.NOT_UNIQUE.equals(this.checkUserNameUnique(user.getUserName()))) {
+                        throw new BusinessException(String.format("导入用户[%s]失败，登录账号已存在", user.getUserName()));
+                    } else if (SysConstants.NOT_UNIQUE.equals(this.checkPhoneUnique(user))) {
+                        throw new BusinessException(String.format("导入用户[%s]失败，手机号码已存在", user.getUserName()));
+                    } else if (SysConstants.NOT_UNIQUE.equals(this.checkEmailUnique(user))) {
+                        throw new BusinessException(String.format("导入用户[%s]失败，邮箱账号已存在", user.getUserName()));
+                    }
+                    user.setDeptId(101L);
+                    user.setCreateBy(SecurityUtils.getUsername());
+                    user.setCreateTime(new Date());
+                    user.setPassword(SecurityUtils.encryptPassword(SysConstants.DEFAULT_PASSWORD));
+                }
+                this.saveBatch(list);
+            })).sheet().doRead();
+            return R.success();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

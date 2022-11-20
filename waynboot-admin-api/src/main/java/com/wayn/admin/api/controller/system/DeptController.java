@@ -6,8 +6,6 @@ import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.security.SecurityUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-@Api("部门接口")
 @RestController
 @RequestMapping("system/dept")
 public class DeptController {
@@ -25,7 +22,6 @@ public class DeptController {
     private IDeptService iDeptService;
 
     @PreAuthorize("@ss.hasPermi('system:dept:list')")
-    @ApiOperation(value = "部门列表", notes = "部门列表")
     @GetMapping("/list")
     public R list(Dept dept) {
         List<Dept> depts = iDeptService.list(dept);
@@ -33,7 +29,6 @@ public class DeptController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:dept:add')")
-    @ApiOperation(value = "保存部门", notes = "保存部门")
     @PostMapping
     public R addDept(@Validated @RequestBody Dept dept) {
         if (SysConstants.NOT_UNIQUE.equals(iDeptService.checkDeptNameUnique(dept))) {
@@ -48,7 +43,6 @@ public class DeptController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:dept:update')")
-    @ApiOperation(value = "更新部门", notes = "更新部门")
     @PutMapping
     public R updateDept(@Validated @RequestBody Dept dept) {
         if (SysConstants.NOT_UNIQUE.equals(iDeptService.checkDeptNameUnique(dept))) {
@@ -78,14 +72,12 @@ public class DeptController {
     }
 
     @PreAuthorize("@ss.hasPermi('system:dept:query')")
-    @ApiOperation(value = "获取部门详细信息", notes = "获取部门详细信息")
     @GetMapping("{deptId}")
     public R getDept(@PathVariable Long deptId) {
         return R.success().add("data", iDeptService.getById(deptId));
     }
 
     @PreAuthorize("@ss.hasPermi('system:dept:delete')")
-    @ApiOperation(value = "删除部门", notes = "删除部门")
     @DeleteMapping("{deptId}")
     public R deleteDept(@PathVariable Long deptId) {
         if (iDeptService.hasChildByDeptId(deptId)) {

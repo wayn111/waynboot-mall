@@ -3,7 +3,8 @@ package com.wayn.data.redis.config;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+import com.alibaba.fastjson2.support.spring.data.redis.FastJsonRedisSerializer;
+import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSerializer;
 import com.wayn.data.redis.constant.CacheConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -47,14 +48,7 @@ public class CacheConfig extends CachingConfigurerSupport {
     }
 
     private RedisSerializer<Object> valueSerializer() {
-        FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
-        ParserConfig globalInstance = ParserConfig.getGlobalInstance();
-        globalInstance.setAutoTypeSupport(true);
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        fastJsonConfig.setParserConfig(globalInstance);
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteClassName);
-        fastJsonRedisSerializer.setFastJsonConfig(fastJsonConfig);
-        return fastJsonRedisSerializer;
+        return new GenericFastJsonRedisSerializer();
     }
 
     @Bean

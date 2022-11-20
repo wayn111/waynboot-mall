@@ -1,6 +1,6 @@
 package com.wayn.message.core.config;
 
-import com.wayn.message.core.constant.SysConstants;
+import com.wayn.message.core.constant.MQConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -23,7 +23,7 @@ public class DirectRabbitConfig {
      */
     @Bean
     public Queue EmailDirectQueue() {
-        return new Queue(SysConstants.email_direct_queue, true);
+        return new Queue(MQConstants.email_direct_queue, true);
     }
 
     /**
@@ -33,7 +33,7 @@ public class DirectRabbitConfig {
      */
     @Bean
     DirectExchange EmailDirectExchange() {
-        return new DirectExchange(SysConstants.EMAIL_DIRECT_EXCHANGE);
+        return new DirectExchange(MQConstants.EMAIL_DIRECT_EXCHANGE);
     }
 
     /**
@@ -49,12 +49,12 @@ public class DirectRabbitConfig {
     /************************************ 订单队列、交换机 begin *******************************************/
     @Bean
     public Queue OrderDirectQueue() {
-        return new Queue(SysConstants.ORDER_DIRECT_QUEUE, true);
+        return new Queue(MQConstants.ORDER_DIRECT_QUEUE, true);
     }
 
     @Bean
     DirectExchange OrderDirectExchange() {
-        return new DirectExchange(SysConstants.ORDER_DIRECT_EXCHANGE);
+        return new DirectExchange(MQConstants.ORDER_DIRECT_EXCHANGE);
     }
 
     @Bean

@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class Banner extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6208877431925919530L;
 
     @TableId(type = IdType.AUTO)
