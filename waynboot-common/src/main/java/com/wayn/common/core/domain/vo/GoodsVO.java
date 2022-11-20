@@ -3,6 +3,7 @@ package com.wayn.common.core.domain.vo;
 import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class GoodsVO extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3591926398371563001L;
 
     private Long id;

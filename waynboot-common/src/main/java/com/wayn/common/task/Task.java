@@ -37,10 +37,9 @@ public abstract class Task implements Delayed, Runnable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if (!(o instanceof Task)) {
+        if (!(o instanceof Task t)) {
             return false;
         }
-        Task t = (Task) o;
         return this.id.equals(t.getId());
     }
 

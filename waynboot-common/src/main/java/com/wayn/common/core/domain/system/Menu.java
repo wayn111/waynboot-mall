@@ -5,12 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.entity.BaseEntity;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +18,11 @@ import java.util.List;
  * 菜单权限表 sys_menu
  */
 @Data
-@ApiModel("菜单实体")
 @TableName("sys_menu")
 @EqualsAndHashCode(callSuper = true)
 public class Menu extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 3675171030764421787L;
     /**
      * 菜单ID

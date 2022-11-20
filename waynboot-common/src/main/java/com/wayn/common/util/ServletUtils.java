@@ -1,10 +1,16 @@
 package com.wayn.common.util;
 
+import com.wayn.common.constant.Constants;
+import com.wayn.common.util.file.FileUtils;
+import com.wayn.common.util.http.HttpUtil;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 public class ServletUtils {
@@ -73,5 +79,38 @@ public class ServletUtils {
     public static ServletUtils setParameter(String name, Object value) {
         getRequest().setAttribute(name, value);
         return getInstance;
+    }
+
+    /**
+     * 将字符串渲染到客户端
+     *
+     * @param response 渲染对象
+     * @param string   待渲染的字符串
+     * @return null
+     */
+    public static String renderString(HttpServletResponse response, String string) {
+        try {
+            response.setContentType("application/json");
+            response.setCharacterEncoding(Constants.UTF_ENCODING);
+            response.getWriter().print(string);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 设置文件导出响应流
+     *
+     * @param response 响应对象
+     * @param fileName 文件名
+     * @param size     文件大小
+     * @throws UnsupportedEncodingException 不支持字符编码异常
+     */
+    public static void setExportResponse(HttpServletResponse response, String fileName, Integer size) throws UnsupportedEncodingException {
+        response.setCharacterEncoding(Constants.UTF_ENCODING);
+        response.setHeader("Content-Length", HttpUtil.safeHttpHeader(size + ""));
+        response.setHeader("Content-Disposition", HttpUtil.safeHttpHeader("attachment;filename=" + URLEncoder.encode(fileName, Constants.UTF_ENCODING)));
+        response.setContentType("application/octet-stream");
     }
 }

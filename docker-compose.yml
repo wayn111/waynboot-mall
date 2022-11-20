@@ -1,7 +1,7 @@
 version: '3'
 services:
   waynboot-mobile-api:
-    image: adoptopenjdk:11-openj9
+    image: ibm-semeru-runtimes:open-17-jdk
     container_name: mobile
     ports:
       - "82"
@@ -18,7 +18,7 @@ services:
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/wayn/upload
   waynboot-admin-api:
-    image: adoptopenjdk:11-openj9
+    image: ibm-semeru-runtimes:open-17-jdk
     container_name: admin
     ports:
       - "81"
@@ -35,7 +35,7 @@ services:
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/wayn/upload
   waynboot-message:
-    image: adoptopenjdk:11-openj9
+    image: ibm-semeru-runtimes:open-17-jdk
     container_name: message
     ports:
       - "85"
@@ -52,7 +52,7 @@ services:
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/wayn/upload
   waynboot-monitor:
-    image: adoptopenjdk:11-openj9
+    image: ibm-semeru-runtimes:open-17-jdk
     container_name: monitor
     ports:
       - "89"

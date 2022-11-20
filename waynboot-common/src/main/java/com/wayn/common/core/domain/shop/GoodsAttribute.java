@@ -7,6 +7,7 @@ import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class GoodsAttribute extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5794705846831493502L;
 
     @TableId(type = IdType.AUTO)

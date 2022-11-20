@@ -1,14 +1,14 @@
 package com.wayn.common.util.excel;
 
-import cn.afterturn.easypoi.excel.ExcelExportUtil;
-import cn.afterturn.easypoi.excel.entity.ExportParams;
+import com.alibaba.excel.EasyExcel;
+import com.wayn.common.util.ServletUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Workbook;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class ExcelUtil {
      * @return 编码后文件名 eg: 990xx002_测试.xlsx
      */
     public static String encodingFilename(String filename) {
-        filename = UUID.randomUUID().toString() + "_" + filename;
+        filename = UUID.randomUUID() + "_" + filename;
         return filename;
     }
 
@@ -49,20 +49,32 @@ public class ExcelUtil {
      *
      * @param list         excel数据
      * @param tClass       解析对象类型
-     * @param originalName 文件名
+     * @param fileName 文件名
      * @return 返回指定文件的名称
      */
-    public static <T> String exportExcel(List<T> list, Class<T> tClass, String originalName, String path) {
-        ExportParams exportParams = new ExportParams();
-        exportParams.setStyle(IExcelExportStylerImpl.class);
-        Workbook workbook = ExcelExportUtil.exportExcel(exportParams,
-                tClass, list);
-        String filename = ExcelUtil.encodingFilename(originalName);
-        try (OutputStream out = new FileOutputStream(ExcelUtil.getAbsoluteFile(filename, path))) {
-            workbook.write(out);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+    public static <T> String exportExcel(List<T> list, Class<T> tClass, String fileName, String path) {
+        String filename = ExcelUtil.encodingFilename(fileName);
+        EasyExcel.write(ExcelUtil.getAbsoluteFile(filename, path), tClass).sheet("sheet").doWrite(list);
         return filename;
+    }
+
+    /**
+     * 导出excel到输出流
+     *
+     * @param response web输出流
+     * @param list     excel数据
+     * @param tClass   解析对象类型
+     */
+    public static <T> void exportExcel(HttpServletResponse response, List<T> list, Class<T> tClass, String fileName) {
+
+        try (ServletOutputStream outputStream = response.getOutputStream();
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            // 使用bos获取excl文件大小
+            EasyExcel.write(bos, tClass).autoCloseStream(Boolean.FALSE).sheet("sheet").doWrite(list);
+            ServletUtils.setExportResponse(response, fileName, bos.size());
+            bos.writeTo(outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
