@@ -8,6 +8,7 @@ import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 public class Order extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3129813461714576208L;
 
     @TableId(type = IdType.AUTO)

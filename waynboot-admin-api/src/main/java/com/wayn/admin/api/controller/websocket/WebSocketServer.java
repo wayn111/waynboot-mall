@@ -40,9 +40,8 @@ public class WebSocketServer {
      * 群发消息
      *
      * @param message
-     * @throws IOException
      */
-    public static void BroadCastInfo(String message) throws IOException {
+    public static void BroadCastInfo(String message) {
         for (Session session : SessionSet) {
             if (session.isOpen()) {
                 SendMessage(session, message);
@@ -55,9 +54,8 @@ public class WebSocketServer {
      *
      * @param sessionId
      * @param message
-     * @throws IOException
      */
-    public static void SendMessage(String message, String sessionId) throws IOException {
+    public static void SendMessage(String message, String sessionId) {
         Session session = null;
         for (Session s : SessionSet) {
             if (s.getId().equals(sessionId)) {

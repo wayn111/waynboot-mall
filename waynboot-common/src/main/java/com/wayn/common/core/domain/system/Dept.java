@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.entity.BaseEntity;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +12,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +20,11 @@ import java.util.List;
  * 部门表 sys_dept
  */
 @Data
-@ApiModel("部门实体")
 @TableName("sys_dept")
 @EqualsAndHashCode(callSuper = true)
 public class Dept extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = -1284670591734055472L;
     /**
      * 部门ID
@@ -87,5 +87,5 @@ public class Dept extends BaseEntity {
      * 子部门
      */
     @TableField(exist = false)
-    private List<Dept> children = new ArrayList<Dept>();
+    private List<Dept> children = new ArrayList<>();
 }

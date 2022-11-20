@@ -39,7 +39,7 @@ import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
 import com.wayn.common.util.ip.IpUtils;
 import com.wayn.data.redis.manager.RedisCache;
-import com.wayn.message.core.constant.SysConstants;
+import com.wayn.message.core.constant.MQConstants;
 import com.wayn.message.core.messsage.OrderDTO;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.OrderMapper;
@@ -242,7 +242,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
                     .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
                     .build();
-            rabbitTemplate.convertAndSend(SysConstants.ORDER_DIRECT_EXCHANGE, SysConstants.ORDER_DIRECT_ROUTING, message, correlationData);
+            rabbitTemplate.convertAndSend(MQConstants.ORDER_DIRECT_EXCHANGE, MQConstants.ORDER_DIRECT_ROUTING, message, correlationData);
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage(), e);
         }
@@ -598,9 +598,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //将异步通知中收到的所有参数都存放到map中
         Map<String, String[]> parameterMap = request.getParameterMap();
         Map<String, String> paramsMap = new HashMap<>();
-        parameterMap.forEach((s, strings) -> {
-            paramsMap.put(s, strings[0]);
-        });
+        parameterMap.forEach((s, strings) -> paramsMap.put(s, strings[0]));
         // 调用SDK验证签名
         boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, alipayConfig.getAlipayPublicKey(), alipayConfig.getCharset(), alipayConfig.getSigntype());
         if (!signVerified) {
@@ -766,7 +764,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * 检查订单操作是否合法
      *
      * @param order 订单详情
-     * @return 成功返回<code>SysConstants.STRING_TRUE</code>，失败返回<code>SysConstants.STRING_FALSE</code>，或者自定义消息
+     * @return 成功返回<code>MQConstants.STRING_TRUE</code>，失败返回<code>MQConstants.STRING_FALSE</code>，或者自定义消息
      */
     private ReturnCodeEnum checkOrderOperator(Order order) {
         Long userId = MobileSecurityUtils.getUserId();

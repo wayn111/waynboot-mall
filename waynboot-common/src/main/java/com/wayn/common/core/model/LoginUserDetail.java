@@ -5,12 +5,14 @@ import com.wayn.common.core.domain.system.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Set;
 
 public class LoginUserDetail implements UserDetails {
 
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String token;

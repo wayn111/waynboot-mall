@@ -5,5 +5,5 @@ package com.wayn.common.enums;
  */
 public enum DataSourceEnum {
     MASTER, // 主库
-    SLAVE;  // 从库
+    SLAVE  // 从库
 }

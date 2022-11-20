@@ -8,12 +8,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 @TableName("shop_channel")
 @EqualsAndHashCode(callSuper = true)
 public class Channel extends ShopBaseEntity implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7151701194368095457L;
 
     @TableId(type = IdType.AUTO)

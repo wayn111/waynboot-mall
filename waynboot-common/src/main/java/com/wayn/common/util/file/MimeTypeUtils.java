@@ -2,7 +2,7 @@ package com.wayn.common.util.file;
 
 /**
  * 媒体类型工具类
- * 
+ *
  * @author ruoyi
  */
 public class MimeTypeUtils
@@ -16,7 +16,7 @@ public class MimeTypeUtils
     public static final String IMAGE_BMP = "image/bmp";
 
     public static final String IMAGE_GIF = "image/gif";
-    
+
     public static final String[] IMAGE_EXTENSION = { "bmp", "gif", "jpg", "jpeg", "png" };
 
     public static final String[] FLASH_EXTENSION = { "swf", "flv" };
@@ -36,20 +36,13 @@ public class MimeTypeUtils
 
     public static String getExtension(String prefix)
     {
-        switch (prefix)
-        {
-            case IMAGE_PNG:
-                return "png";
-            case IMAGE_JPG:
-                return "jpg";
-            case IMAGE_JPEG:
-                return "jpeg";
-            case IMAGE_BMP:
-                return "bmp";
-            case IMAGE_GIF:
-                return "gif";
-            default:
-                return "";
-        }
+        return switch (prefix) {
+            case IMAGE_PNG -> "png";
+            case IMAGE_JPG -> "jpg";
+            case IMAGE_JPEG -> "jpeg";
+            case IMAGE_BMP -> "bmp";
+            case IMAGE_GIF -> "gif";
+            default -> "";
+        };
     }
 }

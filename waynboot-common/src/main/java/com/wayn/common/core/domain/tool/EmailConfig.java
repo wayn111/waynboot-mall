@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 @TableName("tool_email_config")
 public class EmailConfig implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8825288678724602467L;
 
     @TableId(type = IdType.AUTO)

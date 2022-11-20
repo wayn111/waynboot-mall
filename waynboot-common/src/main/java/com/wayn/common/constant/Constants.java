@@ -36,4 +36,11 @@ public class Constants {
     public static final String SORT_ORDER = "sortOrder";
 
     public static final String LOG_PREFIX = "----------------------------------";
+
+
+    public static final long ONE_SECOND = 1000;
+    public static final long ONE_MINITE = ONE_SECOND * 60;
+    public static final long ONE_HOUR = ONE_MINITE * 60;
+    public static final long ONE_DAY = ONE_HOUR * 24;
+    public static final long ONE_WEEK = ONE_DAY * 7;
 }

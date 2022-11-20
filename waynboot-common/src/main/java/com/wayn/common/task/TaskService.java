@@ -21,7 +21,7 @@ public class TaskService {
                     Task task = delayQueue.take();
                     task.run();
                 } catch (Exception e) {
-                    log.error(e.getMessage(), e);;
+                    log.error(e.getMessage(), e);
                 }
             }
         });

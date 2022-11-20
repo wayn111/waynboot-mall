@@ -11,7 +11,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 @Slf4j
 public class HttpUtil {
@@ -309,4 +308,18 @@ public class HttpUtil {
         }
         return value;
     }
+
+    /**
+     * 过滤HTTP Response Splitting攻击
+     *
+     * @param value 响应头
+     * @return string
+     */
+    public static String safeHttpHeader(String value) {
+        String temp;
+        temp = value.replaceAll("\n", "");
+        temp = temp.replaceAll("\r", "");
+        return temp;
+    }
+
 }

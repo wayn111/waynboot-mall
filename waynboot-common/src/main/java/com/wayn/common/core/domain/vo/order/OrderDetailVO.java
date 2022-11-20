@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class OrderDetailVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3129813461714576208L;
 
     private Long id;

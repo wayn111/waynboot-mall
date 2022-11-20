@@ -4,7 +4,7 @@ package com.wayn.message.reciver;
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
 import com.wayn.data.redis.manager.RedisCache;
-import com.wayn.message.core.constant.SysConstants;
+import com.wayn.message.core.constant.MQConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
@@ -68,7 +68,7 @@ public class OrderDirectReceiver {
                 throw new Exception("下单失败 ：" + msgObject);
             }
             JSONObject jsonObject = JSONObject.parseObject(response.getBody());
-            if (SysConstants.RESULT_SUCCESS_CODE != (int) jsonObject.get("code")) {
+            if (MQConstants.RESULT_SUCCESS_CODE != jsonObject.getInteger("code")) {
                 throw new Exception("下单失败 ：" + jsonObject.get("msg"));
             }
             // multiple参数：确认收到消息，false只确认当前consumer一个消息收到，true确认所有consumer获得的消息

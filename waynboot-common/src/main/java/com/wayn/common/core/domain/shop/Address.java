@@ -7,12 +7,14 @@ import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 @TableName("shop_address")
 @EqualsAndHashCode(callSuper = true)
 public class Address extends ShopBaseEntity implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6379853773090753607L;
 
     @TableId(type = IdType.AUTO)
@@ -69,7 +71,7 @@ public class Address extends ShopBaseEntity implements Serializable {
     private boolean isDefault;
 
     /**
-     * 删除标志（0代表存在 1代表删除）
+     * 删除标志（0 代表存在 1 代表删除）
      */
     private Boolean delFlag;
 

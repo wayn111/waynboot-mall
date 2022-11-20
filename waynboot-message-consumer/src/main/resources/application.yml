@@ -5,12 +5,14 @@ spring:
   application:
     name: waynboot-message-consumer
   redis:
-    host: 82.157.141.70
+    host: 121.4.124.33
     port: 16780
-    timeout: 5000
     password: Aa@@1688
     database: 2
+    timeout: 5000
     expire: 400
+    lettuce:
+      shutdown-timeout: 100ms
   # 配置rabbitMq 服务器
   rabbitmq:
     host: 1.116.79.142
@@ -35,7 +37,7 @@ spring:
 # 日志配置
 logging:
   level:
-    com.wayn: debug
+    com.wayn: info
     org.springframework: info
   file:
     name: ${LOG_PATH_PREFIX:E:/home}/${spring.application.name}/info.log
