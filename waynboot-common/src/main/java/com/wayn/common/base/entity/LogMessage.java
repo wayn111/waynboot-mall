@@ -3,12 +3,14 @@ package com.wayn.common.base.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.StringJoiner;
 
 @Getter
 @Setter
 public class LogMessage implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3330416032656611600L;
 
     private Integer httpStatus;

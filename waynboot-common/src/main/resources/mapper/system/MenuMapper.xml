@@ -27,7 +27,7 @@
     </sql>
 
     <select id="selectMenuList" parameterType="com.wayn.common.core.domain.system.Menu" resultMap="SysMenuResult">
-        <include refid="selectMenuVo"></include>
+        <include refid="selectMenuVo"/>
         <where>
 			<if test="menuName != null  and menuName != '' ">
 				and m.menu_name like CONCAT('%',#{menuName},'%')

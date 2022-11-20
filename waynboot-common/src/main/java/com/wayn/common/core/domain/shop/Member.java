@@ -8,6 +8,7 @@ import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 @TableName(value = "shop_member")
 public class Member extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

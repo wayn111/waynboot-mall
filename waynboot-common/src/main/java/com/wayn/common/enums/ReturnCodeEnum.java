@@ -74,7 +74,7 @@ public enum ReturnCodeEnum {
     REDIS_CONNECTION_TIMEOUT_ERROR(6001, "redis连接超时"),
     ES_CONNECTION_TIMEOUT_ERROR(6002, "es连接超时"),
     ;
-    private int code;
+    private final int code;
     private String msg;
 
     ReturnCodeEnum(int code, String msg) {

@@ -19,12 +19,6 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
         <!--阿里数据库连接池 -->
@@ -37,7 +31,6 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>${elasticsearch.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.elasticsearch</groupId>
@@ -110,7 +103,7 @@
         <dependency>
             <groupId>com.hierynomus</groupId>
             <artifactId>sshj</artifactId>
-            <version>0.33.0</version>
+            <version>0.34.0</version>
         </dependency>
 
         <dependency>
@@ -130,9 +123,6 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.wayn.AdminApplication</mainClass>
                     <layout>ZIP</layout>
-                    <!--                    <commandlineArguments>-->
-                    <!--                        -parameters-->
-                    <!--                    </commandlineArguments>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -142,52 +132,8 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!--<plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    &lt;!&ndash;配置基本镜像&ndash;&gt;
-                    <from>
-                        <image>${docker-from-image-name}</image>
-                    </from>
-                    &lt;!&ndash;配置最终推送的地址，仓库名，镜像名&ndash;&gt;
-                    <to>
-                        <image>registry.cn-shanghai.aliyuncs.com/${aliyun-docker-namespace}/${project.artifactId}
-                        </image>
-                        <tags>
-                            <tag>${project.version}</tag>
-                            <tag>latest</tag>
-                        </tags>
-                        <auth>
-                            <username>${docker-username}</username>
-                            <password>${docker-passwqrd}</password>
-                        </auth>
-                    </to>
-                    <container>
-                        <mainClass>${main-class}</mainClass>
-                        <jvmFlags>
-                            <jvmFlag>-Xms812m</jvmFlag>
-                            <jvmFlag>-Xmx812m</jvmFlag>
-                            <jvmFlag>-Xss512k</jvmFlag>
-                            <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
-                            <jvmFlag>-XX:HeapDumpPath=./</jvmFlag>
-                        </jvmFlags>
-                    </container>
-                </configuration>
-
-                &lt;!&ndash; 绑定到maven lifecicle&ndash;&gt;
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
         </plugins>
+        <finalName>waynboot-admin-api</finalName>
     </build>
 
 

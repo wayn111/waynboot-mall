@@ -8,22 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+// @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+public class SecurityConfig {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
@@ -37,32 +36,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private LogoutSuccessHandlerImpl logoutSuccessHandler;
 
-    /**
-     * 解决 无法直接注入 AuthenticationManager
-     *
-     * @return
-     */
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // cors启用
                 .cors().and()
                 // CRSF（跨站请求伪造）禁用，因为不使用session
                 .csrf().disable()
+                // 基于token，所以不需要session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // 认证失败处理类
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .exceptionHandling().and()
-                // 基于token，所以不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // 过滤请求
                 .authorizeRequests()
-                //处理跨域请求中的Preflight请求(cors)，设置corsConfigurationSource后无需使用
+                // 处理跨域请求中的Preflight请求(cors)，设置corsConfigurationSource后无需使用
                 // .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 // 对于登录login 验证码captchaImage 允许匿名访问
                 .antMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
@@ -85,6 +73,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler);
         // 添加JWT filter
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        // 认证用户时用户信息加载配置，注入springAuthUserService
+        httpSecurity.userDetailsService(userDetailsService);
+        return httpSecurity.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     /**
@@ -95,13 +91,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * 身份认证接口
-     */
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
-    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

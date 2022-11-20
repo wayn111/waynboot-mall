@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Slf4j
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint, Serializable {
+    @Serial
     private static final long serialVersionUID = -8970718410437077606L;
 
     @Override

@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
-            <version>3.4.1</version>
+            <version>3.5.3</version>
         </dependency>
 
         <!--阿里数据库连接池 -->
@@ -36,7 +36,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.connector.java.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>

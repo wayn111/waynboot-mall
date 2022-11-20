@@ -36,9 +36,18 @@ public class ThreadPoolConfig {
         executor.setCorePoolSize(corePoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setKeepAliveSeconds(keepAliveSeconds);
-        executor.setThreadNamePrefix("homeThread-");
         // 线程池对拒绝任务(无线程可用)的处理策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 等待所有任务结束后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        BasicThreadFactory build = new BasicThreadFactory.Builder()
+                .namingPattern("home-task-%d")
+                .uncaughtExceptionHandler((t, e) -> {
+                    log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e);
+                })
+                .build();
+        executor.setThreadFactory(build);
+        executor.initialize();
         return executor;
     }
 
@@ -49,9 +58,18 @@ public class ThreadPoolConfig {
         executor.setCorePoolSize(corePoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setKeepAliveSeconds(keepAliveSeconds);
-        executor.setThreadNamePrefix("categoryThread-");
         // 线程池对拒绝任务(无线程可用)的处理策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 等待所有任务结束后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        BasicThreadFactory build = new BasicThreadFactory.Builder()
+                .namingPattern("category-task-%d")
+                .uncaughtExceptionHandler((t, e) -> {
+                    log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e);
+                })
+                .build();
+        executor.setThreadFactory(build);
+        executor.initialize();
         return executor;
     }
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * 消息通知的邮件发送控制器
@@ -28,7 +28,7 @@ public class EmailController {
         SendMailVO sendMailVO = new SendMailVO();
         sendMailVO.setSubject(subject);
         sendMailVO.setContent(content);
-        sendMailVO.setTos(Arrays.asList(tos));
+        sendMailVO.setTos(Collections.singletonList(tos));
         MailUtil.sendMail(emailConfig, sendMailVO, false, false);
         return R.success();
     }

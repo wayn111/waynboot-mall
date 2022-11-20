@@ -20,7 +20,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 7. 集成七牛云存储配置，上传文件至七牛 
 8. 集成常用邮箱配置，方便发送邮件
 9. 商城前台使用hikari连接池，提升性能，后台使用druid连接池，进行sql监控
-10. 使用knife4j增强swagger，管理接口文档 
+# 10. 使用knife4j增强swagger，管理接口文档 
 11. 添加策略模式使用示例，优化首页金刚区跳转逻辑
 12. 拆分出通用的数据访问模块，统一redis & elastic配置与访问
 13. 使用elasticsearch-rest-high-level-client客户端对elasticsearch进行操作

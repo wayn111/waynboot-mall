@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = false)
 public class GoodsProduct extends ShopBaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1472445142327045417L;
     @TableId(type = IdType.AUTO)
     private Long id;

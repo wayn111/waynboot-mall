@@ -1,6 +1,5 @@
 package com.wayn.data.redis.manager;
 
-import io.lettuce.core.RedisClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
