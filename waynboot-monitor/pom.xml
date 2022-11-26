@@ -53,5 +53,6 @@
                 </executions>
             </plugin>
         </plugins>
+        <finalName>waynboot-monitor</finalName>
     </build>
 </project>
