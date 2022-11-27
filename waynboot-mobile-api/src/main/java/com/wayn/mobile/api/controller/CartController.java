@@ -8,7 +8,9 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.flyway.FlywayDataSource;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,6 +24,7 @@ import java.util.List;
  * @author wayn
  * @since 2020-08-03
  */
+@Slf4j
 @RestController
 @RequestMapping("cart")
 public class CartController extends BaseController {
@@ -33,7 +36,9 @@ public class CartController extends BaseController {
     public R list() {
         Long userId = MobileSecurityUtils.getUserId();
         Page<Cart> page = getPage();
-        return iCartService.list(page, userId);
+        R list = iCartService.list(page, userId);
+        log.info("cart list:{}", list);
+        return list;
     }
 
     @PostMapping
