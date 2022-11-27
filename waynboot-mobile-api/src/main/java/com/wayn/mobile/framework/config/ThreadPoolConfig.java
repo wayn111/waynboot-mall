@@ -1,8 +1,10 @@
 package com.wayn.mobile.framework.config;
 
+import com.wayn.common.task.ThreadPoolExecutorMdcWrapper;
 import com.wayn.common.util.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -31,15 +33,7 @@ public class ThreadPoolConfig {
 
     @Bean(name = "homeThreadPoolTaskExecutor")
     public ThreadPoolTaskExecutor homeThreadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setMaxPoolSize(maxPoolSize);
-        executor.setCorePoolSize(corePoolSize);
-        executor.setQueueCapacity(queueCapacity);
-        executor.setKeepAliveSeconds(keepAliveSeconds);
-        // 线程池对拒绝任务(无线程可用)的处理策略
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        // 等待所有任务结束后再关闭线程池
-        executor.setWaitForTasksToCompleteOnShutdown(true);
+        ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
         BasicThreadFactory build = new BasicThreadFactory.Builder()
                 .namingPattern("home-task-%d")
                 .uncaughtExceptionHandler((t, e) -> {
@@ -51,9 +45,9 @@ public class ThreadPoolConfig {
         return executor;
     }
 
-    @Bean(name = "categoryThreadPoolTaskExecutor")
-    public ThreadPoolTaskExecutor categoryThreadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    @NotNull
+    private ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolExecutorMdcWrapper();
         executor.setMaxPoolSize(maxPoolSize);
         executor.setCorePoolSize(corePoolSize);
         executor.setQueueCapacity(queueCapacity);
@@ -62,6 +56,12 @@ public class ThreadPoolConfig {
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // 等待所有任务结束后再关闭线程池
         executor.setWaitForTasksToCompleteOnShutdown(true);
+        return executor;
+    }
+
+    @Bean(name = "categoryThreadPoolTaskExecutor")
+    public ThreadPoolTaskExecutor categoryThreadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
         BasicThreadFactory build = new BasicThreadFactory.Builder()
                 .namingPattern("category-task-%d")
                 .uncaughtExceptionHandler((t, e) -> {
