@@ -1,5 +1,6 @@
 package com.wayn.mobile.framework.security.filter;
 
+import com.wayn.common.util.ThreadMdcUtil;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +30,26 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private TokenService tokenService;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        LoginUserDetail loginUser = tokenService.getLoginUser(request);
-        if (Objects.nonNull(loginUser) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
-            tokenService.verifyToken(loginUser);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        try {
+            // 入口传入请求ID
+            ThreadMdcUtil.setTraceIdIfAbsent();
+            LoginUserDetail loginUser = tokenService.getLoginUser(request);
+            if (Objects.nonNull(loginUser) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
+                ThreadMdcUtil.setUserId(String.valueOf(loginUser.getMember().getId()));
+                tokenService.verifyToken(loginUser);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
+            chain.doFilter(request, response);
+        } finally {
+            // 出口移除请求ID
+            ThreadMdcUtil.removeTraceId();
         }
-        chain.doFilter(request, response);
     }
 
 }
