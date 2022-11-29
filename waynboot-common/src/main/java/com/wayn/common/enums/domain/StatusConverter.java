@@ -3,6 +3,9 @@ package com.wayn.common.enums.domain;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 通用状态字段转换类
+ */
 public class StatusConverter extends AbstractIntConverter {
 
     @Override
@@ -11,6 +14,9 @@ public class StatusConverter extends AbstractIntConverter {
         return Arrays.stream(values).map(sexEnum -> new ConverterDTO(sexEnum.getType(), sexEnum.getDesc())).toList();
     }
 
+    /**
+     * 状态枚举
+     */
     enum StatusEnum {
 
         MAN(0, "启用"),

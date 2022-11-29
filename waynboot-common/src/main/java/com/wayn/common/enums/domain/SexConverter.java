@@ -4,6 +4,9 @@ package com.wayn.common.enums.domain;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 通用性别字段转换类
+ */
 public class SexConverter extends AbstractIntConverter {
 
     @Override
@@ -12,6 +15,9 @@ public class SexConverter extends AbstractIntConverter {
         return Arrays.stream(values).map(sexEnum -> new ConverterDTO(sexEnum.getType(), sexEnum.getDesc())).toList();
     }
 
+    /**
+     * 性别枚举
+     */
     enum SexEnum {
         MAN(0, "男"),
         WOMAN(1, "女");
