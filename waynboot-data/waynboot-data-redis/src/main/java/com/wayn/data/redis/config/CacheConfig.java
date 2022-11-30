@@ -1,12 +1,11 @@
 package com.wayn.data.redis.config;
 
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson2.support.spring.data.redis.FastJsonRedisSerializer;
 import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSerializer;
 import com.wayn.data.redis.constant.CacheConstants;
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.SocketOptions;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -16,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -41,6 +41,29 @@ public class CacheConfig extends CachingConfigurerSupport {
         redisTemplate.setHashValueSerializer(valueSerializer());
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
+    }
+
+    /**
+     * lettuce客户端配置
+     *
+     * @return LettuceClientConfigurationBuilderCustomizer
+     */
+    @Bean
+    public LettuceClientConfigurationBuilderCustomizer lettuceClientConfigurationBuilderCustomizer() {
+        return clientConfigurationBuilder -> {
+            LettuceClientConfiguration clientConfiguration = clientConfigurationBuilder.build();
+            ClientOptions clientOptions = clientConfiguration.getClientOptions().orElseGet(ClientOptions::create);
+            ClientOptions build = clientOptions.mutate().build();
+            SocketOptions.KeepAliveOptions.Builder builder = build.getSocketOptions().getKeepAlive().mutate();
+            builder.enable(true);
+            builder.idle(Duration.ofSeconds(30));
+            SocketOptions.Builder socketOptionsBuilder = clientOptions.getSocketOptions().mutate();
+            SocketOptions.KeepAliveOptions keepAliveOptions = builder.build();
+            socketOptionsBuilder.keepAlive(keepAliveOptions);
+            SocketOptions socketOptions = socketOptionsBuilder.build();
+            ClientOptions clientOptions1 = ClientOptions.builder().socketOptions(socketOptions).build();
+            clientConfigurationBuilder.clientOptions(clientOptions1);
+        };
     }
 
     private RedisSerializer<String> keySerializer() {

@@ -92,32 +92,9 @@ public class RedisCache {
      * @return 缓存键值对应的数据
      */
     public <T> T getCacheObject(final String key) {
-        try {
-            ValueOperations<String, T> operation = redisTemplate.opsForValue();
-            return operation.get(key);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return retryGetCacheObject(key, 1);
-        }
+        ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        return operation.get(key);
     }
-
-    public <T> T retryGetCacheObject(final String key, int retryCount) {
-        try {
-            log.info("retryGetCacheObject, key:{}, retryCount:{}", key, retryCount);
-            if (retryCount <= 0) {
-                return null;
-            }
-            lettuceConnectionFactory.resetConnection();
-            Thread.sleep(200L);
-            retryCount--;
-            ValueOperations<String, T> operation = redisTemplate.opsForValue();
-            return operation.get(key);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return retryGetCacheObject(key, retryCount);
-        }
-    }
-
 
     /**
      * 获取多个key的
