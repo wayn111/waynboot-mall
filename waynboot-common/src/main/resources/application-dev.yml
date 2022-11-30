@@ -20,18 +20,10 @@ spring:
     port: 6379
     password:
     database: 2
-    timeout: 5000
+    timeout: 300
     expire: 400
     lettuce:
       shutdown-timeout: 100ms
-  #    cluster:
-  #      nodes:
-  #        - 127.0.0.1:1681
-  #        - 127.0.0.1:1682
-  #        - 127.0.0.1:1683
-  #        - 127.0.0.1:1684
-  #        - 127.0.0.1:1685
-  #        - 127.0.0.1:1686
   #配置rabbitMq 服务器
   rabbitmq:
     host: 127.0.0.1
