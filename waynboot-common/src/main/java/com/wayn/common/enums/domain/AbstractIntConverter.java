@@ -5,12 +5,14 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * 定义int字段抽象转换类，实现通用转换逻辑
+ */
 public abstract class AbstractIntConverter implements Converter<Integer> {
     abstract List<ConverterDTO> getArr();
 
