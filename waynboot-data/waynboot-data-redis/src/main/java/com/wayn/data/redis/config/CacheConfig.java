@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSeria
 import com.wayn.data.redis.constant.CacheConstants;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.cache.CacheManager;
@@ -23,6 +24,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
+@Slf4j
 @EnableCaching
 @Configuration
 public class CacheConfig extends CachingConfigurerSupport {
@@ -51,7 +53,7 @@ public class CacheConfig extends CachingConfigurerSupport {
             ClientOptions build = clientOptions.mutate().build();
             SocketOptions.KeepAliveOptions.Builder builder = build.getSocketOptions().getKeepAlive().mutate();
             builder.enable(true);
-            builder.idle(Duration.ofSeconds(30));
+            builder.idle(Duration.ofSeconds(60));
             SocketOptions.Builder socketOptionsBuilder = clientOptions.getSocketOptions().mutate();
             SocketOptions.KeepAliveOptions keepAliveOptions = builder.build();
             socketOptionsBuilder.keepAlive(keepAliveOptions);

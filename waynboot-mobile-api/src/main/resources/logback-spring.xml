@@ -22,14 +22,14 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${logPath}/run.%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <!-- 过滤的级别 -->
+        <!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+            &lt;!&ndash; 过滤的级别 &ndash;&gt;
             <level>INFO</level>
-            <!-- 匹配时的操作：接收（记录） -->
+            &lt;!&ndash; 匹配时的操作：接收（记录） &ndash;&gt;
             <onMatch>ACCEPT</onMatch>
-            <!-- 不匹配时的操作：拒绝（不记录） -->
+            &lt;!&ndash; 不匹配时的操作：拒绝（不记录） &ndash;&gt;
             <onMismatch>DENY</onMismatch>
-        </filter>
+        </filter>-->
     </appender>
     <!-- 只记录SQL日志 -->
     <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -43,7 +43,7 @@
     </appender>
 
     <logger name="org.springframework" level="INFO"/>
-    <logger name="io.lettuce.core" level="ERROR"/>
+    <logger name="io.lettuce.core" level="DEBUG"/>
     <!-- logger为java中的包 -->
     <logger name="com.wayn.common.core.mapper" level="DEBUG" activity="false">
         <appender-ref ref="SQL"/>
