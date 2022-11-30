@@ -20,7 +20,7 @@ spring:
     port: 16780
     password: Aa@@1688
     database: 2
-    timeout: 5000
+    timeout: 300
     expire: 400
     lettuce:
       shutdown-timeout: 100ms
