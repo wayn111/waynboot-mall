@@ -20,7 +20,7 @@
         <module>waynboot-job</module>
     </modules>
     <groupId>com.wayn</groupId>
-    <artifactId>waynboot</artifactId>
+    <artifactId>waynboot-mall</artifactId>
     <version>1.2.0</version>
     <packaging>pom</packaging>
     <name>waynboot</name>
