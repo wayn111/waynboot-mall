@@ -8,7 +8,7 @@ import com.wayn.common.core.service.shop.IDiamondService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.design.strategy.context.DiamondJumpContext;
 import com.wayn.mobile.design.strategy.strategy.DiamondJumpType;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("diamond")
 public class DiamondController extends BaseController {
 
-    @Autowired
     private IDiamondService iDiamondService;
 
-    @Autowired
     private DiamondJumpContext diamondJumpContext;
 
     @GetMapping("getGoodsList")

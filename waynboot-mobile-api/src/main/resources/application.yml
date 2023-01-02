@@ -1,20 +1,12 @@
 server:
   port: 82
   shutdown: graceful # 优雅关机
-#  https配置，放开HttpsConfiguration文件注释即可
-#  port: 443
-#  ssl:
-#    enabled: true
-#    key-store: classpath:mall.wayn.ltd.jks
-#    key-store-password: idFXdK.Rnm3CgZp
-#    key-store-type: JKS
-#http-port: 82
 
 spring:
   application:
     name: waynboot-mobile-api
   profiles:
-    active: dev,hikari
+    active: dev
   thymeleaf:
     cache: false
     suffix: .html
@@ -61,7 +53,7 @@ mybatis-plus:
 # wayn配置
 wayn:
   name: wayn
-  version: 1.1.0
+  version: 1.2.0
   email: 166738430@qq.com
   uploadDir: ${UPLOAD_DIR:D:/wayn/upload}
   adminUrl: http://localhost:81

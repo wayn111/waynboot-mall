@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Diamond;
 import com.wayn.common.core.mapper.shop.DiamondMapper;
 import com.wayn.common.core.service.shop.IDiamondService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
  * @since 2020-10-10
  */
 @Service
+@AllArgsConstructor
 public class DiamondServiceImpl extends ServiceImpl<DiamondMapper, Diamond> implements IDiamondService {
 
-    @Autowired
     private DiamondMapper diamondMapper;
 
     @Override

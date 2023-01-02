@@ -1,14 +1,14 @@
 package com.wayn.admin.framework.config;
 
 import com.wayn.common.constant.Constants;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Parameters;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -23,7 +23,7 @@ public class SSHProxyConfig {
 
     public static final String localHost = "localhost";
     private SSHClient client;
-    private SSHProxyProperties sshProxyProperties;
+    private final SSHProxyProperties sshProxyProperties;
 
     public SSHProxyConfig(SSHProxyProperties sshProxyProperties) {
         this.sshProxyProperties = sshProxyProperties;

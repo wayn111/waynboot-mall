@@ -4,15 +4,16 @@ server:
 spring:
   application:
     name: waynboot-message-consumer
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    password:
-    database: 0
-    timeout: 5000
-    expire: 400
-    lettuce:
-      shutdown-timeout: 100ms
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      database: 0
+      timeout: 5000
+      expire: 400
+      lettuce:
+        shutdown-timeout: 100ms
   # 配置rabbitMq 服务器
   rabbitmq:
     host: 127.0.0.1

@@ -4,12 +4,12 @@ import com.wayn.mobile.framework.security.filter.JwtAuthenticationTokenFilter;
 import com.wayn.mobile.framework.security.handle.AuthenticationEntryPointImpl;
 import com.wayn.mobile.framework.security.handle.LogoutSuccessHandlerImpl;
 import com.wayn.mobile.framework.security.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,21 +20,18 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableWebSecurity
+@AllArgsConstructor
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
     private AuthenticationEntryPointImpl unauthorizedHandler;
 
-    @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
-    @Autowired
     private LogoutSuccessHandlerImpl logoutSuccessHandler;
 
     @Bean
@@ -49,19 +46,19 @@ public class SecurityConfig {
                 // 基于token，所以不需要session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // 过滤请求
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 // 对于登录login 验证码captchaImage 允许匿名访问
-                .antMatchers("favicon.ico", "/actuator/**", "/login", "/registry", "/sendEmailCode", "/test/**", "/seckill/**", "/captcha").anonymous()
-                .antMatchers("/home/**", "/category/**", "/comment/**", "/goods/detail/**", "/cart/goodsCount", "/diamond/**").permitAll()
-                .antMatchers("/upload/**").anonymous()
-                .antMatchers("/common/download**").anonymous()
-                .antMatchers("/doc.html").anonymous()
-                .antMatchers("/swagger-ui/**").anonymous()
-                .antMatchers("/swagger-resources/**").anonymous()
-                .antMatchers("/webjars/**").anonymous()
-                .antMatchers("/*/api-docs").anonymous()
-                .antMatchers("/druid/**").anonymous()
-                .antMatchers("/message/**").anonymous()
+                .requestMatchers("favicon.ico", "/actuator/**", "/login", "/registry", "/sendEmailCode", "/test/**", "/seckill/**", "/captcha").anonymous()
+                .requestMatchers("/home/**", "/category/**", "/comment/**", "/goods/detail/**", "/cart/goodsCount", "/diamond/**").permitAll()
+                .requestMatchers("/upload/**").anonymous()
+                .requestMatchers("/common/download**").anonymous()
+                .requestMatchers("/doc.html").anonymous()
+                .requestMatchers("/swagger-ui/**").anonymous()
+                .requestMatchers("/swagger-resources/**").anonymous()
+                .requestMatchers("/webjars/**").anonymous()
+                .requestMatchers("/*/api-docs").anonymous()
+                .requestMatchers("/druid/**").anonymous()
+                .requestMatchers("/message/**").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated().and()
                 .headers().frameOptions().disable();

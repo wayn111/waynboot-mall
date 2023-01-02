@@ -13,8 +13,8 @@ import com.wayn.common.core.mapper.system.MenuMapper;
 import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.core.service.system.IRoleMenuService;
 import com.wayn.common.util.security.SecurityUtils;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,12 +24,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
 
-    @Autowired
     private MenuMapper menuMapper;
 
-    @Autowired
     private IRoleMenuService iRoleMenuService;
 
     @Override

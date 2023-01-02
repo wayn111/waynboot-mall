@@ -10,8 +10,8 @@ import com.wayn.common.core.service.tool.IQiniuConfigService;
 import com.wayn.common.core.service.tool.IQiniuContentService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,13 +19,12 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("tool/qiniu")
 public class QiniuController extends BaseController {
 
-    @Autowired
     private IQiniuConfigService iQiniuConfigService;
 
-    @Autowired
     private IQiniuContentService iQiniuContentService;
 
     @GetMapping("/list")

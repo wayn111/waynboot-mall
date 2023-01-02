@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Column;
 import com.wayn.common.core.mapper.shop.ColumnMapper;
 import com.wayn.common.core.service.shop.IColumnService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
  * @since 2020-10-10
  */
 @Service
+@AllArgsConstructor
 public class ColumnServiceImpl extends ServiceImpl<ColumnMapper, Column> implements IColumnService {
 
-    @Autowired
     private ColumnMapper columnMapper;
 
     @Override

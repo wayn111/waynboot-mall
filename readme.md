@@ -2,7 +2,7 @@
 
 waynboot-mall是一套全部开源的微商城项目，包含一个运营后台、h5商城和后台接口。
 实现了一个商城所需的首页展示、商品分类、商品详情、sku详情、商品搜索、加入购物车、结算下单、订单状态流转、商品评论等一系列功能。
-技术上基于Springboot2.7+,jdk17，整合了Redis、RabbitMQ、ElasticSearch等常用中间件，
+技术上基于最新得Springboot3.0+,jdk17，整合了Redis、RabbitMQ、ElasticSearch等常用中间件，
 贴近生产环境实际经验开发而来不断完善、优化、改进中。
 
 [h5商城项目](https://github.com/wayn111/waynboot-mobile)
@@ -11,7 +11,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 
 ## 技术特点
 
-11. 商城接口代码清晰、注释完善、模块拆分合理
+1. 商城接口代码清晰、注释完善、模块拆分合理
 2. 使用Spring-Security进行访问权限控制
 3. 使用jwt进行接口授权验证 
 4. ORM层使用Mybatis Plus提升开发效率
@@ -19,16 +19,13 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 6. 使用springboot admin进行服务监控
 7. 集成七牛云存储配置，上传文件至七牛 
 8. 集成常用邮箱配置，方便发送邮件
-9. 商城前台使用hikari连接池，提升性能，后台使用druid连接池，进行sql监控
-# 10. 使用knife4j增强swagger，管理接口文档 
-11. 添加策略模式使用示例，优化首页金刚区跳转逻辑
-12. 拆分出通用的数据访问模块，统一redis & elastic配置与访问
-13. 使用elasticsearch-rest-high-level-client客户端对elasticsearch进行操作
-14. 支持商品数据同步elasticsearch操作以及elasticsearch商品搜索
-15. RabbitMQ生产者发送消息采用异步confirm模式，消费者消费消息时需手动确认
-16. 下单处理过程引入rabbitMQ，异步生成订单记录，提高系统下单处理能力
-17. 引入google jib加速和简化构建Docker应用镜像
-18. ...
+9. 添加策略模式使用示例，优化首页金刚区跳转逻辑
+10. 拆分出通用的数据访问模块，统一redis & elastic配置与访问
+11. 使用elasticsearch-rest-high-level-client客户端对elasticsearch进行操作
+12. 支持商品数据同步elasticsearch操作以及elasticsearch商品搜索
+13. RabbitMQ生产者发送消息采用异步confirm模式，消费者消费消息时需手动确认 
+14. 下单处理过程引入rabbitMQ，异步生成订单记录，提高系统下单处理能力 
+15. ...
 
 ## 问题整理
 ### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
@@ -42,7 +39,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 
 ### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
 ```java
-# 使用CompletableFuture异步查询
+// 使用CompletableFuture异步查询
 List<CompletableFuture<Void>> list = new ArrayList<>();
 CompletableFuture<Void> f1 = CompletableFuture.supplyAsync(() -> iBannerService.list(Wrappers.lambdaQuery(Banner.class).eq(Banner::getStatus, 0).orderByAsc(Banner::getSort)), homeThreadPoolTaskExecutor).thenAccept(data -> {
     String key = "bannerList";
@@ -56,7 +53,7 @@ CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(() -> iDiamondService
 });
 list.add(f1);
 list.add(f2);
-# 主线程等待子线程执行完毕
+// 主线程等待子线程执行完毕
 CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
 ```
 
@@ -153,14 +150,17 @@ private static String encryptUserId(String userId, int num) {
 6. 用户支付完成后，返回支付状态查看页面。
 
 ### 6. 金刚区跳转使用策略模式
+
 ```java
-# 1. 定义金刚位跳转策略接口以及跳转枚举类
+# 1.定义金刚位跳转策略接口以及跳转枚举类
+
 public interface DiamondJumpType {
 
     List<Goods> getGoods(Page<Goods> page, Diamond diamond);
 
     Integer getType();
 }
+
 // 金刚位跳转类型枚举
 public enum JumpTypeEnum {
     COLUMN(0),
@@ -182,8 +182,10 @@ public enum JumpTypeEnum {
     }
 }
 
-# 2. 定义策略实现类，并使用@Component注解注入spring
-    
+# 2.定义策略实现类，并使用
+
+@Component注解注入spring
+
 // 分类策略实现
 @Component
 public class CategoryStrategy implements DiamondJumpType {
@@ -228,11 +230,12 @@ public class ColumnStrategy implements DiamondJumpType {
     }
 }
 
-# 3. 定义策略上下文，通过构造器注入spring，定义map属性，通过key获取对应策略实现类
+# 3.定义策略上下文，通过构造器注入spring，定义map属性，通过key获取对应策略实现类
+
 @Component
 public class DiamondJumpContext {
 
-    private Map<Integer, DiamondJumpType> map = new HashMap<>();
+    private final Map<Integer, DiamondJumpType> map = new HashMap<>();
 
     /**
      * 由spring自动注入DiamondJumpType子类
@@ -256,98 +259,9 @@ private DiamondJumpContext diamondJumpContext;
 
 @Test
 public void test(){
-    DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(JumpTypeEnum.COLUMN.getType());
-}
-
-```
-### 7. google jib加速和简化docker镜像构建
-
-```xml
-		<plugins>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <!-- 1. 配置基本镜像-->
-                    <from>
-                        <image>adoptopenjdk:11-jre-openj9</image>
-                    </from>
-                    <!-- 2. 配置最终推送的地址，仓库名，镜像名，默认是docker hub，这里配置的是阿里云容器服务地址-->
-                    <to>
-                        <image>registry.cn-shanghai.aliyuncs.com/${aliyun-docker-namespace}/${project.artifactId}
-                        </image>
-                        <tags>
-                            <!-- 3. 配置镜像标签，这里使用项目版本号-->
-                            <tag>${project.version}</tag>
-                        </tags>
-                        <auth>
-                            <!-- 4. 配置docker镜像仓库的认证信息-->
-                            <username>填写你的阿里云账号</username>
-                            <password>填写你的密码 site:https://cr.console.aliyun.com/cn-shanghai/instance/credentials</password>
-                        </auth>
-                    </to>
-                    <container>
-                        <!-- 6. 配置项目启动类以及jvm参数-->
-                        <mainClass>填写项目启动类路劲 eg:com.wayn.AdminApplication</mainClass>
-                        <jvmFlags>
-                            <jvmFlag>-Xms812m</jvmFlag>
-                            <jvmFlag>-Xmx812m</jvmFlag>
-                            <jvmFlag>-Xss512k</jvmFlag>
-                            <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
-                            <jvmFlag>-XX:HeapDumpPath=./</jvmFlag>
-                        </jvmFlags>
-                    </container>
-                </configuration>
-
-                <!-- 绑定到maven lifecicle-->
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-```
-### 8. 生产环境Redis连接，长时间无响应被服务器断开问题，通过`lettuceConnectionFactory.resetConnection();`重置redis连接
-```java
-    @Autowired
-    private LettuceConnectionFactory lettuceConnectionFactory;
-    /**
-     * 获得缓存的基本对象。
-     *
-     * @param key 缓存键值
-     * @return 缓存键值对应的数据
-     */
-    public <T> T getCacheObject(final String key) {
-        try {
-            ValueOperations<String, T> operation = redisTemplate.opsForValue();
-            return operation.get(key);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return retryGetCacheObject(key, 1);
+        DiamondJumpType diamondJumpType=diamondJumpContext.getInstance(JumpTypeEnum.COLUMN.getType());
         }
-    }
 
-    public <T> T retryGetCacheObject(final String key, int retryCount) {
-        try {
-            log.info("retryGetCacheObject, key:{}, retryCount:{}", key, retryCount);
-            if (retryCount <= 0) {
-                return null;
-            }
-            lettuceConnectionFactory.resetConnection();
-            Thread.sleep(200L);
-            retryCount--;
-            ValueOperations<String, T> operation = redisTemplate.opsForValue();
-            return operation.get(key);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return retryGetCacheObject(key, retryCount);
-        }
-    }
 ```
 
 - todo

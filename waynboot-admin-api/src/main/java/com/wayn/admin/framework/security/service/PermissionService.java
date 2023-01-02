@@ -3,20 +3,16 @@ package com.wayn.admin.framework.security.service;
 import com.wayn.common.core.domain.system.Role;
 import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.util.ServletUtils;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * RuoYi首创 自定义权限实现，ss取自SpringSecurity首字母
- *
- * @author ruoyi
- */
 @Service("ss")
+@AllArgsConstructor
 public class PermissionService {
     /**
      * 所有权限标识
@@ -32,7 +28,6 @@ public class PermissionService {
 
     private static final String PERMISSION_DELIMETER = ",";
 
-    @Autowired
     private TokenService tokenService;
 
     /**

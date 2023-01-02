@@ -1,12 +1,13 @@
 package com.wayn.admin.framework.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//@Configuration
+@Configuration
 @ConfigurationProperties(prefix = "shop.express")
 public class ExpressProperties {
     private boolean enable;

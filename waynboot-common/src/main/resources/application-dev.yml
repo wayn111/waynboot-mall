@@ -4,9 +4,17 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     # 主库数据源
     master:
-      url: jdbc:mysql://127.0.0.1:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
       username: root
       password:
+      pool-name: hikariCP
+      minimum-idle: 100
+      maximum-pool-size: 200
+      auto-commit: true
+      idle-timeout: 10000
+      max-lifetime: 30000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
     # 从库数据源
     slave:
       # 从数据源开关/默认关闭
@@ -15,15 +23,15 @@ spring:
       username:
       password:
 
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    password:
-    database: 2
-    timeout: 300
-    expire: 400
-    lettuce:
-      shutdown-timeout: 100ms
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      database: 2
+      timeout: 300
+      lettuce:
+        shutdown-timeout: 100ms
   #配置rabbitMq 服务器
   rabbitmq:
     host: 127.0.0.1
@@ -37,11 +45,12 @@ spring:
     publisher-returns: true
 
 es:
-  host: 127.0.0.1
-  port: 9200
-  scheme: http
-  shards: 3
-  replicas: 2
+  config:
+    host: 127.0.0.1
+    port: 9200
+    scheme: http
+    shards: 3
+    replicas: 2
 
 # alipay 需要自行申请支付宝的沙箱账号、申请appID，并依次配置AppID、密钥、公钥，否则无法发起支付宝支付。
 alipay:

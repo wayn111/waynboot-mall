@@ -1,15 +1,13 @@
 package com.wayn.common.util.ip;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
  * 获取IP方法
- *
- * @author ruoyi
  */
 public class IpUtils {
     public static String getIpAddr(HttpServletRequest request) {
@@ -65,9 +63,8 @@ public class IpUtils {
                     return true;
                 }
             case SECTION_5:
-                switch (b1) {
-                    case SECTION_6:
-                        return true;
+                if (b1 == SECTION_6) {
+                    return true;
                 }
             default:
                 return false;
@@ -91,7 +88,7 @@ public class IpUtils {
             long l;
             int i;
             switch (elements.length) {
-                case 1:
+                case 1 -> {
                     l = Long.parseLong(elements[0]);
                     if ((l < 0L) || (l > 4294967295L))
                         return null;
@@ -99,8 +96,8 @@ public class IpUtils {
                     bytes[1] = (byte) (int) ((l & 0xFFFFFF) >> 16 & 0xFF);
                     bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
                     bytes[3] = (byte) (int) (l & 0xFF);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     l = Integer.parseInt(elements[0]);
                     if ((l < 0L) || (l > 255L))
                         return null;
@@ -111,8 +108,8 @@ public class IpUtils {
                     bytes[1] = (byte) (int) (l >> 16 & 0xFF);
                     bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
                     bytes[3] = (byte) (int) (l & 0xFF);
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     for (i = 0; i < 2; ++i) {
                         l = Integer.parseInt(elements[i]);
                         if ((l < 0L) || (l > 255L))
@@ -124,17 +121,18 @@ public class IpUtils {
                         return null;
                     bytes[2] = (byte) (int) (l >> 8 & 0xFF);
                     bytes[3] = (byte) (int) (l & 0xFF);
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     for (i = 0; i < 4; ++i) {
                         l = Integer.parseInt(elements[i]);
                         if ((l < 0L) || (l > 255L))
                             return null;
                         bytes[i] = (byte) (int) (l & 0xFF);
                     }
-                    break;
-                default:
+                }
+                default -> {
                     return null;
+                }
             }
         } catch (NumberFormatException e) {
             return null;

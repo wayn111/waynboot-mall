@@ -19,7 +19,6 @@ public class ThreadUtil {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
-            return;
         }
     }
 

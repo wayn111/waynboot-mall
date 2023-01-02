@@ -2,10 +2,10 @@ package com.wayn.common.util.excel;
 
 import com.alibaba.excel.EasyExcel;
 import com.wayn.common.util.ServletUtils;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

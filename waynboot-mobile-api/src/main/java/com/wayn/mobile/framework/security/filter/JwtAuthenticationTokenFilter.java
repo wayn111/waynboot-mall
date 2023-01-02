@@ -3,31 +3,29 @@ package com.wayn.mobile.framework.security.filter;
 import com.wayn.common.util.ThreadMdcUtil;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.service.TokenService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
 /**
  * token过滤器 验证token有效性
- *
- * @author ruoyi
  */
 @Slf4j
 @Component
+@AllArgsConstructor
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
-    @Autowired
     private TokenService tokenService;
 
 

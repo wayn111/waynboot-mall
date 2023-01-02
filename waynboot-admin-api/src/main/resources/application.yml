@@ -6,7 +6,7 @@ spring:
   application:
     name: waynboot-admin-api
   profiles:
-    active: dev,druid,express
+    active: dev,express
   thymeleaf:
     cache: false
     suffix: .html
@@ -71,7 +71,7 @@ mybatis-plus:
 # wayn配置
 wayn:
   name: wayn
-  version: 1.1.0
+  version: 1.2.0
   email: 166738430@qq.com
   uploadDir: ${UPLOAD_DIR:D:/wayn/upload}
   adminUrl: http://localhost:81
@@ -85,23 +85,3 @@ wayn:
     localPort:                          # 代理本地端口
     remoteHost:                         # 需要代理的服务host
     remotePort:                         # 需要代理的服务port
-
-#滑块验证码配置
-aj:
-  captcha:
-    aes-status: true
-    cache-type: redis
-    font-size: 25
-    font-style: 1
-    history-data-clear-enable: false
-    interference-options: 0
-    jigsaw: classpath:images/capthcha
-    req-check-minute-limit: 60
-    req-frequency-limit-enable: true
-    req-get-lock-limit: 2
-    req-get-lock-seconds: 360
-    req-get-minute-limit: 30
-    req-verify-minute-limit: 60
-    slip-offset: 5
-    type: default
-    water-mark: wayn

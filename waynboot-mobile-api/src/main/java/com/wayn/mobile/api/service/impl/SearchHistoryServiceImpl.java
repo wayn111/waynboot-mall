@@ -5,7 +5,7 @@ import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.mapper.SearchHistoryMapper;
 import com.wayn.mobile.api.service.ISearchHistoryService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.List;
  * @since 2020-09-23
  */
 @Service
+@AllArgsConstructor
 public class SearchHistoryServiceImpl extends ServiceImpl<SearchHistoryMapper, SearchHistory> implements ISearchHistoryService {
 
-    @Autowired
     private SearchHistoryMapper searchHistoryMapper;
 
     @Override

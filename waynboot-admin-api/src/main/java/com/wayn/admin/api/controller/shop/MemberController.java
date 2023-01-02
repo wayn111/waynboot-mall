@@ -6,7 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.util.R;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +21,10 @@ import java.util.Date;
  * @since 2020-07-21
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("shop/member")
 public class MemberController extends BaseController {
 
-    @Autowired
     private IMemberService iMemberService;
 
     @GetMapping("list")

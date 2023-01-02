@@ -22,10 +22,9 @@ public class WebSecurityConfigurer {
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + "/");
 
-        http
-                .headers().frameOptions().disable()
-                .and().authorizeRequests()
-                .antMatchers(adminContextPath + "/assets/**"
+        http.headers().frameOptions().disable()
+                .and().authorizeHttpRequests()
+                .requestMatchers(adminContextPath + "/assets/**"
                         , adminContextPath + "/login"
                         , adminContextPath + "/actuator/**"
                         , adminContextPath + "/instances/**"
@@ -39,7 +38,7 @@ public class WebSecurityConfigurer {
                 .httpBasic().and()
                 .csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringAntMatchers(
+                .ignoringRequestMatchers(
                         "/instances",
                         "/actuator/**"
                 );

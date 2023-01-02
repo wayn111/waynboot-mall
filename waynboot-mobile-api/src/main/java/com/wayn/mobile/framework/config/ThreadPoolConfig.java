@@ -20,25 +20,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class ThreadPoolConfig {
     // 核心线程池大小
-    private int corePoolSize = 20;
+    private final int corePoolSize = 20;
 
     // 最大可创建的线程数
-    private int maxPoolSize = 100;
+    private final int maxPoolSize = 50;
 
     // 队列最大长度
-    private int queueCapacity = 200;
+    private final int queueCapacity = 2000;
 
     // 线程池维护线程所允许的空闲时间
-    private int keepAliveSeconds = 300;
+    private final int keepAliveSeconds = 300;
 
     @Bean(name = "homeThreadPoolTaskExecutor")
     public ThreadPoolTaskExecutor homeThreadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
         BasicThreadFactory build = new BasicThreadFactory.Builder()
                 .namingPattern("home-task-%d")
-                .uncaughtExceptionHandler((t, e) -> {
-                    log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e);
-                })
+                .uncaughtExceptionHandler((t, e) -> log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e))
                 .build();
         executor.setThreadFactory(build);
         executor.initialize();
@@ -64,9 +62,7 @@ public class ThreadPoolConfig {
         ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
         BasicThreadFactory build = new BasicThreadFactory.Builder()
                 .namingPattern("category-task-%d")
-                .uncaughtExceptionHandler((t, e) -> {
-                    log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e);
-                })
+                .uncaughtExceptionHandler((t, e) -> log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e))
                 .build();
         executor.setThreadFactory(build);
         executor.initialize();

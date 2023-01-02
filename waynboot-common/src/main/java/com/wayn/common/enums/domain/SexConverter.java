@@ -23,8 +23,8 @@ public class SexConverter extends AbstractIntConverter {
         WOMAN(1, "女");
 
 
-        private Integer type;
-        private String desc;
+        private final Integer type;
+        private final String desc;
 
         SexEnum(Integer type, String desc) {
             this.type = type;

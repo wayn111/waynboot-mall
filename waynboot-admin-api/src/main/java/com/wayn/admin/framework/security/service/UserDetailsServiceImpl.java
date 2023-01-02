@@ -6,8 +6,8 @@ import com.wayn.common.core.model.LoginUserDetail;
 import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.enums.UserStatusEnum;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,15 +19,13 @@ import java.util.Objects;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
     private IUserService iUserService;
 
-    @Autowired
     private IDeptService iDeptService;
 
-    @Autowired
     private SysPermissionService permissionService;
 
     public static void main(String[] args) {

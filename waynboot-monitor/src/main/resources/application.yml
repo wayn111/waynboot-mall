@@ -6,8 +6,8 @@ server:
 spring:
   security:
     user:
-      name: user
-      password: admin123
+      name: admin
+      password: admin
 
 management:
   endpoints:

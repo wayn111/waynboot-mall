@@ -48,6 +48,8 @@ import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.task.OrderUnpaidTask;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -62,8 +64,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -442,7 +442,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return R.error(ReturnCodeEnum.ORDER_SET_PAY_ERROR);
         }
         switch (Objects.requireNonNull(PayTypeEnum.of(payType))) {
-            case WX:
+            case WX -> {
                 WxPayMpOrderResult result;
                 try {
                     WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
@@ -462,7 +462,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     log.error(e.getMessage(), e);
                     return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
                 }
-            case ALI:
+            }
+            case ALI -> {
                 // 初始化
                 AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGateway(), alipayConfig.getAppId(),
                         alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(), alipayConfig.getAlipayPublicKey(),
@@ -502,7 +503,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     log.error(e.getMessage(), e);
                     return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
                 }
-            case ALI_TEST:
+            }
+            case ALI_TEST -> {
                 // 支付宝test，直接更新支付状态为已支付
                 order.setPayId("xxxxx0987654321-ali");
                 order.setPayTime(LocalDateTime.now());
@@ -523,8 +525,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 // 取消订单超时未支付任务
                 taskService.removeTask(new OrderUnpaidTask(order.getId()));
                 return R.success();
-            default:
+            }
+            default -> {
                 return R.error(ReturnCodeEnum.ORDER_NOT_SUPPORT_PAYWAY_ERROR);
+            }
         }
     }
 

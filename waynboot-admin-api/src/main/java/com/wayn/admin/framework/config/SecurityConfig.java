@@ -4,11 +4,12 @@ import com.wayn.admin.framework.security.filter.JwtAuthenticationTokenFilter;
 import com.wayn.admin.framework.security.handle.AuthenticationEntryPointImpl;
 import com.wayn.admin.framework.security.handle.LogoutSuccessHandlerImpl;
 import com.wayn.admin.framework.security.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,19 +22,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-// @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@AllArgsConstructor
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
     private AuthenticationEntryPointImpl unauthorizedHandler;
 
-    @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
-    @Autowired
     private LogoutSuccessHandlerImpl logoutSuccessHandler;
 
     @Bean
@@ -49,24 +47,24 @@ public class SecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .exceptionHandling().and()
                 // 过滤请求
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 // 处理跨域请求中的Preflight请求(cors)，设置corsConfigurationSource后无需使用
                 // .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 // 对于登录login 验证码captchaImage 允许匿名访问
-                .antMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
-                .antMatchers("/slider/**").anonymous()
-                .antMatchers("/captcha/**").anonymous()
-                .antMatchers("/upload/**").anonymous()
-                .antMatchers("/common/download**").anonymous()
-                .antMatchers("/doc.html").anonymous()
-                .antMatchers("/swagger-ui/**").anonymous()
-                .antMatchers("/swagger-resources/**").anonymous()
-                .antMatchers("/webjars/**").anonymous()
-                .antMatchers("/*/api-docs").anonymous()
-                .antMatchers("/druid/**").anonymous()
-                .antMatchers("/elastic/**").anonymous()
-                .antMatchers("/message/**").anonymous()
-                .antMatchers("/ws/**").anonymous()
+                .requestMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
+                .requestMatchers("/slider/**").anonymous()
+                .requestMatchers("/captcha/**").anonymous()
+                .requestMatchers("/upload/**").anonymous()
+                .requestMatchers("/common/download**").anonymous()
+                .requestMatchers("/doc.html").anonymous()
+                .requestMatchers("/swagger-ui/**").anonymous()
+                .requestMatchers("/swagger-resources/**").anonymous()
+                .requestMatchers("/webjars/**").anonymous()
+                .requestMatchers("/*/api-docs").anonymous()
+                .requestMatchers("/druid/**").anonymous()
+                .requestMatchers("/elastic/**").anonymous()
+                .requestMatchers("/message/**").anonymous()
+                .requestMatchers("/ws/**").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated().and()
                 .headers().frameOptions().disable();

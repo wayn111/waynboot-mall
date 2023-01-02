@@ -14,7 +14,7 @@ import com.wayn.common.core.service.system.IRoleMenuService;
 import com.wayn.common.core.service.system.IRoleService;
 import com.wayn.common.core.service.system.IUserRoleService;
 import com.wayn.common.exception.BusinessException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,19 +23,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
 
-    @Autowired
     private RoleMapper roleMapper;
 
-
-    @Autowired
     private IRoleMenuService iRoleMenuService;
 
-    @Autowired
     private IUserRoleService iUserRoleService;
 
-    @Override
     public List<String> selectRoleByUserId(Long userId) {
         return roleMapper.selectRoleByUserId(userId);
     }

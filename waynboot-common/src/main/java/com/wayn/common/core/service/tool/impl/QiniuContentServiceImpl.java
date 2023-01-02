@@ -20,8 +20,8 @@ import com.wayn.common.core.service.tool.IQiniuConfigService;
 import com.wayn.common.core.service.tool.IQiniuContentService;
 import com.wayn.common.util.file.FileUtils;
 import com.wayn.common.util.file.QiniuUtil;
+import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,12 +37,11 @@ import java.util.Date;
  * @since 2020-11-15
  */
 @Service
+@AllArgsConstructor
 public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, QiniuContent> implements IQiniuContentService {
 
-    @Autowired
     private QiniuContentMapper qiniuContentMapper;
 
-    @Autowired
     private IQiniuConfigService iQiniuConfigService;
 
     @Override

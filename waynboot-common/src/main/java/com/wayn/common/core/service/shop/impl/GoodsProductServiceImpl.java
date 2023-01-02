@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.mapper.shop.GoodsProductMapper;
 import com.wayn.common.core.service.shop.IGoodsProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
  * @since 2020-07-06
  */
 @Service
+@AllArgsConstructor
 public class GoodsProductServiceImpl extends ServiceImpl<GoodsProductMapper, GoodsProduct> implements IGoodsProductService {
 
-    @Autowired
     private GoodsProductMapper goodsProductMapper;
 
     @Override

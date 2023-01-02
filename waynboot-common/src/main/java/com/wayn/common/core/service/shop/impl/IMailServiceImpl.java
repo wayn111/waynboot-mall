@@ -2,10 +2,10 @@ package com.wayn.common.core.service.shop.impl;
 
 import com.wayn.common.core.service.shop.IMailService;
 import com.wayn.common.util.IdUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class IMailServiceImpl implements IMailService {
-    @Autowired
     RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
 
     @Override

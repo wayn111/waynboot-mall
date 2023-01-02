@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Keyword;
 import com.wayn.common.core.mapper.shop.KeywordMapper;
 import com.wayn.common.core.service.shop.IKeywordService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
  * @since 2020-11-02
  */
 @Service
+@AllArgsConstructor
 public class KeywordServiceImpl extends ServiceImpl<KeywordMapper, Keyword> implements IKeywordService {
 
-    @Autowired
     private KeywordMapper keywordMapper;
 
     @Override

@@ -7,7 +7,7 @@ import com.wayn.common.core.service.shop.IColumnGoodsRelationService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.mobile.design.strategy.JumpTypeEnum;
 import com.wayn.mobile.design.strategy.strategy.DiamondJumpType;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,12 +16,11 @@ import java.util.List;
  * 栏目跳转策略
  */
 @Component
+@AllArgsConstructor
 public class ColumnStrategy implements DiamondJumpType {
 
-    @Autowired
     private IColumnGoodsRelationService iColumnGoodsRelationService;
 
-    @Autowired
     private IGoodsService iGoodsService;
 
     @Override

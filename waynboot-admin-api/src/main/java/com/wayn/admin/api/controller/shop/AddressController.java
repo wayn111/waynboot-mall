@@ -6,7 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.util.R;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-07-21
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("shop/address")
 public class AddressController extends BaseController {
 
-    @Autowired
     private IAddressService iAddressService;
 
     @GetMapping("list")

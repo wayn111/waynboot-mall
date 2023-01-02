@@ -6,15 +6,15 @@ import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("tool/email")
 public class EmailConfigController {
-    @Autowired
     private IMailConfigService mailConfigService;
 
     @GetMapping

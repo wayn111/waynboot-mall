@@ -8,8 +8,8 @@ import com.wayn.common.util.ip.IpUtils;
 import com.wayn.mobile.framework.config.ThreadPoolConfig;
 import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.security.LoginUserDetail;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,12 +22,11 @@ import java.util.TimerTask;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
     private IMemberService iMemberService;
 
-    @Autowired
     private ThreadPoolConfig threadPoolConfig;
 
     @Override

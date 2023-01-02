@@ -1,45 +1,56 @@
 package com.wayn.data.elastic.config;
 
 import lombok.Data;
-import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-@Configuration
 @Data
+@Component
+@ConfigurationProperties(prefix = "es.config")
 public class ElasticConfig {
-    @Value("${es.host}")
     public String host;
-    @Value("${es.port}")
     public int port;
-    @Value("${es.scheme}")
     public String scheme;
-    @Value("${es.shards}")
     public int shards;
-    @Value("${es.replicas}")
     public int replicas;
 
-    @Bean
-    public RestClientBuilder restClientBuilder() {
-        return RestClient.builder(makeHttpHost());
+    public String getHost() {
+        return host;
     }
 
-    @Bean
-    public RestClient elasticsearchRestClient() {
-        return RestClient.builder(new HttpHost(host, port, scheme)).build();
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    private HttpHost makeHttpHost() {
-        return new HttpHost(host, port, scheme);
+    public int getPort() {
+        return port;
     }
 
-    @Bean
-    public RestHighLevelClient restHighLevelClient(@Autowired RestClientBuilder restClientBuilder) {
-        return new RestHighLevelClient(restClientBuilder);
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    public int getShards() {
+        return shards;
+    }
+
+    public void setShards(int shards) {
+        this.shards = shards;
+    }
+
+    public int getReplicas() {
+        return replicas;
+    }
+
+    public void setReplicas(int replicas) {
+        this.replicas = replicas;
     }
 }

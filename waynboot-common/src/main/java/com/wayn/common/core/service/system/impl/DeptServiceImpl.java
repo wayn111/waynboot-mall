@@ -9,7 +9,7 @@ import com.wayn.common.core.domain.vo.TreeVO;
 import com.wayn.common.core.mapper.system.DeptMapper;
 import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.core.service.system.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,12 +18,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements IDeptService {
 
-    @Autowired
     private DeptMapper deptMapper;
 
-    @Autowired
     private IUserService iUserService;
 
     @Override

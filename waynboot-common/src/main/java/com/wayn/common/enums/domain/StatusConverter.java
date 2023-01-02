@@ -23,8 +23,8 @@ public class StatusConverter extends AbstractIntConverter {
         WOMAN(1, "禁用");
 
 
-        private Integer type;
-        private String desc;
+        private final Integer type;
+        private final String desc;
 
         StatusEnum(Integer type, String desc) {
             this.type = type;

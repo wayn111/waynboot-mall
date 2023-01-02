@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.mapper.shop.AddressMapper;
 import com.wayn.common.core.service.shop.IAddressService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class IAddressServiceImpl extends ServiceImpl<AddressMapper, Address> implements IAddressService {
 
-    @Autowired
     private AddressMapper addressMapper;
 
     @Override

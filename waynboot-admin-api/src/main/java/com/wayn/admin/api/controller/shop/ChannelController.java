@@ -6,7 +6,7 @@ import com.wayn.common.core.domain.shop.Channel;
 import com.wayn.common.core.service.shop.IChannelService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +14,10 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("shop/channel")
 public class ChannelController extends BaseController {
 
-    @Autowired
     private IChannelService iChannelService;
 
     @GetMapping("/list")

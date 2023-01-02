@@ -7,7 +7,7 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
  * @since 2020-09-23
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("searchHistory")
 public class SearchHistoryController extends BaseController {
 
-    @Autowired
     private ISearchHistoryService iSearchHistoryService;
 
     @GetMapping("list")

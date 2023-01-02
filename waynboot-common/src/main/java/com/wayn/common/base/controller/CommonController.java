@@ -9,14 +9,14 @@ import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUploadUtil;
 import com.wayn.common.util.file.FileUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -24,16 +24,14 @@ import java.util.List;
 
 /**
  * 通用请求处理类
- *
- * @author ruoyi
  */
 @Slf4j
 @Controller
+@AllArgsConstructor
 @RequestMapping("common")
 public class CommonController {
 
     public static final String IMAGE_BASE64_FLAG = ";base64,";
-    @Autowired
     private UploadService uploadService;
 
     /**

@@ -10,15 +10,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 异步任务管理器
- *
- * @author ruoyi
  */
 public class AsyncManager {
-    private static AsyncManager me = new AsyncManager();
+    private static final AsyncManager me = new AsyncManager();
     /**
      * 异步操作任务调度线程池
      */
-    private ScheduledExecutorService executor = SpringContextUtil.getBean("scheduledExecutorService");
+    private final ScheduledExecutorService executor = SpringContextUtil.getBean("scheduledExecutorService");
 
     /**
      * 单例模式

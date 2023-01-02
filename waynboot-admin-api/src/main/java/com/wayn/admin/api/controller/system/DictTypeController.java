@@ -2,30 +2,27 @@ package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Dict;
-import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.service.system.IDictService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.common.util.security.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
-
 @RestController
+@AllArgsConstructor
 @RequestMapping("system/dict/type")
 public class DictTypeController extends BaseController {
 
-    @Autowired
     private IDictService iDictService;
 
 

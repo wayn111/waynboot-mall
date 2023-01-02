@@ -18,8 +18,8 @@ import com.wayn.mobile.framework.security.LoginObj;
 import com.wayn.mobile.framework.security.RegistryObj;
 import com.wayn.mobile.framework.security.service.LoginService;
 import com.wf.captcha.SpecCaptcha;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -27,18 +27,15 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@AllArgsConstructor
 public class LoginController {
 
-    @Autowired
     private LoginService loginService;
 
-    @Autowired
     private RedisCache redisCache;
 
-    @Autowired
     private IMemberService iMemberService;
 
-    @Autowired
     private IMailConfigService mailConfigService;
 
     @PostMapping("/login")

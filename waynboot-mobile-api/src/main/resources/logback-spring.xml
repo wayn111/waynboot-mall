@@ -43,7 +43,7 @@
     </appender>
 
     <logger name="org.springframework" level="INFO"/>
-    <logger name="io.lettuce.core" level="DEBUG"/>
+    <logger name="io.lettuce.core" level="INFO"/>
     <!-- logger为java中的包 -->
     <logger name="com.wayn.common.core.mapper" level="DEBUG" activity="false">
         <appender-ref ref="SQL"/>

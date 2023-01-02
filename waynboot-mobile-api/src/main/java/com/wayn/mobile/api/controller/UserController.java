@@ -19,8 +19,8 @@ import com.wayn.mobile.framework.security.RegistryObj;
 import com.wayn.mobile.framework.security.service.TokenService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import com.wf.captcha.SpecCaptcha;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -29,19 +29,16 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("user")
 public class UserController {
 
-    @Autowired
     private TokenService tokenService;
 
-    @Autowired
     private IMemberService iMemberService;
 
-    @Autowired
     private RedisCache redisCache;
 
-    @Autowired
     private IMailConfigService mailConfigService;
 
     @GetMapping("info")

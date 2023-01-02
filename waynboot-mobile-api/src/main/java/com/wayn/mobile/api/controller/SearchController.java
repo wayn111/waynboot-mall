@@ -17,6 +17,7 @@ import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
 import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.unit.TimeValue;
@@ -27,7 +28,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,19 +48,16 @@ import java.util.stream.Collectors;
  * @since 2020-09-23
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("search")
 public class SearchController extends BaseController {
 
-    @Autowired
     private IGoodsService iGoodsService;
 
-    @Autowired
     private ISearchHistoryService iSearchHistoryService;
 
-    @Autowired
     private IKeywordService iKeywordService;
 
-    @Autowired
     private ElasticDocument elasticDocument;
 
     @GetMapping("result")
