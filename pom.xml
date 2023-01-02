@@ -32,7 +32,7 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <spring-boot.version>3.0.1</spring-boot.version>
         <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
-        <elasticsearch.version>7.13.4</elasticsearch.version>
+        <elasticsearch.version>7.14.0</elasticsearch.version>
         <mybatis-plus.version>3.5.3</mybatis-plus.version>
         <druid.version>1.2.15</druid.version>
         <commons.io.version>2.11.0</commons.io.version>
