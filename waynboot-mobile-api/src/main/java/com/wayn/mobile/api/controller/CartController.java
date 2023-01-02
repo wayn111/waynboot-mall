@@ -8,9 +8,8 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.flyway.FlywayDataSource;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -26,10 +25,10 @@ import java.util.List;
  */
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("cart")
 public class CartController extends BaseController {
 
-    @Autowired
     private ICartService iCartService;
 
     @GetMapping("list")

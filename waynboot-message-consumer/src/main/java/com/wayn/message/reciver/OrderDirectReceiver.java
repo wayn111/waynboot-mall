@@ -20,7 +20,7 @@ import java.io.IOException;
 @Slf4j
 public class OrderDirectReceiver {
 
-    private Integer num;
+    private final Integer num;
 
     @Autowired
     private RestTemplate restTemplate;

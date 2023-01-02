@@ -6,16 +6,16 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.shop.Channel;
 import com.wayn.common.core.mapper.shop.ChannelMapper;
 import com.wayn.common.core.service.shop.IChannelService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@AllArgsConstructor
 public class ChannelServiceImpl extends ServiceImpl<ChannelMapper, Channel> implements IChannelService {
 
-    @Autowired
     private ChannelMapper channelMapper;
 
     @Override

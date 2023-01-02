@@ -5,7 +5,7 @@ import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,10 +16,10 @@ import java.util.Collections;
  * 消息通知的邮件发送控制器
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("message/email")
 public class EmailController {
 
-    @Autowired
     private IMailConfigService mailConfigService;
 
     @PostMapping

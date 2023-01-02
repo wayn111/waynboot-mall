@@ -3,14 +3,13 @@ package com.wayn.mobile.framework.security.service;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.json.JsonUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Component

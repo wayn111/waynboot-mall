@@ -9,19 +9,18 @@ import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IOrderService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("order")
 public class OrderController extends BaseController {
 
-    @Autowired
     private IOrderService iOrderService;
 
     @GetMapping("detail/{orderSn}")

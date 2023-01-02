@@ -8,7 +8,7 @@ import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Dict;
 import com.wayn.common.core.mapper.system.DictMapper;
 import com.wayn.common.core.service.system.IDictService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@AllArgsConstructor
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements IDictService {
 
-    @Autowired
     private DictMapper dictMapper;
 
     @Override

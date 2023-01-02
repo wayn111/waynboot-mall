@@ -15,8 +15,8 @@ import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUtils;
 import com.wayn.common.util.file.QiniuUtil;
 import com.wayn.common.util.http.HttpUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -34,11 +34,11 @@ import java.io.File;
  * @version: V1.0
  * @modified: yangkai.shen
  */
-@Service
 @Slf4j
+@Service
+@AllArgsConstructor
 public class UploadServiceImpl implements UploadService {
 
-    @Autowired
     private IQiniuConfigService iQiniuConfigService;
 
     /**

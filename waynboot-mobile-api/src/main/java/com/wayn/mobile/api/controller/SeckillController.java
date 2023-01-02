@@ -4,7 +4,7 @@ package com.wayn.mobile.api.controller;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.ISeckillService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-08-04
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("seckill")
 public class SeckillController extends BaseController {
 
-    @Autowired
     private ISeckillService iSeckillService;
 
     @GetMapping("update")

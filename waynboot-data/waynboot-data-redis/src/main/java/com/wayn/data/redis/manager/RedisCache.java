@@ -1,7 +1,7 @@
 package com.wayn.data.redis.manager;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,17 +17,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * spring redis 工具类
- *
- * @author ruoyi
  **/
 @Slf4j
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
 @Component
+@AllArgsConstructor
 public class RedisCache {
-    @Autowired
     public RedisTemplate redisTemplate;
 
-    @Autowired
     private LettuceConnectionFactory lettuceConnectionFactory;
 
     /**

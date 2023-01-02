@@ -2,8 +2,6 @@ package com.wayn.common.util.file;
 
 /**
  * 媒体类型工具类
- *
- * @author ruoyi
  */
 public class MimeTypeUtils
 {

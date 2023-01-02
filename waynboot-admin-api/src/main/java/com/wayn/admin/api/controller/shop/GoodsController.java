@@ -13,8 +13,8 @@ import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
 import com.wayn.data.redis.manager.RedisCache;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,14 +36,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("/shop/goods")
 public class GoodsController extends BaseController {
 
-    @Autowired
     private IGoodsService iGoodsService;
-    @Autowired
     private ElasticDocument elasticDocument;
-    @Autowired
     private RedisCache redisCache;
 
     @GetMapping("/list")

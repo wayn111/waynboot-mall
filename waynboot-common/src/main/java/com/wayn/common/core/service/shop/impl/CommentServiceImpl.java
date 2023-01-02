@@ -10,8 +10,8 @@ import com.wayn.common.core.mapper.shop.CommentMapper;
 import com.wayn.common.core.service.shop.ICommentService;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.exception.BusinessException;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +26,11 @@ import java.util.Date;
  * @since 2020-10-03
  */
 @Service
+@AllArgsConstructor
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements ICommentService {
 
-    @Autowired
     private CommentMapper commentMapper;
 
-    @Autowired
     private IOrderGoodsService iOrderGoodsService;
 
     @Override

@@ -2,9 +2,9 @@ package com.wayn.mobile.framework.security.service;
 
 import com.wayn.common.exception.BusinessException;
 import com.wayn.mobile.framework.security.LoginUserDetail;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,14 +13,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@AllArgsConstructor
 public class LoginService {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private TokenService tokenService;
-
 
     @SneakyThrows
     public String login(String mobile, String password) {

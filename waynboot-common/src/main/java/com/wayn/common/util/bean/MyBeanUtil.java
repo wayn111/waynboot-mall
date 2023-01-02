@@ -46,7 +46,7 @@ public class MyBeanUtil extends BeanUtils {
         //1.获取bean信息
         BeanInfo beanInfo = Introspector.getBeanInfo(source.getClass());
         PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
-        if (properties != null && properties.length > 0) {
+        if (properties != null) {
             for (PropertyDescriptor prop : properties) {
                 //2.得到属性名
                 String name = prop.getName();
@@ -82,7 +82,7 @@ public class MyBeanUtil extends BeanUtils {
         BeanInfo beanInfo = Introspector.getBeanInfo(source.getClass());
         PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
 
-        if (properties != null && properties.length > 0) {
+        if (properties != null) {
             for (PropertyDescriptor prop : properties) {
                 //2.得到属性名
                 String name = prop.getName();
@@ -92,8 +92,7 @@ public class MyBeanUtil extends BeanUtils {
                     Method getter = prop.getReadMethod();
 
                     //5.获取属性值
-                    Object value = getter.invoke(source);
-                    return value;
+                    return getter.invoke(source);
 
                 }
             }

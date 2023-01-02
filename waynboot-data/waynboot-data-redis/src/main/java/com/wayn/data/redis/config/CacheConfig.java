@@ -4,10 +4,9 @@ import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSeria
 import com.wayn.data.redis.constant.CacheConstants;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +24,7 @@ import java.time.Duration;
 
 @EnableCaching
 @Configuration
-public class CacheConfig extends CachingConfigurerSupport {
-
-    // 0 - never expire
-    @Value("${spring.redis.expire}")
-    private int expire = 0;
+public class CacheConfig implements CachingConfigurer {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory connectionFactory) {
@@ -85,7 +80,7 @@ public class CacheConfig extends CachingConfigurerSupport {
     private RedisCacheConfiguration defaultCacheConfig() {
         return RedisCacheConfiguration.defaultCacheConfig()
                 .prefixCacheNameWith(CacheConstants.CACHE_PREFIX)
-                .entryTtl(Duration.ofSeconds(expire))
+                .entryTtl(Duration.ofSeconds(600))
                 .disableCachingNullValues();
     }
 

@@ -1,13 +1,12 @@
 package com.wayn.common.util;
 
 import com.wayn.common.constant.Constants;
-import com.wayn.common.util.file.FileUtils;
 import com.wayn.common.util.http.HttpUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 public class ServletUtils {
 
-    private static ServletUtils getInstance;
+    private static final ServletUtils getInstance;
 
     static {
         getInstance = new ServletUtils();

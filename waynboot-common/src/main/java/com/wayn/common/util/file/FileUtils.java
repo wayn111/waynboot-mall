@@ -1,9 +1,9 @@
 package com.wayn.common.util.file;
 
 import com.wayn.common.util.security.Md5Utils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -11,8 +11,6 @@ import java.text.DecimalFormat;
 
 /**
  * 文件处理工具类
- *
- * @author ruoyi
  */
 @Slf4j
 public class FileUtils extends org.apache.commons.io.FileUtils {

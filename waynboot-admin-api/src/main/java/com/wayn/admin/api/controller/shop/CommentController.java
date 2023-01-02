@@ -6,7 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Comment;
 import com.wayn.common.core.service.shop.ICommentService;
 import com.wayn.common.util.R;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,10 +21,10 @@ import java.util.List;
  * @since 2020-10-03
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("shop/comment")
 public class CommentController extends BaseController {
 
-    @Autowired
     private ICommentService iCommentService;
 
     @GetMapping("list")

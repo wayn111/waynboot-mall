@@ -5,17 +5,17 @@ import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Objects;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("address")
 public class AddressController {
 
-    @Autowired
     private IAddressService iAddressService;
 
     @GetMapping("list")

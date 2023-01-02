@@ -14,13 +14,13 @@ import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wf.captcha.SpecCaptcha;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

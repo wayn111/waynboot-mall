@@ -3,7 +3,7 @@ package com.wayn.admin.framework.security.service;
 import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.core.service.system.IRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -13,11 +13,10 @@ import java.util.Set;
  * 用户权限处理
  */
 @Component
+@AllArgsConstructor
 public class SysPermissionService {
-    @Autowired
     private IRoleService roleService;
 
-    @Autowired
     private IMenuService menuService;
 
     /**

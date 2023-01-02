@@ -2,7 +2,6 @@ package com.wayn.common.core.service.system.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
-import com.alibaba.excel.read.listener.ReadListener;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -16,12 +15,11 @@ import com.wayn.common.core.mapper.system.RoleMapper;
 import com.wayn.common.core.mapper.system.UserMapper;
 import com.wayn.common.core.service.system.IUserRoleService;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.security.SecurityUtils;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,15 +30,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
-    @Autowired
     private UserMapper userMapper;
 
-    @Autowired
     private RoleMapper roleMapper;
 
-    @Autowired
     private IUserRoleService iUserRoleService;
 
     @Override

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Banner;
 import com.wayn.common.core.mapper.shop.BannerMapper;
 import com.wayn.common.core.service.shop.IBannerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class BannerServiceImpl extends ServiceImpl<BannerMapper, Banner> implements IBannerService {
 
-    @Autowired
     private BannerMapper bannerMapper;
 
     @Override

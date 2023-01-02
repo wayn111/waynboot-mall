@@ -8,14 +8,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.constant.Constants;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.http.HttpUtil;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**

@@ -2,17 +2,15 @@ package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.domain.system.Dict;
 import com.wayn.common.core.domain.system.Role;
 import com.wayn.common.core.service.system.IRoleService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.common.util.security.SecurityUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +20,11 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("system/role")
 public class RoleController extends BaseController {
 
-    @Autowired
     private IRoleService iRoleService;
-
 
     @PreAuthorize("@ss.hasPermi('system:role:list')")
     @GetMapping("/list")

@@ -11,25 +11,23 @@ import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.file.FileUploadUtil;
 import com.wayn.common.util.security.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("system/user/profile")
 public class ProfileController {
 
-    @Autowired
     private IUserService iUserService;
 
-    @Autowired
     private TokenService tokenService;
 
-    @Autowired
     private UploadService uploadService;
 
     @GetMapping

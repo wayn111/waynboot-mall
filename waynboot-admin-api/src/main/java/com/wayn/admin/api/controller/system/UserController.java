@@ -10,27 +10,26 @@ import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.common.util.security.SecurityUtils;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("system/user")
 public class UserController extends BaseController {
 
-    @Autowired
     private IUserService iUserService;
 
-    @Autowired
     private IRoleService iRoleService;
 
     @PreAuthorize("@ss.hasPermi('system:user:list')")

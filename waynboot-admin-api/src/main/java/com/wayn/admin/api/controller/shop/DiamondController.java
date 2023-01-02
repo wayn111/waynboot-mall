@@ -6,7 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Diamond;
 import com.wayn.common.core.service.shop.IDiamondService;
 import com.wayn.common.util.R;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +14,10 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("shop/diamond")
 public class DiamondController extends BaseController {
 
-    @Autowired
     private IDiamondService iDiamondService;
 
     @GetMapping("/list")

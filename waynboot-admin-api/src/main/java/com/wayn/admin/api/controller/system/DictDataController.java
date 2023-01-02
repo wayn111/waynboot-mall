@@ -9,7 +9,7 @@ import com.wayn.common.core.service.system.IDictService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.security.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +19,11 @@ import java.util.List;
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("system/dict/data")
 public class DictDataController extends BaseController {
 
-    @Autowired
     private IDictService iDictService;
-
 
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @GetMapping("/list")

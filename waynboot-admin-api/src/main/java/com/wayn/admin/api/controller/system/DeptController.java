@@ -6,7 +6,7 @@ import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.security.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,10 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("system/dept")
 public class DeptController {
 
-    @Autowired
     private IDeptService iDeptService;
 
     @PreAuthorize("@ss.hasPermi('system:dept:list')")

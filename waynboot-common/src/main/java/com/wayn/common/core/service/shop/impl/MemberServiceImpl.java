@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.mapper.shop.MemberMapper;
 import com.wayn.common.core.service.shop.IMemberService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
  * @since 2020-07-21
  */
 @Service
+@AllArgsConstructor
 public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> implements IMemberService {
 
-    @Autowired
     private MemberMapper memberMapper;
 
     @Override

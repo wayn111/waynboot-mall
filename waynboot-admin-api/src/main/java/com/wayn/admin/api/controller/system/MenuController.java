@@ -10,8 +10,8 @@ import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.security.SecurityUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +21,12 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("system/menu")
 public class MenuController extends BaseController {
 
-    @Autowired
     private IMenuService iMenuService;
 
-    @Autowired
     private TokenService tokenService;
 
     @PreAuthorize("@ss.hasPermi('system:menu:list')")

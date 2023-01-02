@@ -12,10 +12,10 @@ import com.wayn.common.core.service.shop.IColumnGoodsRelationService;
 import com.wayn.common.core.service.shop.IColumnService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.util.R;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,16 +25,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("shop/column")
 public class ColumnController extends BaseController {
 
-    @Autowired
     private IColumnService iColumnService;
 
-    @Autowired
     private IColumnGoodsRelationService iColumnGoodsRelationService;
 
-    @Autowired
     private IGoodsService iGoodsService;
 
     @GetMapping("/list")

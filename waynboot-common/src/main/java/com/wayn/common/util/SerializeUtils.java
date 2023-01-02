@@ -11,7 +11,7 @@ import java.io.*;
  */
 public class SerializeUtils {
 
-	private static Logger logger = LoggerFactory.getLogger(SerializeUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(SerializeUtils.class);
 
 	/**
 	 * 反序列化
