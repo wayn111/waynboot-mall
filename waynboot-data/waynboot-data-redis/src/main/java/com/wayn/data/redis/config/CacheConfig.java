@@ -1,6 +1,6 @@
 package com.wayn.data.redis.config;
 
-import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSerializer;
+import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import com.wayn.data.redis.constant.CacheConstants;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
