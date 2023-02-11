@@ -360,7 +360,7 @@ h5商城api:
 - 注册一个账号
 - 然后登陆
 
-演示地址：http://mall.wayn.xin/mall
+演示地址：http://121.4.124.33/mall
 
 ## 演示图
 
