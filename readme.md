@@ -1,13 +1,45 @@
-## waynboot-mall项目
+# waynboot-mall
+
+| Branch Name                                                        | Spring Boot Version |
+|--------------------------------------------------------------------| ------------------- |
+| [master](https://github.com/wayn111/waynboot-mall)                     | 3.0.2      |
+| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7
+
+---
+
+## 简介
 
 waynboot-mall是一套全部开源的微商城项目，包含一个运营后台、h5商城和后台接口。
 实现了一个商城所需的首页展示、商品分类、商品详情、sku详情、商品搜索、加入购物车、结算下单、订单状态流转、商品评论等一系列功能。
-技术上基于最新得Springboot3.0+,jdk17，整合了Redis、RabbitMQ、ElasticSearch等常用中间件，
+技术上基于最新得Springboot3.0、jdk17，整合了Redis、RabbitMQ、ElasticSearch等常用中间件，
 贴近生产环境实际经验开发而来不断完善、优化、改进中。
 
-[h5商城项目](https://github.com/wayn111/waynboot-mobile)
-[运营后台项目](https://github.com/wayn111/waynboot-admin)  
-[后台接口项目](https://github.com/wayn111/waynboot-mall)  
+- [h5商城项目](https://github.com/wayn111/waynboot-mobile)
+- [运营后台项目](https://github.com/wayn111/waynboot-admin)  
+- [后台接口项目](https://github.com/wayn111/waynboot-mall)  
+
+如果有任何使用问题，欢迎提交Issue或加QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlfh0OLIq5I8wDIjRj6DlT&jump_from=webapi"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="waynboot-mall交流群" title="waynboot-mall交流群"></a>告知，方便互相交流反馈～ 💘。最后，喜欢的话麻烦给我个star
+
+---
+
+- [waynboot-mall](#waynboot-mall)
+  - [简介](#简介)
+  - [技术特点](#技术特点)
+  - [商城设计](#商城设计)
+    - [文件目录](#文件目录)
+    - [1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）](#1-库存扣减操作是在下单操作扣减还是在支付成功时扣减ps扣减库存使用乐观锁机制-where-goods_num---num--0)
+    - [2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩](#2-首页商品展示接口利用多线程技术进行查询优化将多个sql语句的排队查询变成异步查询接口时长只跟查询时长最大的sql查询挂钩)
+    - [3. `ElasticSearch`搜索查询，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回](#3-elasticsearch搜索查询查询包含搜索关键字并且是上架中的商品在根据指定字段进行排序最后分页返回)
+    - [4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单](#4-订单编号生成规则秒级时间戳--加密用户id--今日第几次下单)
+    - [5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力](#5-下单流程处理过程通过rabbitmq异步生成订单提高系统下单处理能力)
+    - [6. 金刚区跳转使用策略模式](#6-金刚区跳转使用策略模式)
+    - [todo](#todo)
+  - [开发部署](#开发部署)
+  - [在线体验](#在线体验)
+  - [演示图](#演示图)
+  - [感谢](#感谢)
+
+---
 
 ## 技术特点
 
@@ -27,7 +59,26 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 14. 下单处理过程引入rabbitMQ，异步生成订单记录，提高系统下单处理能力 
 15. ...
 
-## 问题整理
+---
+
+## 商城设计
+
+### 文件目录
+```
+|-- waynboot-monitor               // 监控模块
+|-- waynboot-admin-api             // 运营后台api模块，提供后台项目api接口
+|-- waynboot-common                // 通用模块，包含项目核心基础类
+|-- waynboot-data                  // 数据模块，通用中间件数据访问
+|   |-- waynboot-data-redis        // redis访问配置模块
+|   |-- waynboot-data-elastic      // elastic访问配置模块
+|-- waynboot-generator             // 代码生成模块
+|-- waynboot-message-consumer      // 消费者模块，处理订单消息和邮件消息
+|-- waynboot-message-core          // 消费者核心模块，队列、交换机配置
+|-- waynboot-mobile-api            // h5商城api模块，提供h5商城api接口
+|-- pom.xml                        // maven父项目依赖，定义子项目依赖版本
+|-- ...
+```
+
 ### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
 1. 下单时扣减，这个方案属于实时扣减，当有大量下单请求时，由于订单数小于请求数，会发生下单失败，但是无法防止短时间大量恶意请求占用库存，
 造成普通用户无法下单
@@ -264,23 +315,20 @@ public void test(){
 
 ```
 
-- todo
+---
 
-## 文件目录
-```
-|-- waynboot-monitor               // 监控模块
-|-- waynboot-admin-api             // 运营后台api模块，提供后台项目api接口
-|-- waynboot-common                // 通用模块，包含项目核心基础类
-|-- waynboot-data                  // 数据模块，通用中间件数据访问
-|   |-- waynboot-data-redis        // redis访问配置模块
-|   |-- waynboot-data-elastic      // elastic访问配置模块
-|-- waynboot-generator             // 代码生成模块
-|-- waynboot-message-consumer      // 消费者模块，处理订单消息和邮件消息
-|-- waynboot-message-core          // 消费者核心模块，队列、交换机配置
-|-- waynboot-mobile-api            // h5商城api模块，提供h5商城api接口
-|-- pom.xml                        // maven父项目依赖，定义子项目依赖版本
-|-- ...
-```
+### todo
+
+- [x] 订单详情页面
+- [ ] 商城资讯流
+- [ ] 联系客服
+- [ ] 秒杀专区
+- [ ] 支持多店铺
+- [ ] 优惠卷使用
+- [ ] 团购下单
+- [ ] ... 
+- [ ] 
+---
 
 ## 开发部署
 ```
@@ -304,6 +352,8 @@ git clone git@github.com:wayn111/waynboot-mall.git
 h5商城api:
     进入waynboot-mobile-api子项目，找到MobileApplication文件，右键`run MobileApplication`，启动h5商城项目
 ```
+
+---
 
 ## 在线体验
 
@@ -373,23 +423,7 @@ h5商城api:
     </tr>
 </table>
 
-
-## waynboot-mall交流群
-
-QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlfh0OLIq5I8wDIjRj6DlT&jump_from=webapi"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="waynboot-mall交流群" title="waynboot-mall交流群"></a>
-有问题可以先提issue😁
-
-## todo
-
-- [x] dockers镜像部署(使用google jib部署方式)
-- [x] 订单详情页面
-- [ ] 商城资讯流
-- [ ] 联系客服
-- [ ] 秒杀专区
-- [ ] 支持多店铺
-- [ ] 优惠卷使用
-- [ ] 团购下单
-- [ ] ... 
+---
 
 ## 感谢
 
