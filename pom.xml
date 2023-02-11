@@ -46,7 +46,7 @@
         <mail.version>2.0.1</mail.version>
         <spring-boot-admin.version>3.0.0</spring-boot-admin.version>
         <xxl-job.version>2.3.1</xxl-job.version>
-        <hutool.version>5.8.11</hutool.version>
+        <hutool.version>5.8.12</hutool.version>
         <easyexcel.version>3.2.0</easyexcel.version>
     </properties>
 
