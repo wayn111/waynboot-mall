@@ -129,20 +129,20 @@
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-pay</artifactId>
-            <version>4.4.7.B</version>
+            <version>4.4.9.B</version>
         </dependency>
 
         <!--支付宝依赖-->
         <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
-            <version>4.35.9.ALL</version>
+            <version>4.35.79.ALL</version>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>3.1.4</version>
+            <version>3.2.1</version>
         </dependency>
 
         <dependency>

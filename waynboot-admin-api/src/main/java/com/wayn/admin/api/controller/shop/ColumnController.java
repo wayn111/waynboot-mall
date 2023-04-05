@@ -41,7 +41,7 @@ public class ColumnController extends BaseController {
         IPage<Column> columnIPage = iColumnService.listPage(page, column);
         List<ColumnVO> columnVOS = columnIPage.getRecords().stream().map(item -> {
             ColumnVO columnVO = new ColumnVO();
-            BeanUtils.copyProperties(columnVO, item);
+            BeanUtils.copyProperties(item, columnVO);
             Integer count = iColumnGoodsRelationService.getGoodsNum(item.getId());
             columnVO.setGoodsNum(count);
             return columnVO;
