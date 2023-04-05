@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.2</version>
+        <version>3.0.5</version>
     </parent>
     <modules>
         <module>waynboot-common</module>
@@ -34,20 +34,20 @@
         <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
-        <druid.version>1.2.15</druid.version>
+        <druid.version>1.2.16</druid.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.collections.version>4.4</commons.collections.version>
         <commons.fileupload.version>1.5</commons.fileupload.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
-        <fastjson.version>2.0.23</fastjson.version>
+        <fastjson.version>2.0.25</fastjson.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
-        <jwt.version>4.2.2</jwt.version>
+        <jwt.version>4.3.0</jwt.version>
         <qiniu.version>7.12.1</qiniu.version>
         <mail.version>2.0.1</mail.version>
         <spring-boot-admin.version>3.0.0</spring-boot-admin.version>
         <xxl-job.version>2.3.1</xxl-job.version>
-        <hutool.version>5.8.12</hutool.version>
-        <easyexcel.version>3.2.0</easyexcel.version>
+        <hutool.version>5.8.15</hutool.version>
+        <easyexcel.version>3.2.1</easyexcel.version>
     </properties>
 
     <dependencies>

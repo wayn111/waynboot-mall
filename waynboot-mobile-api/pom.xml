@@ -54,6 +54,12 @@
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.wayn111</groupId>
+            <artifactId>mybatis-xmlreload-spring-boot-starter</artifactId>
+            <version>3.0.3.m1</version>
+        </dependency>
     </dependencies>
 
     <build>

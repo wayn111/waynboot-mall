@@ -50,6 +50,11 @@ mybatis-plus:
   # 配置mapper的扫描，找到所有的mapper.xml映射文件
   mapperLocations: classpath*:mapper/**/*Mapper.xml
 
+# xml 文件热加载
+mybatis-xml-reload:
+  enabled: ${XML_RELOAD:false}
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+
 # wayn配置
 wayn:
   name: wayn

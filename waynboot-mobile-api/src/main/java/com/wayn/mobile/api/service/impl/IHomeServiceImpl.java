@@ -46,7 +46,6 @@ public class IHomeServiceImpl implements IHomeService {
 
     @Override
     public R getHomeIndexDataCompletableFuture() {
-        log.info("getHomeIndexDataCompletableFuture begin");
         R success = R.success();
         Map<String, Object> shopHomeIndexHash = redisCache.getCacheMap(SHOP_HOME_INDEX_HASH);
         // 当缓存中存在数据,并且过期时间不为空而且小于等于过期时间则直接从缓存中取出数据
@@ -54,7 +53,7 @@ public class IHomeServiceImpl implements IHomeService {
             long time = (long) shopHomeIndexHash.get(SHOP_HOME_INDEX_HASH_EXPIRATION_FIELD);
             if ((new Date().getTime() - time) <= Constants.ONE_DAY) {
                 shopHomeIndexHash.forEach(success::add);
-                log.info("getHomeIndexDataCompletableFuture end");
+                log.info("getHomeIndexDataCompletableFuture:{}", success);
                 return success;
             }
         }
