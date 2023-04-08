@@ -3,11 +3,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Inherit defaults from Spring Boot -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.5</version>
-    </parent>
     <modules>
         <module>waynboot-common</module>
         <module>waynboot-admin-api</module>
@@ -30,11 +25,13 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <spring-boot.version>3.0.2</spring-boot.version>
+        <spring-boot.version>3.0.5</spring-boot.version>
         <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
+        <lettuce.version>6.2.3.RELEASE</lettuce.version>
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <druid.version>1.2.16</druid.version>
+        <lombok.version>1.18.26</lombok.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.collections.version>4.4</commons.collections.version>
         <commons.fileupload.version>1.5</commons.fileupload.version>
@@ -44,7 +41,7 @@
         <jwt.version>4.3.0</jwt.version>
         <qiniu.version>7.12.1</qiniu.version>
         <mail.version>2.0.1</mail.version>
-        <spring-boot-admin.version>3.0.0</spring-boot-admin.version>
+        <spring-boot-admin.version>3.0.2</spring-boot-admin.version>
         <xxl-job.version>2.3.1</xxl-job.version>
         <hutool.version>5.8.15</hutool.version>
         <easyexcel.version>3.2.1</easyexcel.version>
@@ -64,6 +61,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-aop</artifactId>

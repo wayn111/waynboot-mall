@@ -1,9 +1,9 @@
 # waynboot-mall
 
 | Branch Name                                                        | Spring Boot Version |
-|--------------------------------------------------------------------| ------------------- |
-| [master](https://github.com/wayn111/waynboot-mall)                     | 3.0.2      |
-| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7
+|--------------------------------------------------------------------|---------------------|
+| [master](https://github.com/wayn111/waynboot-mall)                     | 3.0.5               |
+| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7                 
 
 ---
 
@@ -18,7 +18,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 - [运营后台项目](https://github.com/wayn111/waynboot-admin)  
 - [后台接口项目](https://github.com/wayn111/waynboot-mall)  
 
-> 如果有任何使用问题，欢迎提交Issue或加QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=Mvf4HO4EhdXlfh0OLIq5I8wDIjRj6DlT&jump_from=webapi"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="waynboot-mall交流群" title="waynboot-mall交流群"></a>告知，方便互相交流反馈～ 💘。最后，喜欢的话麻烦给我个star
+> 如果有任何使用问题，欢迎提交Issue或加wx告知，方便互相交流反馈～ 💘。最后，喜欢的话麻烦给我个star
 
 关注公众号：waynblog，回复"学习"进群交流。
 
