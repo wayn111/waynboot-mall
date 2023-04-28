@@ -6,10 +6,9 @@ import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor

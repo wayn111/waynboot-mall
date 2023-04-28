@@ -9,13 +9,12 @@ import com.wayn.common.core.domain.vo.CommentVO;
 import com.wayn.common.core.service.shop.ICommentService;
 import com.wayn.common.util.R;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
