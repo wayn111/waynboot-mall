@@ -6,10 +6,10 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Comment;
 import com.wayn.common.core.service.shop.ICommentService;
 import com.wayn.common.util.R;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**

@@ -4,9 +4,8 @@ import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.shop.GoodsAttribute;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 import com.wayn.common.core.domain.shop.GoodsSpecification;
+import jakarta.validation.Valid;
 import lombok.Data;
-
-import javax.validation.Valid;
 
 @Data
 public class GoodsSaveRelatedVO {

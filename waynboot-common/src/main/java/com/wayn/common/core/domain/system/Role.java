@@ -7,11 +7,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.entity.BaseEntity;
 import com.wayn.common.enums.domain.StatusConverter;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotBlank;
 import java.io.Serial;
 import java.util.List;
 
