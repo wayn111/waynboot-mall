@@ -1,6 +1,6 @@
 # waynboot-mall
 
-| Branch Name                                                        | Spring Boot Version |
+| 分支名称                                                       | Spring Boot 版本 |
 |--------------------------------------------------------------------|---------------------|
 | [master](https://github.com/wayn111/waynboot-mall)                     | 3.0.5               |
 | [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7                 
