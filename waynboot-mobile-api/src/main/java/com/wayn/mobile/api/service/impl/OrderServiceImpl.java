@@ -369,10 +369,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } else {
             iCartService.removeByIds(cartIdArr);
         }
-        // 下单60s内未支付自动取消订单
+        // 下单30分钟内未支付自动取消订单
         long delay = 1000;
-        redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 60 * delay);
-        taskService.addTask(new OrderUnpaidTask(order.getId(), delay * 60));
+        redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 30 * 60 * delay);
+        taskService.addTask(new OrderUnpaidTask(order.getId()));
         return R.success().add("orderId", order.getId());
     }
 
