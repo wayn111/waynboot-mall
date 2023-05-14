@@ -81,8 +81,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
         File file = new File(filePath);
         // 路径为文件且不为空则进行删除
         if (file.isFile() && file.exists()) {
-            file.delete();
-            flag = true;
+            flag = file.delete();
         }
         return flag;
     }
@@ -149,7 +148,9 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
         String temp = null;
         while (true) {
             try {
-                if ((temp = br.readLine()) == null) break;
+                if ((temp = br.readLine()) == null) {
+                    break;
+                }
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
