@@ -7,7 +7,7 @@
 
 ---
 
-## 简介
+# 简介
 
 waynboot-mall是一套全部开源的微商城项目，包含一个运营后台、h5商城和后台接口。
 实现了一个商城所需的首页展示、商品分类、商品详情、sku详情、商品搜索、加入购物车、结算下单、订单状态流转、商品评论等一系列功能。
@@ -48,7 +48,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 
 ---
 
-## 技术特点
+# 技术特点
 
 1. 商城接口代码清晰、注释完善、模块拆分合理
 2. 使用Spring-Security进行访问权限控制
@@ -68,9 +68,9 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 
 ---
 
-## 商城设计
+# 商城设计
 
-### 文件目录
+## 文件目录
 ```
 |-- waynboot-monitor               // 监控模块
 |-- waynboot-admin-api             // 运营后台api模块，提供后台项目api接口
@@ -86,7 +86,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 |-- ...
 ```
 
-### 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
+## 1. 库存扣减操作是在下单操作扣减还是在支付成功时扣减？（ps：扣减库存使用乐观锁机制 `where goods_num - num >= 0`）
 1. 下单时扣减，这个方案属于实时扣减，当有大量下单请求时，由于订单数小于请求数，会发生下单失败，但是无法防止短时间大量恶意请求占用库存，
 造成普通用户无法下单
 2. 支付成功扣减，这个方案可以预防恶意请求占用库存，但是会存在多个请求同时下单后，在支付回调中扣减库存失败，导致订单还是下单失败并且还要退还订单金额（这种请求就是订单数超过了库存数，无法发货，影响用户体验）
@@ -95,7 +95,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 4. 针对大流量下单场景，比如一分钟内五十万次下单请求，可以通过设置虚拟库存的方式减少下单接口对数据库的访问。具体来说就是把商品库存缓存到redis中，
 下单时配合lua脚本原子的get和decr商品库存数量（这一步就拦截了大部分请求），执行成功后在扣减实际库存
 
-### 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
+## 2. 首页商品展示接口利用多线程技术进行查询优化，将多个sql语句的排队查询变成异步查询，接口时长只跟查询时长最大的sql查询挂钩
 ```java
 // 使用CompletableFuture异步查询
 List<CompletableFuture<Void>> list = new ArrayList<>();
@@ -115,7 +115,7 @@ list.add(f2);
 CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
 ```
 
-### 3. `ElasticSearch`搜索查询，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
+## 3. `ElasticSearch`搜索查询，查询包含搜索关键字并且是上架中的商品，在根据指定字段进行排序，最后分页返回
 ```java
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -157,7 +157,7 @@ searchSourceBuilder.size((int) page.getSize());
 List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
 ```
 
-### 4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
+## 4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
 1. 秒级时间戳：时间递增保证唯一性
 2. 加密用户ID：加密处理，返回用户ID6位数字，可以防并发访问，同一秒用户不会产生2个订单
 3. 今日第几次下单：便于运营查询处理用户当日订单
@@ -199,7 +199,7 @@ private static String encryptUserId(String userId, int num) {
 
 ```
 
-### 5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力
+## 5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力
 1. 用户点击提交订单按钮，后台生成订单编号和订单金额跳转到订单支付页面，并将订单编号等信息发送rabbitMQ消息（生成订单编号，还未生成订单）
 2. 订单消费者接受到订单消息后，获取订单编号生成订单记录（订单创建成功，用户待支付）
 3. 下单页面，前端根据订单编号轮询订单接口，订单已创建则跳转支付页面，否则提示下单失败（订单创建失败）
@@ -207,7 +207,7 @@ private static String encryptUserId(String userId, int num) {
 5. 用户支付完成后在微信/支付宝下回调通知里更新订单状态为已支付（订单已支付）
 6. 用户支付完成后，返回支付状态查看页面。
 
-### 6. 金刚区跳转使用策略模式
+## 6. 金刚区跳转使用策略模式
 
 ```java
 # 1.定义金刚位跳转策略接口以及跳转枚举类
@@ -324,7 +324,7 @@ public void test(){
 
 ---
 
-### todo
+# todo
 
 - [x] 订单详情页面
 - [ ] 商城资讯流
@@ -336,7 +336,7 @@ public void test(){
 - [ ] 
 ---
 
-## 开发部署
+# 开发部署
 ```
 # 1. 克隆项目
 git clone git@github.com:wayn111/waynboot-mall.git
@@ -361,7 +361,7 @@ h5商城api:
 
 ---
 
-## 在线体验
+# 在线体验
 
 - 注册一个账号
 - 然后登陆
@@ -370,7 +370,7 @@ h5商城api:
 
 后台演示地址：http://121.4.124.33/admin， 后台演示账号：关注博主公众号【waynblog】，发送 演示账号
 
-## 演示图
+# 演示图
 
 <table>
     <tr>
@@ -433,7 +433,7 @@ h5商城api:
 
 ---
 
-## 感谢
+# 感谢
 
 - [panda-mall](https://github.com/Ewall1106/vue-h5-template)
 - [litemall](https://github.com/linlinjava/litemall)
