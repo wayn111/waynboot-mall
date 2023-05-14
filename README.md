@@ -14,9 +14,9 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 技术上基于最新得Springboot3.0、jdk17，整合了Redis、RabbitMQ、ElasticSearch等常用中间件，
 贴近生产环境实际经验开发而来不断完善、优化、改进中。
 
-- [h5商城项目](https://github.com/wayn111/waynboot-mobile)
-- [运营后台项目](https://github.com/wayn111/waynboot-admin)  
-- [后台接口项目](https://github.com/wayn111/waynboot-mall)  
+- [h5商城项目](https://gitee.com/wayn111/waynboot-mobile)
+- [运营后台项目](https://gitee.com/wayn111/waynboot-admin)  
+- [后台接口项目](https://gitee.com/wayn111/waynboot-mall)  
 
 > 如果有任何使用问题，欢迎提交Issue或加wx告知，方便互相交流反馈～ 💘。最后，喜欢的话麻烦给我个star
 
