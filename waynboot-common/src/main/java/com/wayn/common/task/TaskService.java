@@ -2,10 +2,12 @@ package com.wayn.common.task;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.DelayQueue;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @Slf4j
 @Component
@@ -14,8 +16,9 @@ public class TaskService {
 
     @PostConstruct
     private void init() {
-
-        Executors.newSingleThreadExecutor().execute(() -> {
+        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
+                new BasicThreadFactory.Builder().namingPattern("schedule-pool-%d").daemon(true).build());
+        executorService.execute(() -> {
             while (true) {
                 try {
                     Task task = delayQueue.take();
@@ -27,15 +30,15 @@ public class TaskService {
         });
     }
 
-    public void addTask(Task task) {
+    public boolean addTask(Task task) {
         if (delayQueue.contains(task)) {
-            return;
+            return false;
         }
-        delayQueue.add(task);
+        return delayQueue.add(task);
     }
 
-    public void removeTask(Task task) {
-        delayQueue.remove(task);
+    public boolean removeTask(Task task) {
+        return delayQueue.remove(task);
     }
 
 }

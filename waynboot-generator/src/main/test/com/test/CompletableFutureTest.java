@@ -8,7 +8,7 @@ public class CompletableFutureTest {
                 .supplyAsync(() -> 1)
                 .thenApplyAsync(integer -> integer + 1)
                 .thenApplyAsync(integer -> integer * integer)
-                .thenCombineAsync(CompletableFuture.completedFuture(11), (integer, integer2) -> integer + integer2)
-                .thenAcceptAsync(integer -> System.out.println(integer));
+                .thenCombineAsync(CompletableFuture.completedFuture(11), Integer::sum)
+                .thenAcceptAsync(System.out::println);
     }
 }
