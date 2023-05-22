@@ -3663,15 +3663,16 @@ INSERT INTO `sys_user_role` VALUES (110, 3346);
 -- Table structure for tool_email_config
 -- ----------------------------
 DROP TABLE IF EXISTS `tool_email_config`;
-CREATE TABLE `tool_email_config`  (
-                                      `id` bigint NOT NULL COMMENT 'ID',
-                                      `from_user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '收件人',
-                                      `host` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '邮件服务器SMTP地址',
-                                      `pass` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
-                                      `port` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '端口',
-                                      `user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '发件者用户名',
-                                      PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '邮箱配置' ROW_FORMAT = COMPACT;
+CREATE TABLE `tool_email_config` (
+                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+                                     `from_user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '收件人',
+                                     `host` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '邮件服务器SMTP地址',
+                                     `pass` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '密码',
+                                     `port` int DEFAULT NULL COMMENT '端口',
+                                     `ssl_port` int DEFAULT NULL COMMENT 'ssl端口',
+                                     `user` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '发件者用户名',
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT='邮箱配置';
 
 -- ----------------------------
 -- Table structure for tool_qiniu_config
@@ -3687,7 +3688,7 @@ CREATE TABLE `tool_qiniu_config`  (
                                       `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储区域',
                                       `enable` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用七牛云存储 0 启用 1 禁用',
                                       PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云配置' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '七牛云配置' ROW_FORMAT = COMPACT;
 
 
 -- ----------------------------
@@ -3707,4 +3708,4 @@ CREATE TABLE `tool_qiniu_content`  (
                                        `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标志（0代表存在 1代表删除）',
                                        PRIMARY KEY (`content_id`) USING BTREE,
                                        UNIQUE INDEX `uniq_name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 518 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '七牛云文件存储' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '七牛云文件存储' ROW_FORMAT = COMPACT;
