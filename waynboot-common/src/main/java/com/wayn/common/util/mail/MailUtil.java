@@ -71,19 +71,4 @@ public class MailUtil {
             log.error(e.getMessage(), e);
         }
     }
-
-    public static void main(String[] args) {
-        EmailConfig emailConfig = new EmailConfig();
-        emailConfig.setFromUser("1669738430@qq.com");
-        emailConfig.setHost("smtp.qq.com");
-        emailConfig.setPass("vxhduzllgqfnjiif");
-        emailConfig.setPort(25);
-        emailConfig.setUser("wayn");
-
-        SendMailVO sendMailVO = new SendMailVO();
-        sendMailVO.setContent("123");
-        sendMailVO.setSubject("title");
-        sendMailVO.setTos(List.of("1669738430@qq.com"));
-        sendMail(emailConfig, sendMailVO, false, false);
-    }
 }
