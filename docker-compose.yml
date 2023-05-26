@@ -10,11 +10,19 @@ services:
       - ./jars/waynboot-mobile-api.jar:/home/app/waynboot-mobile-api.jar
     restart: always
     command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-mobile-api.jar
-    network_mode: "host"
+    ports:
+      - "82:82"
     environment:
       - TZ=Asia/Shanghai
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/waynboot-mall/upload
+    network_mode: "host"
+    # 依赖于redis和mysql，在启动本服务之前会先启动依赖的服务
+    depends_on:
+      - redis
+      - mysql
+      - rabbitmq
+      - es
   waynboot-admin-api:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: admin
@@ -25,11 +33,19 @@ services:
       - ./jars/waynboot-admin-api.jar:/home/app/waynboot-admin-api.jar
     restart: always
     command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-admin-api.jar
-    network_mode: "host"
+    ports:
+      - "81:81"
     environment:
       - TZ=Asia/Shanghai
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/waynboot-mall/upload
+    network_mode: "host"
+    # 依赖于redis和mysql，在启动本服务之前会先启动依赖的服务
+    depends_on:
+      - redis
+      - mysql
+      - rabbitmq
+      - es
   waynboot-message:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: message
@@ -40,11 +56,19 @@ services:
       - ./jars/waynboot-message-consumer.jar:/home/app/waynboot-message-consumer.jar
     restart: always
     command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-message-consumer.jar
-    network_mode: "host"
+    ports:
+      - "85:85"
     environment:
       - TZ=Asia/Shanghai
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/waynboot-mall/upload
+    network_mode: "host"
+    # 依赖于redis和mysql，在启动本服务之前会先启动依赖的服务
+    depends_on:
+      - redis
+      - mysql
+      - rabbitmq
+      - es
   waynboot-monitor:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: monitor
@@ -52,7 +76,82 @@ services:
       - /etc/localtime:/etc/localtime
       - ./jars/waynboot-monitor.jar:/home/app/waynboot-monitor.jar
     restart: always
-    command: java -Xms500m -Xmx500m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-monitor.jar
-    network_mode: "host"
+    command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-monitor.jar
+    ports:
+      - "89:89"
     environment:
       - TZ=Asia/Shanghai
+    network_mode: "host"
+    # 依赖于redis和mysql，在启动本服务之前会先启动依赖的服务
+    depends_on:
+      - redis
+      - mysql
+      - rabbitmq
+      - es
+  # Redis服务
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/redis.conf:/etc/redis/redis.conf
+      - ./redis/data:/data
+    command: redis-server /etc/redis/redis.conf
+    network_mode: "host"
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: rabbitmq
+    environment:
+      #rabbitmq的初始用户名
+      RABBITMQ_DEFAULT_USER: guest
+      #rabbitmq的初始密码
+      RABBITMQ_DEFAULT_PASS: guest
+    network_mode: "host"
+  # MySQL服务
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.33
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+      MYSQL_DATABASE: 'wayn_shop'
+    volumes:
+#      - ./mysql/data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+    command: mysqld --lower_case_table_names=1 --default-authentication-plugin=mysql_native_password
+    network_mode: "host"
+  # Elasticsearch服务
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: elasticsearch
+    volumes:
+#      - ./es/data:/usr/share/elasticsearch/data
+      - ./es/plugins:/usr/share/elasticsearch/plugins
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    network_mode: "host"
+  nginx:
+    container_name: "nginx"
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/log:/var/log/nginx/
+      - ./front/mall:/usr/share/nginx/html/mall/
+      - ./front/admin:/usr/share/nginx/html/admin/
+    network_mode: "host"

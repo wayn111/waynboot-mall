@@ -125,7 +125,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>waynboot-admin-api</finalName>
+        <finalName>../../jars/waynboot-admin-api</finalName>
     </build>
 
 

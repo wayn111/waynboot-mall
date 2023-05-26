@@ -33,3 +33,5 @@ build/
 .mvn
 mvnw*
 .gradle
+
+jars/

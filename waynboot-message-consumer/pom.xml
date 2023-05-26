@@ -108,7 +108,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>waynboot-message-consumer</finalName>
+        <finalName>../../jars/waynboot-message-consumer</finalName>
     </build>
 
 </project>

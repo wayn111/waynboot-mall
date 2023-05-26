@@ -81,7 +81,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>waynboot-mobile-api</finalName>
+        <finalName>../../jars/waynboot-mobile-api</finalName>
     </build>
 
 
