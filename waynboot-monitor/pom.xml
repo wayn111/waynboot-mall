@@ -50,6 +50,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>waynboot-monitor</finalName>
+        <finalName>../../jars/waynboot-monitor</finalName>
     </build>
 </project>
