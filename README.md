@@ -1,9 +1,10 @@
 # waynboot-mall
 
-| 分支名称                                                       | Spring Boot 版本 |
-|--------------------------------------------------------------------|----------------|
-| [master](https://github.com/wayn111/waynboot-mall)                     | 3.0.6          |
-| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7            
+| 分支名称                                                       | Spring Boot 版本 | JDK 版本 |
+|--------------------------------------------------------------------|----------------|--------|
+| [master](https://github.com/wayn111/waynboot-mall)                     | 3.0.6          | 17     |
+| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7        | 1.8    | 
+ 
 
 ---
 
@@ -72,6 +73,7 @@ waynboot-mall是一套全部开源的微商城项目，包含一个运营后台�
 
 ## 文件目录
 ```
+|-- db-init                        // 数据库初始化脚本
 |-- waynboot-monitor               // 监控模块
 |-- waynboot-admin-api             // 运营后台api模块，提供后台项目api接口
 |-- waynboot-common                // 通用模块，包含项目核心基础类
