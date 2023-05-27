@@ -22,7 +22,7 @@ services:
       - redis
       - mysql
       - rabbitmq
-      - es
+      - elasticsearch
   waynboot-admin-api:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: admin
@@ -45,7 +45,7 @@ services:
       - redis
       - mysql
       - rabbitmq
-      - es
+      - elasticsearch
   waynboot-message:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: message
@@ -68,10 +68,10 @@ services:
       - redis
       - mysql
       - rabbitmq
-      - es
+      - elasticsearch
   waynboot-monitor:
     image: ibm-semeru-runtimes:open-17-jdk
-    container_name: monitor
+    container_name: boot-admin
     volumes:
       - /etc/localtime:/etc/localtime
       - ./jars/waynboot-monitor.jar:/home/app/waynboot-monitor.jar
@@ -87,7 +87,7 @@ services:
       - redis
       - mysql
       - rabbitmq
-      - es
+      - elasticsearch
   # Redis服务
   redis:
     container_name: redis
@@ -128,7 +128,7 @@ services:
     command: mysqld --lower_case_table_names=1 --default-authentication-plugin=mysql_native_password
     network_mode: "host"
   # Elasticsearch服务
-  es:
+  elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     container_name: elasticsearch
     volumes:
