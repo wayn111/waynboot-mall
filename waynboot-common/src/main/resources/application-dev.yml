@@ -48,6 +48,8 @@ es:
   config:
     host: 127.0.0.1
     port: 9200
+    username:
+    password:
     scheme: http
     shards: 3
     replicas: 2
