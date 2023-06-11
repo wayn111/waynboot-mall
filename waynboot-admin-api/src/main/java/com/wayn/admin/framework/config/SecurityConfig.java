@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,37 +40,46 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // cors启用
-                .cors().and()
-                // CRSF（跨站请求伪造）禁用，因为不使用session
-                .csrf().disable()
-                // 基于token，所以不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                // 认证失败处理类
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .exceptionHandling().and()
+                .cors(httpSecurityCorsConfigurer -> {
+                })
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(httpSecuritySessionManagementConfigurer -> {
+                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                })
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(unauthorizedHandler);
+                })
                 // 过滤请求
-                .authorizeHttpRequests()
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+                    authorizationManagerRequestMatcherRegistry
+                            .requestMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
+                            .requestMatchers("/slider/**").anonymous()
+                            .requestMatchers("/captcha/**").anonymous()
+                            .requestMatchers("/upload/**").anonymous()
+                            .requestMatchers("/common/download**").anonymous()
+                            .requestMatchers("/doc.html").anonymous()
+                            .requestMatchers("/swagger-ui/**").anonymous()
+                            .requestMatchers("/swagger-resources/**").anonymous()
+                            .requestMatchers("/webjars/**").anonymous()
+                            .requestMatchers("/*/api-docs").anonymous()
+                            .requestMatchers("/druid/**").anonymous()
+                            .requestMatchers("/elastic/**").anonymous()
+                            .requestMatchers("/message/**").anonymous()
+                            .requestMatchers("/ws/**").anonymous()
+                            // 除上面外的所有请求全部需要鉴权认证
+                            .anyRequest().authenticated();
+                })
+                .headers(httpSecurityHeadersConfigurer -> {
+                    httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
+                });
                 // 处理跨域请求中的Preflight请求(cors)，设置corsConfigurationSource后无需使用
                 // .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 // 对于登录login 验证码captchaImage 允许匿名访问
-                .requestMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
-                .requestMatchers("/slider/**").anonymous()
-                .requestMatchers("/captcha/**").anonymous()
-                .requestMatchers("/upload/**").anonymous()
-                .requestMatchers("/common/download**").anonymous()
-                .requestMatchers("/doc.html").anonymous()
-                .requestMatchers("/swagger-ui/**").anonymous()
-                .requestMatchers("/swagger-resources/**").anonymous()
-                .requestMatchers("/webjars/**").anonymous()
-                .requestMatchers("/*/api-docs").anonymous()
-                .requestMatchers("/druid/**").anonymous()
-                .requestMatchers("/elastic/**").anonymous()
-                .requestMatchers("/message/**").anonymous()
-                .requestMatchers("/ws/**").anonymous()
-                // 除上面外的所有请求全部需要鉴权认证
-                .anyRequest().authenticated().and()
-                .headers().frameOptions().disable();
-        httpSecurity.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler);
+
+        httpSecurity.logout(httpSecurityLogoutConfigurer -> {
+            httpSecurityLogoutConfigurer.logoutUrl("/logout");
+            httpSecurityLogoutConfigurer.logoutSuccessHandler(logoutSuccessHandler);
+        });
         // 添加JWT filter
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         // 认证用户时用户信息加载配置，注入springAuthUserService

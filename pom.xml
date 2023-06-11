@@ -25,7 +25,7 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <spring-boot.version>3.0.6</spring-boot.version>
+        <spring-boot.version>3.1.0</spring-boot.version>
         <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
         <lettuce.version>6.2.3.RELEASE</lettuce.version>
         <elasticsearch.version>7.14.0</elasticsearch.version>
@@ -41,9 +41,9 @@
         <jwt.version>4.3.0</jwt.version>
         <qiniu.version>7.12.1</qiniu.version>
         <mail.version>2.0.1</mail.version>
-        <spring-boot-admin.version>3.0.2</spring-boot-admin.version>
+        <spring-boot-admin.version>3.0.4</spring-boot-admin.version>
         <xxl-job.version>2.3.1</xxl-job.version>
-        <hutool.version>5.8.15</hutool.version>
+        <hutool.version>5.8.18</hutool.version>
         <easyexcel.version>3.2.1</easyexcel.version>
     </properties>
 
