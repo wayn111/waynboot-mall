@@ -17,7 +17,7 @@
     <!-- 通用查询结果列 -->
     <sql id="selectSerchHistoryVo">
         select id,
-        user_id, keyword, from, create_time, has_goods,  update_time, del_flag
+        user_id, keyword from create_time, has_goods,  update_time, del_flag
         from search_history s
     </sql>
 

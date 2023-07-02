@@ -158,7 +158,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 unrecv++;
             } else if (OrderUtil.isConfirmStatus(order) || OrderUtil.isAutoConfirmStatus(order)) {
                 uncomment += order.getComments();
-            }  // todo
+            }
 
         }
         success.add("unpaid", unpaid);
@@ -497,7 +497,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 String form;
                 try {
                     // 需要自行申请支付宝的沙箱账号、申请appID，并在配置文件中依次配置AppID、密钥、公钥，否则这里会报错。
-                    form = alipayClient.pageExecute(alipayRequest).getBody();//调用SDK生成表单
+                    form = alipayClient.pageExecute(alipayRequest).getBody();// 调用SDK生成表单
                     return R.success().add("form", form);
                 } catch (AlipayApiException e) {
                     log.error(e.getMessage(), e);
@@ -599,7 +599,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
-        //将异步通知中收到的所有参数都存放到map中
+        // 将异步通知中收到的所有参数都存放到map中
         Map<String, String[]> parameterMap = request.getParameterMap();
         Map<String, String> paramsMap = new HashMap<>();
         parameterMap.forEach((s, strings) -> paramsMap.put(s, strings[0]));

@@ -22,7 +22,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -49,7 +48,7 @@ public class IHomeServiceImpl implements IHomeService {
         R success = R.success();
         Map<String, Object> shopHomeIndexHash = redisCache.getCacheMap(SHOP_HOME_INDEX_HASH);
         // 当缓存中存在数据,并且过期时间不为空而且小于等于过期时间则直接从缓存中取出数据
-        long nowTime = System.currentTimeMillis();;
+        long nowTime = System.currentTimeMillis();
         if (MapUtils.isNotEmpty(shopHomeIndexHash) && shopHomeIndexHash.containsKey(SHOP_HOME_INDEX_HASH_EXPIRATION_FIELD)) {
             long time = (long) shopHomeIndexHash.get(SHOP_HOME_INDEX_HASH_EXPIRATION_FIELD);
             if ((nowTime - time) <= Constants.ONE_DAY) {

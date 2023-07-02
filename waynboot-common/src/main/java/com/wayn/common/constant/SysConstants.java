@@ -10,7 +10,7 @@ public class SysConstants {
 
 
     /**
-     * 缓存前缀, todo 统一项目缓存前缀
+     * 缓存前缀, 统一项目缓存前缀
      */
     public static final String CACHE_PREFIX = "waynboot-mall:";
 
