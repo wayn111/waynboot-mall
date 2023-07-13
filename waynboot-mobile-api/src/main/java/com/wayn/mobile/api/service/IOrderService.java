@@ -34,7 +34,7 @@ public interface IOrderService extends IService<Order> {
      *
      * @param orderVO 订单VO
      */
-    R asyncSubmit(OrderVO orderVO);
+    R asyncSubmit(OrderVO orderVO) throws Exception;
 
     /**
      * 微信H5支付

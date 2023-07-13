@@ -19,4 +19,6 @@ public class CacheConstants {
     public static final String SHOP_HOME_INDEX_HASH = CACHE_PREFIX + "shop_home_index_hash";
     public static final String SHOP_HOME_INDEX_HASH_EXPIRATION_FIELD = "expire_time";
 
+    public static final String ORDER_SN_INCR_KEY = CACHE_PREFIX + "order_sn_incr_key";
+
 }
