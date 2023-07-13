@@ -45,7 +45,7 @@ public class OrderController extends BaseController {
     }
 
     @PostMapping("submit")
-    public R submit(@RequestBody OrderVO orderVO) {
+    public R submit(@RequestBody OrderVO orderVO) throws Exception {
         return iOrderService.asyncSubmit(orderVO);
     }
 

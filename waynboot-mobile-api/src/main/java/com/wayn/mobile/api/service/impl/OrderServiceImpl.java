@@ -97,6 +97,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private IMailService iMailService;
     private RabbitTemplate rabbitTemplate;
     private AlipayConfig alipayConfig;
+    private OrderSnGenUtil orderSnGenUtil;
+
 
     @Override
     public R selectListPage(IPage<Order> page, Integer showType) {
@@ -187,7 +189,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public R asyncSubmit(OrderVO orderVO) {
+    public R asyncSubmit(OrderVO orderVO) throws Exception {
         OrderDTO orderDTO = new OrderDTO();
         MyBeanUtil.copyProperties(orderVO, orderDTO);
         Long userId = orderDTO.getUserId();
@@ -223,11 +225,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BigDecimal grouponPrice = new BigDecimal("0.00");
 
         // 订单费用
-        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal("0.00"));
+        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(BigDecimal.ZERO);
 
         // 最终支付费用
         BigDecimal actualPrice = orderTotalPrice.subtract(integralPrice);
-        String orderSn = OrderSnGenUtil.generateOrderSn(userId);
+        String orderSn = orderSnGenUtil.generateOrderSn(userId);
         orderDTO.setOrderSn(orderSn);
 
         // 异步下单

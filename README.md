@@ -159,46 +159,57 @@ searchSourceBuilder.size((int) page.getSize());
 List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
 ```
 
-## 4. 订单编号生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
+## 4. 订单编号生成规则：秒级时间戳 + 6为redis自增id
 1. 秒级时间戳：时间递增保证唯一性
-2. 加密用户ID：加密处理，返回用户ID6位数字，可以防并发访问，同一秒用户不会产生2个订单
-3. 今日第几次下单：便于运营查询处理用户当日订单
+2. redis自增id：保证高并发情况下订单不重复
 ```java
-/**
- * 返回订单编号，生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
- *
- * @param userId 用户ID
- * @return 订单编号
- */
-public static String generateOrderSn(Long userId) {
-        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
-        return now + encryptUserId(String.valueOf(userId), 6) + countByOrderSn(userId);
-        }
+@Component
+@AllArgsConstructor
+public class OrderSnGenUtil {
 
-/**
- * 计算该用户今日内第几次下单
- *
- * @param userId 用户ID
- * @return 该用户今日第几次下单
- */
-public static int countByOrderSn(Long userId) {
-        IOrderService orderService = SpringContextUtil.getBean(IOrderService.class);
-        return orderService.count(new QueryWrapper<Order>().eq("user_id", userId)
-        .gt("create_time", LocalDate.now())
-        .lt("create_time", LocalDate.now().plusDays(1)));
-        }
+  private RedisCache redisCache;
+  
+  public String generateOrderSn(Long userId) {
+    long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
+    Integer orderSnIncrLimit = 999999;
+    Long incrKey = redisCache.luaIncrKey(CacheConstants.ORDER_SN_INCR_KEY, orderSnIncrLimit);
+    if (incrKey > (long) orderSnIncrLimit) {
+      throw new BusinessException("订单编号生成失败");
+    }
+    return now + String.format("%06d", incrKey);
+  }
+}
 
-/**
- * 加密用户ID，返回num位字符串
- *
- * @param userId 用户ID
- * @param num    长度
- * @return num位加密字符串
- */
-private static String encryptUserId(String userId, int num) {
-        return String.format("%0" + num + "d", Integer.parseInt(userId) + 1);
-        }
+@Component
+@AllArgsConstructor
+public class RedisCache {
+  public RedisTemplate redisTemplate;
+  /**
+   * @param key
+   * @param orderSnIncrLimit
+   * @return
+   */
+  public Long luaIncrKey(String key, Integer orderSnIncrLimit) {
+    RedisScript<Long> redisScript = new DefaultRedisScript<>(buildLuaIncrKeyScript(), Long.class);
+    return (Long) redisTemplate.execute(redisScript, Collections.singletonList(key), orderSnIncrLimit);
+  }
 
+  /**
+   * lua原子脚本
+   */
+  public static String buildLuaIncrKeyScript() {
+    return """
+            local key = KEYS[1]
+            local limit = ARGV[1]
+            local c = redis.call('get', key)
+            if c and tonumber(c) > tonumber(limit) then
+                redis.call('set', key, 0)
+                return c
+            end
+            return redis.call('incr', key)
+            """;
+  }
+}
 ```
 
 ## 5. 下单流程处理过程，通过rabbitMQ异步生成订单，提高系统下单处理能力

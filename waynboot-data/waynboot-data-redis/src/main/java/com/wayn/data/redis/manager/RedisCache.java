@@ -7,12 +7,11 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -278,6 +277,32 @@ public class RedisCache {
     public <T> Set<T> getCacheZset(String key, double min, double max) {
         ZSetOperations operations = redisTemplate.opsForZSet();
         return operations.rangeByScore(key, min, max);
+    }
+
+    /**
+     * @param key
+     * @param orderSnIncrLimit
+     * @return
+     */
+    public Long luaIncrKey(String key, Integer orderSnIncrLimit) {
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(buildLuaIncrKeyScript(), Long.class);
+        return (Long) redisTemplate.execute(redisScript, Collections.singletonList(key), orderSnIncrLimit);
+    }
+
+    /**
+     * lua原子脚本
+     */
+    public static String buildLuaIncrKeyScript() {
+        return """
+                local key = KEYS[1]
+                local limit = ARGV[1]
+                local c = redis.call('get', key)
+                if c and tonumber(c) > tonumber(limit) then
+                    redis.call('set', key, 0)
+                    return c
+                end
+                return redis.call('incr', key)
+                """;
     }
 
 }

@@ -43,4 +43,7 @@ public class Constants {
     public static final long ONE_HOUR = ONE_MINITE * 60;
     public static final long ONE_DAY = ONE_HOUR * 24;
     public static final long ONE_WEEK = ONE_DAY * 7;
+
+    public static final Integer ORDER_SN_INCR_LIMIT = 999999;
+
 }
