@@ -15,9 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 购物车商品表
- * </p>
  *
  * @author wayn
  * @since 2020-08-03

@@ -15,12 +15,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * <p>
  * 商品基本信息表
- * </p>
- *
- * @author wayn
- * @since 2020-07-06
  */
 @Builder
 @Getter

@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.tool.QiniuConfig;
 
 /**
- * <p>
  * 七牛云配置 服务类
- * </p>
  *
  * @author wayn
  * @since 2020-11-13

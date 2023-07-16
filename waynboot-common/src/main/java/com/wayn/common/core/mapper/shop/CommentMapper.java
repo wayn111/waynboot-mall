@@ -8,9 +8,7 @@ import com.wayn.common.core.domain.vo.CommentTagNumVO;
 import com.wayn.common.core.domain.vo.CommentVO;
 
 /**
- * <p>
  * 评论表 Mapper 接口
- * </p>
  *
  * @author wayn
  * @since 2020-10-03

@@ -11,12 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
  * 七牛云文件存储
- * </p>
- *
- * @author wayn
- * @since 2020-11-15
  */
 @Data
 @TableName("tool_qiniu_content")

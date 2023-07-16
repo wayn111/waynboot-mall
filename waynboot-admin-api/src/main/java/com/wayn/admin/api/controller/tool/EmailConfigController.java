@@ -10,6 +10,12 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 邮件配置
+ *
+ * @author wayn
+ * @since 2020-07-21
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("tool/email")

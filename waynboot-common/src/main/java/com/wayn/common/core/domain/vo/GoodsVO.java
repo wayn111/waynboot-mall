@@ -9,12 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * <p>
- * 商品基本信息表
- * </p>
- *
- * @author wayn
- * @since 2020-07-06
+ * 商品基本信息VO
  */
 @Builder
 @Getter

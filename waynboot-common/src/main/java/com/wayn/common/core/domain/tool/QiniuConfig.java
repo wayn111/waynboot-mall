@@ -10,12 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
  * 七牛云配置
- * </p>
- *
- * @author wayn
- * @since 2020-11-13
  */
 @Data
 @TableName("tool_qiniu_config")

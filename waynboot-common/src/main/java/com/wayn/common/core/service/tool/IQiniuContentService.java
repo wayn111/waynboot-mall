@@ -11,9 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 /**
- * <p>
  * 七牛云文件存储 服务类
- * </p>
  *
  * @author wayn
  * @since 2020-11-15

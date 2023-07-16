@@ -8,9 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>
  * 栏目商品关联表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-10-10

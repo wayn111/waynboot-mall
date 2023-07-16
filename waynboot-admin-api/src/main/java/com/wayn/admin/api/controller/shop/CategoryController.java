@@ -13,12 +13,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <p>
- * 类目表 前端控制器
- * </p>
+ * 商城类目管理
  *
  * @author wayn
- * @since 2020-06-26
+ * @since 2020-07-06
  */
 @RestController
 @AllArgsConstructor

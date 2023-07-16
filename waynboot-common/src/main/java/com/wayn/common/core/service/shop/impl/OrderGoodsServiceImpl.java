@@ -7,9 +7,7 @@ import com.wayn.common.core.service.shop.IOrderGoodsService;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>
  * 订单商品表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-08-11

@@ -7,9 +7,7 @@ import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.util.R;
 
 /**
- * <p>
  * 类目表 服务类
- * </p>
  *
  * @author wayn
  * @since 2020-06-26

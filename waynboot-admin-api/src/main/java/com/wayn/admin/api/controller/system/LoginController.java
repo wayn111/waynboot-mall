@@ -25,6 +25,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 用户登录
+ *
+ * @author wayn
+ * @since 2020-07-21
+ */
 @RestController
 @AllArgsConstructor
 public class LoginController {

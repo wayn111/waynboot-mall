@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 /**
- * <p>
  * 评论表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-10-03

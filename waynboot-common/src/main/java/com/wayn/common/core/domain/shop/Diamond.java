@@ -11,12 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
- * 首页金刚区配置
- * </p>
- *
- * @author wayn
- * @since 2020-10-10
+ * 首页金刚区配置表
  */
 @Data
 @TableName("shop_diamond")

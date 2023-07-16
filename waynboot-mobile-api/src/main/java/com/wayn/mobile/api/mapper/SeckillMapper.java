@@ -5,9 +5,7 @@ import com.wayn.mobile.api.domain.Seckill;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * <p>
  * 秒杀库存表 Mapper 接口
- * </p>
  *
  * @author wayn
  * @since 2020-08-04

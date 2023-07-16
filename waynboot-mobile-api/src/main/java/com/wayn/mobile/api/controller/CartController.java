@@ -16,9 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * <p>
  * 购物车商品表 前端控制器
- * </p>
  *
  * @author wayn
  * @since 2020-08-03

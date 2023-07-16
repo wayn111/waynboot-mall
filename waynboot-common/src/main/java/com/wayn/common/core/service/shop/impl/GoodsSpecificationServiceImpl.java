@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
  * 商品规格表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-07-06

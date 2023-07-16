@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 /**
- * <p>
- * 用户表 前端控制器
- * </p>
+ * 会员管理
  *
  * @author wayn
  * @since 2020-07-21

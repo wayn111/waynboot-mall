@@ -24,9 +24,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * <p>
  * 商品基本信息表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-07-06

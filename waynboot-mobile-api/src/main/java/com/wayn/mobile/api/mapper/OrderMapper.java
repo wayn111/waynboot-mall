@@ -7,9 +7,7 @@ import com.wayn.common.core.domain.shop.Order;
 import java.util.List;
 
 /**
- * <p>
  * 订单表 Mapper 接口
- * </p>
  *
  * @author wayn
  * @since 2020-08-11

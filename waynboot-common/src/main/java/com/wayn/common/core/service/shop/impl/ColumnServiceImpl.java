@@ -10,9 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>
  * 首页栏目配置 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-10-10

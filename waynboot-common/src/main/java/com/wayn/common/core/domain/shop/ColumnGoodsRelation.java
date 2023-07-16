@@ -10,12 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
  * 栏目商品关联表
- * </p>
- *
- * @author wayn
- * @since 2020-10-10
  */
 @Data
 @TableName("shop_column_goods_relation")

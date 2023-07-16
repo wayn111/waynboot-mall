@@ -6,9 +6,7 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
 
 /**
- * <p>
  * 购物车商品表 服务类
- * </p>
  *
  * @author wayn
  * @since 2020-08-03

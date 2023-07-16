@@ -11,12 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
  * 商品参数表
- * </p>
- *
- * @author wayn
- * @since 2020-07-06
  */
 @Data
 @TableName("shop_goods_attribute")

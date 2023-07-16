@@ -18,6 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * 七牛云配置
+ *
+ * @author wayn
+ * @since 2020-07-21
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("tool/qiniu")

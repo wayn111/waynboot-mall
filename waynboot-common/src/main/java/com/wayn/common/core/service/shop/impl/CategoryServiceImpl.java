@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * <p>
  * 类目表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-06-26

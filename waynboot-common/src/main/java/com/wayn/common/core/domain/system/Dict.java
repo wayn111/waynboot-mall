@@ -15,6 +15,9 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * 字典表
+ */
 @Data
 @TableName("sys_dict")
 @EqualsAndHashCode(callSuper = true)
