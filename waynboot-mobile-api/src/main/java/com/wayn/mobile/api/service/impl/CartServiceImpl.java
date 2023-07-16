@@ -34,9 +34,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * <p>
  * 购物车商品表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-08-03

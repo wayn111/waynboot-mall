@@ -11,12 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
  * 关键字表
- * </p>
- *
- * @author wayn
- * @since 2020-11-02
  */
 @Data
 @TableName("shop_keyword")

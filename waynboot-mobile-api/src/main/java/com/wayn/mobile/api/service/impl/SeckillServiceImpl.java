@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <p>
  * 秒杀库存表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-08-04

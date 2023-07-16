@@ -8,12 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * <p>
  * 订单商品表
- * </p>
- *
- * @author wayn
- * @since 2020-08-11
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

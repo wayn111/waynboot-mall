@@ -10,9 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 秒杀库存表
- * </p>
  *
  * @author wayn
  * @since 2020-08-04

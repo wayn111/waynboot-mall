@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * <p>
- * 评论表 前端控制器
- * </p>
+ * 评论管理
  *
  * @author wayn
- * @since 2020-10-03
+ * @since 2020-07-06
  */
 @RestController
 @AllArgsConstructor

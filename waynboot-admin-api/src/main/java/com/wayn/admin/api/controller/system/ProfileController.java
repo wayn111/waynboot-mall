@@ -19,6 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * 个人信息
+ *
+ * @author wayn
+ * @since 2020-07-21
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("system/user/profile")

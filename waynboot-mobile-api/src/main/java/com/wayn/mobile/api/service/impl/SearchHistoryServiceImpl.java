@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * <p>
  * 搜索历史表 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-09-23

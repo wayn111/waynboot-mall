@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 
 /**
- * 消息通知的邮件发送控制器
+ * 邮件处理器
+ *
+ * @author wayn
+ * @since 2020-07-06
  */
 @RestController
 @AllArgsConstructor
@@ -22,6 +25,14 @@ public class EmailController {
 
     private IMailConfigService mailConfigService;
 
+    /**
+     * 发送邮件
+     *
+     * @param subject 邮件标题
+     * @param content 邮件内容
+     * @param tos     接收人列表
+     * @return R
+     */
     @PostMapping
     public R sendEmail(String subject, String content, String tos) {
         EmailConfig emailConfig = mailConfigService.getById(1L);

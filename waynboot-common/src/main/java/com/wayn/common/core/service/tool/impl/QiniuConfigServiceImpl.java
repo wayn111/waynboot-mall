@@ -7,9 +7,7 @@ import com.wayn.common.core.service.tool.IQiniuConfigService;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>
  * 七牛云配置 服务实现类
- * </p>
  *
  * @author wayn
  * @since 2020-11-13

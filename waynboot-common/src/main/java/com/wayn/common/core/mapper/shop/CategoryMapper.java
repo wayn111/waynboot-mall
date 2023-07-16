@@ -6,9 +6,7 @@ import com.wayn.common.core.domain.shop.Category;
 import java.util.List;
 
 /**
- * <p>
  * 类目表 Mapper 接口
- * </p>
  *
  * @author wayn
  * @since 2020-06-26

@@ -14,12 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 订单表
- * </p>
- *
- * @author wayn
- * @since 2020-08-11
  */
 @Data
 @TableName(value = "shop_order")

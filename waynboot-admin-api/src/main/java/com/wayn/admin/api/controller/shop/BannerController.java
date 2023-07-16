@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * banner图片管理
+ *
+ * @author wayn
+ * @since 2020-07-06
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("shop/banner")

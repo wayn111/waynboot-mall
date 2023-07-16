@@ -5,12 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * <p>
  * 首页栏目配置VO
- * </p>
- *
- * @author wayn
- * @since 2020-10-10
  */
 @Data
 public class ColumnVO {

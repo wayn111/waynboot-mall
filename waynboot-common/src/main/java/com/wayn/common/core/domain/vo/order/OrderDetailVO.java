@@ -12,12 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <p>
  * 订单表
- * </p>
- *
- * @author wayn
- * @since 2020-08-11
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

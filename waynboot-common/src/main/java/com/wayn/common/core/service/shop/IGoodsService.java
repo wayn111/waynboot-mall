@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
  * 商品基本信息表 服务类
- * </p>
  *
  * @author wayn
  * @since 2020-07-06

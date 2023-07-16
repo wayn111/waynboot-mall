@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * <p>
- * 地址表 前端控制器
- * </p>
+ * 用户收获地址管理
  *
  * @author wayn
- * @since 2020-07-21
+ * @since 2020-07-06
  */
 @RestController
 @AllArgsConstructor
@@ -27,12 +25,24 @@ public class AddressController extends BaseController {
 
     private IAddressService iAddressService;
 
+    /**
+     * 地址列表
+     *
+     * @param address
+     * @return R
+     */
     @GetMapping("list")
     public R list(Address address) {
         Page<Address> page = getPage();
         return R.success().add("page", iAddressService.listPage(page, address));
     }
 
+    /**
+     * 根据addressId获取用户地址
+     *
+     * @param addressId 地址id
+     * @return R
+     */
     @GetMapping("{addressId}")
     public R getMember(@PathVariable Long addressId) {
         return R.success().add("data", iAddressService.getById(addressId));

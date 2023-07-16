@@ -12,6 +12,9 @@ import lombok.ToString;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * banner图片表
+ */
 @Data
 @TableName("shop_banner")
 @ToString

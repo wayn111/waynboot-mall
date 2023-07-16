@@ -11,12 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
- * 类目表
- * </p>
- *
- * @author wayn
- * @since 2020-06-26
+ * 商城类目表
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

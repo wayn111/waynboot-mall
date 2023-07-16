@@ -10,6 +10,9 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * 收获地址表
+ */
 @Data
 @TableName("shop_address")
 @EqualsAndHashCode(callSuper = true)

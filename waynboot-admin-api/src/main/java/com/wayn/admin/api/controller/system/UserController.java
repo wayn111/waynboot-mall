@@ -22,6 +22,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 后台用户管理
+ *
+ * @author wayn
+ * @since 2020-07-21
+ */
 @Slf4j
 @RestController
 @AllArgsConstructor

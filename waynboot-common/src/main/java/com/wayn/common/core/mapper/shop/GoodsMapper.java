@@ -8,9 +8,7 @@ import com.wayn.common.core.domain.shop.Goods;
 import java.util.List;
 
 /**
- * <p>
  * 商品基本信息表 Mapper 接口
- * </p>
  *
  * @author wayn
  * @since 2020-07-06

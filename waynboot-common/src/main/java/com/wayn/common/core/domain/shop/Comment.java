@@ -13,12 +13,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * <p>
  * 评论表
- * </p>
- *
- * @author wayn
- * @since 2020-10-03
  */
 @Data
 @TableName("shop_comment")

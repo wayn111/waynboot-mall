@@ -7,9 +7,7 @@ import com.wayn.common.core.domain.vo.VanTreeSelectVo;
 import java.util.List;
 
 /**
- * <p>
  * 类目表 服务类
- * </p>
  *
  * @author wayn
  * @since 2020-06-26

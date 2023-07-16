@@ -5,9 +5,7 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Seckill;
 
 /**
- * <p>
  * 秒杀库存表 服务类
- * </p>
  *
  * @author wayn
  * @since 2020-08-04

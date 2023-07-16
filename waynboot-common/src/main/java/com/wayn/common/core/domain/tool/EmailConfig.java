@@ -9,6 +9,9 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * 邮件配置表
+ */
 @Data
 @TableName("tool_email_config")
 public class EmailConfig implements Serializable {

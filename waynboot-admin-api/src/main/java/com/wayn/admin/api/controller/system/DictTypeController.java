@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 字典管理
+ *
+ * @author wayn
+ * @since 2020-07-21
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("system/dict/type")

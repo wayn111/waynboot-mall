@@ -27,9 +27,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <p>
- * 商品基本信息表 前端控制器
- * </p>
+ * 商品管理
  *
  * @author wayn
  * @since 2020-07-06

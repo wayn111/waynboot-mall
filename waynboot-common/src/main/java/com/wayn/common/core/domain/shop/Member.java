@@ -14,12 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 用户表
- * </p>
- *
- * @author wayn
- * @since 2020-07-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

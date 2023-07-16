@@ -23,6 +23,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 商城栏目管理
+ *
+ * @author wayn
+ * @since 2020-07-06
+ */
 @Slf4j
 @RestController
 @AllArgsConstructor

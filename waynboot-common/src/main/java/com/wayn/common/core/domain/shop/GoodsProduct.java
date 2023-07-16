@@ -17,12 +17,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * <p>
  * 商品货品表
- * </p>
- *
- * @author wayn
- * @since 2020-07-06
  */
 @Data
 @TableName(value = "shop_goods_product", autoResultMap = true)

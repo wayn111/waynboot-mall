@@ -11,9 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 搜索历史表
- * </p>
  *
  * @author wayn
  * @since 2020-09-23

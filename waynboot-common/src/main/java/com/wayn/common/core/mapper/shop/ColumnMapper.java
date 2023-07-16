@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Column;
 
 /**
- * <p>
  * 首页栏目配置 Mapper 接口
- * </p>
  *
  * @author wayn
  * @since 2020-10-10

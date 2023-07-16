@@ -13,9 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <p>
- * 关键字表 前端控制器
- * </p>
+ * 关键字管理
  *
  * @author wayn
  * @since 2020-10-03
