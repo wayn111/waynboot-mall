@@ -20,10 +20,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class ThreadPoolConfig {
     // 核心线程池大小
-    private final int corePoolSize = 20;
+    private final int corePoolSize = 5;
 
     // 最大可创建的线程数
-    private final int maxPoolSize = 50;
+    private final int maxPoolSize = 10;
 
     // 队列最大长度
     private final int queueCapacity = 2000;

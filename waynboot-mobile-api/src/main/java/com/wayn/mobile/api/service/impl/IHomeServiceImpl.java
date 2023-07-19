@@ -3,6 +3,7 @@ package com.wayn.mobile.api.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.Constants;
 import com.wayn.common.core.domain.shop.Banner;
 import com.wayn.common.core.domain.shop.Diamond;
@@ -104,6 +105,11 @@ public class IHomeServiceImpl implements IHomeService {
     public R listGoodsPage(Page<Goods> page) {
         IPage<Goods> goodsIPage = iGoodsService.listPage(page, new Goods());
         return R.success().add("data", goodsIPage.getRecords());
+    }
+
+    @Override
+    public R mallConfig() {
+        return R.success().add("freightLimit", WaynConfig.getFreightLimit());
     }
 
 }

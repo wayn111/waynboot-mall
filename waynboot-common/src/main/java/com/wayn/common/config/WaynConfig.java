@@ -1,7 +1,10 @@
 package com.wayn.common.config;
 
+import com.alipay.api.domain.BidDetailVO;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
 
 @Component
 @ConfigurationProperties(prefix = "wayn")
@@ -32,6 +35,15 @@ public class WaynConfig {
      * 商城移动端地址
      */
     private static String mobileUrl;
+
+    /**
+     * 商城免运费限额
+     */
+    private static BigDecimal freightLimit;
+    /**
+     * 商城运费
+     */
+    private static BigDecimal freightPrice;
 
     public static String getUploadDir() {
         return uploadDir;
@@ -87,5 +99,21 @@ public class WaynConfig {
 
     public void setMobileUrl(String mobileUrl) {
         WaynConfig.mobileUrl = mobileUrl;
+    }
+
+    public static BigDecimal getFreightLimit() {
+        return freightLimit;
+    }
+
+    public void setFreightLimit(BigDecimal freightLimit) {
+        WaynConfig.freightLimit = freightLimit;
+    }
+
+    public static BigDecimal getFreightPrice() {
+        return freightPrice;
+    }
+
+    public void setFreightPrice(BigDecimal freightPrice) {
+        WaynConfig.freightPrice = freightPrice;
     }
 }

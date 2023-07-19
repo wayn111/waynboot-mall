@@ -82,15 +82,6 @@ public class Order extends ShopBaseEntity implements Serializable {
      */
     private BigDecimal couponPrice;
 
-    /**
-     * 用户积分减免
-     */
-    private BigDecimal integralPrice;
-
-    /**
-     * 团购优惠价减免
-     */
-    private BigDecimal grouponPrice;
 
     /**
      * 订单费用， = goods_price + freight_price - coupon_price

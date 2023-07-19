@@ -14,14 +14,4 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/upload/**").addResourceLocations("file:" + WaynConfig.getUploadDir() + "/");
     }
 
-    //
-    // @Bean
-    // public ServletRegistrationBean dispatcherRegistration() {
-    //     return new ServletRegistrationBean(dispatcherServlet());
-    // }
-    //
-    // @Bean(name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME)
-    // public DispatcherServlet dispatcherServlet() {
-    //     return new WaynDispatcherServlet();
-    // }
 }

@@ -4,6 +4,7 @@ package com.wayn.mobile.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
+import com.wayn.common.config.WaynConfig;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.service.ICartService;
@@ -28,6 +29,8 @@ import java.util.List;
 public class CartController extends BaseController {
 
     private ICartService iCartService;
+
+    private WaynConfig waynConfig;
 
     @GetMapping("list")
     public R list() {
@@ -73,11 +76,24 @@ public class CartController extends BaseController {
         Long userId = MobileSecurityUtils.getUserId();
         List<Cart> cartList = iCartService.list(new QueryWrapper<Cart>()
                 .eq("user_id", userId).eq("checked", true));
-        BigDecimal amount = new BigDecimal("0.00");
+        BigDecimal goodsAmount = BigDecimal.ZERO;
+        BigDecimal orderTotalAmount = BigDecimal.ZERO;
         // 计算总价
         for (Cart cart : cartList) {
-            amount = amount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
+            goodsAmount = goodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
         }
-        return R.success().add("data", cartList).add("amount", amount);
+
+        // 根据订单商品总价计算运费，满足条件（例如88元）则免运费，否则需要支付运费（例如8元）；
+        BigDecimal freightPrice = BigDecimal.ZERO;
+        if (goodsAmount.compareTo(WaynConfig.getFreightLimit()) < 0) {
+            freightPrice = WaynConfig.getFreightPrice();
+        }
+        orderTotalAmount = goodsAmount.add(freightPrice);
+
+        return R.success()
+                .add("data", cartList)
+                .add("freightPrice", freightPrice)
+                .add("goodsAmount", goodsAmount)
+                .add("orderTotalAmount", orderTotalAmount);
     }
 }
