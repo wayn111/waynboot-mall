@@ -18,11 +18,31 @@ public class HomeController extends BaseController {
 
     private IHomeService IHomeService;
 
-    @PostMapping("index")
+    /**
+     * 商城首页
+     *
+     * @return R
+     */
+    @GetMapping("index")
     public R index() {
         return IHomeService.getHomeIndexDataCompletableFuture();
     }
 
+    /**
+     * 获取商城配置
+     *
+     * @return R
+     */
+    @GetMapping("mallConfig")
+    public R mallConfig() {
+        return IHomeService.mallConfig();
+    }
+
+    /**
+     * 为你推荐
+     *
+     * @return R
+     */
     @GetMapping("goodsList")
     public R getGoodsList() {
         Page<Goods> page = getPage();

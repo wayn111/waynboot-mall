@@ -17,9 +17,16 @@ public interface IHomeService {
 
     /**
      * 获取商品分页列表
+     *
      * @param page 分页对象
      * @return r
      */
     R listGoodsPage(Page<Goods> page);
 
+    /**
+     * 商城配置
+     *
+     * @return r
+     */
+    R mallConfig();
 }

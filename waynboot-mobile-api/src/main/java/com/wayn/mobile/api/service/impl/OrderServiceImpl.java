@@ -174,6 +174,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         LambdaQueryWrapper<Order> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Order::getOrderSn, orderSn);
         Order order = getOne(queryWrapper);
+        if (order == null) {
+            throw new BusinessException(ReturnCodeEnum.ORDER_NOT_EXISTS_ERROR);
+        }
         OrderDetailVO orderDetailVO = new OrderDetailVO();
         MyBeanUtil.copyProperties(order, orderDetailVO);
         orderDetailVO.setOrderStatusText(OrderUtil.orderStatusText(order));
@@ -187,7 +190,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public R asyncSubmit(OrderVO orderVO) throws Exception {
+    public R asyncSubmit(OrderVO orderVO) {
         OrderDTO orderDTO = new OrderDTO();
         MyBeanUtil.copyProperties(orderVO, orderDTO);
         Long userId = orderDTO.getUserId();
@@ -201,33 +204,31 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             checkedGoodsList = iCartService.listByIds(cartIdArr);
         }
 
+        if (CollectionUtils.isEmpty(checkedGoodsList)) {
+            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+        }
+
         // 商品费用
-        BigDecimal checkedGoodsPrice = new BigDecimal("0.00");
+        BigDecimal checkedGoodsPrice = BigDecimal.ZERO;
         for (Cart checkGoods : checkedGoodsList) {
             checkedGoodsPrice = checkedGoodsPrice.add(checkGoods.getPrice().multiply(new BigDecimal(checkGoods.getNumber())));
         }
 
         // 根据订单商品总价计算运费，满足条件（例如88元）则免运费，否则需要支付运费（例如8元）；
-        BigDecimal freightPrice = new BigDecimal("0.00");
-        /*if (checkedGoodsPrice.compareTo(SystemConfig.getFreightLimit()) < 0) {
-            freightPrice = SystemConfig.getFreight();
-        }*/
-
-        // 可以使用的其他钱，例如用户积分
-        BigDecimal integralPrice = new BigDecimal("0.00");
+        BigDecimal freightPrice = BigDecimal.ZERO;
+        if (checkedGoodsPrice.compareTo(WaynConfig.getFreightLimit()) < 0) {
+            freightPrice = WaynConfig.getFreightPrice();
+        }
 
         // 优惠卷抵扣费用
-        BigDecimal couponPrice = new BigDecimal("0.00");
-
-        // 团购抵扣费用
-        BigDecimal grouponPrice = new BigDecimal("0.00");
+        BigDecimal couponPrice = BigDecimal.ZERO;
 
         // 订单费用
         BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(BigDecimal.ZERO);
 
         // 最终支付费用
-        BigDecimal actualPrice = orderTotalPrice.subtract(integralPrice);
-        String orderSn = orderSnGenUtil.generateOrderSn(userId);
+        BigDecimal actualPrice = orderTotalPrice;
+        String orderSn = orderSnGenUtil.generateOrderSn();
         orderDTO.setOrderSn(orderSn);
 
         // 异步下单
@@ -300,24 +301,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 根据订单商品总价计算运费，满足条件（例如88元）则免运费，否则需要支付运费（例如8元）；
         BigDecimal freightPrice = new BigDecimal("0.00");
-        /*if (checkedGoodsPrice.compareTo(SystemConfig.getFreightLimit()) < 0) {
-            freightPrice = SystemConfig.getFreight();
-        }*/
-
-        // 可以使用的其他钱，例如用户积分
-        BigDecimal integralPrice = new BigDecimal("0.00");
+        if (checkedGoodsPrice.compareTo(WaynConfig.getFreightLimit()) < 0) {
+            freightPrice = WaynConfig.getFreightPrice();
+        }
 
         // 优惠卷抵扣费用
         BigDecimal couponPrice = new BigDecimal("0.00");
-
-        // 团购抵扣费用
-        BigDecimal grouponPrice = new BigDecimal("0.00");
 
         // 订单费用
         BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal("0.00"));
 
         // 最终支付费用
-        BigDecimal actualPrice = orderTotalPrice.subtract(integralPrice);
+        BigDecimal actualPrice = orderTotalPrice;
 
         // 组装订单数据
         Order order = new Order();
@@ -331,8 +326,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setAddress(detailedAddress);
         order.setFreightPrice(freightPrice);
         order.setCouponPrice(couponPrice);
-        order.setGrouponPrice(grouponPrice);
-        order.setIntegralPrice(integralPrice);
         order.setGoodsPrice(checkedGoodsPrice);
         order.setOrderPrice(orderTotalPrice);
         order.setActualPrice(actualPrice);
@@ -651,7 +644,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (order == null) {
             return R.error(ReturnCodeEnum.ORDER_NOT_EXISTS_ERROR);
         }
-
         // 检查这个订单是否已经处理过
         if (!OrderUtil.isCreateStatus(order)) {
             return R.error(ReturnCodeEnum.ORDER_HAS_CREATED_ERROR);

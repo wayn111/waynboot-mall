@@ -1,5 +1,6 @@
 package com.wayn.common.exception;
 
+import com.wayn.common.enums.ReturnCodeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,6 +22,11 @@ public class BusinessException extends RuntimeException {
     public BusinessException(String msg, Integer code) {
         this.code = code;
         this.msg = msg;
+    }
+
+    public BusinessException(ReturnCodeEnum returnCodeEnum) {
+        this.code = returnCodeEnum.getCode();
+        this.msg = returnCodeEnum.getMsg();
     }
 
     public BusinessException(String message, Throwable cause) {

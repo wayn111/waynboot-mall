@@ -42,6 +42,7 @@ public enum ReturnCodeEnum {
     ORDER_HAS_CREATED_ERROR(5011, "订单已经创建过了 "),
     ORDER_USER_NOT_SAME_ERROR(5012, "订单用户和当前登陆用户不一致"),
 
+    // 用户错误
     USER_NOT_EXISTS_ERROR(5101, "用户不存在"),
     USER_TWO_PASSWORD_NOT_SAME_ERROR(5102, "两次密码输入不相符"),
     USER_EMAIL_CODE_ERROR(5102, "邮箱验证码不正确"),
@@ -51,18 +52,23 @@ public enum ReturnCodeEnum {
     USER_OLD_PASSWORD_ERROR(5104, "旧密码错误"),
     USER_NEW_OLD_PASSWORD_NOT_SAME_ERROR(5105, "新密码不能与旧密码相同"),
 
+    // 上传错误
     UPLOAD_ERROR(5201, "上传图片失败"),
 
+    // 商品错误
     GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR(5301, "商品规格只能选择一个启用默认选中"),
     GOODS_HAS_OFFSHELF_ERROR(5302, "商品已经下架"),
     GOODS_STOCK_NOT_ENOUGH_ERROR(5303, "商品库存不足"),
 
+    // 部门错误
     DEPT_HAS_SUB_DEPT_ERROR(5401, "存在下级部门,不允许删除"),
     DEPT_HAS_USER_ERROR(5402, "部门存在用户,不允许删除"),
 
+    // 菜单错误
     MENU_HAS_SUB_MENU_ERROR(5501, "存在子菜单,不允许删除"),
     MENU_HAS_DISTRIBUTE_ERROR(5502, "菜单已分配,不允许删除"),
 
+    // 工具错误
     TOOL_EMAIL_ERROR(5601, "邮件信息未配置完全，请先填写配置信息"),
     TOOL_QINIU_NOT_EXISTS_ERROR(5602, "七牛云配置不存在"),
     TOOL_QINIU_CONFIG_ERROR(5603, "七牛云配置错误"),

@@ -23,10 +23,9 @@ public class OrderSnGenUtil {
     /**
      * 返回订单编号，生成规则：秒级时间戳 + 加密用户ID + 今日第几次下单
      *
-     * @param userId 用户ID
      * @return 订单编号
      */
-    public String generateOrderSn(Long userId) {
+    public String generateOrderSn() {
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
         Integer orderSnIncrLimit = Constants.ORDER_SN_INCR_LIMIT;
         Long incrKey = redisCache.luaIncrKey(CacheConstants.ORDER_SN_INCR_KEY, orderSnIncrLimit);
