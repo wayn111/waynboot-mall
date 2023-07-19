@@ -6,7 +6,7 @@ package com.wayn.common.constant;
 public class SysConstants {
 
     // ------------------------------------------------ 用户常量 ------------------------------------------------------------------------
-    public static final String DEFAULT_AVATAR = "http://cdn.wayn.xin/091fffcf8e8c25ed8d2cb926be60a16a.png";
+    public static final String DEFAULT_AVATAR = "/upload/54989c410a88af0f1c2a8e5ec87af675.webp";
 
 
     /**
