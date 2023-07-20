@@ -20,7 +20,8 @@ public class ElasticClientConfig {
         // 开始设置用户名和密码
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(config.getUsername(), config.getPassword()));
-        builder.setHttpClientConfigCallback(f -> f.setDefaultCredentialsProvider(credentialsProvider));
+        builder.setHttpClientConfigCallback(f -> f.setDefaultCredentialsProvider(credentialsProvider)
+                .setKeepAliveStrategy((response, context) ->  1000 * 60));
         return builder;
     }
 
