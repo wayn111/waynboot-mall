@@ -88,8 +88,7 @@ public class OrderUtil {
         } else if (payType == 3) {
             return "TEST";
         }
-        throw new IllegalStateException("payType不支持");
-
+        return "";
     }
 
 
