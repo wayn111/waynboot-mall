@@ -3164,11 +3164,6 @@ CREATE TABLE `shop_order`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of shop_order
--- ----------------------------
-INSERT INTO `shop_order` VALUES (1, 1, '1689693154000012', 201, 0, 'heqq', '13617159841', '北京市北京市东城区 aedsadas', '', 49.00, 10.00, 0.00, 59.00, 59.00, 'xxxxx0987654321-ali', '2023-07-18 23:12:38', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, '2023-07-18 23:12:35', '2023-07-18 23:12:38', 0);
-
--- ----------------------------
 -- Table structure for shop_order_goods
 -- ----------------------------
 DROP TABLE IF EXISTS `shop_order_goods`;
@@ -3191,11 +3186,6 @@ CREATE TABLE `shop_order_goods`  (
   INDEX `order_id`(`order_id`) USING BTREE,
   INDEX `goods_id`(`goods_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单商品表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of shop_order_goods
--- ----------------------------
-INSERT INTO `shop_order_goods` VALUES (1, 1, 1134032, '趣味粉彩系列记忆棉坐垫', '1134032', 199, 1, 49.00, '[\"标准\"]', '/upload/8b30eeb17c831eba08b97bdcb4c46a8e.webp', 0, '2023-07-18 23:12:35', NULL, 0);
 
 -- ----------------------------
 -- Table structure for shop_search_history

@@ -272,6 +272,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             checkedGoodsList = iCartService.listByIds(cartIdArr);
         }
 
+        if (checkedGoodsList.size() == 0) {
+            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+        }
+
         // 商品货品库存数量减少
         List<Long> goodsIds = checkedGoodsList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
         List<GoodsProduct> goodsProducts = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().in("goods_id", goodsIds));
