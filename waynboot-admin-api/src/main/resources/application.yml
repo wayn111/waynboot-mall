@@ -73,7 +73,7 @@ wayn:
   name: wayn
   version: 1.2.0
   email: 166738430@qq.com
-  uploadDir: ${UPLOAD_DIR:D:/waynboot-mall/webp}
+  uploadDir: ${UPLOAD_DIR:D:/waynshop/webp}
   adminUrl: http://localhost:81
   mobileUrl: http://localhost:82
   ssh-proxy: # ssh端口代理设置，eg:通过ssh连接公网服务器，在通过端口转发访问内网服务器的服务
