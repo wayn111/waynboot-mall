@@ -5,6 +5,7 @@ import com.wayn.common.core.domain.shop.Order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /*
  * 订单流程：下单成功－》支付订单－》发货－》收货
@@ -81,11 +82,11 @@ public class OrderUtil {
 
     public static String payTypeText(Order order) {
         Integer payType = order.getPayType();
-        if (payType == 1) {
+        if (Objects.equals(payType, 1)) {
             return "微信";
-        } else if (payType == 2) {
+        } else if (Objects.equals(payType, 2)) {
             return "支付宝";
-        } else if (payType == 3) {
+        } else if (Objects.equals(payType, 3)) {
             return "TEST";
         }
         return "";
