@@ -6,7 +6,6 @@
     <modules>
         <module>waynboot-common</module>
         <module>waynboot-admin-api</module>
-        <module>waynboot-generator</module>
         <module>waynboot-mobile-api</module>
         <module>waynboot-message-consumer</module>
         <module>waynboot-message-core</module>
