@@ -80,7 +80,10 @@ waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运
 ---
 
 # 开发部署
-**ps: 由于本项目图片压缩包超过100m不能在github上传，请加我的wx:waynaqua ，获取图片压缩包**
+由于本项目图片压缩包超过100m不能在github上传，
+提供百度网盘地址链接：https://pan.baidu.com/s/16_d0_f6RhVnN_dDobYm9Bw 提取码：rvlk
+
+ps: 也可以加我 wx: waynaqua 获取商城图片
 ```
 # 1. 克隆项目
 git clone git@github.com:wayn111/waynboot-mall.git
