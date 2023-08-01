@@ -74,11 +74,8 @@ public enum ReturnCodeEnum {
     TOOL_QINIU_CONFIG_ERROR(5603, "七牛云配置错误"),
 
 
-    /**
-     * 6xxx，中间件异常
-     */
-    REDIS_CONNECTION_TIMEOUT_ERROR(6001, "redis连接超时"),
-    ES_CONNECTION_TIMEOUT_ERROR(6002, "es连接超时"),
+    REDIS_CONNECTION_TIMEOUT_ERROR(5701, "redis连接超时"),
+    ES_CONNECTION_TIMEOUT_ERROR(5702, "es连接超时"),
     ;
     private final int code;
     private String msg;
