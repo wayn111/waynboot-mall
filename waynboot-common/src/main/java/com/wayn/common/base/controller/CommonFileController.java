@@ -29,7 +29,7 @@ import java.util.List;
 @Controller
 @AllArgsConstructor
 @RequestMapping("common")
-public class CommonController {
+public class CommonFileController {
 
     public static final String IMAGE_BASE64_FLAG = ";base64,";
     private UploadService uploadService;
