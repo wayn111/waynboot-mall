@@ -1,8 +1,12 @@
 package com.wayn.common.util.file;
 
+import com.alibaba.excel.util.FileTypeUtils;
 import com.wayn.common.util.security.Md5Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -14,7 +18,6 @@ import java.text.DecimalFormat;
  */
 @Slf4j
 public class FileUtils extends org.apache.commons.io.FileUtils {
-    public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-|.\\u4e00-\\u9fa5]+";
 
     private static int counter = 0;
 
@@ -86,14 +89,25 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
         return flag;
     }
 
+
     /**
-     * 文件名称验证
+     * 检查文件是否可下载
      *
-     * @param filename 文件名称
+     * @param resource 需要下载的文件
      * @return true 正常 false 非法
      */
-    public static boolean isValidFilename(String filename) {
-        return filename.matches(FILENAME_PATTERN);
+    public static boolean checkAllowDownload(String resource) {
+        // 禁止目录上跳级别
+        if (StringUtils.contains(resource, "..")) {
+            return false;
+        }
+
+        // 检查允许下载的文件规则
+        if (ArrayUtils.contains(MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION, FilenameUtils.getExtension(resource))) {
+            return true;
+        }
+        // 不在允许下载的文件规则
+        return false;
     }
 
     /**
@@ -165,13 +179,13 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
     public static String getSize(long size) {
         String resultSize;
         if (size / GB >= 1) {
-            //如果当前Byte的值大于等于1GB
+            // 如果当前Byte的值大于等于1GB
             resultSize = DF.format(size / (float) GB) + "GB   ";
         } else if (size / MB >= 1) {
-            //如果当前Byte的值大于等于1MB
+            // 如果当前Byte的值大于等于1MB
             resultSize = DF.format(size / (float) MB) + "MB   ";
         } else if (size / KB >= 1) {
-            //如果当前Byte的值大于等于1KB
+            // 如果当前Byte的值大于等于1KB
             resultSize = DF.format(size / (float) KB) + "KB   ";
         } else {
             resultSize = size + "B   ";
