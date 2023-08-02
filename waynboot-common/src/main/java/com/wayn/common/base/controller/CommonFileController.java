@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,16 +44,19 @@ public class CommonFileController {
     @GetMapping("download")
     public void fileDownload(String fileName, boolean delete, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if (!FileUtils.isValidFilename(fileName)) {
+            // 1. 判断下载文件名称是否合规
+            if (!FileUtils.checkAllowDownload(fileName)) {
                 throw new BusinessException("文件名称(" + fileName + ")非法，不允许下载。 ");
             }
-            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
+            // 2. 获取要下载的文件所在服务器的下载目录位置
             String filePath = WaynConfig.getDownloadPath() + fileName;
-
+            // 3. 重命令下载文件名称
+            String realFileName = System.currentTimeMillis() + FilenameUtils.EXTENSION_SEPARATOR + FilenameUtils.getExtension(fileName);
+            // 4. 将下载文件写入响应流并设置下载文件名称
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             response.setHeader("Content-Disposition", "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, realFileName));
-            FileUtils.       writeBytes(filePath, response.getOutputStream());
+            FileUtils.writeBytes(filePath, response.getOutputStream());
             if (delete) {
                 FileUtils.deleteFile(filePath);
             }
@@ -69,7 +73,7 @@ public class CommonFileController {
     @GetMapping("/downloadTemplate")
     public void downloadTemplate(String fileName, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if (!FileUtils.isValidFilename(fileName)) {
+            if (!FileUtils.checkAllowDownload(fileName)) {
                 throw new BusinessException("文件名称(" + fileName + ")非法，不允许下载。 ");
             }
             String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
@@ -93,10 +97,12 @@ public class CommonFileController {
     @ResponseBody
     public R uploadFile(MultipartFile file, HttpServletRequest request) {
         try {
-            // 上传文件路径
+            // 1. 获取上传文件的保存路径
             String filePath = WaynConfig.getUploadDir();
+            // 2. 上传文件至服务器
             String fileName = FileUploadUtil.uploadFile(file, filePath);
-            String fileUrl = uploadService.uploadFile(fileName);
+            // 3. 返回文件访问路径
+            String fileUrl = "/upload/" + fileName;
             return R.success().add("url", fileUrl).add("fileName", fileName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
