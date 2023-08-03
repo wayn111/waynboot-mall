@@ -2,8 +2,10 @@ package com.wayn.common.util;
 
 import com.wayn.common.constant.Constants;
 import com.wayn.common.util.http.HttpUtil;
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -111,5 +113,9 @@ public class ServletUtils {
         response.setHeader("Content-Length", HttpUtil.safeHttpHeader(size + ""));
         response.setHeader("Content-Disposition", HttpUtil.safeHttpHeader("attachment;filename=" + URLEncoder.encode(fileName, Constants.UTF_ENCODING)));
         response.setContentType("application/octet-stream");
+    }
+
+    public static byte[] getBodyBytes(ServletRequest request) throws IOException {
+        return IOUtils.readFully(request.getInputStream(), 1024);
     }
 }
