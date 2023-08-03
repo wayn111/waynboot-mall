@@ -322,4 +322,8 @@ public class HttpUtil {
         return temp;
     }
 
+    public static boolean isJsonRequest(HttpServletRequest request) {
+        return request.getHeader("Content-Type") != null
+                && request.getHeader("Content-Type").contains("application/json");
+    }
 }

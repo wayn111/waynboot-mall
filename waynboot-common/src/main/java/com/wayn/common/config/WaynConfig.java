@@ -1,6 +1,5 @@
 package com.wayn.common.config;
 
-import com.alipay.api.domain.BidDetailVO;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 

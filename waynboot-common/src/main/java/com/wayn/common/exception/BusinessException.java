@@ -24,12 +24,8 @@ public class BusinessException extends RuntimeException {
         this.msg = returnCodeEnum.getMsg();
     }
 
-    public BusinessException(String message, Throwable cause) {
-        super(message, cause);
+    public BusinessException(String msg) {
+        this.msg = msg;
+        this.code = ReturnCodeEnum.CUSTOM_ERROR.getCode();
     }
-
-    public BusinessException(String message) {
-        super(message);
-    }
-
 }
