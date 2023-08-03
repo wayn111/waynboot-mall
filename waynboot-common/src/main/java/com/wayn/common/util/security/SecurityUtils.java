@@ -1,8 +1,8 @@
 package com.wayn.common.util.security;
 
 import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +19,7 @@ public class SecurityUtils {
         try {
             return getLoginUser().getUser().getUserId();
         } catch (Exception e) {
-            throw new BusinessException("获取用户账户异常", HttpStatus.UNAUTHORIZED.value());
+            throw new BusinessException(ReturnCodeEnum.UNAUTHORIZED);
         }
     }
 
@@ -30,7 +30,7 @@ public class SecurityUtils {
         try {
             return getLoginUser().getUsername();
         } catch (Exception e) {
-            throw new BusinessException("获取用户账户异常", HttpStatus.UNAUTHORIZED.value());
+            throw new BusinessException(ReturnCodeEnum.UNAUTHORIZED);
         }
     }
 
@@ -41,7 +41,7 @@ public class SecurityUtils {
         try {
             return (LoginUserDetail) getAuthentication().getPrincipal();
         } catch (Exception e) {
-            throw new BusinessException("获取用户信息异常", HttpStatus.UNAUTHORIZED.value());
+            throw new BusinessException(ReturnCodeEnum.UNAUTHORIZED);
         }
     }
 
