@@ -1,8 +1,8 @@
 package com.wayn.mobile.framework.security.util;
 
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.mobile.framework.security.LoginUserDetail;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,7 +18,7 @@ public class MobileSecurityUtils {
         try {
             return getLoginUser().getUsername();
         } catch (Exception e) {
-            throw new BusinessException("获取用户账户异常", HttpStatus.UNAUTHORIZED.value());
+            throw new BusinessException(ReturnCodeEnum.UNAUTHORIZED);
         }
     }
 
@@ -37,7 +37,7 @@ public class MobileSecurityUtils {
         try {
             return (LoginUserDetail) getAuthentication().getPrincipal();
         } catch (Exception e) {
-            throw new BusinessException("获取用户信息异常", HttpStatus.UNAUTHORIZED.value());
+            throw new BusinessException(ReturnCodeEnum.UNAUTHORIZED);
         }
     }
 

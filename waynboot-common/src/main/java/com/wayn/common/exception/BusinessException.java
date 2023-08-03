@@ -19,11 +19,6 @@ public class BusinessException extends RuntimeException {
 
     private String msg;
 
-    public BusinessException(String msg, Integer code) {
-        this.code = code;
-        this.msg = msg;
-    }
-
     public BusinessException(ReturnCodeEnum returnCodeEnum) {
         this.code = returnCodeEnum.getCode();
         this.msg = returnCodeEnum.getMsg();
