@@ -97,7 +97,7 @@ git clone git@github.com:wayn111/waynboot-mall.git
 在项目根目录下，找到`wayn_shop_*.sql`文件，新建mysql数据库wayn_shop，导入其中
 
 # 5. 项目图片部署(注意由于本项目图片压缩包超过100m不能在github上传，请加我的wx:waynaqua ，获取图片压缩包)
-在项目根目录下，找到webp.zip文件，将zip中所有图片解压缩部署到D:\waynshop\webp目录下
+在项目根目录下，找到webp.zip文件，将zip中所有图片解压缩部署到D:/waynshop/webp目录下
 
 # 6. 修改Mysql、Redis、RabbitMQ、Elasticsearch连接配置
 修改`application-dev.yml`以及`application.yml`文件中数据连接配置相关信息
