@@ -1,5 +1,6 @@
 package com.wayn.common.annotation;
 
+import com.wayn.common.enums.ModuleEnum;
 import com.wayn.common.enums.OperatorEnum;
 
 import java.lang.annotation.ElementType;
@@ -18,7 +19,7 @@ public @interface Log {
      *
      * @return
      */
-    String value() default "";
+    ModuleEnum value() default ModuleEnum.DEFAULT;
 
     /**
      * 操作类型

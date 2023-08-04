@@ -6,12 +6,14 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.util.encoders.UTF8;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 public class ServletUtils {
@@ -117,5 +119,9 @@ public class ServletUtils {
 
     public static byte[] getBodyBytes(ServletRequest request) throws IOException {
         return IOUtils.readFully(request.getInputStream(), 1024);
+    }
+
+    public static String getBody(ServletRequest request) throws IOException {
+        return new String(getBodyBytes(request), Charset.defaultCharset());
     }
 }

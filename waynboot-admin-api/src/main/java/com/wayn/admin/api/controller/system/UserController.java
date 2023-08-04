@@ -1,11 +1,14 @@
 package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.common.annotation.Log;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.service.system.IRoleService;
 import com.wayn.common.core.service.system.IUserService;
+import com.wayn.common.enums.ModuleEnum;
+import com.wayn.common.enums.OperatorEnum;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.excel.ExcelUtil;
@@ -38,6 +41,7 @@ public class UserController extends BaseController {
 
     private IRoleService iRoleService;
 
+    @Log(value = ModuleEnum.USER, operator = OperatorEnum.SELECT)
     @PreAuthorize("@ss.hasPermi('system:user:list')")
     @GetMapping("/list")
     public R list(User user) {
