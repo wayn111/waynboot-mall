@@ -144,7 +144,11 @@
             <artifactId>easyexcel</artifactId>
             <version>3.2.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>

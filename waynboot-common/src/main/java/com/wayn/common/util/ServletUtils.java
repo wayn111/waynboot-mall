@@ -1,12 +1,11 @@
 package com.wayn.common.util;
 
+import cn.hutool.core.io.IoUtil;
 import com.wayn.common.constant.Constants;
 import com.wayn.common.util.http.HttpUtil;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.util.encoders.UTF8;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -118,7 +117,7 @@ public class ServletUtils {
     }
 
     public static byte[] getBodyBytes(ServletRequest request) throws IOException {
-        return IOUtils.readFully(request.getInputStream(), 1024);
+        return IoUtil.readBytes(request.getInputStream());
     }
 
     public static String getBody(ServletRequest request) throws IOException {
