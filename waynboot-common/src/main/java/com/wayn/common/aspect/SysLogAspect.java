@@ -23,9 +23,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 @Aspect
 @Component
-@Slf4j
 public class SysLogAspect {
 
     private static final ThreadLocal<Long> startTimeLocal = ThreadLocal.withInitial(() -> 0L);
