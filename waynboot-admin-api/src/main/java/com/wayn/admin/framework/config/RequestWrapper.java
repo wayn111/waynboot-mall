@@ -1,8 +1,7 @@
 package com.wayn.admin.framework.config;
 
 
-import cn.hutool.extra.servlet.ServletUtil;
-import com.wayn.common.util.ServletUtils;
+import cn.hutool.core.io.IoUtil;
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 
     public RequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
-        body = ServletUtils.getBodyBytes(request);
+        body = IoUtil.readBytes(request.getInputStream());
     }
 
     @Override
