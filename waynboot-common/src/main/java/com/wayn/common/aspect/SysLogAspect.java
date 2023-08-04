@@ -2,7 +2,13 @@ package com.wayn.common.aspect;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.wayn.common.annotation.Log;
+import com.wayn.common.core.domain.system.SysLog;
+import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.core.service.system.ISysLogService;
 import com.wayn.common.util.ServletUtils;
+import com.wayn.common.util.http.HttpUtil;
+import com.wayn.common.util.security.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,8 +16,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -22,18 +26,14 @@ import java.util.Objects;
 @Aspect
 @Component
 @Slf4j
-public class OperLogAspect {
+public class SysLogAspect {
 
     private static final ThreadLocal<Long> startTimeLocal = ThreadLocal.withInitial(() -> 0L);
 
     @Autowired
-    private OperMgrLogDao operMgrLogDao;
+    private ISysLogService iSysLogService;
 
-    @Autowired
-    @Qualifier("operLogTaskExecutor")
-    private TaskExecutor operLogTaskExecutor;
-
-    @Pointcut("@annotation(com.vc.mgr.modules.vc.model.annotation.Log)")
+    @Pointcut("@annotation(com.wayn.common.annotation.Log)")
     public void logPointCut() {
     }
 
@@ -83,34 +83,34 @@ public class OperLogAspect {
             HttpServletRequest request = ServletUtils.getRequest();
             // 获取日志注解
             Log log = method.getAnnotation(Log.class);
-            LoginUserBean loginUserBean = (LoginUserBean) request.getSession().getAttribute(Constants.CURRENT_ADMIN_KEY);
-            if (loginUserBean == null) {
+            LoginUserDetail loginUser = SecurityUtils.getLoginUser();
+            if (loginUser == null) {
                 return;
             }
             if (log != null) {
                 // 创建操作日志对象
-                OperMgrLog operLog = new OperMgrLog();
-                operLog.setCreateTime(new Date());
-                operLog.setModuleName(log.value().getName());
-                operLog.setOperation(log.operator().getCode());
-                operLog.setUserName(loginUserBean.getAname());
-                operLog.setUrl(StringUtils.substring(request.getRequestURI(), 0, 100));
+                SysLog sysLog = new SysLog();
+                sysLog.setCreateTime(new Date());
+                sysLog.setModuleName(log.value().getName());
+                sysLog.setOperation(log.operator().getCode());
+                sysLog.setUserName(loginUser.getUsername());
+                sysLog.setUrl(StringUtils.substring(request.getRequestURI(), 0, 100));
                 // 设置方法名称
                 String className = joinPoint.getTarget().getClass().getName();
                 String methodName = method.getName();
-                operLog.setMethod(className + "." + methodName + "()");
-                operLog.setOperState(Constants.OPERATOR_SUCCESS);
-                operLog.setRequestMethod(request.getMethod());
-                operLog.setExecuteTime(executeTime / 1000000);
+                sysLog.setMethod(className + "." + methodName + "()");
+                sysLog.setOperState(1);
+                sysLog.setRequestMethod(request.getMethod());
+                sysLog.setExecuteTime(executeTime / 1000000);
                 // 保存请求响应
                 if (Objects.nonNull(response)) {
-                    operLog.setRequestResponse(StringUtils.substring(JSON.toJSONString(response), 0, 2000));
+                    sysLog.setRequestResponse(StringUtils.substring(JSON.toJSONString(response), 0, 2000));
                 }
-
+                // 判断是否需要保存请求参数
                 if (log.isNeedParam()) {
-                    String reqParmeter = "";
-                    if (ServletUtil.isJsonRequest(request)) {
-                        reqParmeter = ServletUtil.getBody(request);
+                    String reqParmeter;
+                    if (HttpUtil.isJsonRequest(request)) {
+                        reqParmeter = ServletUtils.getBody(request);
                     } else {
                         // 保存请求参数
                         Map<String, String[]> parameterMap = request.getParameterMap();
@@ -126,13 +126,13 @@ public class OperLogAspect {
                         }
                         reqParmeter = obj.toJSONString();
                     }
-                    operLog.setRequestParams(StringUtils.substring(reqParmeter, 0, 2000));
+                    sysLog.setRequestParams(StringUtils.substring(reqParmeter, 0, 2000));
                 }
                 if (e != null) {
-                    operLog.setOperState(Constants.OPERATOR_fail);
-                    operLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
+                    sysLog.setOperState(0);
+                    sysLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
                 }
-                operLogTaskExecutor.execute(() -> operMgrLogDao.insert(operLog));
+                iSysLogService.save(sysLog);
             }
         } catch (Exception exception) {
             log.error("handlerLog", exception);
