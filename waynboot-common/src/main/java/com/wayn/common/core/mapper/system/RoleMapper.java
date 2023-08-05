@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.system.Role;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface RoleMapper extends BaseMapper<Role> {
@@ -18,4 +19,6 @@ public interface RoleMapper extends BaseMapper<Role> {
     List<Role> selectRoleList(Role role);
 
     List<Role> selectRolesByUserName(String userName);
+
+    Collection<String> selectRoleKeyByUserId(Long userId);
 }

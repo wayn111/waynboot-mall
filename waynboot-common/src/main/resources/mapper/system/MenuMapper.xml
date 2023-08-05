@@ -78,4 +78,13 @@
 		</where>
 		order by m.parent_id, m.sort
 	</select>
+
+	<select id="selectMenuPermsByRoleKey" resultType="java.lang.String">
+		select distinct m.perms
+		from sys_menu m
+				 left join sys_role_menu rm on m.menu_id = rm.menu_id
+				 left join sys_role r on r.role_id = rm.role_id
+		where m.menu_status = '0' and r.role_status = '0' and r.role_key = #{roleKey}
+
+	</select>
 </mapper>

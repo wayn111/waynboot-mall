@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.system.Role;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface IRoleService extends IService<Role> {
@@ -95,4 +96,6 @@ public interface IRoleService extends IService<Role> {
      * @return int
      */
     long countUserRoleByRoleId(Long roleId);
+
+    Collection<String> selectRoleKeyByUserId(Long userId);
 }

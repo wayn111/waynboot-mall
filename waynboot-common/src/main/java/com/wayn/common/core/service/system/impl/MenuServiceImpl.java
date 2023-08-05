@@ -37,8 +37,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     }
 
     @Override
-    public List<String> selectMenuPermsByUserId(Long userId) {
-        return menuMapper.selectMenuPermsByUserId(userId);
+    public List<String> selectMenuPermsByRoleKey(String roleKey) {
+        return menuMapper.selectMenuPermsByRoleKey(roleKey);
     }
 
     @Override
