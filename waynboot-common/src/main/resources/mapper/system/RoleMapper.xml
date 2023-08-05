@@ -81,4 +81,12 @@
         <include refid="selectRoleVo"/>
         WHERE r.del_flag = 0 and u.user_name = #{userName}
     </select>
+
+    <select id="selectRoleKeyByUserId" resultType="java.lang.String">
+        SELECT r.role_key
+        FROM sys_role r
+                 left join sys_user_role ur on ur.role_id = r.role_id
+                 left join sys_user u on u.user_id = ur.user_id
+        WHERE r.del_flag = 0 and ur.user_id = #{userId}
+    </select>
 </mapper>

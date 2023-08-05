@@ -33,7 +33,7 @@ public class LoginService {
             if (e instanceof BadCredentialsException) {
                 throw new BadCredentialsException(e.getMessage(), e);
             } else {
-                throw new BusinessException(e.getMessage());
+                throw new BusinessException(e.getMessage(), e);
             }
         }
         LoginUserDetail principal = (LoginUserDetail) authentication.getPrincipal();

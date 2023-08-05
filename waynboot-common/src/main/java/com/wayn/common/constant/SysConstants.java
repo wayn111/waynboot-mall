@@ -37,6 +37,23 @@ public class SysConstants {
      */
     public static final String TOKEN_PREFIX = "Bearer ";
 
+    // ------------------------------------------------ 角色常量 ------------------------------------------------------------------------
+
+    /**
+     * 所有权限标识
+     */
+    public static final String ALL_PERMISSION = "*:*:*";
+
+    /**
+     * 管理员角色权限标识
+     */
+    public static final String SUPER_ADMIN = "admin";
+
+    public static final String ROLE_DELIMETER = ",";
+
+    public static final String PERMISSION_DELIMETER = ",";
+
+
     // ------------------------------------------------ 菜单常量 ------------------------------------------------------------------------
     /**
      * 类型（M目录 C菜单 F按钮）

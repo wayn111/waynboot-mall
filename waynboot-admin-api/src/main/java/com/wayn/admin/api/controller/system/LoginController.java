@@ -1,7 +1,7 @@
 package com.wayn.admin.api.controller.system;
 
 import com.wayn.admin.framework.security.service.LoginService;
-import com.wayn.admin.framework.security.service.SysPermissionService;
+import com.wayn.admin.framework.security.service.PermissionService;
 import com.wayn.admin.framework.security.service.TokenService;
 import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Menu;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class LoginController {
     private LoginService loginService;
     private TokenService tokenService;
-    private SysPermissionService sysPermissionService;
+    private PermissionService permissionService;
     private IMenuService iMenuService;
     private RedisCache redisCache;
 
@@ -60,8 +60,8 @@ public class LoginController {
         R success = R.success();
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
         User user = loginUser.getUser();
-        Set<String> rolePermission = sysPermissionService.getRolePermission(user);
-        Set<String> menuPermission = sysPermissionService.getMenuPermission(user);
+        Set<String> rolePermission = permissionService.getRolePermission(user);
+        Set<String> menuPermission = permissionService.getMenuPermission(rolePermission);
         success.add("user", user);
         success.add("roles", rolePermission);
         success.add("permissions", menuPermission);

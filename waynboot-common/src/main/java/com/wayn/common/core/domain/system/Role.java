@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.wayn.common.base.entity.BaseEntity;
+import com.wayn.common.constant.SysConstants;
 import com.wayn.common.enums.domain.StatusConverter;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.util.List;
@@ -78,12 +80,12 @@ public class Role extends BaseEntity {
     }
 
 
-    public static boolean isAdmin(Long roleId) {
-        return roleId != null && 1L == roleId;
+    public static boolean isAdmin(String roleKey) {
+        return StringUtils.isNotBlank(roleKey) && SysConstants.SUPER_ADMIN.equals(roleKey);
     }
 
     public boolean isAdmin() {
-        return isAdmin(this.roleId);
+        return isAdmin(this.roleKey);
     }
 
 }

@@ -18,12 +18,12 @@ public interface IMenuService extends IService<Menu> {
     List<Menu> list(Menu menu);
 
     /**
-     * 根据用户id查询权限
+     * 根据角色key查询权限
      *
      * @param userId
      * @return 权限列表
      */
-    List<String> selectMenuPermsByUserId(Long userId);
+    List<String> selectMenuPermsByRoleKey(String roleKey);
 
     /**
      * 根据用户id查询菜单树

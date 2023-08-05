@@ -28,9 +28,9 @@ public class GlobalExceptionHandler {
     public R businessException(BusinessException e) {
         log.error(e.getMessage(), e);
         if (Objects.isNull(e.getCode())) {
-            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(e.getMessage()));
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(e.getMsg()));
         }
-        return R.error(e.getCode(), e.getMessage());
+        return R.error(e.getCode(), e.getMsg());
     }
 
     /**

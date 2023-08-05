@@ -17,6 +17,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户表 sys_user

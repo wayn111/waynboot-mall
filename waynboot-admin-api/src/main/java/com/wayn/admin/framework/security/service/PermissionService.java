@@ -1,34 +1,29 @@
 package com.wayn.admin.framework.security.service;
 
+import com.wayn.common.constant.SysConstants;
 import com.wayn.common.core.domain.system.Role;
+import com.wayn.common.core.domain.system.User;
 import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.core.service.system.IMenuService;
+import com.wayn.common.core.service.system.IRoleService;
+import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.util.ServletUtils;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Service("ss")
 @AllArgsConstructor
 public class PermissionService {
-    /**
-     * 所有权限标识
-     */
-    private static final String ALL_PERMISSION = "*:*:*";
-
-    /**
-     * 管理员角色权限标识
-     */
-    private static final String SUPER_ADMIN = "admin";
-
-    private static final String ROLE_DELIMETER = ",";
-
-    private static final String PERMISSION_DELIMETER = ",";
-
     private TokenService tokenService;
+    private IUserService userService;
+    private IRoleService roleService;
+    private IMenuService menuService;
 
     /**
      * 验证用户是否具备某权限
@@ -72,7 +67,7 @@ public class PermissionService {
             return false;
         }
         Set<String> authorities = loginUser.getPermissions();
-        for (String permission : permissions.split(PERMISSION_DELIMETER)) {
+        for (String permission : permissions.split(SysConstants.PERMISSION_DELIMETER)) {
             if (permission != null && hasPermissions(authorities, permission)) {
                 return true;
             }
@@ -96,7 +91,7 @@ public class PermissionService {
         }
         for (Role sysRole : loginUser.getUser().getRoles()) {
             String roleKey = sysRole.getRoleKey();
-            if (SUPER_ADMIN.contains(roleKey) || roleKey.contains(StringUtils.trim(role))) {
+            if (SysConstants.SUPER_ADMIN.contains(roleKey) || roleKey.contains(StringUtils.trim(role))) {
                 return true;
             }
         }
@@ -127,7 +122,7 @@ public class PermissionService {
         if (Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getUser().getRoles())) {
             return false;
         }
-        for (String role : roles.split(ROLE_DELIMETER)) {
+        for (String role : roles.split(SysConstants.ROLE_DELIMETER)) {
             if (hasRole(role)) {
                 return true;
             }
@@ -143,6 +138,43 @@ public class PermissionService {
      * @return 用户是否具备某权限
      */
     private boolean hasPermissions(Set<String> permissions, String permission) {
-        return permissions.contains(ALL_PERMISSION) || permissions.contains(StringUtils.trim(permission));
+        return permissions.contains(SysConstants.ALL_PERMISSION)
+                || permissions.contains(StringUtils.trim(permission));
+    }
+
+    /**
+     * 获取角色数据权限
+     *
+     * @param user 用户信息
+     * @return 角色权限信息
+     */
+    public Set<String> getRolePermission(User user) {
+        Set<String> roles = new HashSet<>();
+        // 管理员拥有所有权限
+        if (user.isAdmin()) {
+            roles.add("admin");
+        } else {
+            roles.addAll(roleService.selectRoleKeyByUserId(user.getUserId()));
+        }
+        return roles;
+    }
+
+    /**
+     * 获取菜单数据权限
+     *
+     * @param roleKeys 角色信息
+     * @return 菜单权限信息
+     */
+    public Set<String> getMenuPermission(Set<String> roleKeys) {
+        Set<String> perms = new HashSet<>();
+        // 管理员拥有所有权限
+        if (roleKeys.contains(SysConstants.SUPER_ADMIN)) {
+            perms.add("*:*:*");
+        } else {
+            for (String roleKey : roleKeys) {
+                perms.addAll(menuService.selectMenuPermsByRoleKey(roleKey));
+            }
+        }
+        return perms;
     }
 }

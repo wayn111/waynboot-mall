@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -101,6 +102,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public long countUserRoleByRoleId(Long roleId) {
         return iUserRoleService.count(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, roleId));
+    }
+
+    @Override
+    public Collection<String> selectRoleKeyByUserId(Long userId) {
+        return roleMapper.selectRoleKeyByUserId(userId);
     }
 
     @Override
