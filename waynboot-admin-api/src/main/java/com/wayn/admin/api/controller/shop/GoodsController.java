@@ -6,13 +6,14 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.enums.ReturnCodeEnum;
+import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.file.FileUtils;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
 import com.wayn.data.redis.manager.RedisCache;
+import com.wayn.data.redis.manager.RedisLock;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 商品管理
@@ -41,6 +41,7 @@ public class GoodsController extends BaseController {
     private IGoodsService iGoodsService;
     private ElasticDocument elasticDocument;
     private RedisCache redisCache;
+    private RedisLock redisLock;
 
     @GetMapping("/list")
     public R list(Goods goods) {
@@ -70,12 +71,12 @@ public class GoodsController extends BaseController {
 
     @PostMapping("syncEs")
     public R syncEs() {
-        if (redisCache.getCacheObject(EsConstants.ES_GOODS_INDEX_KEY) != null) {
-            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("正在同步，请稍等"));
-        }
         boolean flag = false;
-        redisCache.setCacheObject(EsConstants.ES_GOODS_INDEX_KEY, true, 3, TimeUnit.MINUTES);
         try {
+            boolean lock = redisLock.lock(EsConstants.ES_GOODS_INDEX_KEY, 2);
+            if (!lock) {
+                throw new BusinessException("加锁失败");
+            }
             elasticDocument.deleteIndex(EsConstants.ES_GOODS_INDEX);
             InputStream inputStream = this.getClass().getResourceAsStream(EsConstants.ES_INDEX_GOODS_FILENAME);
             if (elasticDocument.createIndex(EsConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
@@ -100,10 +101,11 @@ public class GoodsController extends BaseController {
                 }
                 flag = elasticDocument.insertBatch(EsConstants.ES_GOODS_INDEX, entities);
             }
+
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            redisCache.deleteObject(EsConstants.ES_GOODS_INDEX_KEY);
+            redisLock.unLock(EsConstants.ES_GOODS_INDEX_KEY);
         }
         return R.result(flag);
     }

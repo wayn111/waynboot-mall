@@ -60,6 +60,7 @@ public class SearchController extends BaseController {
 
     @GetMapping("result")
     public R result(SearchVO searchVO) throws IOException {
+        // 获取筛选、排序条件
         Long memberId = MobileSecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();
         Boolean filterNew = searchVO.getFilterNew();
@@ -111,15 +112,18 @@ public class SearchController extends BaseController {
             boolQueryBuilder.filter(filterQuery);
         }
 
+        // 组装Elasticsearch查询条件
         searchSourceBuilder.query(boolQueryBuilder);
+        // Elasticsearch分页相关
         searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
         searchSourceBuilder.size((int) page.getSize());
+        // 执行Elasticsearch查询
         List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
         List<Integer> goodsIdList = list.stream().map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
-        if (goodsIdList.size() == 0) {
+        if (goodsIdList.isEmpty()) {
             return R.success().add("goods", Collections.emptyList());
         }
-        // 根据es中返回商品ID查询商品详情并保持es中的排序
+        // 根据Elasticsearch中返回商品ID查询商品详情并保持es中的排序
         List<Goods> goodsList = iGoodsService.searchResult(goodsIdList);
         Map<Integer, Goods> goodsMap = goodsList.stream().collect(Collectors.toMap(goods -> Math.toIntExact(goods.getId()), o -> o));
         List<Goods> returnGoodsList = new ArrayList<>(goodsList.size());

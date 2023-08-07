@@ -13,7 +13,7 @@ public interface IHomeService {
      * @return r
      * @see <a href="https://www.cnblogs.com/cjsblog/p/9267163.html">https://www.cnblogs.com/cjsblog/p/9267163.html</a>
      */
-    R getHomeIndexDataCompletableFuture();
+    R index();
 
     /**
      * 获取商品分页列表
