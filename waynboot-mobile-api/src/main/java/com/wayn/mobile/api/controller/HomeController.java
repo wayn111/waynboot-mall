@@ -25,7 +25,7 @@ public class HomeController extends BaseController {
      */
     @GetMapping("index")
     public R index() {
-        return IHomeService.getHomeIndexDataCompletableFuture();
+        return IHomeService.index();
     }
 
     /**
