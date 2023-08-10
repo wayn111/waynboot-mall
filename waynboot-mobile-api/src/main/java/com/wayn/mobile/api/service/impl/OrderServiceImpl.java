@@ -195,6 +195,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         MyBeanUtil.copyProperties(orderVO, orderDTO);
         Long userId = MobileSecurityUtils.getUserId();
         Long addressId = orderDTO.getAddressId();
+        orderDTO.setUserId(userId);
         Address address = iAddressService.getById(addressId);
         if (!Objects.equals(address.getMemberId(), userId)) {
             throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_ADDRESS_ERROR);
