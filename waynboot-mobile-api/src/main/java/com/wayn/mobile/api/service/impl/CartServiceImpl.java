@@ -15,6 +15,8 @@ import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
+import com.wayn.data.redis.constant.RedisKeyEnum;
+import com.wayn.data.redis.manager.RedisLock;
 import com.wayn.mobile.api.domain.Cart;
 import com.wayn.mobile.api.mapper.CartMapper;
 import com.wayn.mobile.api.service.ICartService;
@@ -42,6 +44,8 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
+
+    private RedisLock redisLock;
 
     private IGoodsService iGoodsService;
 
@@ -71,36 +75,43 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         }
         Long userId = MobileSecurityUtils.getLoginUser().getMember().getId();
         GoodsProduct product = iGoodsProductService.getById(productId);
-        Cart existsCart = checkExistsGoods(userId, goodsId, productId);
-        if (Objects.isNull(existsCart)) {
-            if (Objects.isNull(product) || product.getNumber() < number) {
-                return R.error(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
-            }
-
-            cart.setGoodsSn(goods.getGoodsSn());
-            cart.setGoodsName(goods.getName());
-            if (StringUtils.isEmpty(product.getUrl())) {
-                cart.setPicUrl(goods.getPicUrl());
+        boolean lock = redisLock.lock(RedisKeyEnum.CART_LOCK.getKey(userId), 2);
+        if (!lock) {
+            throw new BusinessException("加锁失败");
+        }
+        try {
+            Cart existsCart = checkExistsGoods(userId, goodsId, productId);
+            if (Objects.isNull(existsCart)) {
+                if (Objects.isNull(product) || number > product.getNumber()) {
+                    return R.error(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
+                }
+                cart.setGoodsSn(goods.getGoodsSn());
+                cart.setGoodsName(goods.getName());
+                if (StringUtils.isEmpty(product.getUrl())) {
+                    cart.setPicUrl(goods.getPicUrl());
+                } else {
+                    cart.setPicUrl(product.getUrl());
+                }
+                cart.setPrice(product.getPrice());
+                cart.setSpecifications((product.getSpecifications()));
+                cart.setUserId(Math.toIntExact(userId));
+                cart.setChecked(true);
+                cart.setRemark(goods.getBrief());
+                cart.setCreateTime(LocalDateTime.now());
+                save(cart);
             } else {
-                cart.setPicUrl(product.getUrl());
+                int num = existsCart.getNumber() + number;
+                if (num > product.getNumber()) {
+                    return R.error(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
+                }
+                existsCart.setNumber(num);
+                cart.setUpdateTime(LocalDateTime.now());
+                if (!updateById(existsCart)) {
+                    return R.error();
+                }
             }
-            cart.setPrice(product.getPrice());
-            cart.setSpecifications((product.getSpecifications()));
-            cart.setUserId(Math.toIntExact(userId));
-            cart.setChecked(true);
-            cart.setRemark(goods.getBrief());
-            cart.setCreateTime(LocalDateTime.now());
-            save(cart);
-        } else {
-            int num = existsCart.getNumber() + number;
-            if (num > product.getNumber()) {
-                return R.error(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
-            }
-            existsCart.setNumber(num);
-            cart.setUpdateTime(LocalDateTime.now());
-            if (!updateById(existsCart)) {
-                return R.error();
-            }
+        } finally {
+            redisLock.unLock(RedisKeyEnum.CART_LOCK.getKey(userId));
         }
         return R.success();
     }

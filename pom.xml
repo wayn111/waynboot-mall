@@ -28,7 +28,7 @@
         <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
         <lettuce.version>6.2.3.RELEASE</lettuce.version>
         <elasticsearch.version>7.14.0</elasticsearch.version>
-        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
         <druid.version>1.2.16</druid.version>
         <lombok.version>1.18.26</lombok.version>
         <commons.io.version>2.11.0</commons.io.version>

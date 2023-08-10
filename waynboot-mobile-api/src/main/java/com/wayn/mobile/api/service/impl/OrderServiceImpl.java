@@ -193,7 +193,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public R asyncSubmit(OrderVO orderVO) {
         OrderDTO orderDTO = new OrderDTO();
         MyBeanUtil.copyProperties(orderVO, orderDTO);
-        Long userId = orderDTO.getUserId();
+        Long userId = MobileSecurityUtils.getUserId();
+        Long addressId = orderDTO.getAddressId();
+        Address address = iAddressService.getById(addressId);
+        if (!Objects.equals(address.getMemberId(), userId)) {
+            throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_ADDRESS_ERROR);
+        }
 
         // 获取用户订单商品，为空默认取购物车已选中商品
         List<Long> cartIdArr = orderDTO.getCartIdArr();
@@ -203,9 +208,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } else {
             checkedGoodsList = iCartService.listByIds(cartIdArr);
         }
-
         if (CollectionUtils.isEmpty(checkedGoodsList)) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+            throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_CART_EMPTY_ERROR);
         }
 
         // 商品费用
@@ -272,8 +276,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             checkedGoodsList = iCartService.listByIds(cartIdArr);
         }
 
-        if (checkedGoodsList.size() == 0) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+        if (checkedGoodsList.isEmpty()) {
+            throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_CART_EMPTY_ERROR);
         }
 
         // 商品货品库存数量减少

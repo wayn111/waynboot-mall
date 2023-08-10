@@ -7,10 +7,6 @@ public class EsConstants {
      */
     public static final String ES_GOODS_INDEX = "goods";
     /**
-     * 商品索引创建缓存，创建成功后删除
-     */
-    public static final String ES_GOODS_INDEX_KEY = "es_goods";
-    /**
      * es商品索引的创建语句所在文件位置
      */
     public static String ES_INDEX_GOODS_FILENAME = "/es/index/goods.json";
