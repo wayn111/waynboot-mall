@@ -41,6 +41,8 @@ public enum ReturnCodeEnum {
     ORDER_NOT_SUPPORT_PAYWAY_ERROR(5010, "不支持的支付类型"),
     ORDER_HAS_CREATED_ERROR(5011, "订单已经创建过了 "),
     ORDER_USER_NOT_SAME_ERROR(5012, "订单用户和当前登陆用户不一致"),
+    ORDER_ERROR_CART_EMPTY_ERROR(5013, "下单失败，当前购物车无数据"),
+    ORDER_ERROR_ADDRESS_ERROR(50143, "下单失败，当前地址错误"),
 
     // 用户错误
     USER_NOT_EXISTS_ERROR(5101, "用户不存在"),

@@ -61,9 +61,9 @@ public class RedisLock {
     public boolean lock(String key, Integer timeout) {
         Integer timeoutTmp;
         if (timeout == null) {
-            timeoutTmp = DEFAULT_TIME_OUT;
+            timeoutTmp = DEFAULT_TIME_OUT * 1000;
         } else {
-            timeoutTmp = timeout;
+            timeoutTmp = timeout * 1000;
         }
         String nanoId;
         if (stringThreadLocal.get() != null) {
@@ -84,7 +84,7 @@ public class RedisLock {
                 if (result != null && result == 2) {
                     ThreadUtil.shutdownAndAwaitTermination(scheduledExecutorService);
                 }
-            }, 0, timeoutTmp / 3, TimeUnit.SECONDS);
+            }, timeoutTmp / 3, timeoutTmp / 3, TimeUnit.MILLISECONDS);
         }
         return flag;
     }

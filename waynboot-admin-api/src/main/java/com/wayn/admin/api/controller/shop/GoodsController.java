@@ -12,6 +12,7 @@ import com.wayn.common.util.file.FileUtils;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
+import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.data.redis.manager.RedisLock;
 import lombok.AllArgsConstructor;
@@ -73,7 +74,7 @@ public class GoodsController extends BaseController {
     public R syncEs() {
         boolean flag = false;
         try {
-            boolean lock = redisLock.lock(EsConstants.ES_GOODS_INDEX_KEY, 2);
+            boolean lock = redisLock.lock(RedisKeyEnum.ES_SYNC_CACHE.getKey(), 2);
             if (!lock) {
                 throw new BusinessException("加锁失败");
             }
@@ -105,7 +106,7 @@ public class GoodsController extends BaseController {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            redisLock.unLock(EsConstants.ES_GOODS_INDEX_KEY);
+            redisLock.unLock(RedisKeyEnum.ES_SYNC_CACHE.getKey());
         }
         return R.result(flag);
     }

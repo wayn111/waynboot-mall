@@ -10,11 +10,6 @@ public class SysConstants {
 
 
     /**
-     * 缓存前缀, 统一项目缓存前缀
-     */
-    public static final String CACHE_PREFIX = "waynboot-mall:";
-
-    /**
      * 用户默认密码
      */
     public static final String DEFAULT_PASSWORD = "123456";
@@ -78,14 +73,4 @@ public class SysConstants {
      * 校验返回结果码 0 不存在 1 已经存在
      */
     public final static String NOT_UNIQUE = "1";
-
-    /**
-     * string类型boolean返回值，成功默认为success
-     */
-    public final static String STRING_TRUE = "true";
-
-    /**
-     * string类型boolean返回值，失败默认为error
-     */
-    public final static String STRING_FALSE = "false";
 }

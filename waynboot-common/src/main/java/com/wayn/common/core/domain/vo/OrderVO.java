@@ -21,11 +21,6 @@ public class OrderVO {
     private List<Long> cartIdArr;
 
     /**
-     * 用户id
-     */
-    private Long userId;
-
-    /**
      * 地址id
      */
     private Long addressId;
