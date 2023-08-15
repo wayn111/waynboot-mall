@@ -31,4 +31,20 @@ public class RabbitTemplateConfig {
 
         return rabbitTemplate;
     }
+
+    @Bean
+    public RabbitTemplate delayRabbitTemplate(CachingConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        // 服务器收到消息确认回调
+        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> log.info("delay 消息发送成功:correlationData({}),ack({}),cause({})", correlationData, ack, cause));
+        // 消息投递到队列失败回调处理
+        rabbitTemplate.setReturnsCallback(returned -> {
+            log.info("delay returnCallback:     " + "消息：" + returned.getMessage());
+            log.info("delay returnCallback:     " + "回应码：" + returned.getReplyCode());
+            log.info("delay returnCallback:     " + "回应信息：" + returned.getReplyText());
+            log.info("delay returnCallback:     " + "交换机：" + returned.getExchange());
+            log.info("delay returnCallback:     " + "路由键：" + returned.getRoutingKey());
+        });
+        return rabbitTemplate;
+    }
 }

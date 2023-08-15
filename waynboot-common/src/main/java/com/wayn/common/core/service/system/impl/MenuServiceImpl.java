@@ -123,7 +123,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     @Override
     public boolean checkMenuExistRole(Long menuId) {
-        return count(Wrappers.lambdaQuery(Menu.class).eq(Menu::getMenuId, menuId)) > 0;
+        return iRoleMenuService.count(Wrappers.lambdaQuery(RoleMenu.class).eq(RoleMenu::getMenuId, menuId)) > 0;
     }
 
     /**

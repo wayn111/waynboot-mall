@@ -7,6 +7,7 @@ import com.wayn.common.core.service.shop.IChannelService;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +21,13 @@ public class ChannelController extends BaseController {
 
     private IChannelService iChannelService;
 
+    @PreAuthorize("@ss.hasPermi('shop:channel:list')")
     @GetMapping("/list")
     public R list(Channel channel) {
         return R.success().add("channelList", iChannelService.list(channel));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:channel:add')")
     @PostMapping
     public R addChannel(@Validated @RequestBody Channel channel) {
         if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelNameUnique(channel))) {
@@ -38,6 +41,7 @@ public class ChannelController extends BaseController {
         return R.result(iChannelService.save(channel));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:channel:update')")
     @PutMapping
     public R updateChannel(@Validated @RequestBody Channel channel) {
         if (SysConstants.NOT_UNIQUE.equals(iChannelService.checkChannelNameUnique(channel))) {
@@ -51,11 +55,13 @@ public class ChannelController extends BaseController {
         return R.result(iChannelService.updateById(channel));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:channel:info')")
     @GetMapping("{channelId}")
     public R getChannel(@PathVariable Long channelId) {
         return R.success().add("data", iChannelService.getById(channelId));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:channel:delete')")
     @DeleteMapping("{channelIds}")
     public R deleteChannel(@PathVariable List<Long> channelIds) {
         return R.result(iChannelService.removeByIds(channelIds));

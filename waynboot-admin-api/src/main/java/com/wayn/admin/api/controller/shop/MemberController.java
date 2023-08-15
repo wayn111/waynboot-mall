@@ -7,6 +7,7 @@ import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.util.R;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,17 +26,20 @@ public class MemberController extends BaseController {
 
     private IMemberService iMemberService;
 
+    @PreAuthorize("@ss.hasPermi('shop:member:list')")
     @GetMapping("list")
     public R list(Member member) {
         Page<Member> page = getPage();
         return R.success().add("page", iMemberService.listPage(page, member));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:member:info')")
     @GetMapping("{memberId}")
     public R getMember(@PathVariable Long memberId) {
         return R.success().add("data", iMemberService.getById(memberId));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:member:update')")
     @PutMapping
     public R updateMember(@Validated @RequestBody Member member) {
         member.setUpdateTime(new Date());

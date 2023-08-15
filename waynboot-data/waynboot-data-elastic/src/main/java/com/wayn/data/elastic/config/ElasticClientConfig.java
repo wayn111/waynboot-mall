@@ -1,10 +1,14 @@
 package com.wayn.data.elastic.config;
 
+import cn.hutool.core.codec.Base64;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -17,17 +21,19 @@ public class ElasticClientConfig {
     @Bean
     public RestClientBuilder restClientBuilder(ElasticConfig config) {
         RestClientBuilder builder = RestClient.builder(new HttpHost(config.getHost(), config.getPort(), config.getScheme()));
-        // 开始设置用户名和密码
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(config.getUsername(), config.getPassword()));
-        builder.setHttpClientConfigCallback(f -> f.setDefaultCredentialsProvider(credentialsProvider)
-                .setKeepAliveStrategy((response, context) ->  1000 * 60));
-        return builder;
-    }
-
-    @Bean
-    public RestClient elasticsearchRestClient(ElasticConfig config) {
-        return RestClient.builder(new HttpHost(config.getHost(), config.getPort(), config.getScheme())).build();
+        return builder.setHttpClientConfigCallback(f -> f.setDefaultCredentialsProvider(credentialsProvider)
+                .setKeepAliveStrategy((response, context) -> 1000 * 60));
+        // final CredentialsProvider credentialsProvider =
+        //         new BasicCredentialsProvider();
+        // credentialsProvider.setCredentials(AuthScope.ANY,
+        //         new UsernamePasswordCredentials(config.getUsername(), config.getPassword()));
+        //
+        // return RestClient.builder(
+        //                 new HttpHost(config.getHost(), config.getPort(), config.getScheme()))
+        //         .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
+        //                 .setDefaultCredentialsProvider(credentialsProvider));
     }
 
     @Bean

@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class ColumnController extends BaseController {
 
     private IGoodsService iGoodsService;
 
+    @PreAuthorize("@ss.hasPermi('shop:column:list')")
     @GetMapping("/list")
     public R list(Column column) {
         Page<Column> page = getPage();
@@ -61,25 +63,29 @@ public class ColumnController extends BaseController {
         return R.success().add("data", columnList);
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:column:add')")
     @PostMapping
-    public R addBanner(@Validated @RequestBody Column column) {
+    public R addColumn(@Validated @RequestBody Column column) {
         column.setCreateTime(new Date());
         return R.result(iColumnService.save(column));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:column:update')")
     @PutMapping
-    public R updateBanner(@Validated @RequestBody Column column) {
+    public R updateColumn(@Validated @RequestBody Column column) {
         column.setUpdateTime(new Date());
         return R.result(iColumnService.updateById(column));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:column:info')")
     @GetMapping("{columnId}")
-    public R getBanner(@PathVariable Long columnId) {
+    public R getColumn(@PathVariable Long columnId) {
         return R.success().add("data", iColumnService.getById(columnId));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:column:delete')")
     @DeleteMapping("{columnIds}")
-    public R deleteBanner(@PathVariable List<Long> columnIds) {
+    public R deleteColumn(@PathVariable List<Long> columnIds) {
         return R.result(iColumnService.removeByIds(columnIds));
     }
 

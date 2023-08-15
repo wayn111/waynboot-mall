@@ -1,4 +1,4 @@
-package com.wayn.mobile.api.controller.message;
+package com.wayn.mobile.api.controller.callback;
 
 import com.wayn.common.core.domain.tool.EmailConfig;
 import com.wayn.common.core.domain.vo.SendMailVO;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("message/email")
+@RequestMapping("callback/email")
 public class EmailController {
 
     private IMailConfigService mailConfigService;

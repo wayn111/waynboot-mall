@@ -63,8 +63,9 @@ wayn:
   uploadDir: ${UPLOAD_DIR:D:/waynshop/webp}
   adminUrl: http://localhost:81
   mobileUrl: http://localhost:82
-  freightLimit: "88"
-  freightPrice: "10"
+  freightLimit: "88"  # 运费限额
+  freightPrice: "10"  # 运费
+  unpaidOrderCancelDelayTime: 30 # 未支付订单超时时间
 
 # wx支付配置
 shop:

@@ -15,7 +15,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 认证失败处理类 返回未授权
+ * 失败处理类
  */
 @Slf4j
 @Component
@@ -25,8 +25,9 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint, S
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) {
-        int code = HttpStatus.UNAUTHORIZED.value();
-        String msg = String.format("请求访问：%s，认证失败，无法访问系统资源", request.getRequestURI());
+        log.error(e.getMessage(), e);
+        int code = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        String msg = e.getMessage();
         try {
             response.setStatus(HttpStatus.OK.value());
             response.setContentType("application/json");

@@ -36,6 +36,11 @@ public class WaynConfig {
     private static String mobileUrl;
 
     /**
+     * 未支付订单延时取消时间
+     */
+    private static Integer unpaidOrderCancelDelayTime;
+
+    /**
      * 商城免运费限额
      */
     private static BigDecimal freightLimit;
@@ -114,5 +119,13 @@ public class WaynConfig {
 
     public void setFreightPrice(BigDecimal freightPrice) {
         WaynConfig.freightPrice = freightPrice;
+    }
+
+    public void setUnpaidOrderCancelDelayTime(Integer unpaidOrderCancelDelayTime) {
+        WaynConfig.unpaidOrderCancelDelayTime = unpaidOrderCancelDelayTime;
+    }
+
+    public static Integer getUnpaidOrderCancelDelayTime() {
+        return unpaidOrderCancelDelayTime;
     }
 }

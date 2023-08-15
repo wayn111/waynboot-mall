@@ -60,7 +60,7 @@ public class SecurityConfig {
                                 .requestMatchers("/webjars/**").anonymous()
                                 .requestMatchers("/*/api-docs").anonymous()
                                 .requestMatchers("/druid/**").anonymous()
-                                .requestMatchers("/message/**").anonymous()
+                                .requestMatchers("/callback/**").anonymous()
                                 // 除上面外的所有请求全部需要鉴权认证
                                 .anyRequest().authenticated()
                 )

@@ -17,6 +17,7 @@ import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.data.redis.manager.RedisLock;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,32 +45,38 @@ public class GoodsController extends BaseController {
     private RedisCache redisCache;
     private RedisLock redisLock;
 
+    @PreAuthorize("@ss.hasPermi('shop:goods:list')")
     @GetMapping("/list")
     public R list(Goods goods) {
         Page<Goods> page = getPage();
         return R.success().add("page", iGoodsService.listPage(page, goods));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:goods:add')")
     @PostMapping
     public R addGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
         return iGoodsService.saveGoodsRelated(goodsSaveRelatedVO);
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:goods:update')")
     @PutMapping
     public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
         return iGoodsService.updateGoodsRelated(goodsSaveRelatedVO);
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:goods:info')")
     @GetMapping("{goodsId}")
     public R getGoods(@PathVariable Long goodsId) {
         return R.success().add("data", iGoodsService.getGoodsInfoById(goodsId));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:goods:delete')")
     @DeleteMapping("{goodsId}")
     public R deleteGoods(@PathVariable Long goodsId) throws IOException {
         return R.result(iGoodsService.deleteGoodsRelatedByGoodsId(goodsId));
     }
 
+    @PreAuthorize("@ss.hasPermi('shop:goods:syncEs')")
     @PostMapping("syncEs")
     public R syncEs() {
         boolean flag = false;
