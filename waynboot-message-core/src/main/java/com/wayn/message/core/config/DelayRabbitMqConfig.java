@@ -26,7 +26,7 @@ public class DelayRabbitMqConfig {
         // 创建一个自定义交换机，可以发送延迟消息
         Map<String, Object> args = new HashMap<>();
         args.put("x-delayed-type", "direct");
-        return new CustomExchange(MQConstants.ORDER_DELAY_EXCHANGE, "x-delayed-callback", true, false, args);
+        return new CustomExchange(MQConstants.ORDER_DELAY_EXCHANGE, "x-delayed-message", true, false, args);
     }
 
     /**
