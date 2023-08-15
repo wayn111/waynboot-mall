@@ -15,7 +15,7 @@
     </modules>
     <groupId>com.wayn</groupId>
     <artifactId>waynboot-mall</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <packaging>pom</packaging>
     <name>waynboot</name>
     <description>waynboot mall商城</description>
