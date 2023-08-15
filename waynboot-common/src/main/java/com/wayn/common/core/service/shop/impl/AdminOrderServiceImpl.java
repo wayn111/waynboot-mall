@@ -115,7 +115,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
             iMailService.sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email,
-                    WaynConfig.getAdminUrl() + "/message/email");
+                    WaynConfig.getAdminUrl() + "/callback/email");
         }
         // logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
         return R.success();
@@ -149,7 +149,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         if (StringUtils.isNotEmpty(email)) {
             iMailService.sendEmail("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14)
                     + "，请注意查收", order.getOrderSn().substring(8, 14), email, WaynConfig.getAdminUrl()
-                    + "/message/email");
+                    + "/callback/email");
         }
         return R.success();
     }

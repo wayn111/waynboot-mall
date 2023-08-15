@@ -22,8 +22,8 @@ public class DirectRabbitConfig {
      * @return 队列
      */
     @Bean
-    public Queue EmailDirectQueue() {
-        return new Queue(MQConstants.email_direct_queue, true);
+    public Queue emailDirectQueue() {
+        return new Queue(MQConstants.EMAIL_DIRECT_QUEUE, true);
     }
 
     /**
@@ -32,7 +32,7 @@ public class DirectRabbitConfig {
      * @return 交换机
      */
     @Bean
-    DirectExchange EmailDirectExchange() {
+    DirectExchange emailDirectExchange() {
         return new DirectExchange(MQConstants.EMAIL_DIRECT_EXCHANGE);
     }
 
@@ -41,25 +41,25 @@ public class DirectRabbitConfig {
      */
     @Bean
     Binding bindingEmailDirect() {
-        return BindingBuilder.bind(EmailDirectQueue()).to(EmailDirectExchange()).with("EmailDirectRouting");
+        return BindingBuilder.bind(emailDirectQueue()).to(emailDirectExchange()).with(MQConstants.EMAIL_DIRECT_ROUTING);
     }
     /************************************ 订单队列、交换机 end *******************************************/
 
 
     /************************************ 订单队列、交换机 begin *******************************************/
     @Bean
-    public Queue OrderDirectQueue() {
+    public Queue orderDirectQueue() {
         return new Queue(MQConstants.ORDER_DIRECT_QUEUE, true);
     }
 
     @Bean
-    DirectExchange OrderDirectExchange() {
+    DirectExchange orderDirectExchange() {
         return new DirectExchange(MQConstants.ORDER_DIRECT_EXCHANGE);
     }
 
     @Bean
     Binding bindingOrderDirect() {
-        return BindingBuilder.bind(OrderDirectQueue()).to(OrderDirectExchange()).with("OrderDirectRouting");
+        return BindingBuilder.bind(orderDirectQueue()).to(orderDirectExchange()).with(MQConstants.ORDER_DIRECT_ROUTING);
     }
     /************************************ 订单队列、交换机 end *******************************************/
 

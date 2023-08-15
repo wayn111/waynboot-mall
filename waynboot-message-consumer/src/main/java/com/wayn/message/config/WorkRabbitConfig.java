@@ -1,7 +1,7 @@
 package com.wayn.message.config;
 
-import com.wayn.message.reciver.EmailDirectReceiver;
-import com.wayn.message.reciver.OrderDirectReceiver;
+import com.wayn.message.consumer.EmailSendConsumer;
+import com.wayn.message.consumer.OrderPayConsumer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,23 +12,23 @@ import org.springframework.context.annotation.Configuration;
 public class WorkRabbitConfig {
     /*******************************************邮件消费者配置1个*****************************************/
     @Bean
-    public EmailDirectReceiver emailDirectReceiver() {
-        return new EmailDirectReceiver();
+    public EmailSendConsumer emailDirectReceiver() {
+        return new EmailSendConsumer();
     }
 
     /*******************************************订单消费者配置2个*****************************************/
     @Bean
-    public OrderDirectReceiver orderWorkReceiver1() {
-        return new OrderDirectReceiver(1);
+    public OrderPayConsumer orderWorkReceiver1() {
+        return new OrderPayConsumer(1);
     }
 
     @Bean
-    public OrderDirectReceiver orderWorkReceiver2() {
-        return new OrderDirectReceiver(2);
+    public OrderPayConsumer orderWorkReceiver2() {
+        return new OrderPayConsumer(2);
     }
 
     @Bean
-    public OrderDirectReceiver orderWorkReceiver3() {
-        return new OrderDirectReceiver(3);
+    public OrderPayConsumer orderWorkReceiver3() {
+        return new OrderPayConsumer(3);
     }
 }

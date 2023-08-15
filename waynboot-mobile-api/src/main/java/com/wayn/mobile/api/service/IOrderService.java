@@ -10,6 +10,8 @@ import com.wayn.message.core.messsage.OrderDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * 订单表 服务类
  *
@@ -24,7 +26,7 @@ public interface IOrderService extends IService<Order> {
      * @param orderDTO 订单DTO
      * @return R
      */
-    R submit(OrderDTO orderDTO);
+    R submit(OrderDTO orderDTO) throws UnsupportedEncodingException;
 
 
     /**

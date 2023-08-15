@@ -94,6 +94,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private TaskService taskService;
     private IMailService iMailService;
     private RabbitTemplate rabbitTemplate;
+    private RabbitTemplate delayRabbitTemplate;
     private AlipayConfig alipayConfig;
     private OrderSnGenUtil orderSnGenUtil;
 
@@ -241,7 +242,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         CorrelationData correlationData = new CorrelationData(uid);
         Map<String, Object> map = new HashMap<>();
         map.put("order", orderDTO);
-        map.put("notifyUrl", WaynConfig.getMobileUrl() + "/message/order/submit");
+        map.put("notifyUrl", WaynConfig.getMobileUrl() + "/callback/order/submit");
         try {
             Message message = MessageBuilder
                     .withBody(JSON.toJSONString(map).getBytes(Constants.UTF_ENCODING))
@@ -257,7 +258,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R submit(OrderDTO orderDTO) {
+    public R submit(OrderDTO orderDTO) throws UnsupportedEncodingException {
         Long userId = orderDTO.getUserId();
 
         // 获取用户地址
@@ -372,9 +373,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             iCartService.removeByIds(cartIdArr);
         }
         // 下单30分钟内未支付自动取消订单
-        long delay = 1000;
-        redisCache.setCacheZset("order_zset", order.getId(), System.currentTimeMillis() + 30 * 60 * delay);
-        taskService.addTask(new OrderUnpaidTask(order.getId()));
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderSn", orderDTO.getOrderSn());
+        map.put("notifyUrl", WaynConfig.getMobileUrl() + "/callback/order/unpaid");
+        Message message = MessageBuilder
+                .withBody(JSON.toJSONString(map).getBytes(Constants.UTF_ENCODING))
+                .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .build();
+        delayRabbitTemplate.convertAndSend(MQConstants.ORDER_DELAY_EXCHANGE, MQConstants.ORDER_DELAY_ROUTING, message, messagePostProcessor -> {
+            // 延迟10s
+            long delayTime = WaynConfig.getUnpaidOrderCancelDelayTime() * 1000L;
+            messagePostProcessor.getMessageProperties().setDelay(Math.toIntExact(delayTime));
+            return messagePostProcessor;
+        });
         return R.success().add("orderId", order.getId());
     }
 
@@ -519,7 +531,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
                 String email = iMemberService.getById(order.getUserId()).getEmail();
                 if (StringUtils.isNotBlank(email)) {
-                    iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+                    iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
                 }
 
                 // 删除redis中订单id
@@ -591,7 +603,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
         }
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
@@ -638,7 +650,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotBlank(email)) {
-            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
         }
         // 删除redis中订单id
         redisCache.deleteZsetObject("order_zset", order.getId());
@@ -718,7 +730,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String email = iMemberService.getById(order.getUserId()).getEmail();
         if (StringUtils.isNotEmpty(email)) {
             if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/message/email");
+                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
             }
         }
 

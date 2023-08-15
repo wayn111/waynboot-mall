@@ -5,6 +5,7 @@ import com.wayn.admin.framework.security.handle.AuthenticationEntryPointImpl;
 import com.wayn.admin.framework.security.handle.LogoutSuccessHandlerImpl;
 import com.wayn.admin.framework.security.service.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,17 +38,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // cors启用
-                .cors(httpSecurityCorsConfigurer -> {})
+                .cors(httpSecurityCorsConfigurer -> {
+                })
+                // CSRF(跨站请求伪造)禁用，因为不使用session
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(httpSecuritySessionManagementConfigurer -> {
-                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(unauthorizedHandler);
-                })
+                // 认证失败处理类
+                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(unauthorizedHandler))
+                // 基于token，所以不需要session
+                .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 过滤请求
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
+                .authorizeHttpRequests(
+                        registry -> registry
                             .requestMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
                             .requestMatchers("/slider/**").anonymous()
                             .requestMatchers("/captcha/**").anonymous()
@@ -60,26 +61,15 @@ public class SecurityConfig {
                             .requestMatchers("/*/api-docs").anonymous()
                             .requestMatchers("/druid/**").anonymous()
                             .requestMatchers("/elastic/**").anonymous()
-                            .requestMatchers("/message/**").anonymous()
+                            .requestMatchers("/callback/**").anonymous()
                             .requestMatchers("/ws/**").anonymous()
                             // 除上面外的所有请求全部需要鉴权认证
-                            .anyRequest().authenticated();
-                })
-                .headers(httpSecurityHeadersConfigurer -> {
-                    httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
-                });
-                // 处理跨域请求中的Preflight请求(cors)，设置corsConfigurationSource后无需使用
-                // .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                // 对于登录login 验证码captchaImage 允许匿名访问
-
-        httpSecurity.logout(httpSecurityLogoutConfigurer -> {
-            httpSecurityLogoutConfigurer.logoutUrl("/logout");
-            httpSecurityLogoutConfigurer.logoutSuccessHandler(logoutSuccessHandler);
-        });
-        // 添加JWT filter
-        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        // 认证用户时用户信息加载配置，注入springAuthUserService
-        httpSecurity.userDetailsService(userDetailsService);
+                            .anyRequest().authenticated()
+                )
+                .logout(configurer -> configurer.logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler))
+                .headers(configurer -> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .userDetailsService(userDetailsService);
         return httpSecurity.build();
     }
 

@@ -20,7 +20,7 @@ import java.util.Collections;
  */
 @RestController
 @AllArgsConstructor
-@RequestMapping("message/email")
+@RequestMapping("callback/email")
 public class EmailController {
 
     private IMailConfigService mailConfigService;

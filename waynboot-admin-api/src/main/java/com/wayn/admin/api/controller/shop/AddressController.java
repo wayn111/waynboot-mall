@@ -7,6 +7,7 @@ import com.wayn.common.core.domain.shop.Address;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.util.R;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,7 @@ public class AddressController extends BaseController {
      * @param address
      * @return R
      */
+    @PreAuthorize("@ss.hasPermi('shop:address:list')")
     @GetMapping("list")
     public R list(Address address) {
         Page<Address> page = getPage();
@@ -43,8 +45,9 @@ public class AddressController extends BaseController {
      * @param addressId 地址id
      * @return R
      */
+    @PreAuthorize("@ss.hasPermi('shop:address:info')")
     @GetMapping("{addressId}")
-    public R getMember(@PathVariable Long addressId) {
+    public R info(@PathVariable Long addressId) {
         return R.success().add("data", iAddressService.getById(addressId));
     }
 }

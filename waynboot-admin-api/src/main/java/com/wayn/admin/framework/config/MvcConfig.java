@@ -16,12 +16,12 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/upload/**").addResourceLocations("file:" + WaynConfig.getUploadDir() + "/");
     }
 
-    @Bean
-    public FilterRegistrationBean<RequestWrapperFilter> firstFilter() {
-        FilterRegistrationBean<RequestWrapperFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new RequestWrapperFilter());
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.setOrder(20);
-        return registrationBean;
-    }
+    // @Bean
+    // public FilterRegistrationBean<RequestWrapperFilter> firstFilter() {
+    //     FilterRegistrationBean<RequestWrapperFilter> registrationBean = new FilterRegistrationBean<>();
+    //     registrationBean.setFilter(new RequestWrapperFilter());
+    //     registrationBean.addUrlPatterns("/*");
+    //     registrationBean.setOrder(20);
+    //     return registrationBean;
+    // }
 }
