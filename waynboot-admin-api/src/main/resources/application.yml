@@ -71,7 +71,7 @@ mybatis-plus:
 # wayn配置
 wayn:
   name: wayn
-  version: 1.2.0
+  version: 1.3.0
   email: 166738430@qq.com
   uploadDir: ${UPLOAD_DIR:D:/waynshop/webp}
   adminUrl: http://localhost:81
