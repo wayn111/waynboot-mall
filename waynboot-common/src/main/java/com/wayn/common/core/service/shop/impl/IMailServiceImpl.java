@@ -29,7 +29,7 @@ public class IMailServiceImpl implements IMailService {
         map.put("tos", tos);
         map.put("notifyUrl", notifyUrl);
         // 异步发送邮件
-        rabbitTemplate.convertAndSend("EmailDirectExchange", "EmailDirectRouting", map, correlationData);
+        rabbitTemplate.convertAndSend("email_direct_exchange", "email_direct_routing", map, correlationData);
 
     }
 }

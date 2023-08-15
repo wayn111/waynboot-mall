@@ -1,6 +1,7 @@
 package com.wayn.mobile.api.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUnit;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
@@ -383,7 +384,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .build();
         delayRabbitTemplate.convertAndSend(MQConstants.ORDER_DELAY_EXCHANGE, MQConstants.ORDER_DELAY_ROUTING, message, messagePostProcessor -> {
             // 延迟10s
-            long delayTime = WaynConfig.getUnpaidOrderCancelDelayTime() * 1000L;
+            long delayTime = WaynConfig.getUnpaidOrderCancelDelayTime() * DateUnit.MINUTE.getMillis();
             messagePostProcessor.getMessageProperties().setDelay(Math.toIntExact(delayTime));
             return messagePostProcessor;
         });
