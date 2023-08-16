@@ -29,7 +29,7 @@ waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运
 
 - H5商城项目 https://github.com/wayn111/waynboot-mobile
 - 运营后台项目 https://github.com/wayn111/waynboot-admin
-- 后台接口项目 https://github.com/wayn111/waynboot-mall
+- 后端接口项目 https://github.com/wayn111/waynboot-mall
 
 > 如果有任何使用问题，欢迎提交Issue或加wx告知，方便互相交流反馈～ 💘。最后，喜欢的话麻烦给我个star
 
