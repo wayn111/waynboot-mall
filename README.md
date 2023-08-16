@@ -2,8 +2,8 @@
 
 | 分支名称                                                       | Spring Boot 版本 | JDK 版本 |
 |--------------------------------------------------------------------|----------------|--------|
-| [master](https://github.com/wayn111/waynboot-mall)                     | 3.0.6          | 17     |
-| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7        | 1.8    | 
+| [master](https://github.com/wayn111/waynboot-mall)                     | 3.1.0          | 17     |
+| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7            | 1.8    | 
  
 ---
 
@@ -27,9 +27,9 @@ waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运
 
 对于初学者而言 waynboot-mall 项目是非常易于部署的，根据readme中的开发部署指南就能成功启动项目。对于非技术人员，本项目也提供了一键安装脚本，能在五分钟内启动商城前后台所有服务。
 
-- [H5商城项目](https://github.com/wayn111/waynboot-mobile)
-- [运营后台项目](https://github.com/wayn111/waynboot-admin)  
-- [后台接口项目](https://github.com/wayn111/waynboot-mall)  
+- H5商城项目 https://github.com/wayn111/waynboot-mobile
+- 运营后台项目 https://github.com/wayn111/waynboot-admin
+- 后台接口项目 https://github.com/wayn111/waynboot-mall
 
 > 如果有任何使用问题，欢迎提交Issue或加wx告知，方便互相交流反馈～ 💘。最后，喜欢的话麻烦给我个star
 
