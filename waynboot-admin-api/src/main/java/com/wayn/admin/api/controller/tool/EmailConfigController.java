@@ -8,6 +8,7 @@ import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -22,11 +23,13 @@ import org.springframework.web.bind.annotation.*;
 public class EmailConfigController {
     private IMailConfigService mailConfigService;
 
+    @PreAuthorize("@ss.hasPermi('tool:email:info')")
     @GetMapping
     public R info() {
         return R.success().add("data", mailConfigService.getById(1));
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:email:update')")
     @PutMapping
     public R update(@Valid @RequestBody EmailConfig emailConfig) {
         emailConfig.setId(1L);
@@ -34,6 +37,7 @@ public class EmailConfigController {
         return R.success();
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:email:send')")
     @PostMapping("send")
     public R sendMail(@Valid @RequestBody SendMailVO mailVO) {
         EmailConfig emailConfig = mailConfigService.getById(1L);
