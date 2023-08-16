@@ -13,6 +13,7 @@ import com.wayn.common.util.R;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,17 +34,20 @@ public class QiniuController extends BaseController {
 
     private IQiniuContentService iQiniuContentService;
 
+    @PreAuthorize("@ss.hasPermi('tool:qiniu:list')")
     @GetMapping("/list")
     public R list(QiniuContent qiniuContent) {
         Page<QiniuContent> page = getPage();
         return R.success().add("page", iQiniuContentService.listPage(page, qiniuContent));
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:qiniu:info')")
     @GetMapping("config")
     public R info() {
         return R.success().add("data", iQiniuConfigService.getById(1));
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:qiniu:update')")
     @PutMapping("config")
     public R update(@Valid @RequestBody QiniuConfig qiniuConfig) {
         qiniuConfig.setId(1L);
@@ -51,6 +55,7 @@ public class QiniuController extends BaseController {
         return R.success();
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:qiniu:upload')")
     @PostMapping("upload")
     public R upload(@RequestParam MultipartFile file) throws IOException {
         QiniuConfig qiniuConfig = iQiniuConfigService.getById(1);
@@ -64,6 +69,7 @@ public class QiniuController extends BaseController {
         return R.result(iQiniuContentService.save(qiniuContent)).add("id", qiniuContent.getContentId()).add("fileUrl", qiniuContent.getUrl());
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:qiniu:download')")
     @GetMapping("download/{id}")
     public R download(@PathVariable Long id) {
         QiniuConfig qiniuConfig = iQiniuConfigService.getById(1);
@@ -76,6 +82,7 @@ public class QiniuController extends BaseController {
         return R.success().add("url", iQiniuContentService.download(id, qiniuConfig));
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:qiniu:syncQiniu')")
     @GetMapping("syncQiniu")
     public R syncQiniu() {
         QiniuConfig qiniuConfig = iQiniuConfigService.getById(1);
@@ -89,6 +96,7 @@ public class QiniuController extends BaseController {
         return R.success();
     }
 
+    @PreAuthorize("@ss.hasPermi('tool:qiniu:delete')")
     @DeleteMapping(value = "{id}")
     public R delete(@PathVariable Long id) throws QiniuException {
         QiniuConfig qiniuConfig = iQiniuConfigService.getById(1);
