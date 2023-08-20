@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R refund(Long orderId) {
+    public R refund(Long orderId) throws UnsupportedEncodingException {
         Order order = getById(orderId);
         if (order == null) {
             return R.error();
@@ -122,7 +123,7 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
     }
 
     @Override
-    public R ship(ShipVO shipVO) {
+    public R ship(ShipVO shipVO) throws UnsupportedEncodingException {
         Long orderId = shipVO.getOrderId();
         String shipChannel = shipVO.getShipChannel();
         String shipSn = shipVO.getShipSn();

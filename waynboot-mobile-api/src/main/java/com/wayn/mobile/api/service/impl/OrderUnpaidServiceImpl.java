@@ -42,8 +42,9 @@ public class OrderUnpaidServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         Order order = orderService.getOne(Wrappers.lambdaQuery(Order.class)
                 .eq(Order::getOrderStatus, OrderUtil.STATUS_CREATE)
                 .eq(Order::getOrderSn, orderSn));
-        if (Objects.isNull(order) || !OrderUtil.isCreateStatus(order)) {
-            R.error(ReturnCodeEnum.ORDER_NOT_EXISTS_ERROR);
+        // 订单状态不是刚生成不做处理
+        if (!OrderUtil.isCreateStatus(order)) {
+            return R.success();
         }
         Long orderId = order.getId();
         // 设置订单为已取消状态

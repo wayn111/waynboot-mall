@@ -1,6 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
@@ -37,7 +38,7 @@ public class CartController extends BaseController {
         Long userId = MobileSecurityUtils.getUserId();
         Page<Cart> page = getPage();
         R list = iCartService.list(page, userId);
-        log.info("cart list:{}", list);
+        log.info("cart list:{}", JSON.toJSON(list));
         return list;
     }
 

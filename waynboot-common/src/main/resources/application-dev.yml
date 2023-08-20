@@ -38,11 +38,18 @@ spring:
     port: 5672
     username: guest
     password: guest
+    # 虚拟主机名称
+    virtual-host: /
     # 消息确认配置项
     # 确认消息已发送到交换机(Exchange)
     publisher-confirm-type: correlated
     # 确认消息已发送到队列(Queue)
     publisher-returns: true
+    listener:
+      simple:
+        # 一个消费者最多可处理的nack（未确认）消息数量
+        prefetch: 1
+        acknowledge-mode: manual  # 消息确认方式，其有三种配置方式，分别是none、manual(手动ack) 和auto(自动ack) 默认auto
 
 es:
   config:

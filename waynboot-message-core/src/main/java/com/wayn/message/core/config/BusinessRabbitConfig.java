@@ -1,20 +1,20 @@
 package com.wayn.message.core.config;
 
 import com.wayn.message.core.constant.MQConstants;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * 直连交换机配置
+ * 业务配置
  */
 @Configuration
-public class DirectRabbitConfig {
+public class BusinessRabbitConfig {
 
-    /************************************ 订单队列、交换机 begin *******************************************/
+    /************************************ 邮件队列、交换机 begin *******************************************/
 
     /**
      * 设置队列名称，并持久化
@@ -23,7 +23,7 @@ public class DirectRabbitConfig {
      */
     @Bean
     public Queue emailDirectQueue() {
-        return new Queue(MQConstants.EMAIL_DIRECT_QUEUE, true);
+        return new Queue(MQConstants.EMAIL_DIRECT_QUEUE);
     }
 
     /**
@@ -49,7 +49,13 @@ public class DirectRabbitConfig {
     /************************************ 订单队列、交换机 begin *******************************************/
     @Bean
     public Queue orderDirectQueue() {
-        return new Queue(MQConstants.ORDER_DIRECT_QUEUE, true);
+
+        Map<String, Object> params = new HashMap<>();
+        // 声明当前队列绑定的死信交换机
+        params.put("x-dead-letter-exchange", MQConstants.DL_TOPIC_EXCHANGE);
+        // // 声明当前队列的死信路由键
+        params.put("x-dead-letter-routing-key", MQConstants.DL_ROUTING_KEY);
+        return new Queue(MQConstants.ORDER_DIRECT_QUEUE, true, false, false, params);
     }
 
     @Bean

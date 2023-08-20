@@ -43,7 +43,7 @@ public interface IOrderService extends IService<Order> {
      * @param request 请求
      * @return r
      */
-    R h5pay(String orderSn, Integer payType, HttpServletRequest request);
+    R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException;
 
     /**
      * 付款订单的预支付会话标识
@@ -74,9 +74,9 @@ public interface IOrderService extends IService<Order> {
      * @param response 响应
      * @return r
      */
-    void wxPayNotify(HttpServletRequest request, HttpServletResponse response);
+    void wxPayNotify(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException;
 
-    void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException;
+    void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException;
 
     /**
      * 测试支付成功回调
@@ -109,7 +109,7 @@ public interface IOrderService extends IService<Order> {
      * @param orderId 订单ID
      * @return r
      */
-    R refund(Long orderId);
+    R refund(Long orderId) throws UnsupportedEncodingException;
 
     /**
      * 删除订单

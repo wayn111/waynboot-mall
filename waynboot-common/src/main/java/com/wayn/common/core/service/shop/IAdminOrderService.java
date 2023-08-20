@@ -6,6 +6,8 @@ import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.vo.ShipVO;
 import com.wayn.common.util.R;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * 类目表 服务类
  *
@@ -39,7 +41,7 @@ public interface IAdminOrderService extends IService<Order> {
      * @param orderId 订单id
      * @return r
      */
-    R refund(Long orderId);
+    R refund(Long orderId) throws UnsupportedEncodingException;
 
     /**
      * 发货
@@ -49,7 +51,7 @@ public interface IAdminOrderService extends IService<Order> {
      * @param shipVO 订单信息，{ orderId：xxx, shipSn: xxx, shipChannel: xxx }
      * @return r
      */
-    R ship(ShipVO shipVO);
+    R ship(ShipVO shipVO) throws UnsupportedEncodingException;
 
     /**
      * 获取订单详情（包含订单信息，订单商品信息，用户信息）
