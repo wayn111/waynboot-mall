@@ -1,5 +1,7 @@
 package com.wayn.common.core.service.shop;
 
+import java.io.UnsupportedEncodingException;
+
 public interface IMailService {
 
     /**
@@ -9,6 +11,6 @@ public interface IMailService {
      * @param tos 收件人
      * @param notifyUrl 回调系统通知地址
      */
-    void sendEmail(String subject, String content, String tos, String notifyUrl);
+    void sendEmail(String subject, String content, String tos, String notifyUrl) throws UnsupportedEncodingException;
 
 }

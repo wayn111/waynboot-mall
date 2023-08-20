@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -67,18 +69,18 @@ public class OrderController extends BaseController {
      * @return
      */
     @PostMapping("h5pay")
-    public R h5pay(@RequestBody OrderVO orderVO) {
+    public R h5pay(@RequestBody OrderVO orderVO) throws UnsupportedEncodingException {
         return iOrderService.h5pay(orderVO.getOrderSn(), orderVO.getPayType(), request);
     }
 
     @PostMapping("wxPayNotify")
-    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
+    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         log.info("微信paySuccess通知数据记录：req：{}", JSONObject.toJSONString(request.getParameterMap()));
         iOrderService.wxPayNotify(request, response);
     }
 
     @PostMapping("aliPayNotify")
-    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
+    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException {
         log.info("支付宝paySuccess通知数据记录：req: {}", JSONObject.toJSONString(request.getParameterMap()));
         iOrderService.aliPayNotify(request, response);
     }
@@ -94,7 +96,7 @@ public class OrderController extends BaseController {
     }
 
     @PostMapping("refund/{orderId}")
-    public R refund(@PathVariable Long orderId) {
+    public R refund(@PathVariable Long orderId) throws UnsupportedEncodingException {
         return iOrderService.refund(orderId);
     }
 

@@ -1,5 +1,6 @@
 package com.wayn.data.redis.manager;
 
+import io.netty.util.Timeout;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -47,7 +48,9 @@ public class RedisCache {
     public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
         redisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit);
     }
-
+    public <T> void setCacheObject(final String key, final T value, final Integer timeout) {
+        redisTemplate.opsForValue().setIfAbsent(key, value, timeout, TimeUnit.SECONDS);
+    }
     /**
      * 设置有效时间
      *
@@ -203,8 +206,10 @@ public class RedisCache {
         redisTemplate.opsForHash().delete(key, hKey);
     }
 
-    public long incrByCacheMapValue(final String key, final String hKey, long value) {
-        return redisTemplate.opsForHash().increment(key, hKey, value);
+    public long incrByCacheMapValue(final String key, final String hKey, long value, Integer timeout) {
+        Long increment = redisTemplate.opsForHash().increment(key, hKey, value);
+        redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
+        return increment;
     }
 
     /**

@@ -40,7 +40,7 @@
         <jwt.version>4.3.0</jwt.version>
         <qiniu.version>7.12.1</qiniu.version>
         <mail.version>2.0.1</mail.version>
-        <spring-boot-admin.version>3.0.4</spring-boot-admin.version>
+        <spring-boot-admin.version>3.1.0</spring-boot-admin.version>
         <xxl-job.version>2.3.1</xxl-job.version>
         <hutool.version>5.8.18</hutool.version>
         <easyexcel.version>3.2.1</easyexcel.version>
@@ -55,6 +55,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.mweirauch</groupId>
+            <artifactId>micrometer-jvm-extras</artifactId>
+            <version>0.2.2</version>
         </dependency>
     </dependencies>
 

@@ -436,7 +436,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R h5pay(String orderSn, Integer payType, HttpServletRequest request) {
+    public R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException {
         // 获取订单详情
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         Long userId = order.getUserId();
@@ -534,11 +534,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 if (StringUtils.isNotBlank(email)) {
                     iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
                 }
-
-                // 删除redis中订单id
-                redisCache.deleteZsetObject("order_zset", order.getId());
-                // 取消订单超时未支付任务
-                taskService.removeTask(new OrderUnpaidTask(order.getId()));
                 return R.success();
             }
             default -> {
@@ -548,7 +543,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
+    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String xmlResult = null;
         try {
             xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
@@ -606,14 +601,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (StringUtils.isNotBlank(email)) {
             iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
         }
-        // 删除redis中订单id
-        redisCache.deleteZsetObject("order_zset", order.getId());
-        // 取消订单超时未支付任务
-        taskService.removeTask(new OrderUnpaidTask(order.getId()));
     }
 
     @Override
-    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
+    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException {
         // 将异步通知中收到的所有参数都存放到map中
         Map<String, String[]> parameterMap = request.getParameterMap();
         Map<String, String> paramsMap = new HashMap<>();
@@ -653,10 +644,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (StringUtils.isNotBlank(email)) {
             iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
         }
-        // 删除redis中订单id
-        redisCache.deleteZsetObject("order_zset", order.getId());
-        // 取消订单超时未支付任务
-        taskService.removeTask(new OrderUnpaidTask(order.getId()));
         log.info("支付宝支付回调：结束");
     }
 
@@ -710,7 +697,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public R refund(Long orderId) {
+    public R refund(Long orderId) throws UnsupportedEncodingException {
         Order order = getById(orderId);
         ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
         if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {

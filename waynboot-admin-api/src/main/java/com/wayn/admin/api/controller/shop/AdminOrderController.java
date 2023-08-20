@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+
 
 /**
  * 订单管理
@@ -48,7 +50,7 @@ public class AdminOrderController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('shop:order:refund')")
     @PostMapping("refund/{orderId}")
-    public R refund(@PathVariable Long orderId) {
+    public R refund(@PathVariable Long orderId) throws UnsupportedEncodingException {
         return iAdminOrderService.refund(orderId);
     }
 
@@ -59,7 +61,7 @@ public class AdminOrderController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('shop:order:ship')")
     @PostMapping("ship")
-    public R ship(@RequestBody  ShipVO shipVO) {
+    public R ship(@RequestBody  ShipVO shipVO) throws UnsupportedEncodingException {
         return iAdminOrderService.ship(shipVO);
     }
 }
