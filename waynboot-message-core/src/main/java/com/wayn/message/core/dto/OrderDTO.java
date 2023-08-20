@@ -1,4 +1,4 @@
-package com.wayn.message.core.messsage;
+package com.wayn.message.core.dto;
 
 import lombok.Data;
 

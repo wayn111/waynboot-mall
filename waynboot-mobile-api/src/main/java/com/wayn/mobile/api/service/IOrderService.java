@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.util.R;
-import com.wayn.message.core.messsage.OrderDTO;
+import com.wayn.message.core.dto.OrderDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
