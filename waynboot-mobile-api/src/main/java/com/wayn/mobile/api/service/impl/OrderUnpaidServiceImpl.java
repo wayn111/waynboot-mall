@@ -40,7 +40,6 @@ public class OrderUnpaidServiceImpl extends ServiceImpl<OrderMapper, Order> impl
     public R unpaid(String orderSn) {
         log.info("订单编号：{}，未支付取消操作开始", orderSn);
         Order order = orderService.getOne(Wrappers.lambdaQuery(Order.class)
-                .eq(Order::getOrderStatus, OrderUtil.STATUS_CREATE)
                 .eq(Order::getOrderSn, orderSn));
         // 订单状态不是刚生成不做处理
         if (!OrderUtil.isCreateStatus(order)) {

@@ -2,7 +2,7 @@ package com.wayn.mobile.api.controller.callback;
 
 import com.alibaba.fastjson.JSON;
 import com.wayn.common.util.R;
-import com.wayn.message.core.messsage.OrderDTO;
+import com.wayn.message.core.dto.OrderDTO;
 import com.wayn.mobile.api.service.IOrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

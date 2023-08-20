@@ -20,7 +20,7 @@ public class RabbitTemplateConfig {
         rabbitTemplate.setMandatory(true);
         // 服务器收到消息确认回调
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> log.info("消息发送成功:correlationData({}),ack({}),cause({})", correlationData, ack, cause));
-        // 消息投递到队列失败回调处理
+        // 消息投递到队列时，如果失败的话会进行 returnCallback 的回调处理，反之成功就不会回调。
         rabbitTemplate.setReturnsCallback(returned -> {
             log.info("returnCallback:     " + "消息：" + returned.getMessage());
             log.info("returnCallback:     " + "回应码：" + returned.getReplyCode());
