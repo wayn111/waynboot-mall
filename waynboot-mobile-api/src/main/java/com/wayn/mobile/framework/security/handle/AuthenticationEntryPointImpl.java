@@ -1,5 +1,6 @@
 package com.wayn.mobile.framework.security.handle;
 
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.json.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,8 +25,8 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint, S
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) {
-        log.error(e.getMessage(), e);
-        int code = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        // log.error(e.getMessage(), e);
+        int code = ReturnCodeEnum.UNAUTHORIZED.getCode();
         String msg = e.getMessage();
         try {
             response.setStatus(HttpStatus.OK.value());
