@@ -2,7 +2,7 @@
 
 | 分支名称                                                       | Spring Boot 版本 | JDK 版本 |
 |--------------------------------------------------------------------|----------------|--------|
-| [master](https://github.com/wayn111/waynboot-mall)                     | 3.1.0          | 17     |
+| [master](https://github.com/wayn111/waynboot-mall)                     | 3.1.4          | 17     |
 | [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7            | 1.8    | 
  
 ---
@@ -73,9 +73,9 @@ waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运
 # todo
 
 - [x] 订单详情页面
+- [x] 完善支付功能
 - [ ] 商城资讯流
 - [ ] 联系客服
-- [ ] 团购下单
 
 ---
 
@@ -107,15 +107,17 @@ git clone git@github.com:wayn111/waynboot-mall.git
     进入waynboot-admin-api子项目，找到AdminApplication文件，右键`run AdminApplication`，启动后台项目
 h5商城api:
     进入waynboot-mobile-api子项目，找到MobileApplication文件，右键`run MobileApplication`，启动h5商城项目
+消费者api：
+    进入waynboot-message-consumer子项目，找到MessageApplication文件，右键`run MessageApplication`，启动消费者项目
 ```
 ---
 
 # 在线体验
 
-- 注册一个账号
-- 然后登陆
-
 前台演示地址：http://121.4.124.33/mall
+
+- 使用邮箱 + 手机号注册商城用户
+- 使用手机号 + 密码登陆
 
 后台演示地址：http://121.4.124.33/admin ， 后台演示账号：关注博主公众号【waynblog】，发送 演示账号
 
