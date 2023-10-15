@@ -61,6 +61,7 @@ public class SecurityConfig {
                                 .requestMatchers("/*/api-docs").anonymous()
                                 .requestMatchers("/druid/**").anonymous()
                                 .requestMatchers("/callback/**").anonymous()
+                                .requestMatchers("/pay/callback/**").anonymous()
                                 // 除上面外的所有请求全部需要鉴权认证
                                 .anyRequest().authenticated()
                 )

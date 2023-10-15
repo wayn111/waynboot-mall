@@ -1,8 +1,5 @@
-package com.wayn.common.core.domain.tool;
+package com.wayn.common.core.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -13,33 +10,35 @@ import java.io.Serializable;
  * 七牛云配置
  */
 @Data
-@TableName("tool_qiniu_config")
-public class QiniuConfig implements Serializable {
+public class QiniuConfigVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * accessKey
      */
+    @NotBlank(message = "accessKey不能为空")
     private String accessKey;
 
     /**
      * Bucket 识别符
      */
+    @NotBlank(message = "Bucket不能为空")
     private String bucket;
 
     /**
      * 外链域名
      */
+    @NotBlank(message = "外链域名不能为空")
     private String host;
 
     /**
      * secretKey
      */
+    @NotBlank(message = "secretKey不能为空")
     private String secretKey;
 
     /**

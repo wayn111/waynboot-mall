@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.Order;
 import com.wayn.common.core.domain.vo.OrderVO;
+import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.message.core.dto.OrderDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,28 +38,6 @@ public interface IOrderService extends IService<Order> {
     R asyncSubmit(OrderVO orderVO) throws Exception;
 
     /**
-     * 微信H5支付
-     *
-     * @param orderSn 订单编号
-     * @param request 请求
-     * @return r
-     */
-    R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException;
-
-    /**
-     * 付款订单的预支付会话标识
-     * <p>
-     * 1. 检测当前订单是否能够付款
-     * 2. 微信商户平台返回支付订单ID
-     * 3. 设置订单付款状态
-     *
-     * @param orderSn 订单编号
-     * @param request 请求
-     * @return r
-     */
-    R prepay(String orderSn, Integer payType, HttpServletRequest request);
-
-    /**
      * 获取订单列表
      *
      * @param page     分页对象
@@ -66,17 +45,6 @@ public interface IOrderService extends IService<Order> {
      * @return r
      */
     R selectListPage(IPage<Order> page, Integer showType);
-
-    /**
-     * 支付成功回调处理
-     *
-     * @param request  请求
-     * @param response 响应
-     * @return r
-     */
-    void wxPayNotify(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException;
-
-    void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException;
 
     /**
      * 测试支付成功回调
@@ -141,4 +109,12 @@ public interface IOrderService extends IService<Order> {
     R statusCount();
 
     R getOrderDetailByOrderSn(String orderSn);
+
+    /**
+     * 检查订单操作是否合法
+     *
+     * @param order 订单详情
+     * @return 成功返回<code>MQConstants.STRING_TRUE</code>，失败返回<code>MQConstants.STRING_FALSE</code>，或者自定义消息
+     */
+    ReturnCodeEnum checkOrderOperator(Order order);
 }

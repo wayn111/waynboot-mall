@@ -1,6 +1,8 @@
 package com.wayn.admin.api.controller.tool;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.wayn.common.core.domain.tool.EmailConfig;
+import com.wayn.common.core.domain.vo.EmailConfigVO;
 import com.wayn.common.core.domain.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.enums.ReturnCodeEnum;
@@ -31,9 +33,9 @@ public class EmailConfigController {
 
     @PreAuthorize("@ss.hasPermi('tool:email:update')")
     @PutMapping
-    public R update(@Valid @RequestBody EmailConfig emailConfig) {
+    public R update(@Valid @RequestBody EmailConfigVO emailConfig) {
         emailConfig.setId(1L);
-        mailConfigService.updateById(emailConfig);
+        mailConfigService.saveOrUpdate(BeanUtil.copyProperties(emailConfig, EmailConfig.class));
         return R.success();
     }
 

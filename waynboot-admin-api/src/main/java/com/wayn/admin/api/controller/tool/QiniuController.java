@@ -1,11 +1,13 @@
 package com.wayn.admin.api.controller.tool;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiniu.common.QiniuException;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.tool.QiniuConfig;
 import com.wayn.common.core.domain.tool.QiniuContent;
+import com.wayn.common.core.domain.vo.QiniuConfigVO;
 import com.wayn.common.core.service.tool.IQiniuConfigService;
 import com.wayn.common.core.service.tool.IQiniuContentService;
 import com.wayn.common.enums.ReturnCodeEnum;
@@ -49,9 +51,10 @@ public class QiniuController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('tool:qiniu:update')")
     @PutMapping("config")
-    public R update(@Valid @RequestBody QiniuConfig qiniuConfig) {
-        qiniuConfig.setId(1L);
-        iQiniuConfigService.updateById(qiniuConfig);
+    public R update(@Valid @RequestBody QiniuConfigVO qiniuConfigVO) {
+        qiniuConfigVO.setId(1L);
+        QiniuConfig qiniuConfig = BeanUtil.copyProperties(qiniuConfigVO, QiniuConfig.class);
+        iQiniuConfigService.saveOrUpdate(qiniuConfig);
         return R.success();
     }
 
