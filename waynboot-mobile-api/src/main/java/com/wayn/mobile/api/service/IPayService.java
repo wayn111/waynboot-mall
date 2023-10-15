@@ -1,12 +1,9 @@
 package com.wayn.mobile.api.service;
 
 import com.alipay.api.AlipayApiException;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.shop.Order;
+import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.common.core.domain.vo.OrderVO;
 import com.wayn.common.util.R;
-import com.wayn.message.core.dto.OrderDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -21,15 +18,6 @@ import java.io.UnsupportedEncodingException;
 public interface IPayService {
 
     /**
-     * 微信H5支付
-     *
-     * @param orderSn 订单编号
-     * @param request 请求
-     * @return r
-     */
-    R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException;
-
-    /**
      * 付款订单的预支付会话标识
      * <p>
      * 1. 检测当前订单是否能够付款
@@ -41,6 +29,25 @@ public interface IPayService {
      * @return r
      */
     R prepay(String orderSn, Integer payType, HttpServletRequest request);
+
+    /**
+     * 微信H5支付
+     *
+     * @param orderVO 订单VO
+     * @return r
+     */
+    R h5pay(OrderVO orderVO) throws UnsupportedEncodingException;
+
+    /**
+     * 订单退款
+     * <p>
+     * 1. 检测当前订单是否可以退款；
+     * 2. 更改订单状态为已退款。
+     *
+     * @param orderId 订单ID
+     * @return r
+     */
+    R refund(Long orderId) throws UnsupportedEncodingException, AlipayApiException, WxPayException;
 
     String wxPayNotify(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException;
 

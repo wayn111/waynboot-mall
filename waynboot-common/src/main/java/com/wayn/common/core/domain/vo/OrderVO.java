@@ -31,4 +31,5 @@ public class OrderVO {
      * 支付方式 1微信 2支付宝
      */
     private Integer payType;
+    private String returnUrl;
 }

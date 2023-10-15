@@ -67,18 +67,6 @@ public interface IOrderService extends IService<Order> {
      */
     R cancel(Long orderId);
 
-
-    /**
-     * 订单退款
-     * <p>
-     * 1. 检测当前订单是否可以退款；
-     * 2. 更改订单状态为已退款。
-     *
-     * @param orderId 订单ID
-     * @return r
-     */
-    R refund(Long orderId) throws UnsupportedEncodingException;
-
     /**
      * 删除订单
      * <p>

@@ -43,6 +43,7 @@ public enum ReturnCodeEnum {
     ORDER_USER_NOT_SAME_ERROR(5012, "订单用户和当前登陆用户不一致"),
     ORDER_ERROR_CART_EMPTY_ERROR(5013, "下单失败，当前购物车无数据"),
     ORDER_ERROR_ADDRESS_ERROR(50143, "下单失败，当前地址错误"),
+    ORDER_REFUND_ERROR(50144, "退款失败"),
 
     // 用户错误
     USER_NOT_EXISTS_ERROR(5101, "用户不存在"),

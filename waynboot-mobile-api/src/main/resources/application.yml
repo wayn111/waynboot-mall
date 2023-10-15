@@ -61,8 +61,8 @@ wayn:
   version: 1.3.0
   email: 166738430@qq.com
   uploadDir: ${UPLOAD_DIR:D:/waynshop/webp}
-  adminUrl: http://localhost:81
-  mobileUrl: http://localhost:82
+  adminUrl: ${ADMIN_URL:http://localhost:81}
+  mobileUrl: ${MOBILE_URL:http://localhost:82}
   freightLimit: "88"  # 运费限额
   freightPrice: "10"  # 运费
   unpaidOrderCancelDelayTime: 30 # 未支付订单超时时间
@@ -70,7 +70,7 @@ wayn:
 # wx支付配置
 shop:
   # 开发者应该设置成自己的wx相关信息
-  wx:
+  wxpay:
     app-id:
     app-secret:
     mch-id:
