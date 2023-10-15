@@ -6,28 +6,37 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
+import com.github.binarywang.wxpay.bean.request.WxPayRefundV3Request;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.github.binarywang.wxpay.bean.result.WxPayRefundV3Result;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.WaynConfig;
-import com.wayn.common.core.domain.shop.*;
-import com.wayn.common.core.service.shop.*;
+import com.wayn.common.core.domain.shop.Member;
+import com.wayn.common.core.domain.shop.Order;
+import com.wayn.common.core.domain.vo.OrderVO;
+import com.wayn.common.core.service.shop.IMailService;
+import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.core.util.OrderHandleOption;
 import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.enums.PayTypeEnum;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
+import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.ip.IpUtils;
 import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.service.IPayService;
+import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,11 +47,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 订单表 服务实现类
@@ -60,6 +71,7 @@ public class PayServiceImpl implements IPayService {
     private AlipayConfig alipayConfig;
     private IOrderService orderService;
     private WxPayService wxPayService;
+    private OrderSnGenUtil orderSnGenUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -88,7 +100,7 @@ public class PayServiceImpl implements IPayService {
             orderRequest.setOutTradeNo(order.getOrderSn());
             orderRequest.setOpenid(openid);
             orderRequest.setBody("商城订单：" + order.getOrderSn());
-            String url = WaynConfig.getMobileUrl() + request.getContextPath();
+            String url = WaynConfig.getMobileUrl();
             orderRequest.setNotifyUrl(url + "/pay/callback/weixinPayNotify");
             // 元转成分
             int fee;
@@ -107,7 +119,9 @@ public class PayServiceImpl implements IPayService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException {
+    public R h5pay(OrderVO orderVO) throws UnsupportedEncodingException {
+        String orderSn = orderVO.getOrderSn();
+        Integer payType = orderVO.getPayType();
         // 获取订单详情
         Order order = orderService.getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         Long userId = order.getUserId();
@@ -132,7 +146,7 @@ public class PayServiceImpl implements IPayService {
                 WxPayMpOrderResult result;
                 try {
                     WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-                    String url = WaynConfig.getMobileUrl() + request.getContextPath();
+                    String url = WaynConfig.getMobileUrl();
                     orderRequest.setOutTradeNo(order.getOrderSn());
                     orderRequest.setTradeType(WxPayConstants.TradeType.MWEB);
                     orderRequest.setNotifyUrl(url + "/pay/callback/weixinPayNotify");
@@ -142,7 +156,7 @@ public class PayServiceImpl implements IPayService {
                     BigDecimal actualPrice = order.getActualPrice();
                     fee = actualPrice.multiply(new BigDecimal(100)).intValue();
                     orderRequest.setTotalFee(fee);
-                    orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
+                    orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
 
                     result = wxPayService.createOrder(orderRequest);
                     return R.success().add("result", result);
@@ -159,8 +173,10 @@ public class PayServiceImpl implements IPayService {
                 // 创建API对应的request，使用手机网站支付request
                 AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
                 // 在公共参数中设置回跳和通知地址
-                String url = WaynConfig.getMobileUrl() + request.getContextPath();
-                alipayRequest.setReturnUrl(url + "/returnOrders/" + orderSn + "/" + userId);
+                String url = WaynConfig.getMobileUrl();
+                if (StringUtils.isNotBlank(orderVO.getReturnUrl())) {
+                    alipayRequest.setReturnUrl(orderVO.getReturnUrl());
+                }
                 alipayRequest.setNotifyUrl(url + "/pay/callback/aliPayNotify");
 
                 // 填充业务参数
@@ -190,6 +206,7 @@ public class PayServiceImpl implements IPayService {
                 // 请求
                 String form;
                 try {
+                    log.info("alipayRequest:{}", JSON.toJSONString(alipayRequest));
                     // 需要自行申请支付宝的沙箱账号、申请appID，并在配置文件中依次配置AppID、密钥、公钥，否则这里会报错。
                     form = alipayClient.pageExecute(alipayRequest).getBody();// 调用SDK生成表单
                     return R.success().add("form", form);
@@ -219,6 +236,81 @@ public class PayServiceImpl implements IPayService {
             }
         }
     }
+
+    @Override
+    public R refund(Long orderId) throws UnsupportedEncodingException, AlipayApiException, WxPayException {
+        Order order = orderService.getById(orderId);
+        ReturnCodeEnum returnCodeEnum = orderService.checkOrderOperator(order);
+        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
+            return R.error(returnCodeEnum);
+        }
+
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isRefund()) {
+            return R.error(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
+        }
+
+        // 设置订单申请退款状态
+        order.setOrderStatus(OrderUtil.STATUS_REFUND);
+        order.setUpdateTime(new Date());
+        if (!orderService.updateById(order)) {
+            return R.error(ReturnCodeEnum.ERROR);
+        }
+        Integer payType = order.getPayType();
+        switch (Objects.requireNonNull(PayTypeEnum.of(payType))) {
+            case WX -> {
+                WxPayRefundV3Request refundV3Request = new WxPayRefundV3Request();
+                String refundSn = orderSnGenUtil.generateRefundOrderSn();
+                refundV3Request.setTransactionId(order.getPayId());
+                refundV3Request.setOutRefundNo(refundSn);
+                refundV3Request.setReason("商城退款：refund：{}" + refundSn);
+                WxPayRefundV3Request.Amount amount = new WxPayRefundV3Request.Amount();
+                amount.setRefund(order.getActualPrice().multiply(new BigDecimal("100")).intValue());
+                amount.setCurrency("CNY");
+                amount.setTotal(order.getActualPrice().multiply(new BigDecimal("100")).intValue());
+                refundV3Request.setAmount(amount);
+                WxPayRefundV3Result refundV3Result = wxPayService.refundV3(refundV3Request);
+                log.info("response:{}", JSON.toJSONString(refundV3Result));
+                String status = refundV3Result.getStatus();
+                if (!"SUCCESS".equals(status)) {
+                    return R.error(ReturnCodeEnum.ORDER_REFUND_ERROR);
+                }
+                break;
+            }
+            case ALI -> {
+                AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGateway(), alipayConfig.getAppId(),
+                        alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(), alipayConfig.getAlipayPublicKey(),
+                        alipayConfig.getSigntype());
+                AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+                JSONObject bizContent = new JSONObject();
+                String refundSn = orderSnGenUtil.generateRefundOrderSn();
+                bizContent.put("trade_no", order.getPayId());
+                bizContent.put("refund_amount", order.getActualPrice());
+                bizContent.put("out_request_no", refundSn);
+                bizContent.put("refund_reason", "商城退款：refund：{}" + refundSn);
+
+                request.setBizContent(bizContent.toString());
+                AlipayTradeRefundResponse response = alipayClient.execute(request);
+                log.info("response:{}", JSON.toJSONString(response));
+                if (!response.isSuccess()) {
+                    return R.error(ReturnCodeEnum.ORDER_REFUND_ERROR);
+                }
+                break;
+            }
+            default -> {
+            }
+        }
+
+        // 有用户申请退款，邮件通知运营人员
+        String email = iMemberService.getById(order.getUserId()).getEmail();
+        if (StringUtils.isNotEmpty(email)) {
+            if (StringUtils.isNotBlank(email)) {
+                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
+            }
+        }
+        return R.success();
+    }
+
 
     @Override
     public String wxPayNotify(HttpServletRequest request, HttpServletResponse response) {

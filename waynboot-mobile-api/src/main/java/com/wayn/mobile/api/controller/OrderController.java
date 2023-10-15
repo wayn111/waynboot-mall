@@ -61,11 +61,6 @@ public class OrderController extends BaseController {
         return iOrderService.cancel(orderId);
     }
 
-    @PostMapping("refund/{orderId}")
-    public R refund(@PathVariable Long orderId) throws UnsupportedEncodingException {
-        return iOrderService.refund(orderId);
-    }
-
     @PostMapping("confirm/{orderId}")
     public R confirm(@PathVariable Long orderId) {
         return iOrderService.confirm(orderId);

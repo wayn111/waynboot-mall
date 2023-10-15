@@ -1,8 +1,11 @@
 package com.wayn.common.enums;
 
+import lombok.Getter;
+
 /**
  * 支付方式枚举
  */
+@Getter
 public enum PayTypeEnum {
     // 微信
     WX(1),
@@ -15,10 +18,6 @@ public enum PayTypeEnum {
 
     PayTypeEnum(int code) {
         this.code = code;
-    }
-
-    public int getCode() {
-        return code;
     }
 
     public static PayTypeEnum of(int code) {

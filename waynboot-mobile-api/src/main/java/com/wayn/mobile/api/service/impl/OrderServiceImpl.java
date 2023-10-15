@@ -418,35 +418,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public R refund(Long orderId) throws UnsupportedEncodingException {
-        Order order = getById(orderId);
-        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
-        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
-            return R.error(returnCodeEnum);
-        }
-
-        OrderHandleOption handleOption = OrderUtil.build(order);
-        if (!handleOption.isRefund()) {
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
-        }
-
-        // 设置订单申请退款状态
-        order.setOrderStatus(OrderUtil.STATUS_REFUND);
-        order.setUpdateTime(new Date());
-        updateById(order);
-
-        // 有用户申请退款，邮件通知运营人员
-        String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotEmpty(email)) {
-            if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
-            }
-        }
-
-        return R.success();
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public R delete(Long orderId) {
         Order order = getById(orderId);

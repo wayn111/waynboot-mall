@@ -102,15 +102,6 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
             }
         }
 
-        // 返还优惠券
-//        List<LitemallCouponUser> couponUsers = couponUserService.findByOid(orderId);
-//        for (LitemallCouponUser couponUser: couponUsers) {
-//            // 优惠券状态设置为可使用
-//            couponUser.setStatus(CouponUserConstant.STATUS_USABLE);
-//            couponUser.setUpdateTime(LocalDateTime.now());
-//            couponUserService.update(couponUser);
-//        }
-
         // 退款成功通知用户, 例如“您申请的订单退款 [ 单号:{1} ] 已成功，请耐心等待到账。”
         // 注意订单号只发后6位
         String email = iMemberService.getById(order.getUserId()).getEmail();
@@ -118,7 +109,6 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
             iMailService.sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email,
                     WaynConfig.getAdminUrl() + "/callback/email");
         }
-        // logHelper.logOrderSucceed("退款", "订单编号 " + order.getOrderSn());
         return R.success();
     }
 
@@ -169,6 +159,4 @@ public class AdminOrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> 
         data.put("user", member);
         return R.success().add("data", data);
     }
-
-
 }
