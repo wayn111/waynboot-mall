@@ -51,40 +51,6 @@ public class OrderController extends BaseController {
         return iOrderService.asyncSubmit(orderVO);
     }
 
-    /**
-     * JSAPI支付
-     *
-     * @param orderVO
-     * @return
-     */
-    @PostMapping("prepay")
-    public R prepay(@RequestBody OrderVO orderVO) {
-        return iOrderService.prepay(orderVO.getOrderSn(), orderVO.getPayType(), request);
-    }
-
-    /**
-     * H5支付
-     *
-     * @param orderVO
-     * @return
-     */
-    @PostMapping("h5pay")
-    public R h5pay(@RequestBody OrderVO orderVO) throws UnsupportedEncodingException {
-        return iOrderService.h5pay(orderVO.getOrderSn(), orderVO.getPayType(), request);
-    }
-
-    @PostMapping("wxPayNotify")
-    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        log.info("微信paySuccess通知数据记录：req：{}", JSONObject.toJSONString(request.getParameterMap()));
-        iOrderService.wxPayNotify(request, response);
-    }
-
-    @PostMapping("aliPayNotify")
-    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException {
-        log.info("支付宝paySuccess通知数据记录：req: {}", JSONObject.toJSONString(request.getParameterMap()));
-        iOrderService.aliPayNotify(request, response);
-    }
-
     @GetMapping("searchResult/{orderSn}")
     public R searchResult(@PathVariable String orderSn) {
         return iOrderService.searchResult(orderSn);

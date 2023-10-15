@@ -3,24 +3,11 @@ package com.wayn.mobile.api.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUnit;
 import com.alibaba.fastjson.JSON;
-import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
-import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
-import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
-import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
-import com.github.binarywang.wxpay.constant.WxPayConstants;
-import com.github.binarywang.wxpay.exception.WxPayException;
-import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.constant.Constants;
@@ -31,14 +18,11 @@ import com.wayn.common.core.domain.vo.order.OrderGoodsVO;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.util.OrderHandleOption;
 import com.wayn.common.core.util.OrderUtil;
-import com.wayn.common.enums.PayTypeEnum;
 import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.exception.BusinessException;
-import com.wayn.common.task.TaskService;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
-import com.wayn.common.util.ip.IpUtils;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.message.core.constant.MQConstants;
 import com.wayn.message.core.dto.OrderDTO;
@@ -48,12 +32,9 @@ import com.wayn.mobile.api.service.ICartService;
 import com.wayn.mobile.api.service.IOrderService;
 import com.wayn.mobile.api.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -64,7 +45,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -88,10 +68,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private IOrderGoodsService iOrderGoodsService;
     private IGoodsProductService iGoodsProductService;
     private IGoodsService iGoodsService;
-    private WxPayService wxPayService;
     private IMemberService iMemberService;
     private OrderMapper orderMapper;
-    private TaskService taskService;
     private IMailService iMailService;
     private RabbitTemplate rabbitTemplate;
     private RabbitTemplate delayRabbitTemplate;
@@ -391,262 +369,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public R prepay(String orderSn, Integer payType, HttpServletRequest request) {
-        // 获取订单详情
-        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
-        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
-        if (!returnCodeEnum.equals(ReturnCodeEnum.SUCCESS)) {
-            return R.error(returnCodeEnum);
-        }
-        // 检测是否能够取消
-        OrderHandleOption handleOption = OrderUtil.build(order);
-        if (!handleOption.isPay()) {
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
-        }
-        // 设置支付方式
-        order.setPayType(payType);
-        Member member = iMemberService.getById(MobileSecurityUtils.getUserId());
-        String openid = member.getWeixinOpenid();
-        if (openid == null) {
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
-        }
-        WxPayMpOrderResult result;
-        try {
-            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-            orderRequest.setOutTradeNo(order.getOrderSn());
-            orderRequest.setOpenid(openid);
-            orderRequest.setBody("订单：" + order.getOrderSn());
-            // 元转成分
-            int fee;
-            BigDecimal actualPrice = order.getActualPrice();
-            fee = actualPrice.multiply(new BigDecimal(100)).intValue();
-            orderRequest.setTotalFee(fee);
-            orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
-
-            result = wxPayService.createOrder(orderRequest);
-            return R.success().add("result", result);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
-        }
-    }
-
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public R h5pay(String orderSn, Integer payType, HttpServletRequest request) throws UnsupportedEncodingException {
-        // 获取订单详情
-        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
-        Long userId = order.getUserId();
-        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
-        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
-            return R.error(returnCodeEnum);
-        }
-        // 检测是否能够取消
-        OrderHandleOption handleOption = OrderUtil.build(order);
-        if (!handleOption.isPay()) {
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
-        }
-        // 保存支付方式
-        boolean update = lambdaUpdate()
-                .set(Order::getPayType, payType)
-                .eq(Order::getOrderSn, orderSn).update();
-        if (!update) {
-            return R.error(ReturnCodeEnum.ORDER_SET_PAY_ERROR);
-        }
-        switch (Objects.requireNonNull(PayTypeEnum.of(payType))) {
-            case WX -> {
-                WxPayMpOrderResult result;
-                try {
-                    WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-                    orderRequest.setOutTradeNo(order.getOrderSn());
-                    orderRequest.setTradeType(WxPayConstants.TradeType.MWEB);
-                    orderRequest.setBody("订单：" + order.getOrderSn());
-                    // 元转成分
-                    int fee;
-                    BigDecimal actualPrice = order.getActualPrice();
-                    fee = actualPrice.multiply(new BigDecimal(100)).intValue();
-                    orderRequest.setTotalFee(fee);
-                    orderRequest.setSpbillCreateIp(IpUtils.getIpAddr(request));
-
-                    result = wxPayService.createOrder(orderRequest);
-                    return R.success().add("result", result);
-                } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                    return R.error(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
-                }
-            }
-            case ALI -> {
-                // 初始化
-                AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGateway(), alipayConfig.getAppId(),
-                        alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(), alipayConfig.getAlipayPublicKey(),
-                        alipayConfig.getSigntype());
-                // 创建API对应的request，使用手机网站支付request
-                AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
-                // 在公共参数中设置回跳和通知地址
-                String url = WaynConfig.getMobileUrl() + request.getContextPath();
-                alipayRequest.setReturnUrl(url + "/returnOrders/" + orderSn + "/" + userId);
-                alipayRequest.setNotifyUrl(url + "/paySuccess?payType=1&orderSn=" + orderSn);
-
-                // 填充业务参数
-                // 必填
-                // 商户订单号，需保证在商户端不重复
-                String out_trade_no = orderSn + new Random().nextInt(9999);
-                // 销售产品码，与支付宝签约的产品码名称。目前仅支持FAST_INSTANT_TRADE_PAY
-                String product_code = "FAST_INSTANT_TRADE_PAY";
-                // 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]。
-                BigDecimal actualPrice = order.getActualPrice();
-                String total_amount = actualPrice.toString();
-                // 订单标题
-                String subject = "支付宝测试";
-
-                // 选填
-                // 商品描述，可空
-                String body = "商品描述";
-                alipayRequest.setBizContent("{" + "\"out_trade_no\":\"" + out_trade_no + "\"," + "\"product_code\":\""
-                        + product_code + "\"," + "\"total_amount\":\"" + total_amount + "\"," + "\"subject\":\"" + subject
-                        + "\"," + "\"body\":\"" + body + "\"}");
-                // 请求
-                String form;
-                try {
-                    // 需要自行申请支付宝的沙箱账号、申请appID，并在配置文件中依次配置AppID、密钥、公钥，否则这里会报错。
-                    form = alipayClient.pageExecute(alipayRequest).getBody();// 调用SDK生成表单
-                    return R.success().add("form", form);
-                } catch (AlipayApiException e) {
-                    log.error(e.getMessage(), e);
-                    return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-                }
-            }
-            case ALI_TEST -> {
-                // 支付宝test，直接更新支付状态为已支付
-                order.setPayId("xxxxx0987654321-ali");
-                order.setPayTime(LocalDateTime.now());
-                order.setOrderStatus(OrderUtil.STATUS_PAY);
-                order.setUpdateTime(new Date());
-                if (!updateById(order)) {
-                    return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-                }
-
-                // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-                String email = iMemberService.getById(order.getUserId()).getEmail();
-                if (StringUtils.isNotBlank(email)) {
-                    iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
-                }
-                return R.success();
-            }
-            default -> {
-                return R.error(ReturnCodeEnum.ORDER_NOT_SUPPORT_PAYWAY_ERROR);
-            }
-        }
-    }
-
-    @Override
-    public void wxPayNotify(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String xmlResult = null;
-        try {
-            xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
-        } catch (IOException e) {
-            log.error(WxPayNotifyResponse.fail(e.getMessage()), e);
-        }
-
-        WxPayOrderNotifyResult result = null;
-        try {
-            result = wxPayService.parseOrderNotifyResult(xmlResult);
-
-            if (!WxPayConstants.ResultCode.SUCCESS.equals(result.getReturnCode())) {
-                log.error(xmlResult);
-            }
-        } catch (WxPayException e) {
-            log.error(e.getMessage(), e);
-        }
-
-        log.info("处理腾讯支付平台的订单支付, {}", result.getReturnMsg());
-
-        String orderSn = result.getOutTradeNo();
-        String payId = result.getTransactionId();
-
-        // 分转化成元
-        String totalFee = BaseWxPayResult.fenToYuan(result.getTotalFee());
-        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
-        if (order == null) {
-            log.error("微信支付回调：订单不存在，orderSn：{}", orderSn);
-            return;
-        }
-
-        // 检查这个订单是否已经处理过
-        if (OrderUtil.hasPayed(order)) {
-            log.error("微信支付回调：订单已经处理过了，orderSn：{}", orderSn);
-            return;
-        }
-
-        // 检查支付订单金额
-        if (!totalFee.equals(order.getActualPrice().toString())) {
-            log.error("微信支付回调: 支付金额不符合，orderSn：{}，totalFee：{}", order.getOrderSn(), totalFee);
-            return;
-        }
-
-        order.setPayId(payId);
-        order.setPayTime(LocalDateTime.now());
-        order.setOrderStatus(OrderUtil.STATUS_PAY);
-        order.setUpdateTime(new Date());
-        if (!updateById(order)) {
-            log.error("微信支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
-            return;
-        }
-
-        // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-        String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotBlank(email)) {
-            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
-        }
-    }
-
-    @Override
-    public void aliPayNotify(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException {
-        // 将异步通知中收到的所有参数都存放到map中
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        Map<String, String> paramsMap = new HashMap<>();
-        parameterMap.forEach((s, strings) -> paramsMap.put(s, strings[0]));
-        // 调用SDK验证签名
-        boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, alipayConfig.getAlipayPublicKey(), alipayConfig.getCharset(), alipayConfig.getSigntype());
-        if (!signVerified) {
-            log.error("支付宝支付回调：验签失败");
-            return;
-        }
-        log.info("支付宝支付回调：开始");
-        // 验签成功后，按照支付结果异步通知中的描述，对支付结果中的业务内容进行二次校验，校验成功后在response中返回success并继续商户自身业务处理，校验失败返回failure
-        String orderSn = request.getParameter("orderSn");
-        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
-        if (order == null) {
-            log.error("支付宝支付回调：订单不存在，orderSn：{}", orderSn);
-            return;
-        }
-
-        // 检查这个订单是否已经处理过
-        if (OrderUtil.hasPayed(order)) {
-            log.error("支付宝支付回调：订单已经处理过了，orderSn：{}", orderSn);
-            return;
-        }
-
-        order.setPayId("0xsdfsadfas-ali");
-        order.setPayTime(LocalDateTime.now());
-        order.setOrderStatus(OrderUtil.STATUS_PAY);
-        order.setUpdateTime(new Date());
-        if (!updateById(order)) {
-            log.error("支付宝支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
-            return;
-        }
-
-        // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-        String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotBlank(email)) {
-            iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
-        }
-        log.info("支付宝支付回调：结束");
-    }
-
-    @Override
     public R searchResult(String orderSn) {
         Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
         if (order == null) {
@@ -764,13 +486,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return R.success();
     }
 
-    /**
-     * 检查订单操作是否合法
-     *
-     * @param order 订单详情
-     * @return 成功返回<code>MQConstants.STRING_TRUE</code>，失败返回<code>MQConstants.STRING_FALSE</code>，或者自定义消息
-     */
-    private ReturnCodeEnum checkOrderOperator(Order order) {
+    @Override
+    public ReturnCodeEnum checkOrderOperator(Order order) {
         Long userId = MobileSecurityUtils.getUserId();
         if (Objects.isNull(order)) {
             return ReturnCodeEnum.USER_NOT_EXISTS_ERROR;
@@ -781,15 +498,4 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return ReturnCodeEnum.SUCCESS;
     }
 
-    /*public void releaseCoupon(Long orderId) {
-        List<CouponUser> couponUserList = couponUserService.list(new QueryWrapper<CouponUser>().eq("order_id", orderId));
-        if (CollectionUtils.isEmpty(couponUserList)) {
-            return;
-        }
-        for (CouponUser couponUser : couponUserList) {
-            couponUser.setStatus((byte) 0);
-            couponUser.setUpdateTime(new Date());
-            couponUserService.updateById(couponUser);
-        }
-    }*/
 }

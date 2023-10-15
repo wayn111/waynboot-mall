@@ -75,10 +75,20 @@ shop:
     app-secret:
     mch-id:
     mch-key:
-    notify-url: http://www.example.com/wx/order/pay-notify
     # 商户证书文件路径
     # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
     key-path: xxxxx
+  # alipay
+  alipay:
+    app-id:
+    rsa-private-key:
+    alipay-public_key:
+    gateway: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+    charset: UTF-8
+    format: json
+    log_path: /opt/waynboot-mall/log
+    signtype: RSA2
+
 management:
   endpoints:
     web:
