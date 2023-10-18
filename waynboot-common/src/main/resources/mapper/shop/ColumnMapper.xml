@@ -30,6 +30,7 @@
             <if test="column.endTime != null and column.endTime != ''">
                 and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{column.endTime},'%Y-%m-%d')
             </if>
+            order by id desc
         </where>
     </select>
 

@@ -2,6 +2,7 @@ package com.wayn.mobile.framework.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wayn.common.core.domain.shop.Member;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +10,7 @@ import java.io.Serial;
 import java.util.Collection;
 import java.util.Set;
 
+@Getter
 public class LoginUserDetail implements UserDetails {
 
 
@@ -47,17 +49,9 @@ public class LoginUserDetail implements UserDetails {
     public LoginUserDetail() {
     }
 
-    public Set<String> getPermissions() {
-        return permissions;
-    }
-
     public LoginUserDetail setPermissions(Set<String> permissions) {
         this.permissions = permissions;
         return this;
-    }
-
-    public Long getLoginTime() {
-        return loginTime;
     }
 
     public LoginUserDetail setLoginTime(Long loginTime) {
@@ -65,26 +59,14 @@ public class LoginUserDetail implements UserDetails {
         return this;
     }
 
-    public Long getExpireTime() {
-        return expireTime;
-    }
-
     public LoginUserDetail setExpireTime(Long expireTime) {
         this.expireTime = expireTime;
         return this;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public LoginUserDetail setToken(String token) {
         this.token = token;
         return this;
-    }
-
-    public Member getMember() {
-        return member;
     }
 
     public LoginUserDetail setMember(Member member) {

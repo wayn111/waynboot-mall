@@ -40,7 +40,6 @@ logging:
   level:
     com.wayn: info
     org.springframework: info
-    com.baomidou: info
   file:
     name: ${LOG_PATH_PREFIX:E:/home}/${spring.application.name}/info.log
 

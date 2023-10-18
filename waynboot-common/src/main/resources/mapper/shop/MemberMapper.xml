@@ -46,7 +46,7 @@
             <if test="member.endTime != null and member.endTime != ''">
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{member.endTime},'%Y-%m-%d')
             </if>
-            order by create_time desc
+            order by create_time desc, id desc
         </where>
     </select>
 </mapper>

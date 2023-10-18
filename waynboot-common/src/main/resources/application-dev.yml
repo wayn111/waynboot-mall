@@ -38,8 +38,6 @@ spring:
     port: 5672
     username: guest
     password: guest
-    # 虚拟主机名称
-    virtual-host: /
     # 消息确认配置项
     # 确认消息已发送到交换机(Exchange)
     publisher-confirm-type: correlated
@@ -61,13 +59,24 @@ es:
     shards: 3
     replicas: 2
 
-# alipay 需要自行申请支付宝的沙箱账号、申请appID，并依次配置AppID、密钥、公钥，否则无法发起支付宝支付。
-alipay:
-  app-id:
-  rsa-private-key:
-  alipay-public_key:
-  gateway: https://openapi.alipaydev.com/gateway.do
-  charset: UTF-8
-  format: json
-  log-path: ./log
-  signtype: RSA2
+# wx支付配置
+shop:
+  # 开发者应该设置成自己的wx相关信息
+  wxpay:
+    app-id:
+    app-secret:
+    mch-id:
+    mch-key:
+    # 商户证书文件路径
+    # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
+    key-path: xxxxx
+  # alipay
+  alipay:
+    app-id:
+    rsa-private-key:
+    alipay-public_key:
+    gateway: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+    charset: UTF-8
+    format: json
+    log_path: /opt/waynboot-mall/log
+    signtype: RSA2
