@@ -38,7 +38,10 @@
     <!-- 通用查询结果列 -->
     <sql id="selectOrderVo">
         select id,
-        user_id, order_sn, order_status, aftersale_status, consignee, mobile, address, message, goods_price, freight_price, coupon_price, order_price, actual_price, pay_id, pay_time, ship_sn, ship_channel, ship_time, refund_amount, refund_type, refund_content, refund_time, confirm_time, comments, order_end_time, create_time, update_time, del_flag
+        user_id, order_sn, order_status, aftersale_status, consignee, mobile, address, message, goods_price,
+        freight_price, coupon_price, order_price, actual_price, pay_type, pay_id, pay_time, ship_sn, ship_channel,
+        ship_time, refund_amount, refund_type, refund_content, refund_time, confirm_time, comments,
+        order_end_time, create_time, update_time, del_flag
         from shop_order
     </sql>
 
@@ -55,17 +58,20 @@
             <if test="order.orderStatus != null">
                 AND order_status = #{order.orderStatus}
             </if>
+            <if test="order.payType != null">
+                AND pay_type = #{order.payType}
+            </if>
             <if test="order.userId != null">
                 AND user_id = #{order.userId}
             </if>
             <if test="order.startTime != null and order.startTime != ''">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{order.startTime},'%Y-%m-%d')
+                AND create_time <![CDATA[ >= ]]> DATE_FORMAT(#{order.startTime},'%Y-%m-%d 00:00:00')
             </if>
             <if test="order.endTime != null and order.endTime != ''">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{order.endTime},'%Y-%m-%d')
+                AND create_time <![CDATA[ <= ]]> DATE_FORMAT(#{order.endTime},'%Y-%m-%d 23:59:59')
             </if>
-            order by create_time desc, id desc
         </where>
+        order by create_time desc, id desc
     </select>
 
 </mapper>

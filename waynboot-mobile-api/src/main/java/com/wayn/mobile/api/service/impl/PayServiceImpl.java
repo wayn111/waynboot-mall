@@ -6,17 +6,13 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
-import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
-import com.github.binarywang.wxpay.bean.request.WxPayRefundV3Request;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
-import com.github.binarywang.wxpay.bean.result.WxPayRefundV3Result;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -34,9 +30,9 @@ import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.ip.IpUtils;
-import com.wayn.mobile.api.service.IOrderService;
+import com.wayn.mobile.api.service.IMobileOrderService;
 import com.wayn.mobile.api.service.IPayService;
-import com.wayn.mobile.api.util.OrderSnGenUtil;
+import com.wayn.common.util.OrderSnGenUtil;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -69,7 +65,7 @@ public class PayServiceImpl implements IPayService {
     private IMemberService iMemberService;
     private IMailService iMailService;
     private AlipayConfig alipayConfig;
-    private IOrderService orderService;
+    private IMobileOrderService orderService;
     private WxPayService wxPayService;
     private OrderSnGenUtil orderSnGenUtil;
 
@@ -255,58 +251,6 @@ public class PayServiceImpl implements IPayService {
         order.setUpdateTime(new Date());
         if (!orderService.updateById(order)) {
             return R.error(ReturnCodeEnum.ERROR);
-        }
-        Integer payType = order.getPayType();
-        switch (Objects.requireNonNull(PayTypeEnum.of(payType))) {
-            case WX -> {
-                WxPayRefundV3Request refundV3Request = new WxPayRefundV3Request();
-                String refundSn = orderSnGenUtil.generateRefundOrderSn();
-                refundV3Request.setTransactionId(order.getPayId());
-                refundV3Request.setOutRefundNo(refundSn);
-                refundV3Request.setReason("商城退款：refund：{}" + refundSn);
-                WxPayRefundV3Request.Amount amount = new WxPayRefundV3Request.Amount();
-                amount.setRefund(order.getActualPrice().multiply(new BigDecimal("100")).intValue());
-                amount.setCurrency("CNY");
-                amount.setTotal(order.getActualPrice().multiply(new BigDecimal("100")).intValue());
-                refundV3Request.setAmount(amount);
-                WxPayRefundV3Result refundV3Result = wxPayService.refundV3(refundV3Request);
-                log.info("response:{}", JSON.toJSONString(refundV3Result));
-                String status = refundV3Result.getStatus();
-                if (!"SUCCESS".equals(status)) {
-                    return R.error(ReturnCodeEnum.ORDER_REFUND_ERROR);
-                }
-                break;
-            }
-            case ALI -> {
-                AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGateway(), alipayConfig.getAppId(),
-                        alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(), alipayConfig.getAlipayPublicKey(),
-                        alipayConfig.getSigntype());
-                AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
-                JSONObject bizContent = new JSONObject();
-                String refundSn = orderSnGenUtil.generateRefundOrderSn();
-                bizContent.put("trade_no", order.getPayId());
-                bizContent.put("refund_amount", order.getActualPrice());
-                bizContent.put("out_request_no", refundSn);
-                bizContent.put("refund_reason", "商城退款：refund：{}" + refundSn);
-
-                request.setBizContent(bizContent.toString());
-                AlipayTradeRefundResponse response = alipayClient.execute(request);
-                log.info("response:{}", JSON.toJSONString(response));
-                if (!response.isSuccess()) {
-                    return R.error(ReturnCodeEnum.ORDER_REFUND_ERROR);
-                }
-                break;
-            }
-            default -> {
-            }
-        }
-
-        // 有用户申请退款，邮件通知运营人员
-        String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotEmpty(email)) {
-            if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("订单正在退款", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
-            }
         }
         return R.success();
     }

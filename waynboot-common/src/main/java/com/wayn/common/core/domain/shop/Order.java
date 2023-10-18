@@ -133,7 +133,7 @@ public class Order extends ShopBaseEntity implements Serializable {
     /**
      * 退款方式
      */
-    private String refundType;
+    private Integer refundType;
 
     /**
      * 退款备注

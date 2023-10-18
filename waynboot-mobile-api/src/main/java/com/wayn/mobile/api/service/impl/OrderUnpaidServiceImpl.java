@@ -7,10 +7,9 @@ import com.wayn.common.core.domain.shop.OrderGoods;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.core.util.OrderUtil;
-import com.wayn.common.enums.ReturnCodeEnum;
 import com.wayn.common.util.R;
 import com.wayn.mobile.api.mapper.OrderMapper;
-import com.wayn.mobile.api.service.IOrderService;
+import com.wayn.mobile.api.service.IMobileOrderService;
 import com.wayn.mobile.api.service.IOrderUnpaidService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author: waynaqua
@@ -31,7 +29,7 @@ import java.util.Objects;
 public class OrderUnpaidServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderUnpaidService {
 
 
-    private IOrderService orderService;
+    private IMobileOrderService orderService;
     private IOrderGoodsService orderGoodsService;
     private IGoodsProductService productService;
 

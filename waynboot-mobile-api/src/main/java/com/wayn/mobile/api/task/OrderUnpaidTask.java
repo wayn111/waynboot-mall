@@ -9,7 +9,7 @@ import com.wayn.common.core.util.OrderUtil;
 import com.wayn.common.task.Task;
 import com.wayn.common.util.spring.SpringContextUtil;
 import com.wayn.data.redis.manager.RedisCache;
-import com.wayn.mobile.api.service.IOrderService;
+import com.wayn.mobile.api.service.IMobileOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -47,7 +47,7 @@ public class OrderUnpaidTask extends Task {
     @Override
     public void run() {
         log.info("系统开始处理延时任务---订单超时未付款---{}", this.orderId);
-        IOrderService orderService = SpringContextUtil.getBean(IOrderService.class);
+        IMobileOrderService orderService = SpringContextUtil.getBean(IMobileOrderService.class);
         IOrderGoodsService orderGoodsService = SpringContextUtil.getBean(IOrderGoodsService.class);
         IGoodsProductService productService = SpringContextUtil.getBean(IGoodsProductService.class);
         RedisCache redisCache = SpringContextUtil.getBean(RedisCache.class);
