@@ -8,7 +8,7 @@ services:
       - "15672:15672"
     container_name: rabbitmq
     volumes:
-      - ./rabbitmq/plugins:/plugins
+      - ./rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.12.0.ez:/plugins/rabbitmq_delayed_message_exchange-3.12.0.ez
       - ./rabbitmq/plugins/enabled_plugins:/etc/rabbitmq/enabled_plugins
       - ./rabbitmq/data:/var/lib/rabbitmq
       - ./rabbitmq/log:/var/lib/rabbitmq
