@@ -99,19 +99,6 @@ services:
       - ./redis/data:/data
     command: redis-server /etc/redis/redis.conf
     network_mode: "host"
-  # RabbitMQ
-  rabbitmq:
-    image: rabbitmq:management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    container_name: rabbitmq
-    environment:
-      #rabbitmq的初始用户名
-      RABBITMQ_DEFAULT_USER: guest
-      #rabbitmq的初始密码
-      RABBITMQ_DEFAULT_PASS: guest
-    network_mode: "host"
   # MySQL服务
   mysql:
     container_name: mysql
@@ -127,16 +114,38 @@ services:
       - ./db-init:/docker-entrypoint-initdb.d
     command: mysqld --lower_case_table_names=1 --default-authentication-plugin=mysql_native_password
     network_mode: "host"
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.12.7-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: rabbitmq
+    volumes:
+      - ./rabbitmq/plugins:/plugins
+      - ./rabbitmq/plugins/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbitmq/data:/var/lib/rabbitmq
+      - ./rabbitmq/log:/var/lib/rabbitmq
+    environment:
+      #rabbitmq的初始用户名
+      RABBITMQ_DEFAULT_USER: guest
+      #rabbitmq的初始密码
+      RABBITMQ_DEFAULT_PASS: guest
+    network_mode: "host"
   # Elasticsearch服务
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    image: elasticsearch:7.14.0
+    ports:
+      - "9200:9200"
     container_name: elasticsearch
     volumes:
       - ./es/data:/usr/share/elasticsearch/data
       - ./es/plugins:/usr/share/elasticsearch/plugins
+      - ./es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
+      - ELASTIC_PASSWORD="123456"
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     network_mode: "host"
   nginx:
