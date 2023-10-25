@@ -32,7 +32,7 @@ public class CategoryController extends BaseController {
 
     private ICategoryService iCategoryService;
     private IGoodsService iGoodsService;
-    private ThreadPoolTaskExecutor categoryThreadPoolTaskExecutor;
+    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
     @GetMapping("index")
     public R index(@RequestParam(required = false) Long id) {
@@ -49,8 +49,8 @@ public class CategoryController extends BaseController {
         }
         FutureTask<Category> currentCategoryTask = new FutureTask<>(currentCategoryCallable);
         FutureTask<List<VanTreeSelectVo>> subCategoryListTask = new FutureTask<>(subCategoryListCallable);
-        categoryThreadPoolTaskExecutor.submit(currentCategoryTask);
-        categoryThreadPoolTaskExecutor.submit(subCategoryListTask);
+        commonThreadPoolTaskExecutor.submit(currentCategoryTask);
+        commonThreadPoolTaskExecutor.submit(subCategoryListTask);
         try {
             success.add("categoryList", categoryList);
             success.add("currentCategory", currentCategoryTask.get());
@@ -69,8 +69,8 @@ public class CategoryController extends BaseController {
         Callable<List<VanTreeSelectVo>> subCategoryListCallable = () -> iCategoryService.selectCategoryByPid(id);
         FutureTask<Category> currentCategoryTask = new FutureTask<>(currentCategoryCallable);
         FutureTask<List<VanTreeSelectVo>> subCategoryListTask = new FutureTask<>(subCategoryListCallable);
-        categoryThreadPoolTaskExecutor.submit(currentCategoryTask);
-        categoryThreadPoolTaskExecutor.submit(subCategoryListTask);
+        commonThreadPoolTaskExecutor.submit(currentCategoryTask);
+        commonThreadPoolTaskExecutor.submit(subCategoryListTask);
         try {
             success.add("currentCategory", currentCategoryTask.get());
             success.add("subCategoryList", subCategoryListTask.get());

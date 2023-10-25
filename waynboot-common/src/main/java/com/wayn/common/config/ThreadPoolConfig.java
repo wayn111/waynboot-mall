@@ -1,4 +1,4 @@
-package com.wayn.mobile.framework.config;
+package com.wayn.common.config;
 
 import com.wayn.common.task.ThreadPoolExecutorMdcWrapper;
 import com.wayn.common.util.ThreadUtil;
@@ -31,12 +31,12 @@ public class ThreadPoolConfig {
     // 线程池维护线程所允许的空闲时间
     private final int keepAliveSeconds = 300;
 
-    @Bean(name = "homeThreadPoolTaskExecutor")
+    @Bean(name = "commonThreadPoolTaskExecutor")
     public ThreadPoolTaskExecutor homeThreadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
         BasicThreadFactory build = new BasicThreadFactory.Builder()
                 .namingPattern("home-task-%d")
-                .uncaughtExceptionHandler((t, e) -> log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e))
+                .uncaughtExceptionHandler((t, e) -> log.error("commonTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e))
                 .build();
         executor.setThreadFactory(build);
         executor.initialize();
@@ -54,18 +54,6 @@ public class ThreadPoolConfig {
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // 等待所有任务结束后再关闭线程池
         executor.setWaitForTasksToCompleteOnShutdown(true);
-        return executor;
-    }
-
-    @Bean(name = "categoryThreadPoolTaskExecutor")
-    public ThreadPoolTaskExecutor categoryThreadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
-        BasicThreadFactory build = new BasicThreadFactory.Builder()
-                .namingPattern("category-task-%d")
-                .uncaughtExceptionHandler((t, e) -> log.error("dongXinTaskExecutor:{},error:{}", t.getName(), e.getMessage(), e))
-                .build();
-        executor.setThreadFactory(build);
-        executor.initialize();
         return executor;
     }
 

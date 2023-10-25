@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
- * 解决子线程丢失reqest_id问题
+ * 解决子线程丢失request_id问题
  */
 public class ThreadPoolExecutorMdcWrapper extends ThreadPoolTaskExecutor {
 
