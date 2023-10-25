@@ -5,7 +5,7 @@ import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.enums.UserStatusEnum;
 import com.wayn.common.util.ip.IpUtils;
-import com.wayn.mobile.framework.config.ThreadPoolConfig;
+import com.wayn.common.config.ThreadPoolConfig;
 import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import lombok.AllArgsConstructor;

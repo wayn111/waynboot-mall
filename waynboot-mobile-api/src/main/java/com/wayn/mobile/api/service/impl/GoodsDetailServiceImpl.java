@@ -29,7 +29,7 @@ public class GoodsDetailServiceImpl implements IGoodsDetailService {
     private IGoodsSpecificationService iGoodsSpecificationService;
     private IGoodsProductService iGoodsProductService;
     private IGoodsAttributeService iGoodsAttributeService;
-    private ThreadPoolTaskExecutor homeThreadPoolTaskExecutor;
+    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
     @Override
     public R getGoodsDetailData(Long goodsId) {
@@ -41,9 +41,9 @@ public class GoodsDetailServiceImpl implements IGoodsDetailService {
         FutureTask<Object> specificationTask = new FutureTask<>(specificationCall);
         FutureTask<List<GoodsProduct>> productTask = new FutureTask<>(productCall);
         FutureTask<List<GoodsAttribute>> attrTask = new FutureTask<>(attrCall);
-        homeThreadPoolTaskExecutor.submit(specificationTask);
-        homeThreadPoolTaskExecutor.submit(productTask);
-        homeThreadPoolTaskExecutor.submit(attrTask);
+        commonThreadPoolTaskExecutor.submit(specificationTask);
+        commonThreadPoolTaskExecutor.submit(productTask);
+        commonThreadPoolTaskExecutor.submit(attrTask);
         try {
             success.add("info", iGoodsService.getById(goodsId));
             success.add("specificationList", specificationTask.get());
