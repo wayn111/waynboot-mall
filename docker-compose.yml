@@ -74,6 +74,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
     volumes:
+      - /opt/waynboot-mall/upload:/opt/waynboot-mall/upload
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/log:/var/log/nginx/
