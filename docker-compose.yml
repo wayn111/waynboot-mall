@@ -1,6 +1,6 @@
 version: '3'
 services:
-  waynboot-mobile-api:
+  mobile:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: mobile
     volumes:
@@ -17,7 +17,7 @@ services:
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/waynboot-mall/upload
     network_mode: "host"
-  waynboot-admin-api:
+  admin:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: admin
     volumes:
@@ -34,7 +34,7 @@ services:
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/waynboot-mall/upload
     network_mode: "host"
-  waynboot-message:
+  message:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: message
     volumes:
@@ -51,7 +51,7 @@ services:
       - LOG_PATH_PREFIX=/home/logs
       - UPLOAD_DIR=/opt/waynboot-mall/upload
     network_mode: "host"
-  waynboot-monitor:
+  monitor:
     image: ibm-semeru-runtimes:open-17-jdk
     container_name: boot-admin
     volumes:
