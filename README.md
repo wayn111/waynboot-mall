@@ -1,9 +1,10 @@
 # waynboot-mall
 
-| 分支名称                                                       | Spring Boot 版本 | JDK 版本 |
-|--------------------------------------------------------------------|----------------|--------|
-| [master](https://github.com/wayn111/waynboot-mall)                     | 3.1.4          | 17     |
+| 分支名称                                                                           | Spring Boot 版本 | JDK 版本 |
+|--------------------------------------------------------------------------------|----------------|--------|
+| [master](https://github.com/wayn111/waynboot-mall)                             | 3.1.4          | 17     |
 | [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7            | 1.8    | 
+
  
 ---
 
@@ -13,7 +14,7 @@
 - [技术选型](#技术选型)
 - [文件目录](#文件目录)
 - [todo](#todo)
-- [本地开发](#本地开发)
+- [开发部署](#开发部署)
 - [在线体验](#在线体验)
 - [演示截图](#演示截图)
 - [文件目录](#文件目录)
@@ -23,7 +24,9 @@
 
 # 简介
 
-waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运营后台、H5 商城和后端接口。实现了一套完整的商城业务，有首页展示、商品分类、商品详情、sku 详情、商品搜索、加入购物车、结算下单、支付宝/微信支付、商品评论等一系列功能。商城前后台项目源码全部开源，绝无套路。技术上基于最新得 Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，根据博主多年线上项目实战经验总结开发而来不断优化、完善。
+waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运营后台、H5 商城和后端接口。实现了一套完整的商城业务，有首页展示、商品分类、商品详情、sku
+详情、商品搜索、加入购物车、结算下单、支付宝/微信支付、商品评论等一系列功能。商城前后台项目源码全部开源，绝无套路。技术上基于最新得
+Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，根据博主多年线上项目实战经验总结开发而来不断优化、完善。
 
 对于初学者而言 waynboot-mall 项目是非常易于部署的，根据readme中的开发部署指南就能成功启动项目。对于非技术人员，本项目也提供了一键安装脚本，只需要十多分钟就能启动商城前后台所有服务。
 
@@ -42,6 +45,7 @@ waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运
 ![系统设计](images/系统设计.png)
 
 关注公众号：waynblog，每周更新最新技术文章。回复关键字：
+
 - **学习**：加群交流，群内问题都会一一解答。
 - **演示账号**：获得线上项目管理后台演示账号。
 - **开源项目**：获取博主自己写的三个开源项目，包含PC、H5商城、后台权限管理系统等。
@@ -52,21 +56,21 @@ waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运
 
 # 技术选型
 
-|     | 系统组件             | 采用技术                    | 官网                                                                                       |
-| --- | -------------------- | --------------------------- | ------------------------------------------------------------------------------------------ |
-| 1   | 基础框架             | Spring Boot                 | https://spring.io/projects/spring-boot                                                     |
-| 2   | ORM 框架             | MyBatis-Plus                | https://baomidou.com                                                                       |
-| 3   | 工具类库             | hutool                      | https://hutool.cn                                                                          |
-| 4   | 流量网关             | Nginx                       | http://nginx.org/en/index.html                                                             |
-| 5   | 访问控制             | Spring Security             | https://spring.io/projects/spring-security                                                 |
-| 6   | 日志记录             | Nginx                       | https://logback.qos.ch/                                                                    |
-| 7   | 验证码               | easy-captcha                | https://github.com/ele-admin/EasyCaptcha                                                   |
-| 8   | 数据库连接池         | HikariCP                    | https://github.com/brettwooldridge/HikariCP                                                |
-| 9   | Redis 客户端         | Lettuce                     | https://lettuce.io                                                                         |
-| 10  | Elasticsearch 客户端 | Java High Level REST Client | https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html |
-| 11  | 消息队列             | RabbitMQ                    | https://www.rabbitmq.com                                                                   |
-| 12  | 定时任务             | xxl-job                     | https://www.xuxueli.com/xxl-job                                                            |
-| 13  | 服务监控             | spring-boot-admin           | https://docs.spring-boot-admin.com/current/getting-started.html                            |
+|    | 系统组件              | 采用技术                        | 官网                                                                                         |
+|----|-------------------|-----------------------------|--------------------------------------------------------------------------------------------|
+| 1  | 基础框架              | Spring Boot                 | https://spring.io/projects/spring-boot                                                     |
+| 2  | ORM 框架            | MyBatis-Plus                | https://baomidou.com                                                                       |
+| 3  | 工具类库              | hutool                      | https://hutool.cn                                                                          |
+| 4  | 流量网关              | Nginx                       | http://nginx.org/en/index.html                                                             |
+| 5  | 访问控制              | Spring Security             | https://spring.io/projects/spring-security                                                 |
+| 6  | 日志记录              | Nginx                       | https://logback.qos.ch/                                                                    |
+| 7  | 验证码               | easy-captcha                | https://github.com/ele-admin/EasyCaptcha                                                   |
+| 8  | 数据库连接池            | HikariCP                    | https://github.com/brettwooldridge/HikariCP                                                |
+| 9  | Redis 客户端         | Lettuce                     | https://lettuce.io                                                                         |
+| 10 | Elasticsearch 客户端 | Java High Level REST Client | https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html |
+| 11 | 消息队列              | RabbitMQ                    | https://www.rabbitmq.com                                                                   |
+| 12 | 定时任务              | xxl-job                     | https://www.xuxueli.com/xxl-job                                                            |
+| 13 | 服务监控              | spring-boot-admin           | https://docs.spring-boot-admin.com/current/getting-started.html                            |
 
 ---
 
@@ -79,11 +83,13 @@ waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运
 
 ---
 
-# 本地开发
+# 开发部署
+
 由于本项目图片压缩包超过100m不能在github上传，
 提供百度网盘地址链接：https://pan.baidu.com/s/16_d0_f6RhVnN_dDobYm9Bw 提取码：rvlk
 
 ps: 也可以加我 wx: waynaqua 获取商城图片
+
 ```
 # 1. 克隆项目
 git clone git@github.com:wayn111/waynboot-mall.git
@@ -110,6 +116,7 @@ h5商城api:
 消费者api：
     进入waynboot-message-consumer子项目，找到MessageApplication文件，右键`run MessageApplication`，启动消费者项目
 ```
+
 ---
 
 # 在线体验
