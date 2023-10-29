@@ -14,7 +14,7 @@
 - [技术选型](#技术选型)
 - [文件目录](#文件目录)
 - [todo](#todo)
-- [开发部署](#开发部署)
+- [本地开发](#本地开发)
 - [在线体验](#在线体验)
 - [演示截图](#演示截图)
 - [文件目录](#文件目录)
@@ -83,7 +83,7 @@ Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，
 
 ---
 
-# 开发部署
+# 本地开发
 
 由于本项目图片压缩包超过100m不能在github上传，
 提供百度网盘地址链接：https://pan.baidu.com/s/16_d0_f6RhVnN_dDobYm9Bw 提取码：rvlk
@@ -115,6 +115,12 @@ h5商城api:
     进入waynboot-mobile-api子项目，找到MobileApplication文件，右键`run MobileApplication`，启动h5商城项目
 消费者api：
     进入waynboot-message-consumer子项目，找到MessageApplication文件，右键`run MessageApplication`，启动消费者项目
+    
+# 8. 启动商城H5项目
+请查看商城H5前端项目https://github.com/wayn111/waynboot-mobile，readme文档，进行本地启动
+
+# 9. 启动商城后管项目
+请查看商城后管前端项目https://github.com/wayn111/waynboot-admin，readme文档，进行本地启动
 ```
 
 ---
@@ -129,6 +135,10 @@ h5商城api:
 后台演示地址：http://121.4.124.33/admin ， 后台演示账号：关注博主公众号【waynblog】，发送 演示账号
 
 ---
+
+# 服务器部署
+
+对于想要自己部署这个项目的同学又没有开发资源，可以加作者wx：waynaqua，作者提供有偿帮助。
 
 # 演示截图
 
@@ -202,3 +212,7 @@ h5商城api:
 - [panda-mall](https://github.com/Ewall1106/vue-h5-template)
 - [litemall](https://github.com/linlinjava/litemall)
 - [vant-ui](https://github.com/youzan/vant)
+
+# 捐助
+
+<img src="./images/捐助.jpg" width="260" alt="如果这个项目对你有所帮助，不如请作者喝杯咖啡吧">
