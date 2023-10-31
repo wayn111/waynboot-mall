@@ -30,9 +30,9 @@ Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，
 
 对于初学者而言 waynboot-mall 项目是非常易于部署的，根据readme中的开发部署指南就能成功启动项目。对于非技术人员，本项目也提供了一键安装脚本，只需要十多分钟就能启动商城前后台所有服务。
 
-- H5商城项目 https://github.com/wayn111/waynboot-mobile
-- 运营后台项目 https://github.com/wayn111/waynboot-admin
 - 后端接口项目 https://github.com/wayn111/waynboot-mall
+- 前端H5商城项目 https://github.com/wayn111/waynboot-mobile
+- 前端运管后台项目 https://github.com/wayn111/waynboot-admin
 
 > 如果有任何使用问题，欢迎提交Issue或加wx告知，方便互相交流反馈～ 💘。最后，喜欢的话麻烦给我个star
 
@@ -49,6 +49,7 @@ Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，
 - **学习**：加群交流，群内问题都会一一解答。
 - **演示账号**：获得线上项目管理后台演示账号。
 - **开源项目**：获取博主自己写的三个开源项目，包含PC、H5商城、后台权限管理系统等。
+- **加微信**：联系博主。
 
 <img src="images/wx-mp-code.png" width = "100" />
 
