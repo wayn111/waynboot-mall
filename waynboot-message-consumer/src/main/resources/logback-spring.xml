@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="dev"/>
+    <property name="logPath" value="/home/logs/${appName}"/>
+    <property name="pattern"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{request_id}] [%thread] [%-5level] %logger{36}:%L %M - %msg%n"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder 默认配置为PatternLayoutEncoder -->
+        <encoder>
+            <pattern>${pattern}</pattern>
+        </encoder>
+    </appender>
+    <!-- 记录日志到文件 -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/info.log</file>
+        <encoder>
+            <pattern>${pattern}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/run.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+            &lt;!&ndash; 过滤的级别 &ndash;&gt;
+            <level>INFO</level>
+            &lt;!&ndash; 匹配时的操作：接收（记录） &ndash;&gt;
+            <onMatch>ACCEPT</onMatch>
+            &lt;!&ndash; 不匹配时的操作：拒绝（不记录） &ndash;&gt;
+            <onMismatch>DENY</onMismatch>
+        </filter>-->
+    </appender>
+
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="io.lettuce.core" level="INFO"/>
+    <!-- logger为java中的包 -->
+    <logger name="com.wayn.common.core.mapper" level="INFO" />
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="INFO"/>
+    </root>
+
+</configuration>
