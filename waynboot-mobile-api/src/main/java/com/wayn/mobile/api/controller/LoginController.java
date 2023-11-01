@@ -1,5 +1,6 @@
 package com.wayn.mobile.api.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wayn.common.constant.SysConstants;
@@ -13,6 +14,7 @@ import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.mail.MailUtil;
 import com.wayn.common.util.security.SecurityUtils;
+import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.framework.security.LoginObj;
 import com.wayn.mobile.framework.security.RegistryObj;
@@ -20,6 +22,7 @@ import com.wayn.mobile.framework.security.service.LoginService;
 import com.wf.captcha.SpecCaptcha;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -31,12 +34,10 @@ import java.util.concurrent.TimeUnit;
 public class LoginController {
 
     private LoginService loginService;
-
     private RedisCache redisCache;
-
     private IMemberService iMemberService;
-
     private IMailConfigService mailConfigService;
+    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
     @PostMapping("/login")
     public R login(@RequestBody LoginObj loginObj) {
@@ -56,14 +57,6 @@ public class LoginController {
         if (count > 0) {
             return R.error(ReturnCodeEnum.USER_PHONE_HAS_REGISTER_ERROR);
         }
-
-        // String redisCode = redisCache.getCacheObject(registryObj.getKey());
-        // // 判断验证码
-        // if (registryObj.getCode() == null || !redisCode.equals(registryObj.getCode().trim().toLowerCase())) {
-        //     return R.error("验证码不正确");
-        // }
-        //
-        // redisCache.deleteObject(registryObj.getKey());
 
         String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
         // 判断邮箱验证码
@@ -87,28 +80,49 @@ public class LoginController {
     @ResponseBody
     @RequestMapping("/captcha")
     public R captcha() {
+        // 创建验证码对象，定义验证码图形的长、宽、以及字数
         SpecCaptcha specCaptcha = new SpecCaptcha(80, 32, 4);
+        // 生成验证码
         String verCode = specCaptcha.text().toLowerCase();
-        String key = IdUtil.getUid();
+        // 生成验证码唯一key
+        String key = RedisKeyEnum.CAPTCHA_KEY_CACHE.getKey(IdUtil.getUid());
         // 存入redis并设置过期时间为30分钟
-        redisCache.setCacheObject(key, verCode, SysConstants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
+        redisCache.setCacheObject(key, verCode, RedisKeyEnum.CAPTCHA_KEY_CACHE.getExpireSecond());
         // 将key和base64返回给前端
         return R.success().add("key", key).add("image", specCaptcha.toBase64());
     }
 
     @PostMapping("/sendEmailCode")
     public R sendEmailCode(@RequestBody RegistryObj registryObj) {
-        SpecCaptcha specCaptcha = new SpecCaptcha(80, 32, 4);
-        String verCode = specCaptcha.text().toLowerCase();
-        String key = IdUtil.getUid();
+        // 判断图形验证码是否正确
+        String captchaKey = registryObj.getCaptchaKey();
+        String captchaCode = registryObj.getCaptchaCode();
+        if (StringUtils.isBlank(captchaKey)) {
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("验证码 key为空"));
+        }
+        if (StringUtils.isBlank(captchaCode)) {
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("验证码 code为空"));
+        }
+        String redisCode = redisCache.getCacheObject(captchaKey);
+        // 判断验证码code
+        if (!redisCode.equals(captchaCode.trim().toLowerCase())) {
+            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("验证码输入错误"));
+        }
+        // 生成邮箱验证码code
+        String verCode = RandomUtil.randomString(6);
+        // 生成邮箱验证码唯一key
+        String key = RedisKeyEnum.EMAIL_KEY_CACHE.getKey(IdUtil.getUid());
         // 存入redis并设置过期时间为20分钟
-        redisCache.setCacheObject(key, verCode, SysConstants.CAPTCHA_EXPIRATION * 10, TimeUnit.MINUTES);
-        EmailConfig emailConfig = mailConfigService.getById(1L);
-        SendMailVO sendMailVO = new SendMailVO();
-        sendMailVO.setSubject("mall商城注册通知");
-        sendMailVO.setContent("邮箱验证码：" + verCode);
-        sendMailVO.setTos(Collections.singletonList(registryObj.getEmail()));
-        MailUtil.sendMail(emailConfig, sendMailVO, false, false);
+        redisCache.setCacheObject(key, verCode,  RedisKeyEnum.EMAIL_KEY_CACHE.getExpireSecond());
+        commonThreadPoolTaskExecutor.execute(() -> {
+            EmailConfig emailConfig = mailConfigService.getById(1L);
+            SendMailVO sendMailVO = new SendMailVO();
+            sendMailVO.setSubject("mall商城注册通知");
+            sendMailVO.setContent("邮箱验证码：" + verCode);
+            sendMailVO.setTos(Collections.singletonList(registryObj.getEmail()));
+            MailUtil.sendMail(emailConfig, sendMailVO, false, false);
+            redisCache.deleteObject(captchaKey);
+        });
         return R.success().add("key", key);
     }
 }
