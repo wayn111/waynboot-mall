@@ -33,7 +33,7 @@ public class RegistryObj {
     /**
      * 验证码
      */
-    private String code;
+    private String captchaCode;
 
     /**
      * 邮箱验证码
@@ -43,7 +43,7 @@ public class RegistryObj {
     /**
      * 验证码 key
      */
-    private String key;
+    private String captchaKey;
 
     /**
      * 邮箱验证码 key
