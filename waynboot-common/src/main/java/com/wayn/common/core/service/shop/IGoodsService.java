@@ -86,9 +86,9 @@ public interface IGoodsService extends IService<Goods> {
      *
      * @param page       分页对象
      * @param l2cateList 二级分类Id集合
-     * @return r
+     * @return goods
      */
-    R selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList);
+    List<Goods> selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList);
 
     /**
      * 查询商品展示

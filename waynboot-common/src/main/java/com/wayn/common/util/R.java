@@ -1,6 +1,9 @@
 package com.wayn.common.util;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.wayn.common.enums.ReturnCodeEnum;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
@@ -8,6 +11,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public class R implements Serializable {
 
     @Serial
@@ -27,6 +31,14 @@ public class R implements Serializable {
         R r = new R();
         r.code = ReturnCodeEnum.getCode();
         r.msg = ReturnCodeEnum.getMsg();
+        return r;
+    }
+
+    public static R success(Object data) {
+        R r = new R();
+        r.code = ReturnCodeEnum.SUCCESS.getCode();
+        r.msg = ReturnCodeEnum.SUCCESS.getMsg();
+        r.map = JSONObject.from(data);
         return r;
     }
 
@@ -65,24 +77,12 @@ public class R implements Serializable {
         return this;
     }
 
-    public int getCode() {
-        return code;
-    }
-
     public void setCode(int code) {
         this.code = code;
     }
 
-    public String getMsg() {
-        return msg;
-    }
-
     public void setMsg(String msg) {
         this.msg = msg;
-    }
-
-    public Map<String, Object> getMap() {
-        return map;
     }
 
     public void setMap(Map<String, Object> map) {

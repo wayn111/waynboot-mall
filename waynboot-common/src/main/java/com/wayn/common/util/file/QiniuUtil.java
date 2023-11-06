@@ -28,8 +28,6 @@ public class QiniuUtil {
 
     private static final String HUAD = "华东";
 
-    private static final String HUAD2 = "华东-浙江2";
-
     private static final String HUAB = "华北";
 
     private static final String HUAN = "华南";
@@ -46,11 +44,9 @@ public class QiniuUtil {
 
         if (HUAD.equals(zone)) {
             return Region.huadong();
-        } else if (HUAD2.equals(zone)) {
-            return Region.huadongZheJiang2();
         } else if (HUAB.equals(zone)) {
             return Region.huabei();
-        }else if (HUAN.equals(zone)) {
+        } else if (HUAN.equals(zone)) {
             return Region.huanan();
         } else if (BEIM.equals(zone)) {
             return Region.beimei();

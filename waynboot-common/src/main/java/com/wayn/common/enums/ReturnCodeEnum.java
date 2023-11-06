@@ -1,11 +1,8 @@
 package com.wayn.common.enums;
 
-import lombok.Getter;
-
 /**
  * 错误状态码enum
  */
-@Getter
 public enum ReturnCodeEnum {
 
     // 200，通用操作成功 3xx，资源重定向 4xx，客户端错误 500，通用操作失败
@@ -57,6 +54,7 @@ public enum ReturnCodeEnum {
     USER_VERIFY_CODE_ERROR(5103, "验证码不正确"),
     USER_OLD_PASSWORD_ERROR(5104, "旧密码错误"),
     USER_NEW_OLD_PASSWORD_NOT_SAME_ERROR(5105, "新密码不能与旧密码相同"),
+    USER_CAPTCHA_CODE_ERROR(5106, "图形验证码不正确"),
 
     // 上传错误
     UPLOAD_ERROR(5201, "上传图片失败"),
@@ -89,6 +87,14 @@ public enum ReturnCodeEnum {
     ReturnCodeEnum(int code, String msg) {
         this.code = code;
         this.msg = msg;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 
     public ReturnCodeEnum setMsg(String msg) {
