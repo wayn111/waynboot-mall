@@ -9,11 +9,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.Optional;
 
 public class ServletUtils {
 
@@ -55,6 +57,13 @@ public class ServletUtils {
      */
     public static Integer getParameterToInt(String name) {
         return Integer.parseInt(getRequest().getParameter(name));
+    }
+
+    /**
+     * 获取Integer参数
+     */
+    public static Integer getParameterToInt(String name, String num) {
+        return Integer.parseInt(Optional.ofNullable(getRequest().getParameter(name)).orElse(num));
     }
 
     /**

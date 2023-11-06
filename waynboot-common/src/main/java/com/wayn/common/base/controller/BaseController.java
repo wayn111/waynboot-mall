@@ -58,8 +58,8 @@ public class BaseController {
     protected <T> Page<T> getPage() {
         //设置通用分页
         try {
-            Integer pageNumber = ServletUtils.getParameterToInt(Constants.PAGE_NUMBER);
-            Integer pageSize = ServletUtils.getParameterToInt(Constants.PAGE_SIZE);
+            Integer pageNumber = ServletUtils.getParameterToInt(Constants.PAGE_NUMBER, "1");
+            Integer pageSize = ServletUtils.getParameterToInt(Constants.PAGE_SIZE, "10");
             String sortName = ServletUtils.getParameter(Constants.SORT_NAME);
             String sortOrder = ServletUtils.getParameter(Constants.SORT_ORDER);
             Page<T> tPage = new Page<>(pageNumber, pageSize);

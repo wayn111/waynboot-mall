@@ -7,15 +7,15 @@ import lombok.Data;
  * vant 树形选择组件所需实体
  */
 @Data
-public class VanTreeSelectVo {
+public class VanTreeSelectVO {
     private Long id;
     private String text;
     private String icon;
 
-    public VanTreeSelectVo() {
+    public VanTreeSelectVO() {
     }
 
-    public VanTreeSelectVo(Category category) {
+    public VanTreeSelectVO(Category category) {
         this.id = category.getId();
         this.text = category.getName();
         this.icon = category.getIconUrl();

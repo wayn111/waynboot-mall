@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
+
+import static com.wayn.common.enums.ReturnCodeEnum.*;
 
 @RestController
 @AllArgsConstructor
@@ -49,21 +50,28 @@ public class LoginController {
     @PostMapping("/registry")
     public R registry(@RequestBody RegistryObj registryObj) {
         if (!StringUtils.equalsIgnoreCase(registryObj.getPassword(), registryObj.getConfirmPassword())) {
-            return R.error(ReturnCodeEnum.USER_TWO_PASSWORD_NOT_SAME_ERROR);
+            return R.error(USER_TWO_PASSWORD_NOT_SAME_ERROR);
         }
         // 验证手机号是否唯一
         long count = iMemberService.count(Wrappers.lambdaQuery(Member.class).eq(Member::getMobile, registryObj.getMobile()));
         iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
         if (count > 0) {
-            return R.error(ReturnCodeEnum.USER_PHONE_HAS_REGISTER_ERROR);
+            return R.error(USER_PHONE_HAS_REGISTER_ERROR);
         }
 
-        String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
+        // 判断图形验证码
+        String redisCaptchaCode = redisCache.getCacheObject(registryObj.getCaptchaKey());
+        if (registryObj.getCaptchaCode() == null || !redisCaptchaCode.equals(registryObj.getCaptchaCode().trim().toLowerCase())) {
+            return R.error(USER_CAPTCHA_CODE_ERROR);
+        }
+
         // 判断邮箱验证码
+        String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
         if (registryObj.getEmailCode() == null || !redisEmailCode.equals(registryObj.getEmailCode().trim().toLowerCase())) {
             return R.error(ReturnCodeEnum.USER_EMAIL_CODE_ERROR);
         }
         // 删除验证码
+        redisCache.deleteObject(registryObj.getCaptchaKey());
         redisCache.deleteObject(registryObj.getEmailKey());
         Member member = new Member();
         long time = System.currentTimeMillis();
@@ -98,15 +106,15 @@ public class LoginController {
         String captchaKey = registryObj.getCaptchaKey();
         String captchaCode = registryObj.getCaptchaCode();
         if (StringUtils.isBlank(captchaKey)) {
-            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("验证码 key为空"));
+            return R.error(CUSTOM_ERROR.setMsg("验证码 key为空"));
         }
         if (StringUtils.isBlank(captchaCode)) {
-            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("验证码 code为空"));
+            return R.error(CUSTOM_ERROR.setMsg("验证码 code为空"));
         }
         String redisCode = redisCache.getCacheObject(captchaKey);
         // 判断验证码code
         if (!redisCode.equals(captchaCode.trim().toLowerCase())) {
-            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg("验证码输入错误"));
+            return R.error(USER_CAPTCHA_CODE_ERROR);
         }
         // 生成邮箱验证码code
         String verCode = RandomUtil.randomString(6);
@@ -121,7 +129,6 @@ public class LoginController {
             sendMailVO.setContent("邮箱验证码：" + verCode);
             sendMailVO.setTos(Collections.singletonList(registryObj.getEmail()));
             MailUtil.sendMail(emailConfig, sendMailVO, false, false);
-            redisCache.deleteObject(captchaKey);
         });
         return R.success().add("key", key);
     }
