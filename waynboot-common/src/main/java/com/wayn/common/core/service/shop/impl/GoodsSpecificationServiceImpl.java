@@ -3,6 +3,7 @@ package com.wayn.common.core.service.shop.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.domain.shop.GoodsSpecification;
+import com.wayn.common.core.domain.shop.vo.SpecificationVO;
 import com.wayn.common.core.mapper.shop.GoodsSpecificationMapper;
 import com.wayn.common.core.service.shop.IGoodsSpecificationService;
 import org.springframework.stereotype.Service;
@@ -22,16 +23,15 @@ import java.util.Map;
 public class GoodsSpecificationServiceImpl extends ServiceImpl<GoodsSpecificationMapper, GoodsSpecification> implements IGoodsSpecificationService {
 
     @Override
-    public List<VO> getSpecificationVOList(Long goodsId) {
+    public List<SpecificationVO> getSpecificationVOList(Long goodsId) {
         List<GoodsSpecification> specificationList = list(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
-
-        Map<String, VO> map = new HashMap<>();
-        List<VO> specificationVoList = new ArrayList<>();
+        Map<String, SpecificationVO> map = new HashMap<>();
+        List<SpecificationVO> specificationVoList = new ArrayList<>();
         for (GoodsSpecification goodsSpecification : specificationList) {
             String specification = goodsSpecification.getSpecification();
-            VO goodsSpecificationVo = map.get(specification);
+            SpecificationVO goodsSpecificationVo = map.get(specification);
             if (goodsSpecificationVo == null) {
-                goodsSpecificationVo = new VO();
+                goodsSpecificationVo = new SpecificationVO();
                 goodsSpecificationVo.setName(specification);
                 List<GoodsSpecification> valueList = new ArrayList<>();
                 valueList.add(goodsSpecification);
@@ -46,25 +46,4 @@ public class GoodsSpecificationServiceImpl extends ServiceImpl<GoodsSpecificatio
         return specificationVoList;
     }
 
-
-    private static class VO {
-        private String name;
-        private List<GoodsSpecification> valueList;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public List<GoodsSpecification> getValueList() {
-            return valueList;
-        }
-
-        public void setValueList(List<GoodsSpecification> valueList) {
-            this.valueList = valueList;
-        }
-    }
 }
