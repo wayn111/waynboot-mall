@@ -17,6 +17,6 @@ public class GoodsController {
 
     @GetMapping("detail/{goodsId}")
     public R detail(@PathVariable Long goodsId) {
-        return iGoodsDetailService.getGoodsDetailData(goodsId);
+        return R.success(iGoodsDetailService.getGoodsDetailData(goodsId));
     }
 }

@@ -1,6 +1,6 @@
 package com.wayn.mobile.api.service;
 
-import com.wayn.common.util.R;
+import com.wayn.common.core.domain.shop.vo.GoodsDetailResponseVO;
 
 public interface IGoodsDetailService {
 
@@ -10,5 +10,5 @@ public interface IGoodsDetailService {
      * @param goodsId 商品ID
      * @return 获取商品详情
      */
-    R getGoodsDetailData(Long goodsId);
+    GoodsDetailResponseVO getGoodsDetailData(Long goodsId);
 }
