@@ -54,7 +54,6 @@ public class LoginController {
         }
         // 验证手机号是否唯一
         long count = iMemberService.count(Wrappers.lambdaQuery(Member.class).eq(Member::getMobile, registryObj.getMobile()));
-        iMemberService.count(new QueryWrapper<Member>().eq("mobile", registryObj.getMobile()));
         if (count > 0) {
             return R.error(USER_PHONE_HAS_REGISTER_ERROR);
         }
@@ -66,7 +65,18 @@ public class LoginController {
         }
 
         // 判断邮箱验证码
-        String redisEmailCode = redisCache.getCacheObject(registryObj.getEmailKey());
+        String value = redisCache.getCacheObject(registryObj.getEmailKey());
+        String[] split = value.split("_");
+        if (split.length < 2) {
+            return R.error(ReturnCodeEnum.USER_EMAIL_CODE_ERROR);
+        }
+        String redisEmailCode = split[0];
+        String mobile = split[1];
+        // 判断发送邮箱验证码的手机号是否与用户当前传入手机号一致
+        if (!StringUtils.equalsIgnoreCase(mobile, registryObj.getMobile())) {
+            return R.error(ReturnCodeEnum.USER_REGISTER_MOBILE_ERROR);
+        }
+        // 判断用户输入邮箱验证码是否正确
         if (registryObj.getEmailCode() == null || !redisEmailCode.equals(registryObj.getEmailCode().trim().toLowerCase())) {
             return R.error(ReturnCodeEnum.USER_EMAIL_CODE_ERROR);
         }
@@ -97,7 +107,7 @@ public class LoginController {
         // 存入redis并设置过期时间为30分钟
         redisCache.setCacheObject(key, verCode, RedisKeyEnum.CAPTCHA_KEY_CACHE.getExpireSecond());
         // 将key和base64返回给前端
-        return R.success().add("key", key).add("image", specCaptcha.toBase64());
+        return R.success().add("captchaKey", key).add("captchaImg", specCaptcha.toBase64());
     }
 
     @PostMapping("/sendEmailCode")
@@ -105,23 +115,32 @@ public class LoginController {
         // 判断图形验证码是否正确
         String captchaKey = registryObj.getCaptchaKey();
         String captchaCode = registryObj.getCaptchaCode();
+        String mobile = registryObj.getMobile();
         if (StringUtils.isBlank(captchaKey)) {
-            return R.error(CUSTOM_ERROR.setMsg("验证码 key为空"));
+            return R.error(CUSTOM_ERROR.setMsg("图形验证码错误"));
         }
         if (StringUtils.isBlank(captchaCode)) {
-            return R.error(CUSTOM_ERROR.setMsg("验证码 code为空"));
+            return R.error(CUSTOM_ERROR.setMsg("图形验证码为空"));
+        }
+        if (StringUtils.isBlank(mobile)) {
+            return R.error(CUSTOM_ERROR.setMsg("手机号为空"));
         }
         String redisCode = redisCache.getCacheObject(captchaKey);
         // 判断验证码code
         if (!redisCode.equals(captchaCode.trim().toLowerCase())) {
             return R.error(USER_CAPTCHA_CODE_ERROR);
         }
+        // 验证手机号是否唯一
+        long count = iMemberService.count(Wrappers.lambdaQuery(Member.class).eq(Member::getMobile, mobile));
+        if (count > 0) {
+            return R.error(USER_PHONE_HAS_REGISTER_ERROR);
+        }
         // 生成邮箱验证码code
         String verCode = RandomUtil.randomString(6);
         // 生成邮箱验证码唯一key
         String key = RedisKeyEnum.EMAIL_KEY_CACHE.getKey(IdUtil.getUid());
         // 存入redis并设置过期时间为20分钟
-        redisCache.setCacheObject(key, verCode,  RedisKeyEnum.EMAIL_KEY_CACHE.getExpireSecond());
+        redisCache.setCacheObject(key, verCode + "_" + mobile,  RedisKeyEnum.EMAIL_KEY_CACHE.getExpireSecond());
         commonThreadPoolTaskExecutor.execute(() -> {
             EmailConfig emailConfig = mailConfigService.getById(1L);
             SendMailVO sendMailVO = new SendMailVO();
@@ -130,6 +149,6 @@ public class LoginController {
             sendMailVO.setTos(Collections.singletonList(registryObj.getEmail()));
             MailUtil.sendMail(emailConfig, sendMailVO, false, false);
         });
-        return R.success().add("key", key);
+        return R.success().add("emailKey", key);
     }
 }
