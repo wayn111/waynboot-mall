@@ -2,6 +2,7 @@ package com.wayn.mobile.api.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.domain.shop.vo.HomeIndexResponseVO;
 import com.wayn.common.util.R;
 
 public interface IHomeService {
@@ -13,7 +14,7 @@ public interface IHomeService {
      * @return r
      * @see <a href="https://www.cnblogs.com/cjsblog/p/9267163.html">https://www.cnblogs.com/cjsblog/p/9267163.html</a>
      */
-    R index();
+    HomeIndexResponseVO index();
 
     /**
      * 获取商品分页列表

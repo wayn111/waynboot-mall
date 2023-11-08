@@ -29,6 +29,7 @@ public class CacheConfig implements CachingConfigurer {
     @Bean
     public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        connectionFactory.setValidateConnection(true);
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(keySerializer());
         redisTemplate.setHashKeySerializer(keySerializer());
@@ -38,23 +39,6 @@ public class CacheConfig implements CachingConfigurer {
         return redisTemplate;
     }
 
-    @Bean
-    public LettuceClientConfigurationBuilderCustomizer lettuceCustomizer() {
-        return builder -> {
-            if (SystemUtils.IS_OS_LINUX) {
-                builder.clientOptions(ClientOptions.builder()
-                        .socketOptions(SocketOptions.builder()
-                                .keepAlive(SocketOptions.KeepAliveOptions.builder()
-                                        .enable(true)
-                                        .idle(Duration.ofMinutes(3))
-                                        .count(3)
-                                        .interval(Duration.ofSeconds(10))
-                                        .build())
-                                .build())
-                        .build());
-            }
-        };
-    }
 
     private RedisSerializer<String> keySerializer() {
         return new StringRedisSerializer();
