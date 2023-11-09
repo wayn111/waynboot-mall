@@ -97,7 +97,10 @@ public class UserController {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Member member = loginUser.getMember();
         member.setAvatar(avatar);
-        boolean update = iMemberService.updateById(member);
+        boolean update = iMemberService.lambdaUpdate()
+                .set(Member::getAvatar, avatar)
+                .eq(Member::getId, member.getId())
+                .update();
         if (!update) {
             throw new BusinessException("上传头像失败");
         }
