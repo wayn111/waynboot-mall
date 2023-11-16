@@ -3,7 +3,11 @@ package com.wayn.mobile.api.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.shop.vo.HomeIndexResponseVO;
+import com.wayn.common.core.domain.shop.vo.MallConfigResponseVO;
+import com.wayn.common.core.domain.shop.vo.RecommonGoodsResponseVO;
 import com.wayn.common.util.R;
+
+import java.util.List;
 
 public interface IHomeService {
 
@@ -22,12 +26,12 @@ public interface IHomeService {
      * @param page 分页对象
      * @return r
      */
-    R listGoodsPage(Page<Goods> page);
+    RecommonGoodsResponseVO listGoodsPage(Page<Goods> page);
 
     /**
      * 商城配置
      *
      * @return r
      */
-    R mallConfig();
+    MallConfigResponseVO mallConfig();
 }

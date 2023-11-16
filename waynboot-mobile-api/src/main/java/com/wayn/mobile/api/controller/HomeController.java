@@ -7,7 +7,6 @@ import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IHomeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +34,7 @@ public class HomeController extends BaseController {
      */
     @GetMapping("mallConfig")
     public R mallConfig() {
-        return iHomeService.mallConfig();
+        return R.success(iHomeService.mallConfig());
     }
 
     /**
@@ -43,10 +42,10 @@ public class HomeController extends BaseController {
      *
      * @return R
      */
-    @GetMapping("goodsList")
-    public R getGoodsList() {
+    @GetMapping("recommonGoodsList")
+    public R recommonGoodsList() {
         Page<Goods> page = getPage();
-        return iHomeService.listGoodsPage(page);
+        return R.success(iHomeService.listGoodsPage(page));
     }
 }
 
