@@ -5,9 +5,11 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import com.wayn.common.constant.Constants;
 import com.wayn.common.util.ServletUtils;
 import com.wayn.common.util.http.HttpUtil;
+import com.wayn.common.util.sql.SqlUtil;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,36 +54,35 @@ public class BaseController {
 
     /**
      * 获取分页对象
+     *
      * @param <T>
      * @return 返回分页对象
      */
     protected <T> Page<T> getPage() {
-        //设置通用分页
-        try {
-            Integer pageNumber = ServletUtils.getParameterToInt(Constants.PAGE_NUMBER, "1");
-            Integer pageSize = ServletUtils.getParameterToInt(Constants.PAGE_SIZE, "10");
-            String sortName = ServletUtils.getParameter(Constants.SORT_NAME);
-            String sortOrder = ServletUtils.getParameter(Constants.SORT_ORDER);
-            Page<T> tPage = new Page<>(pageNumber, pageSize);
-            if (StringUtils.isNotEmpty(sortName)) {
-                String[] split = sortName.split(",");
-                for (String s : split) {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setColumn(s.replaceAll("[A-Z]", "_$0").toLowerCase());
-                    orderItem.setAsc(sortOrder == null || !sortOrder.startsWith(Constants.ORDER_DESC));
-                    tPage.addOrder(orderItem);
-                }
+        // 设置通用分页
+        Integer pageNumber = ServletUtils.getParameterToInt(Constants.PAGE_NUMBER, "1");
+        Integer pageSize = ServletUtils.getParameterToInt(Constants.PAGE_SIZE, "10");
+        String sortName = ServletUtils.getParameter(Constants.SORT_NAME);
+        String sortOrder = ServletUtils.getParameter(Constants.SORT_ORDER);
+        Page<T> tPage = new Page<>(pageNumber, pageSize);
+        if (StringUtils.isNotEmpty(sortName)) {
+            sortName = SqlUtil.escapeOrderBySql(sortName);
+            sortOrder = SqlUtil.escapeOrderBySql(sortOrder);
+            String[] split = sortName.split(",");
+            for (String s : split) {
+                OrderItem orderItem = new OrderItem();
+                orderItem.setColumn(s.replaceAll("[A-Z]", "_$0").toLowerCase());
+                orderItem.setAsc(sortOrder == null || !sortOrder.startsWith(Constants.ORDER_DESC));
+                tPage.addOrder(orderItem);
             }
-            return tPage;
-        } catch (Exception e) {
-            // log.error(e.getMessage(), e);
-            return getPage(1, 10);
         }
+        return tPage;
     }
 
 
     /**
      * 获取分页对象
+     *
      * @param pageNumber 当前页
      * @param <T>
      * @return 返回分页对象
@@ -95,8 +96,8 @@ public class BaseController {
      * 获取分页对象
      * </p>
      *
-     * @param pageNumber  当前页
-     * @param pageSize    分页数
+     * @param pageNumber 当前页
+     * @param pageSize   分页数
      * @param <T>
      * @return 返回分页对象
      */
@@ -147,7 +148,6 @@ public class BaseController {
      * @param object 转换对象
      * @param format 序列化特点
      * @return json字符串
-     *
      */
     protected String toJson(Object object, String format) {
         if (format == null) {

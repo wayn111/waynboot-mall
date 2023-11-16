@@ -3,15 +3,16 @@ package com.wayn.mobile.api.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.config.WaynConfig;
+import com.wayn.common.convert.MallConfigConvert;
 import com.wayn.common.core.domain.shop.Banner;
 import com.wayn.common.core.domain.shop.Diamond;
 import com.wayn.common.core.domain.shop.Goods;
 import com.wayn.common.core.domain.shop.vo.HomeIndexResponseVO;
+import com.wayn.common.core.domain.shop.vo.MallConfigResponseVO;
+import com.wayn.common.core.domain.shop.vo.RecommonGoodsResponseVO;
 import com.wayn.common.core.service.shop.IBannerService;
 import com.wayn.common.core.service.shop.IDiamondService;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.util.R;
 import com.wayn.mobile.api.service.IHomeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class IHomeServiceImpl implements IHomeService {
                     .thenAccept(responseVO::setBannerList);
             CompletableFuture<Void> f2 = CompletableFuture.supplyAsync(
                             () -> iDiamondService.list(Wrappers.lambdaQuery(Diamond.class).orderByAsc(Diamond::getSort).last("limit 10")), commonThreadPoolTaskExecutor)
-                    .thenAccept(responseVO::setCategoryList);
+                    .thenAccept(responseVO::setDiamondList);
             CompletableFuture<Void> f3 = CompletableFuture.supplyAsync(
                             () -> iGoodsService.selectHomeIndexGoods(Goods.builder().isNew(true).build()), commonThreadPoolTaskExecutor)
                     .thenAccept(responseVO::setNewGoodsList);
@@ -67,14 +68,17 @@ public class IHomeServiceImpl implements IHomeService {
     }
 
     @Override
-    public R listGoodsPage(Page<Goods> page) {
+    public RecommonGoodsResponseVO listGoodsPage(Page<Goods> page) {
+        RecommonGoodsResponseVO responseVO = new RecommonGoodsResponseVO();
         IPage<Goods> goodsIPage = iGoodsService.listPage(page, new Goods());
-        return R.success().add("data", goodsIPage.getRecords());
+        responseVO.setData(goodsIPage.getRecords());
+        return responseVO;
+
     }
 
     @Override
-    public R mallConfig() {
-        return R.success().add("freightLimit", WaynConfig.getFreightLimit());
+    public MallConfigResponseVO mallConfig() {
+        return MallConfigConvert.convertMallConfig();
     }
 
 }

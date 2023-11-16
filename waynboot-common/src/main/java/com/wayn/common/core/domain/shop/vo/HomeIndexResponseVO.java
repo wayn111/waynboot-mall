@@ -19,7 +19,7 @@ public class HomeIndexResponseVO implements Serializable {
     private static final long serialVersionUID = -14732478530341760L;
 
     private List<Banner> bannerList;
-    private List<Diamond> categoryList;
+    private List<Diamond> diamondList;
     private List<Goods> newGoodsList;
     private List<Goods> hotGoodsList;
 }
