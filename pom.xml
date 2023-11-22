@@ -27,7 +27,7 @@
         <spring-boot.version>3.1.4</spring-boot.version>
         <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
         <lettuce.version>6.2.3.RELEASE</lettuce.version>
-        <elasticsearch.version>7.17.9</elasticsearch.version>
+        <elasticsearch.version>7.17.14</elasticsearch.version>
         <mybatis-plus.version>3.5.4.1</mybatis-plus.version>
         <druid.version>1.2.20</druid.version>
         <lombok.version>1.18.26</lombok.version>
