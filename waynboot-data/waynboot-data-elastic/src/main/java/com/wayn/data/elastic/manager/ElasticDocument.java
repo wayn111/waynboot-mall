@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wayn.data.elastic.config.ElasticConfig;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -31,6 +32,8 @@ import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.suggest.Suggest;
+import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
@@ -187,12 +190,43 @@ public class ElasticDocument implements DisposableBean {
      * @param c       结果类对象
      * @return java.util.List<T>
      */
-    public <T> List<T> search(String idxName, SearchSourceBuilder builder, Class<T> c) throws IOException {
+    public <T> List<T> searchResult(String idxName, SearchSourceBuilder builder, Class<T> c) throws IOException {
         SearchRequest request = new SearchRequest(idxName);
         request.source(builder);
         SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
         SearchHit[] hits = response.getHits().getHits();
         return Arrays.stream(hits).map(hit -> JSON.parseObject(hit.getSourceAsString(), c)).collect(Collectors.toList());
+    }
+
+    /**
+     * 搜索文档建议
+     *
+     * @param idxName index
+     * @param suggest 建议名称
+     * @param builder 查询参数
+     * @return java.util.List<String>
+     * @throws IOException
+     */
+    public List<String> searchSuggest(String idxName, String suggest, SuggestBuilder builder) throws IOException {
+        SearchRequest searchRequest = new SearchRequest(idxName);
+        searchRequest.source(new SearchSourceBuilder().suggest(builder));
+        SearchResponse response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        Suggest suggestions = response.getSuggest();
+        List<String> sugguestList = new ArrayList<>();
+        List<? extends Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>> entries =
+                suggestions.getSuggestion(suggest).getEntries();
+        for (Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option> entry : entries) {
+            for (Suggest.Suggestion.Entry.Option option : entry.getOptions()) {
+                String keyword = option.getText().string();
+                if (!StringUtils.isEmpty(keyword)) {
+                    if (sugguestList.contains(keyword)) {
+                        continue;
+                    }
+                    sugguestList.add(keyword);
+                }
+            }
+        }
+        return sugguestList;
     }
 
 

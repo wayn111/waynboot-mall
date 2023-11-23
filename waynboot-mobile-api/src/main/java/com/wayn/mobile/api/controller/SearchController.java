@@ -29,6 +29,10 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilders;
+import org.elasticsearch.search.suggest.SuggestionBuilder;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,6 +61,21 @@ public class SearchController extends BaseController {
     private IKeywordService iKeywordService;
 
     private ElasticDocument elasticDocument;
+
+    @GetMapping("sugguest")
+    public R sugguest(SearchVO searchVO) throws IOException {
+        String keyword = searchVO.getKeyword();
+        String suggestField = "name.suggest";
+        String suggestName = "my-suggest";
+        SuggestionBuilder<CompletionSuggestionBuilder> termSuggestionBuilder = SuggestBuilders.completionSuggestion(suggestField)
+                .prefix(keyword)
+                .skipDuplicates(true)
+                .size(10);
+        SuggestBuilder suggestBuilder = new SuggestBuilder();
+        suggestBuilder.addSuggestion(suggestName, termSuggestionBuilder);
+        List<String> list = elasticDocument.searchSuggest("goods", suggestName, suggestBuilder);
+        return R.success().add("suggest", list);
+    }
 
     @GetMapping("result")
     public R result(SearchVO searchVO) throws IOException {
@@ -118,7 +137,7 @@ public class SearchController extends BaseController {
         searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
         searchSourceBuilder.size((int) page.getSize());
         // 执行Elasticsearch查询
-        List<JSONObject> list = elasticDocument.search("goods", searchSourceBuilder, JSONObject.class);
+        List<JSONObject> list = elasticDocument.searchResult("goods", searchSourceBuilder, JSONObject.class);
         List<Integer> goodsIdList = list.stream().map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
         if (goodsIdList.isEmpty()) {
             return R.success().add("goods", Collections.emptyList());
