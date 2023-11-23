@@ -40,7 +40,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // cors启用
-                .cors(httpSecurityCorsConfigurer -> {})
+                .cors(httpSecurityCorsConfigurer -> {
+                })
                 // CSRF(跨站请求伪造)禁用，因为不使用session
                 .csrf(AbstractHttpConfigurer::disable)
                 // 认证失败处理类
@@ -50,8 +51,10 @@ public class SecurityConfig {
                 // 过滤请求
                 .authorizeHttpRequests(
                         registry -> registry
-                                .requestMatchers("favicon.ico", "/actuator/**", "/login", "/registry", "/sendEmailCode", "/test/**", "/seckill/**", "/captcha").anonymous()
-                                .requestMatchers("/home/**", "/category/**", "/comment/**", "/goods/detail/**", "/cart/goodsCount", "/diamond/**").permitAll()
+                                .requestMatchers("favicon.ico", "/actuator/**", "/login", "/registry",
+                                        "/search/**", "/sendEmailCode", "/test/**", "/seckill/**", "/captcha").anonymous()
+                                .requestMatchers("/home/**", "/category/**", "/comment/**",
+                                        "/goods/detail/**", "/cart/goodsCount", "/diamond/**").permitAll()
                                 .requestMatchers("/upload/**").anonymous()
                                 .requestMatchers("/common/download**").anonymous()
                                 .requestMatchers("/doc.html").anonymous()
