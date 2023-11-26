@@ -23,6 +23,7 @@ import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.IdUtil;
 import com.wayn.common.util.R;
 import com.wayn.common.util.bean.MyBeanUtil;
+import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.message.core.constant.MQConstants;
 import com.wayn.message.core.dto.OrderDTO;
@@ -236,14 +237,15 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R submit(OrderDTO orderDTO) throws UnsupportedEncodingException {
+    public void submit(OrderDTO orderDTO) throws UnsupportedEncodingException {
         Long userId = orderDTO.getUserId();
+        String orderSn = orderDTO.getOrderSn();
 
         // 获取用户地址
         Long addressId = orderDTO.getAddressId();
         Address checkedAddress;
         if (Objects.isNull(addressId)) {
-            throw new BusinessException("收获地址为空，请求参数" + JSON.toJSONString(orderDTO));
+            throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_ADDRESS_ERROR);
         }
         checkedAddress = iAddressService.getById(addressId);
 
@@ -257,6 +259,8 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         }
 
         if (checkedGoodsList.isEmpty()) {
+            redisCache.setCacheObject(RedisKeyEnum.ORDER_RESULT_KEY.getKey(orderSn), "收获地址为空",
+                    RedisKeyEnum.ORDER_RESULT_KEY.getExpireSecond());
             throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_CART_EMPTY_ERROR);
         }
 
@@ -274,10 +278,11 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
                 Goods goods = iGoodsService.getById(goodsId);
                 String goodsName = goods.getName();
                 String[] specifications = product.getSpecifications();
-                throw new BusinessException(String.format("%s,%s 库存不足", goodsName, StringUtils.join(specifications, " ")));
+                throw new BusinessException(String.format(ReturnCodeEnum.ORDER_ERROR_STOCK_NOT_ENOUGH.getMsg(),
+                        goodsName, StringUtils.join(specifications, " ")));
             }
             if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
-                throw new BusinessException("商品货品库存减少失败");
+                throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
             }
         }
 
@@ -319,7 +324,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         order.setActualPrice(actualPrice);
         order.setCreateTime(new Date());
         if (!save(order)) {
-            throw new BusinessException("订单创建失败" + JSON.toJSONString(order));
+            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
         }
 
         Long orderId = order.getId();
@@ -341,7 +346,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
             orderGoodsList.add(orderGoods);
         }
         if (!iOrderGoodsService.saveBatch(orderGoodsList)) {
-            throw new BusinessException("添加订单商品表项失败" + JSON.toJSONString(orderGoodsList));
+            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
         }
 
         // 删除购物车里面的商品信息
@@ -365,18 +370,16 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
             messagePostProcessor.getMessageProperties().setDelay(Math.toIntExact(delayTime));
             return messagePostProcessor;
         });
-        return R.success().add("orderId", order.getId());
     }
 
     @Override
     public R searchResult(String orderSn) {
-        Order order = getOne(new QueryWrapper<Order>().eq("order_sn", orderSn));
-        if (order == null) {
-            return R.error(ReturnCodeEnum.ORDER_NOT_EXISTS_ERROR);
+        String value = redisCache.getCacheObject(RedisKeyEnum.ORDER_RESULT_KEY.getKey(orderSn));
+        if (value == null) {
+            return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
         }
-        // 检查这个订单是否已经处理过
-        if (!OrderUtil.isCreateStatus(order)) {
-            return R.error(ReturnCodeEnum.ORDER_HAS_CREATED_ERROR);
+        if (!"success".equals(value)) {
+            return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR.getCode(), value);
         }
         return R.success();
     }

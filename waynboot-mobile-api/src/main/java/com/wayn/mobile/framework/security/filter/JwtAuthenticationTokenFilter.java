@@ -29,8 +29,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private TokenService tokenService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
         try {
             // 入口传入请求ID
             ThreadMdcUtil.setTraceIdIfAbsent();
@@ -43,6 +42,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
             chain.doFilter(request, response);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         } finally {
             // 出口移除请求ID
             ThreadMdcUtil.removeTraceId();
