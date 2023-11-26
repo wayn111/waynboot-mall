@@ -65,7 +65,7 @@ public class SearchController extends BaseController {
     @GetMapping("sugguest")
     public R sugguest(SearchVO searchVO) throws IOException {
         String keyword = searchVO.getKeyword();
-        String suggestField = "name.suggest";
+        String suggestField = "name.py";
         String suggestName = "my-suggest";
         SuggestionBuilder<CompletionSuggestionBuilder> termSuggestionBuilder = SuggestBuilders.completionSuggestion(suggestField)
                 .prefix(keyword)
@@ -89,20 +89,19 @@ public class SearchController extends BaseController {
         Boolean isPrice = searchVO.getIsPrice();
         Boolean isSales = searchVO.getIsSales();
         String orderBy = searchVO.getOrderBy();
-        SearchHistory searchHistory = new SearchHistory();
-        if (memberId != null && StringUtils.isNotEmpty(keyword)) {
-            searchHistory.setCreateTime(LocalDateTime.now());
-            searchHistory.setUserId(memberId);
-            searchHistory.setKeyword(keyword);
-        }
+
         Page<SearchVO> page = getPage();
         // 查询包含关键字、已上架商品
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         MatchQueryBuilder matchFiler = QueryBuilders.matchQuery("isOnSale", true);
         MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("name", keyword);
+        MatchQueryBuilder pymatchQuery = QueryBuilders.matchQuery("pyname", keyword);
         MatchPhraseQueryBuilder matchPhraseQueryBuilder = QueryBuilders.matchPhraseQuery("keyword", keyword);
-        boolQueryBuilder.filter(matchFiler).should(matchQuery).should(matchPhraseQueryBuilder).minimumShouldMatch(1);
+        boolQueryBuilder.filter(matchFiler).should(matchQuery)
+                .should(pymatchQuery)
+                .should(matchPhraseQueryBuilder)
+                .minimumShouldMatch(1);
         searchSourceBuilder.timeout(new TimeValue(10, TimeUnit.SECONDS));
         // 按是否新品排序
         if (isNew) {
@@ -153,8 +152,14 @@ public class SearchController extends BaseController {
             AsyncManager.me().execute(new TimerTask() {
                 @Override
                 public void run() {
-                    searchHistory.setHasGoods(true);
-                    iSearchHistoryService.save(searchHistory);
+                    SearchHistory searchHistory = new SearchHistory();
+                    if (memberId != null && StringUtils.isNotEmpty(keyword)) {
+                        searchHistory.setCreateTime(LocalDateTime.now());
+                        searchHistory.setUserId(memberId);
+                        searchHistory.setKeyword(keyword);
+                        searchHistory.setHasGoods(true);
+                        iSearchHistoryService.save(searchHistory);
+                    }
                 }
             });
         }
