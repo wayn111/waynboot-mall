@@ -7,11 +7,19 @@
       "type": "text",
       "analyzer": "ik_max_word",
       "fields": {
-        "suggest": {
+        "kw": {
           "type": "completion",
-          "analyzer": "ik_max_word"
+          "analyzer": "keyword"
+        },
+        "py": {
+          "type": "completion",
+          "analyzer": "pinyin"
         }
       }
+    },
+    "pyname": {
+      "type": "text",
+      "analyzer": "pinyin"
     },
     "sales": {
       "type": "integer"
