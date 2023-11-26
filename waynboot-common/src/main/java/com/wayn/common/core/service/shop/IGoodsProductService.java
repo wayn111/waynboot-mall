@@ -3,6 +3,8 @@ package com.wayn.common.core.service.shop;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.domain.shop.GoodsProduct;
 
+import java.util.List;
+
 /**
  * 商品货品表 服务类
  *
@@ -26,4 +28,6 @@ public interface IGoodsProductService extends IService<GoodsProduct> {
      * @return boolean
      */
     boolean addStock(Long productId, Integer number);
+
+    List<GoodsProduct> selectProductByIds(List<Long> productIds);
 }

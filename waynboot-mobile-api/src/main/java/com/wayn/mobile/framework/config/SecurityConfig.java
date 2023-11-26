@@ -52,8 +52,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         registry -> registry
                                 .requestMatchers("favicon.ico", "/actuator/**", "/login", "/registry",
-                                        "/search/**", "/sendEmailCode", "/test/**", "/seckill/**", "/captcha").anonymous()
-                                .requestMatchers("/home/**", "/category/**", "/comment/**",
+                                        "/sendEmailCode", "/test/**", "/seckill/**", "/captcha").anonymous()
+                                .requestMatchers("/home/**", "/category/**", "/comment/**", "/search/**",
                                         "/goods/detail/**", "/cart/goodsCount", "/diamond/**").permitAll()
                                 .requestMatchers("/upload/**").anonymous()
                                 .requestMatchers("/common/download**").anonymous()

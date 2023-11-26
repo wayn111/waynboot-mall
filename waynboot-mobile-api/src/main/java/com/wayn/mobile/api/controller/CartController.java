@@ -38,7 +38,6 @@ public class CartController extends BaseController {
         Long userId = MobileSecurityUtils.getUserId();
         Page<Cart> page = getPage();
         R list = iCartService.list(page, userId);
-        log.info("cart list:{}", JSON.toJSON(list));
         return list;
     }
 
@@ -59,7 +58,7 @@ public class CartController extends BaseController {
 
     @PostMapping("changeNum/{cartId}/{number}")
     public R changeNum(@PathVariable Long cartId, @PathVariable Integer number) {
-        return iCartService.changeNum(cartId, number);
+        return R.result(iCartService.changeNum(cartId, number));
     }
 
     @DeleteMapping("{cartId}")

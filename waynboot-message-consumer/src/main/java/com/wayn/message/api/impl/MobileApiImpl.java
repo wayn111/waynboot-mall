@@ -22,7 +22,7 @@ public class MobileApiImpl implements MobileApi {
     @Resource
     private RestTemplate restTemplate;
 
-    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
     @Override
     public void submitOrder(String body) throws Exception {
         JSONObject msgObject = JSONObject.parseObject(body);
@@ -45,7 +45,7 @@ public class MobileApiImpl implements MobileApi {
         }
     }
 
-    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
     @Override
     public void unpaidOrder(String body) throws Exception {
         JSONObject msgObject = JSONObject.parseObject(body);
@@ -69,7 +69,7 @@ public class MobileApiImpl implements MobileApi {
         }
     }
 
-    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
     @Override
     public void sendEmail(String body) throws Exception {
         JSONObject msgObject = JSONObject.parseObject(body);
