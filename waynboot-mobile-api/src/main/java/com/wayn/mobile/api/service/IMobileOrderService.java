@@ -24,7 +24,7 @@ public interface IMobileOrderService extends IService<Order> {
      * @param orderDTO 订单DTO
      * @return R
      */
-    R submit(OrderDTO orderDTO) throws UnsupportedEncodingException;
+    void submit(OrderDTO orderDTO) throws UnsupportedEncodingException;
 
 
     /**
