@@ -24,11 +24,14 @@
 
 # 简介
 
-waynboot-mall 是一套全部开源的微商城项目，包含三个项目：运营后台、H5 商城和后端接口。实现了一套完整的商城业务，有首页展示、商品分类、商品详情、sku
-详情、商品搜索、加入购物车、结算下单、支付宝/微信支付、商品评论等一系列功能。商城前后台项目源码全部开源，绝无套路。技术上基于最新得
-Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，根据博主多年线上项目实战经验总结开发而来不断优化、完善。
+🔥waynboot-mall 是一套全部开源的微商城项目，包含三个项目：**运营后台、H5 商城和后端接口**。实现了一套完整的商城业务，有首页展示、商品分类、商品详情、sku
+详情、商品搜索、加入购物车、结算下单、支付宝/微信支付、订单列表、商品评论等一系列功能🔥。
 
-对于初学者而言 waynboot-mall 项目是非常易于部署的，根据readme中的本地开发指南就能成功启动项目。还提供 docker-compose 一键部署脚本，只需要十多分钟就能启动商城前后台所有服务。
+商城前后台项目源码全部开源，绝无套路。技术上基于最新得 Spring Boot3.1、Mybatis Plus、Spring Security，整合了 Mysql、Redis、RabbitMQ、ElasticSearch 等常用中间件，根据博主多年线上项目实战经验总结开发而来不断优化、完善。
+
+对于初学者而言 waynboot-mall 项目是非常易于部署的，根据 readme 中的本地开发指南就能成功启动项目。
+
+并且提供了 docker-compose 一键部署脚本，只需要十多分钟就能启动商城前后台所有服务。
 
 - 后端接口项目 https://github.com/wayn111/waynboot-mall
 - 前端H5商城项目 https://github.com/wayn111/waynboot-mobile
@@ -44,12 +47,12 @@ Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，
 
 ![系统设计](images/系统设计.png)
 
-关注公众号：waynblog，每周更新最新技术文章。回复关键字：
+关注我的公众号：waynblog，每周更新技术文章、项目实战。回复关键字：
 
-- **学习**：加群交流，群内问题都会一一解答。
-- **演示账号**：获得线上项目管理后台演示账号。
-- **开源项目**：获取博主自己写的三个开源项目，包含PC、H5商城、后台权限管理系统等。
-- **加微信**：联系博主。
+- **加群**：加群交流，探讨技术问题。
+- **演示账号**：获得 waynboot-mall 商城后台演示账号。
+- **开源项目**：获取我写的三个开源项目，包含PC、H5商城、后台权限管理系统等。
+- **加微信**：联系我。
 
 <img src="images/wx-mp-code.png" width = "100" />
 
@@ -86,25 +89,23 @@ Springboot3.1，整合了 Redis、RabbitMQ、ElasticSearch 等常用中间件，
 
 # 本地开发
 
-由于本项目图片压缩包超过100m不能在github上传，
-提供百度网盘地址链接：https://pan.baidu.com/s/16_d0_f6RhVnN_dDobYm9Bw 提取码：rvlk
-
-ps: 也可以加我 wx: waynaqua 获取商城图片
+由于本项目图片压缩包超过 100m 不能在 github 上传，
+提供百度网盘地址链接：链接：https://pan.baidu.com/s/1hxaRKqBjv4BRRmR2Ck1inQ ， 提取码：hoep
 
 ```
 # 1. 克隆项目
 git clone git@github.com:wayn111/waynboot-mall.git
 
 # 2. 导入项目依赖
-将waynboot-mall目录用idea打开，导入maven依赖
+将 waynboot-mall 目录用 idea 打开，导入 maven 依赖
 
-# 3. 安装Mysql8.0+、Redis3.0+、RabbitMQ3.0+（含延迟消息插件）、ElasticSearch7.0+（含分词插件）到本地
+# 3. 安装 Mysql8.0+、Redis3.0+、RabbitMQ3.0+（含延迟消息插件）、ElasticSearch7.0+（含分词、拼英插件）到本地
 
-# 4. 导入sql文件
-在项目根目录下，找到`wayn_shop_*.sql`文件，新建mysql数据库wayn_shop，导入其中
+# 4. 导入 sql 文件
+在项目根目录下，找到 `wayn_shop_*.sql` 文件，新建 mysql 数据库 wayn_shop，导入其中
 
-# 5. 项目图片部署(注意由于本项目图片压缩包超过100m不能在github上传，请加我的wx:waynaqua ，获取图片压缩包)
-在项目根目录下，找到webp.zip文件，将zip中所有图片解压缩部署到D:/waynshop/webp目录下
+# 5. 项目图片部署
+使用百度网盘，下载商城图片压缩包，将 zip 中所有图片解压缩部署到 D:/waynshop/webp 目录下
 
 # 6. 修改Mysql、Redis、RabbitMQ、Elasticsearch连接配置
 修改`application-dev.yml`以及`application.yml`文件中数据连接配置相关信息
@@ -139,7 +140,15 @@ h5商城api:
 
 # 服务器部署
 
-对于想要自己部署这个项目的同学又没有开发资源，可以加作者wx：waynaqua，作者提供有偿帮助。
+对于想要自己部署这个项目的同学又没有开发资源，可以加我 wx：waynaqua，提供有偿帮助。
+
+# 咨询指南
+
+商城咨询时请考虑我的时间成本，虽然我是乐于帮助新手解决问题。
+
+但是某些人不仅白嫖咨询大量问题，消耗我的时间成本。而且咨询态度就像是我的客户一样，咨询完了一句谢谢也不会说。
+
+所以如有咨询大量问题，请先付出金钱成本😜。
 
 # 演示截图
 
