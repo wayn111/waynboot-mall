@@ -44,6 +44,7 @@ public enum ReturnCodeEnum {
     ORDER_ERROR_CART_EMPTY_ERROR(5013, "下单失败，当前购物车无数据"),
     ORDER_ERROR_ADDRESS_ERROR(50143, "下单失败，当前地址错误"),
     ORDER_REFUND_ERROR(50144, "退款失败"),
+    ORDER_ERROR_STOCK_NOT_ENOUGH(50145, "%s,%s 库存不足，请重新选择商品"),
 
     // 用户错误
     USER_NOT_EXISTS_ERROR(5101, "用户不存在"),

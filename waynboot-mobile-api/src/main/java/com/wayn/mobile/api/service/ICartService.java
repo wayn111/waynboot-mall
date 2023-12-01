@@ -56,7 +56,7 @@ public interface ICartService extends IService<Cart> {
      * @param number 商品数量
      * @return r
      */
-    R changeNum(Long cartId, Integer number);
+    Boolean changeNum(Long cartId, Integer number);
 
     /**
      * 添加商品的默认选中货品至购物车

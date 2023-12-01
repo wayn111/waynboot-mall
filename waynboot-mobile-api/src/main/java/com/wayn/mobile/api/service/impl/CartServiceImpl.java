@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.beans.IntrospectionException;
@@ -52,7 +53,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     private IGoodsProductService iGoodsProductService;
 
     private CartMapper cartMapper;
-
+    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
     @Override
     public Cart checkExistsGoods(Long userId, Long goodsId, Long productId) {
         return getOne(new QueryWrapper<Cart>()
@@ -131,25 +132,34 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     public R list(Page<Cart> page, Long userId) {
         IPage<Cart> goodsIPage = cartMapper.selectCartPageList(page, userId);
         List<Cart> cartList = goodsIPage.getRecords();
-        List<Long> goodsIdList = cartList.stream().map(Cart::getGoodsId).collect(Collectors.toList());
+        List<Long> goodsIdList = cartList.stream().map(Cart::getGoodsId).toList();
+        List<Long> productIdList = cartList.stream().map(Cart::getProductId).toList();
 
         JSONArray array = new JSONArray();
         if (CollectionUtils.isEmpty(goodsIdList)) {
             return R.success().add("data", array);
         }
-        Map<Long, Goods> goodsIdMap = iGoodsService.selectGoodsByIds(goodsIdList).stream().collect(Collectors.toMap(Goods::getId, goods -> goods));
+        // Map<Long, Goods> goodsIdMap = iGoodsService.selectGoodsByIds(goodsIdList).stream()
+        //         .collect(Collectors.toMap(Goods::getId, goods -> goods));
+        Map<Long, GoodsProduct> productIdMap = iGoodsProductService.selectProductByIds(productIdList).stream()
+                .collect(Collectors.toMap(GoodsProduct::getId, product -> product));
 
         for (Cart cart : cartList) {
             JSONObject jsonObject = new JSONObject();
             try {
+                GoodsProduct product = productIdMap.get(cart.getProductId());
+                Integer number = cart.getNumber();
+                Integer maxNumber = product.getNumber();
+                if (maxNumber < number) {
+                    commonThreadPoolTaskExecutor.execute(() -> {
+                        this.lambdaUpdate()
+                                .set(Cart::getChecked, false)
+                                .eq(Cart::getId, cart.getId())
+                                .update();
+                    });
+                }
                 MyBeanUtil.copyProperties2Map(cart, jsonObject);
-                Goods goods = goodsIdMap.get(cart.getGoodsId());
-                if (goods.getIsNew()) {
-                    jsonObject.put("tag", "新品");
-                }
-                if (goods.getIsHot()) {
-                    jsonObject.put("tag", "热品");
-                }
+                jsonObject.put("maxNum", maxNumber);
             } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
                 log.error(e.getMessage(), e);
             }
@@ -159,16 +169,12 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     }
 
     @Override
-    public R changeNum(Long cartId, Integer number) {
-        Cart cart = getById(cartId);
-        Long productId = cart.getProductId();
-        GoodsProduct goodsProduct = iGoodsProductService.getById(productId);
-        Integer productNumber = goodsProduct.getNumber();
-        if (number > productNumber) {
-            throw new BusinessException(String.format("库存不足，该商品只剩%d件了", productNumber));
-        }
-        boolean update = lambdaUpdate().setSql("number = " + number).eq(Cart::getId, cartId).update();
-        return R.result(update);
+    public Boolean changeNum(Long cartId, Integer number) {
+        // todo 并发问题，后续可以通过 mq 实现
+        commonThreadPoolTaskExecutor.execute(() -> {
+            lambdaUpdate().setSql("number = " + number).eq(Cart::getId, cartId).update();
+        });
+        return true;
     }
 
     @Override
