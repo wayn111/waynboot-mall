@@ -62,6 +62,12 @@ public class SearchController extends BaseController {
 
     private ElasticDocument elasticDocument;
 
+    /**
+     * 商城搜索建议
+     * @param searchVO
+     * @return
+     * @throws IOException
+     */
     @GetMapping("sugguest")
     public R sugguest(SearchVO searchVO) throws IOException {
         String keyword = searchVO.getKeyword();
@@ -77,6 +83,12 @@ public class SearchController extends BaseController {
         return R.success().add("suggest", list);
     }
 
+    /**
+     * 商城搜索结果
+     * @param searchVO
+     * @return
+     * @throws IOException
+     */
     @GetMapping("result")
     public R result(SearchVO searchVO) throws IOException {
         // 获取筛选、排序条件
@@ -167,39 +179,16 @@ public class SearchController extends BaseController {
     }
 
     /**
-     * 关键字提醒
-     * <p>
-     * 当用户输入关键字一部分时，可以推荐系统中合适的关键字。
-     *
-     * @param keyword 关键字
-     * @return 合适的关键字
+     * 热门搜索
+     * @return R
      */
-    @GetMapping("helper")
-    public R helper(@NotEmpty String keyword) {
-        Page<Keyword> page = getPage();
-        Keyword newKeyword = new Keyword();
-        newKeyword.setKeyword(keyword);
-        IPage<Keyword> keywordIPage = iKeywordService.listPage(page, newKeyword);
-        List<Keyword> keywordList = keywordIPage.getRecords();
-        String[] keys = new String[keywordList.size()];
-        int index = 0;
-        for (Keyword key : keywordList) {
-            keys[index++] = key.getKeyword();
-        }
-        return R.success().add("keys", keys);
-    }
-
-    @GetMapping("hotList")
-    public R hotList() {
-        List<SearchHistory> historyList = iSearchHistoryService.selectHostList();
-        List<String> keywordList = historyList.stream().map(SearchHistory::getKeyword).collect(Collectors.toList());
-        return R.success().add("data", keywordList);
-    }
-
     @GetMapping("hotKeywords")
     public R hotKeywords() {
+        // 查询配置了热门搜索展示的关键词
         List<Keyword> hotKeywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByAsc("sort"));
         List<String> hotStrings = hotKeywords.stream().map(Keyword::getKeyword).collect(Collectors.toList());
+
+        // 查询配置了默认搜索展示的关键词，如果有多个配置了默认搜索，就按照排序值从小到大取第一个
         List<Keyword> defaultKeyword = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_default", true).orderByAsc("sort"));
         List<String> defaultStrings = defaultKeyword.stream().map(Keyword::getKeyword).collect(Collectors.toList());
         R r = R.success();
