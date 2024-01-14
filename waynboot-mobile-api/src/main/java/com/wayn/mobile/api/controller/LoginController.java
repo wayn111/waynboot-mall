@@ -147,7 +147,7 @@ public class LoginController {
             sendMailVO.setSubject("mall商城注册通知");
             sendMailVO.setContent("邮箱验证码：" + verCode);
             sendMailVO.setTos(Collections.singletonList(registryObj.getEmail()));
-            MailUtil.sendMail(emailConfig, sendMailVO, false, false);
+            MailUtil.sendMail(emailConfig, sendMailVO, false, true);
         });
         return R.success().add("emailKey", key);
     }

@@ -37,7 +37,7 @@ public class IHomeServiceImpl implements IHomeService {
     private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
 
-    @Cacheable(value = "home_index_cache#600", unless = "#result == null")
+    @Cacheable(value = "home_index_cache#300", unless = "#result == null")
     @Override
     public HomeIndexResponseVO index() {
         HomeIndexResponseVO responseVO = new HomeIndexResponseVO();

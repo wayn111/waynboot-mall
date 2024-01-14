@@ -78,6 +78,15 @@ public class CacheConfig implements CachingConfigurer {
         return new MyRedisCacheManager(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory), defaultCacheConfig());
     }
 
+    // @Bean
+    // public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+    //     return RedisCacheManager.builder(redisConnectionFactory)
+    //             .cacheDefaults(defaultCacheConfig())
+    //             .transactionAware()
+    //             .build();
+    // }
+
+
     private RedisCacheConfiguration defaultCacheConfig() {
         return RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
