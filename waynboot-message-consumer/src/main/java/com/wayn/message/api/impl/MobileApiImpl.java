@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.wayn.message.api.MobileApi;
 import com.wayn.message.core.constant.MQConstants;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.*;
 import org.springframework.retry.annotation.Backoff;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
  * @author: waynaqua
  * @date: 2023/8/20 18:30
  */
+@Slf4j
 @Service
 public class MobileApiImpl implements MobileApi {
     @Resource
@@ -36,6 +38,7 @@ public class MobileApiImpl implements MobileApi {
         multiValueMap.add("order", msgObject.get("order"));
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
+        log.info("submitOrder response:{}", response.getBody());
         if (response.getStatusCode().value() != HttpStatus.OK.value()) {
             throw new Exception("调用mobile下单api失败， body：" + body);
         }
@@ -60,6 +63,7 @@ public class MobileApiImpl implements MobileApi {
         multiValueMap.add("orderSn", orderSn);
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
+        log.info("unpaidOrder response:{}", response.getBody());
         if (response.getStatusCode().value() != HttpStatus.OK.value()) {
             throw new Exception("调用mobile未支付订单超时取消api失败， body：" + body);
         }
@@ -85,6 +89,7 @@ public class MobileApiImpl implements MobileApi {
         multiValueMap.add("tos", msgObject.get("tos"));
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(multiValueMap, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(notifyUrl, request, String.class);
+        log.info("sendEmail response:{}", response.getBody());
         if (response.getStatusCode().value() != HttpStatus.OK.value()) {
             throw new Exception("调用mobile发送邮件api失败， body：" + body);
         }

@@ -40,7 +40,7 @@ public class EmailController {
         sendMailVO.setSubject(subject);
         sendMailVO.setContent(content);
         sendMailVO.setTos(Collections.singletonList(tos));
-        MailUtil.sendMail(emailConfig, sendMailVO, false, false);
+        MailUtil.sendMail(emailConfig, sendMailVO, false, true);
         return R.success();
     }
 }

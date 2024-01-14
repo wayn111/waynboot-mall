@@ -46,7 +46,7 @@ public class EmailConfigController {
         if (!mailConfigService.checkMailConfig(emailConfig)) {
             return R.error(ReturnCodeEnum.TOOL_EMAIL_ERROR);
         }
-        MailUtil.sendMail(emailConfig, mailVO, false, false);
+        MailUtil.sendMail(emailConfig, mailVO, false, true);
         return R.success();
     }
 }
