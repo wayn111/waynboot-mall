@@ -28,6 +28,9 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 用户接口
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("user")
@@ -41,12 +44,24 @@ public class UserController {
 
     private IMailConfigService mailConfigService;
 
+    /**
+     * 获取用户信息
+     * 需要再 header 中添加 Authorization 参数
+     *
+     * @return
+     */
     @GetMapping("info")
     public R getInfo() {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         return R.success().add("info", loginUser.getMember());
     }
 
+    /**
+     * 获取用户资料
+     *
+     * @param profileVO 用户资料参数
+     * @return R
+     */
     @PostMapping("profile")
     public R profile(@RequestBody ProfileVO profileVO) {
         String nickname = profileVO.getNickname();
@@ -76,6 +91,12 @@ public class UserController {
         return R.result(iMemberService.updateById(member));
     }
 
+    /**
+     * 发送邮件
+     *
+     * @param registryObj 发送邮件参数
+     * @return R
+     */
     @PostMapping("/sendEmailCode")
     public R sendEmailCode(@RequestBody RegistryObj registryObj) {
         SpecCaptcha specCaptcha = new SpecCaptcha(80, 32, 4);
@@ -92,6 +113,12 @@ public class UserController {
         return R.success().add("key", key);
     }
 
+    /**
+     * 上传头像
+     *
+     * @param avatar 用户头像地址
+     * @return R
+     */
     @PostMapping("uploadAvatar")
     public R uploadAvatar(String avatar) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -109,6 +136,12 @@ public class UserController {
         return R.result(true).add("userInfo", member);
     }
 
+    /**
+     * 更新用户密码
+     *
+     * @param registryObj 更新参数
+     * @return R
+     */
     @PostMapping("updatePassword")
     public R updatePassword(@RequestBody RegistryObj registryObj) {
         if (!StringUtils.equalsIgnoreCase(registryObj.getPassword(), registryObj.getConfirmPassword())) {

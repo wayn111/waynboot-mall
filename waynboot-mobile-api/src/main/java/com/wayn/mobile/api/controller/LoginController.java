@@ -30,6 +30,12 @@ import java.util.Date;
 
 import static com.wayn.common.enums.ReturnCodeEnum.*;
 
+/**
+ * 登录相关接口
+ *
+ * @author wayn
+ * @since 2024/1/15
+ */
 @RestController
 @AllArgsConstructor
 public class LoginController {
@@ -40,6 +46,12 @@ public class LoginController {
     private IMailConfigService mailConfigService;
     private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
+    /**
+     * 用户登录
+     *
+     * @param loginObj 登录参数
+     * @return R
+     */
     @PostMapping("/login")
     public R login(@RequestBody LoginObj loginObj) {
         // 生成令牌
@@ -47,6 +59,12 @@ public class LoginController {
         return R.success().add(SysConstants.TOKEN, token);
     }
 
+    /**
+     * 用户注册
+     *
+     * @param registryObj 注册参数
+     * @return R
+     */
     @PostMapping("/registry")
     public R registry(@RequestBody RegistryObj registryObj) {
         if (!StringUtils.equalsIgnoreCase(registryObj.getPassword(), registryObj.getConfirmPassword())) {
@@ -95,6 +113,11 @@ public class LoginController {
         return R.result(iMemberService.save(member));
     }
 
+    /**
+     * 验证码
+     *
+     * @return R
+     */
     @ResponseBody
     @RequestMapping("/captcha")
     public R captcha() {
@@ -110,6 +133,12 @@ public class LoginController {
         return R.success().add("captchaKey", key).add("captchaImg", specCaptcha.toBase64());
     }
 
+    /**
+     * 发送邮箱
+     *
+     * @param registryObj 注册参数
+     * @return R
+     */
     @PostMapping("/sendEmailCode")
     public R sendEmailCode(@RequestBody RegistryObj registryObj) {
         // 判断图形验证码是否正确
@@ -140,7 +169,7 @@ public class LoginController {
         // 生成邮箱验证码唯一key
         String key = RedisKeyEnum.EMAIL_KEY_CACHE.getKey(IdUtil.getUid());
         // 存入redis并设置过期时间为20分钟
-        redisCache.setCacheObject(key, verCode + "_" + mobile,  RedisKeyEnum.EMAIL_KEY_CACHE.getExpireSecond());
+        redisCache.setCacheObject(key, verCode + "_" + mobile, RedisKeyEnum.EMAIL_KEY_CACHE.getExpireSecond());
         commonThreadPoolTaskExecutor.execute(() -> {
             EmailConfig emailConfig = mailConfigService.getById(1L);
             SendMailVO sendMailVO = new SendMailVO();

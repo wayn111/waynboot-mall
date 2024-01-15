@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 邮件回调接口
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("callback/email")
@@ -19,6 +22,13 @@ public class EmailController {
 
     private IMailConfigService mailConfigService;
 
+    /**
+     * 发送邮件
+     * @param subject 标题
+     * @param content 内容
+     * @param tos 接收人
+     * @return R
+     */
     @PostMapping
     public R sendEmail(String subject, String content, String tos) {
         EmailConfig emailConfig = mailConfigService.getById(1L);

@@ -1,7 +1,6 @@
 package com.wayn.mobile.api.controller;
 
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
@@ -18,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 购物车商品表 前端控制器
+ * 购物车接口
  *
  * @author wayn
  * @since 2020-08-03
@@ -31,8 +30,11 @@ public class CartController extends BaseController {
 
     private ICartService iCartService;
 
-    private WaynConfig waynConfig;
-
+    /**
+     * 购物车列表
+     *
+     * @return
+     */
     @GetMapping("list")
     public R list() {
         Long userId = MobileSecurityUtils.getUserId();
@@ -41,36 +43,75 @@ public class CartController extends BaseController {
         return list;
     }
 
+    /**
+     * 添加购物车
+     *
+     * @return R
+     */
     @PostMapping
     public R add(@RequestBody Cart cart) {
         return iCartService.add(cart);
     }
 
+    /**
+     * 往购物车中添加默认商品
+     *
+     * @return R
+     */
     @PostMapping("addDefaultGoodsProduct")
     public R addDefaultGoodsProduct(@RequestBody Cart cart) {
         return iCartService.addDefaultGoodsProduct(cart);
     }
 
+    /**
+     * 更新购物车
+     *
+     * @param cart 更新参数
+     * @return R
+     */
     @PutMapping
     public R update(@RequestBody Cart cart) {
         return R.result(iCartService.updateById(cart));
     }
 
+    /**
+     * 修改购物车商品数量
+     *
+     * @param cartId 购物车id
+     * @param number 更新数量
+     * @return R
+     */
     @PostMapping("changeNum/{cartId}/{number}")
     public R changeNum(@PathVariable Long cartId, @PathVariable Integer number) {
         return R.result(iCartService.changeNum(cartId, number));
     }
 
+    /**
+     * 删除购物车商品
+     *
+     * @param cartId 购物车id
+     * @return R
+     */
     @DeleteMapping("{cartId}")
     public R delete(@PathVariable Long cartId) {
         return R.result(iCartService.removeById(cartId));
     }
 
+    /**
+     * 统计购物车中现有商品数量
+     *
+     * @return R
+     */
     @GetMapping("goodsCount")
     public R goodsCount() {
         return iCartService.goodsCount();
     }
 
+    /**
+     * 统计购物车中已勾选商品数量
+     *
+     * @return R
+     */
     @PostMapping("getCheckedGoods")
     public R getCheckedGoods() {
         Long userId = MobileSecurityUtils.getUserId();
