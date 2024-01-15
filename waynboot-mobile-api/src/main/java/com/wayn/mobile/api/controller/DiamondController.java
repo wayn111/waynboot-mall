@@ -15,6 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 金刚区接口
+ *
+ * @author wayn
+ * @since 2024/1/15
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("diamond")
@@ -24,6 +30,12 @@ public class DiamondController extends BaseController {
 
     private DiamondJumpContext diamondJumpContext;
 
+    /**
+     * 金刚区跳转
+     *
+     * @param diamondId 金刚区id
+     * @return R
+     */
     @GetMapping("getGoodsList")
     public R getGoodsList(Long diamondId) {
         Page<Goods> page = getPage();

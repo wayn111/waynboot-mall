@@ -11,7 +11,7 @@ import java.util.List;
 public class OrderVO {
 
     /**
-     * 订单ID
+     * 订单编号
      */
     private String orderSn;
 

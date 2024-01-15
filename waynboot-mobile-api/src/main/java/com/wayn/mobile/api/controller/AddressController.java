@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * 用户地址接口
+ *
+ * @author wayn
+ * @since 2020-08-03
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("address")
@@ -18,12 +24,22 @@ public class AddressController {
 
     private IAddressService iAddressService;
 
+    /**
+     * 地址列表
+     *
+     * @return R
+     */
     @GetMapping("list")
     public R list() {
         Long memberId = MobileSecurityUtils.getUserId();
         return R.success().add("data", iAddressService.list(new QueryWrapper<Address>().eq("member_id", memberId)));
     }
 
+    /**
+     * 添加地址
+     *
+     * @return R
+     */
     @PostMapping
     public R add(@RequestBody Address address) {
         Long memberId = MobileSecurityUtils.getUserId();
@@ -39,6 +55,11 @@ public class AddressController {
         return R.result(iAddressService.save(address));
     }
 
+    /**
+     * 删除地址
+     *
+     * @return R
+     */
     @DeleteMapping("{addressId}")
     public R delete(@PathVariable Long addressId) {
         return R.result(iAddressService.removeById(addressId));

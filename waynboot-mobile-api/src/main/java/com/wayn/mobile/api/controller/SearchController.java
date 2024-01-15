@@ -3,7 +3,6 @@ package com.wayn.mobile.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.domain.shop.Goods;
@@ -17,7 +16,6 @@ import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
 import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * 搜索历史表 前端控制器
+ * 搜索接口
  *
  * @author wayn
  * @since 2020-09-23
@@ -64,9 +62,9 @@ public class SearchController extends BaseController {
 
     /**
      * 商城搜索建议
-     * @param searchVO
-     * @return
-     * @throws IOException
+     *
+     * @param searchVO 搜索参数
+     * @return R
      */
     @GetMapping("sugguest")
     public R sugguest(SearchVO searchVO) throws IOException {
@@ -85,9 +83,9 @@ public class SearchController extends BaseController {
 
     /**
      * 商城搜索结果
-     * @param searchVO
-     * @return
-     * @throws IOException
+     *
+     * @param searchVO 搜索参数
+     * @return R
      */
     @GetMapping("result")
     public R result(SearchVO searchVO) throws IOException {
@@ -180,6 +178,7 @@ public class SearchController extends BaseController {
 
     /**
      * 热门搜索
+     *
      * @return R
      */
     @GetMapping("hotKeywords")
@@ -192,9 +191,6 @@ public class SearchController extends BaseController {
         List<Keyword> defaultKeyword = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_default", true).orderByAsc("sort"));
         List<String> defaultStrings = defaultKeyword.stream().map(Keyword::getKeyword).collect(Collectors.toList());
         R r = R.success();
-        if (CollectionUtils.isNotEmpty(hotStrings)) {
-            r.add("data", hotStrings);
-        }
         r.add("data", hotStrings);
         if (CollectionUtils.isNotEmpty(defaultStrings)) {
             r.add("default", defaultStrings.get(0));

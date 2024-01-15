@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 搜索历史表 前端控制器
+ * 搜索历史接口
  *
  * @author wayn
  * @since 2020-09-23
@@ -28,6 +28,12 @@ public class SearchHistoryController extends BaseController {
         return R.success().add("data", iSearchHistoryService.selectList());
     }
 
+    /**
+     * 添加搜索历史
+     *
+     * @param searchHistory 搜索历史参数
+     * @return R
+     */
     @PostMapping
     public R add(@RequestBody SearchHistory searchHistory) {
         Long memberId = MobileSecurityUtils.getUserId();
@@ -35,11 +41,22 @@ public class SearchHistoryController extends BaseController {
         return R.result(iSearchHistoryService.save(searchHistory));
     }
 
+    /**
+     * 删除搜索历史
+     *
+     * @param id 搜索历史id
+     * @return R
+     */
     @DeleteMapping("{id}")
     public R delete(@PathVariable Long id) {
         return R.result(iSearchHistoryService.removeById(id));
     }
 
+    /**
+     * 删除当前用户所有搜索历史
+     *
+     * @return R
+     */
     @DeleteMapping("all")
     public R delete() {
         Long memberId = MobileSecurityUtils.getUserId();

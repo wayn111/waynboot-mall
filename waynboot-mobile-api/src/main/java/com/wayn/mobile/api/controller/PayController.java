@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * 支付接口
+ */
 @Slf4j
 @RestController
 @AllArgsConstructor

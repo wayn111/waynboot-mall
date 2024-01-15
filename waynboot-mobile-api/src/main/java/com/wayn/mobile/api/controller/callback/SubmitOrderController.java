@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 下单回调接口
+ */
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -22,6 +25,11 @@ public class SubmitOrderController {
     private IMobileOrderService iMobileOrderService;
     private RedisCache redisCache;
 
+    /**
+     * 回调下单
+     * @param order 订单数据传输对象
+     * @return R
+     */
     @PostMapping("submit")
     public R submit(String order) {
         log.info("callback order request is {}", order);
