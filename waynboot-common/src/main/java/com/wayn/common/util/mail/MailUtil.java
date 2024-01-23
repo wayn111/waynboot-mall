@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Properties;
 @Slf4j
 public class MailUtil {
 
-    public static void sendMail(EmailConfig emailConfig, SendMailVO mailVO, boolean isHtml, boolean ssl) {
+    public static void sendMail(EmailConfig emailConfig, SendMailVO mailVO, boolean isHtml) {
         if (emailConfig == null) {
             log.warn("emailConfig is null");
             return;
@@ -42,7 +43,7 @@ public class MailUtil {
                     Properties properties = System.getProperties();
                     properties.setProperty("mail.smtp.port", String.valueOf(emailConfig.getPort()));
                     // SSL加密
-                    if (ssl) {
+                    if (Objects.equals(emailConfig.getSslEnable(), 1)) {
                         MailSSLSocketFactory sf = new MailSSLSocketFactory();
                         sf.setTrustAllHosts(true);
                         properties.put("mail.smtp.ssl.enable", "true");

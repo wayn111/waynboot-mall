@@ -44,7 +44,10 @@ public class EmailConfig implements Serializable {
      * 发件者用户名
      */
     private String user;
-
+    /**
+     * 是否启用 ssl port 0不启用 1启用
+     */
+    private Integer sslEnable;
     /**
      * 逻辑删除 0存在1删除
      */

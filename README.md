@@ -99,7 +99,7 @@ git clone git@github.com:wayn111/waynboot-mall.git
 # 2. 导入项目依赖
 将 waynboot-mall 目录用 idea 打开，导入 maven 依赖
 
-# 3. 安装 Mysql8.0+、Redis3.0+、RabbitMQ3.0+（含延迟消息插件）、ElasticSearch7.0+（含分词、拼英插件）到本地
+# 3. 安装 Jdk17、Mysql8.0+、Redis3.0+、RabbitMQ3.0+（含延迟消息插件）、ElasticSearch7.0+（含分词、拼英插件）到本地
 
 # 4. 导入 sql 文件
 在项目根目录下，找到 `wayn_shop_*.sql` 文件，新建 mysql 数据库 wayn_shop，导入其中
@@ -150,42 +150,15 @@ h5商城api:
 
 所以如有咨询大量问题，请先付出金钱成本😜。
 
-# 演示截图
+# 演示gif
 
-<table>
-    <tr>
-        <td>商城首页<img src="https://files.mdnice.com/user/40549/914d6ec3-7456-49fc-bda5-24256bdec9ee.png"/></td>
-        <td>更多商品<img src="https://files.mdnice.com/user/40549/dc5160be-77ed-4082-99d0-94dc529f4093.png"/></td>
-    </tr>
-    <tr>
-        <td>商城搜索<img src="https://files.mdnice.com/user/40549/f9a80d94-3e99-477d-a7e5-deb7269092ec.png"/></td>
-        <td>金刚位跳转<img src="https://files.mdnice.com/user/40549/a7f61d46-24e2-4197-8684-f741cb584bf9.png"/></td>
-    </tr>
-    <tr>
-        <td>商品详情<img src="https://files.mdnice.com/user/40549/d6da447b-cc18-4175-a879-482a14ba7892.png"/></td>
-        <td>商品分类<img src="https://files.mdnice.com/user/40549/b0b57fee-87c8-49e1-b870-afcf98408bde.png"/></td>
-    </tr>
-    <tr>
-        <td>商品sku选择<img src="https://files.mdnice.com/user/40549/2ea549b3-842c-4949-ba97-56c954206b0e.png"/></td>
-        <td>购物车查看<img src="https://files.mdnice.com/user/40549/0e5e0317-5caf-41d9-9171-831bc13decda.png"/></td>
-    </tr>
-    <tr>
-        <td>确认下单<img src="https://files.mdnice.com/user/40549/aa089cc8-301f-4b39-9caa-9eff9d5bb407.png"/></td>
-        <td>选择支付方式<img src="https://files.mdnice.com/user/40549/38aed1a1-7bfc-422c-a080-a919af91c306.png"/></td>
-    </tr>
-    <tr>
-        <td>下单成功<img src="https://files.mdnice.com/user/40549/f1e6bd71-8f70-442d-852d-803937b9d703.png"/></td>
-        <td>订单列表<img src="https://files.mdnice.com/user/40549/6c171780-2c94-48cf-bfe8-b4369745a567.png"/></td>
-    </tr>
-    <tr>
-        <td>商品评论<img src="https://files.mdnice.com/user/40549/590615c0-1167-44e9-9b8f-0fc7e11db654.png"/></td>
-        <td>我的页面<img src="https://files.mdnice.com/user/40549/fc26c2d0-6e71-4e76-aeff-8886f15be092.png"/></td>
-    </tr>
-    <tr>
-        <td>登录<img src="https://files.mdnice.com/user/40549/57bb81a0-92af-4db4-93c8-e83d87cc1a73.png"/></td>
-        <td>注册<img src="https://files.mdnice.com/user/40549/09c7c705-5839-4364-b908-e4231d31a8cc.png"/></td>
-    </tr>
-</table>
+## 前台演示
+
+![mall.gif](images%2Fmall.gif)
+
+## 后台演示
+
+![admin.gif](images%2Fadmin.gif)
 
 # 文件目录
 
