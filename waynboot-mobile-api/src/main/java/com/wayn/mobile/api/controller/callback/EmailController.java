@@ -36,7 +36,7 @@ public class EmailController {
         sendMailVO.setSubject(subject);
         sendMailVO.setContent(content);
         sendMailVO.setTos(List.of(tos));
-        MailUtil.sendMail(emailConfig, sendMailVO, false, true);
+        MailUtil.sendMail(emailConfig, sendMailVO, false);
         return R.success();
     }
 }

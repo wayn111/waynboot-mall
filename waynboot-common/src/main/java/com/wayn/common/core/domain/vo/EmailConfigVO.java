@@ -1,6 +1,7 @@
 package com.wayn.common.core.domain.vo;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -26,9 +27,10 @@ public class EmailConfigVO implements Serializable {
     /**
      * 邮件服务器SMTP端口
      */
-    @NotBlank(message = "邮件服务器SMTP端口不能为空")
+    @NotNull(message = "邮件服务器SMTP端口不能为空")
     private Integer port;
 
+    @NotNull(message = "邮件服务器SMTP SSL端口不能为空")
     private Integer sslPort;
 
     @NotBlank(message = "邮箱密钥不能为空")
@@ -49,4 +51,9 @@ public class EmailConfigVO implements Serializable {
      * 逻辑删除 0存在1删除
      */
     private Integer delFlag;
+
+    /**
+     * 是否启用 ssl port 0不启用 1启用
+     */
+    private Integer sslEnable;
 }
