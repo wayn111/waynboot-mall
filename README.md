@@ -52,6 +52,7 @@
 - **加群**：加群交流，探讨技术问题。
 - **演示账号**：获得 waynboot-mall 商城后台演示账号。
 - **开源项目**：获取我写的三个开源项目，包含PC、H5商城、后台权限管理系统等。
+- **wayn商城图片**：获取商城全部图片压缩包下载地址。
 - **加微信**：联系我。
 
 <img src="images/wx-mp-code.png" width = "100" />
@@ -89,8 +90,8 @@
 
 # 本地开发
 
-由于本项目图片压缩包超过 100m 不能在 github 上传，
-提供百度网盘地址链接：链接：https://pan.baidu.com/s/1hxaRKqBjv4BRRmR2Ck1inQ ， 提取码：hoep
+由于本项目图片压缩包超过 100m 不能在 github 上传，所以下载链接放在我的公众号【程序员wayn】，
+回复 wayn商城图片 获取
 
 ```
 # 1. 克隆项目
@@ -105,7 +106,7 @@ git clone git@github.com:wayn111/waynboot-mall.git
 在项目根目录下，找到 `wayn_shop_*.sql` 文件，新建 mysql 数据库 wayn_shop，导入其中
 
 # 5. 项目图片部署
-使用百度网盘，下载商城图片压缩包，将 zip 中所有图片解压缩部署到 D:/waynshop/webp 目录下
+下载商城图片压缩包，将 zip 中所有图片解压缩部署到 D:/waynshop/webp 目录下
 
 # 6. 修改Mysql、Redis、RabbitMQ、Elasticsearch连接配置
 修改`application-dev.yml`以及`application.yml`文件中数据连接配置相关信息
