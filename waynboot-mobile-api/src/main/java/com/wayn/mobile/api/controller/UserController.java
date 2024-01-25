@@ -57,7 +57,7 @@ public class UserController {
     }
 
     /**
-     * 获取用户资料
+     * 修改用户资料
      *
      * @param profileVO 用户资料参数
      * @return R
