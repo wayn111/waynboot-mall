@@ -1,6 +1,7 @@
 package com.wayn.common.util.excel;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.read.listener.ReadListener;
 import com.wayn.common.util.ServletUtils;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,8 +49,8 @@ public class ExcelUtil {
     /**
      * 导出excel到指定文件中
      *
-     * @param list         excel数据
-     * @param tClass       解析对象类型
+     * @param list     excel数据
+     * @param tClass   解析对象类型
      * @param fileName 文件名
      * @return 返回指定文件的名称
      */
@@ -76,5 +78,27 @@ public class ExcelUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 读取excel输入流
+     * @param inputStream excel输入流
+     * @param clazz 导入class
+     * @param readListener 导入监听
+     * @return list
+     * @param <T>
+     */
+    public static <T> List<T> readExcelList(InputStream inputStream, Class clazz, ReadListener readListener) {
+        return EasyExcel.read(inputStream, clazz, readListener).sheet().doReadSync();
+    }
+
+    /**
+     * 读取excel输入流
+     * @param inputStream excel输入流
+     * @param clazz 导入class
+     * @param readListener 导入监听
+     */
+    public static void readExcel(InputStream inputStream, Class clazz, ReadListener readListener) {
+        EasyExcel.read(inputStream, clazz, readListener).sheet().doRead();
     }
 }

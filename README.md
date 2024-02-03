@@ -66,7 +66,7 @@
 | 1  | 基础框架              | Spring Boot                 | https://spring.io/projects/spring-boot                                                     |
 | 2  | ORM 框架            | MyBatis-Plus                | https://baomidou.com                                                                       |
 | 3  | 工具类库              | hutool                      | https://hutool.cn                                                                          |
-| 4  | 流量网关              | Nginx                       | http://nginx.org/en/index.html                                                             |
+| 4  | 流量网关、网关安全         | openresty                   | https://openresty.org/cn/                                                             |
 | 5  | 访问控制              | Spring Security             | https://spring.io/projects/spring-security                                                 |
 | 6  | 日志记录              | Nginx                       | https://logback.qos.ch/                                                                    |
 | 7  | 验证码               | easy-captcha                | https://github.com/ele-admin/EasyCaptcha                                                   |

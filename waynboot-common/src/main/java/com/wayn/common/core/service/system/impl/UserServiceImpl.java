@@ -1,6 +1,5 @@
 package com.wayn.common.core.service.system.impl;
 
-import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,6 +16,7 @@ import com.wayn.common.core.service.system.IUserRoleService;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.exception.BusinessException;
 import com.wayn.common.util.R;
+import com.wayn.common.util.excel.ExcelUtil;
 import com.wayn.common.util.security.SecurityUtils;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -119,7 +119,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public R importUser(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             List<User> list = new ArrayList<>();
-            EasyExcel.read(inputStream, User.class, new PageReadListener<User>(dataList -> {
+            ExcelUtil.readExcel(inputStream, User.class, new PageReadListener<User>(dataList -> {
                 for (User user : dataList) {
                     if (SysConstants.NOT_UNIQUE.equals(this.checkUserNameUnique(user.getUserName()))) {
                         throw new BusinessException(String.format("导入用户[%s]失败，登录账号已存在", user.getUserName()));
@@ -134,7 +134,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     user.setPassword(SecurityUtils.encryptPassword(SysConstants.DEFAULT_PASSWORD));
                 }
                 this.saveBatch(list);
-            })).sheet().doRead();
+            }));
             return R.success();
         } catch (IOException e) {
             throw new RuntimeException(e);
