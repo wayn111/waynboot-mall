@@ -2,7 +2,6 @@ package com.wayn.data.redis.manager;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -24,8 +23,6 @@ import java.util.concurrent.TimeUnit;
 public class RedisCache {
     public RedisTemplate redisTemplate;
 
-    private LettuceConnectionFactory lettuceConnectionFactory;
-
     /**
      * 缓存基本的对象，Integer、String、实体类等
      *
@@ -45,10 +42,10 @@ public class RedisCache {
      * @param timeUnit 时间颗粒度
      */
     public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
-        redisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit);
+        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
     public <T> void setCacheObject(final String key, final T value, final Integer timeout) {
-        redisTemplate.opsForValue().setIfAbsent(key, value, timeout, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
     }
     /**
      * 设置有效时间
