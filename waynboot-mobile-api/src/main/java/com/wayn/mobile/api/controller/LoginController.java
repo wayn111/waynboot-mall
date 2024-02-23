@@ -67,7 +67,7 @@ public class LoginController {
      */
     @PostMapping("/registry")
     public R registry(@RequestBody RegistryObj registryObj) {
-        if (!StringUtils.equalsIgnoreCase(registryObj.getPassword(), registryObj.getConfirmPassword())) {
+        if (!StringUtils.equals(registryObj.getPassword(), registryObj.getConfirmPassword())) {
             return R.error(USER_TWO_PASSWORD_NOT_SAME_ERROR);
         }
         // 验证手机号是否唯一
