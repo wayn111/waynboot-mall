@@ -68,7 +68,6 @@ public class LoginController {
         return success;
     }
 
-
     @GetMapping("/getRouters")
     public R getRouters(HttpServletRequest request) {
         R success = R.success();

@@ -32,8 +32,7 @@ public class CacheConfig implements CachingConfigurer {
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(keySerializer());
         redisTemplate.setHashKeySerializer(keySerializer());
-        redisTemplate.setValueSerializer(valueSerializer());
-        redisTemplate.setHashValueSerializer(valueSerializer());
+        redisTemplate.setDefaultSerializer(valueSerializer());
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }

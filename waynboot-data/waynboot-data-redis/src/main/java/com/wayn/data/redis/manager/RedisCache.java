@@ -2,14 +2,12 @@ package com.wayn.data.redis.manager;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -288,6 +286,29 @@ public class RedisCache {
     public Long luaIncrKey(String key, Integer orderSnIncrLimit) {
         RedisScript<Long> redisScript = new DefaultRedisScript<>(buildLuaIncrKeyScript(), Long.class);
         return (Long) redisTemplate.execute(redisScript, Collections.singletonList(key), orderSnIncrLimit);
+    }
+
+    /**
+     * 获取匹配的所有key，使用scan避免阻塞
+     *
+     * @param pattern 匹配keys的规则
+     * @return 返回获取到的keys
+     */
+    public Set<String> scan(String pattern) {
+        return (Set<String>) redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
+            Set<String> keysTmp = new HashSet<>();
+            try (Cursor<byte[]> cursor = connection.keyCommands().scan(ScanOptions.scanOptions()
+                    .match(pattern)
+                    .count(1000).build())) {
+                while (cursor.hasNext()) {
+                    keysTmp.add(new String(cursor.next(), StandardCharsets.UTF_8));
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+            return keysTmp;
+        });
     }
 
     /**
