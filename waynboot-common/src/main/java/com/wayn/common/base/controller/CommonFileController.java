@@ -99,6 +99,7 @@ public class CommonFileController {
         try {
             // 1. 获取上传文件的保存路径
             String filePath = WaynConfig.getUploadDir();
+            log.info("file path is {}", filePath);
             // 2. 上传文件至服务器
             String fileName = FileUploadUtil.uploadFile(file, filePath);
             // 3. 返回文件访问路径
