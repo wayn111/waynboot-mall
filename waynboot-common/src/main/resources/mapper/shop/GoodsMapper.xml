@@ -54,10 +54,9 @@
     </sql>
 
     <select id="selectGoodsListPage" resultMap="ShopGoodsResult">
-        <include refid="home_goods_info"/>
+        <include refid="goods_info"/>
         <where>
             del_flag = 0
-            and is_on_sale = 1
             <if test="goods.id != null">
                 AND id like concat('%', #{goods.id}, '%')
             </if>
