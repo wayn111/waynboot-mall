@@ -5,11 +5,10 @@ import com.wayn.common.core.domain.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.enums.UserStatusEnum;
 import com.wayn.common.util.ip.IpUtils;
-import com.wayn.common.config.ThreadPoolConfig;
-import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.TimerTask;
 
 @Slf4j
 @Service
@@ -27,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private IMemberService iMemberService;
 
-    private ThreadPoolConfig threadPoolConfig;
+    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
     @Override
     public UserDetails loadUserByUsername(String mobile) throws UsernameNotFoundException {
@@ -41,15 +39,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new DisabledException("登录用户：" + mobile + " 不存在");
         }
         // 记录最后一次登陆时间以及登陆IP
-        AsyncManager.me().execute(new TimerTask() {
-            @Override
-            public void run() {
-                iMemberService.update()
-                        .set("last_login_time", LocalDateTime.now())
-                        .set("last_login_ip", IpUtils.getHostIp())
-                        .eq("id", member.getId())
-                        .update();
-            }
+        commonThreadPoolTaskExecutor.execute(() -> {
+            iMemberService.update()
+                    .set("last_login_time", LocalDateTime.now())
+                    .set("last_login_ip", IpUtils.getHostIp())
+                    .eq("id", member.getId())
+                    .update();
         });
         return new LoginUserDetail(member, Collections.emptySet());
     }

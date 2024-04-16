@@ -10,11 +10,11 @@ import com.wayn.common.core.domain.shop.Keyword;
 import com.wayn.common.core.domain.vo.SearchVO;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IKeywordService;
+import com.wayn.common.task.ThreadPoolExecutorMdcWrapper;
 import com.wayn.common.util.R;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
-import com.wayn.mobile.framework.manager.thread.AsyncManager;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,6 +31,7 @@ import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;
 import org.elasticsearch.search.suggest.SuggestionBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,12 +54,10 @@ import java.util.stream.Collectors;
 public class SearchController extends BaseController {
 
     private IGoodsService iGoodsService;
-
     private ISearchHistoryService iSearchHistoryService;
-
     private IKeywordService iKeywordService;
-
     private ElasticDocument elasticDocument;
+    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
     /**
      * 商城搜索建议
@@ -159,17 +158,14 @@ public class SearchController extends BaseController {
             returnGoodsList.add(goodsMap.get(goodsId));
         }
         if (CollectionUtils.isNotEmpty(goodsList)) {
-            AsyncManager.me().execute(new TimerTask() {
-                @Override
-                public void run() {
-                    SearchHistory searchHistory = new SearchHistory();
-                    if (memberId != null && StringUtils.isNotEmpty(keyword)) {
-                        searchHistory.setCreateTime(LocalDateTime.now());
-                        searchHistory.setUserId(memberId);
-                        searchHistory.setKeyword(keyword);
-                        searchHistory.setHasGoods(true);
-                        iSearchHistoryService.save(searchHistory);
-                    }
+            commonThreadPoolTaskExecutor.execute(() -> {
+                SearchHistory searchHistory = new SearchHistory();
+                if (memberId != null && StringUtils.isNotEmpty(keyword)) {
+                    searchHistory.setCreateTime(LocalDateTime.now());
+                    searchHistory.setUserId(memberId);
+                    searchHistory.setKeyword(keyword);
+                    searchHistory.setHasGoods(true);
+                    iSearchHistoryService.save(searchHistory);
                 }
             });
         }

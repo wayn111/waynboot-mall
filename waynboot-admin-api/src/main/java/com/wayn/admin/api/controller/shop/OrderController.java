@@ -63,7 +63,7 @@ public class OrderController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('shop:order:ship')")
     @PostMapping("ship")
-    public R ship(@RequestBody  ShipVO shipVO) throws UnsupportedEncodingException {
+    public R ship(@RequestBody ShipVO shipVO) throws UnsupportedEncodingException {
         return iOrderService.ship(shipVO);
     }
 }
