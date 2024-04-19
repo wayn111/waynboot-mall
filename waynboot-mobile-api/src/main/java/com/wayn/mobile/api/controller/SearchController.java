@@ -12,6 +12,7 @@ import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IKeywordService;
 import com.wayn.common.task.ThreadPoolExecutorMdcWrapper;
 import com.wayn.common.util.R;
+import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.mobile.api.domain.SearchHistory;
 import com.wayn.mobile.api.service.ISearchHistoryService;
@@ -76,7 +77,7 @@ public class SearchController extends BaseController {
                 .size(10);
         SuggestBuilder suggestBuilder = new SuggestBuilder();
         suggestBuilder.addSuggestion(suggestName, termSuggestionBuilder);
-        List<String> list = elasticDocument.searchSuggest("goods", suggestName, suggestBuilder);
+        List<String> list = elasticDocument.searchSuggest(EsConstants.ES_GOODS_INDEX, suggestName, suggestBuilder);
         return R.success().add("suggest", list);
     }
 
@@ -145,7 +146,7 @@ public class SearchController extends BaseController {
         searchSourceBuilder.from((int) (page.getCurrent() - 1) * (int) page.getSize());
         searchSourceBuilder.size((int) page.getSize());
         // 执行Elasticsearch查询
-        List<JSONObject> list = elasticDocument.searchResult("goods", searchSourceBuilder, JSONObject.class);
+        List<JSONObject> list = elasticDocument.searchResult(EsConstants.ES_GOODS_INDEX, searchSourceBuilder, JSONObject.class);
         List<Integer> goodsIdList = list.stream().map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
         if (goodsIdList.isEmpty()) {
             return R.success().add("goods", Collections.emptyList());
