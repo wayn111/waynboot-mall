@@ -78,7 +78,7 @@ public class LoginController {
 
         // 判断图形验证码
         String redisCaptchaCode = redisCache.getCacheObject(registryObj.getCaptchaKey());
-        if (registryObj.getCaptchaCode() == null || !redisCaptchaCode.equals(registryObj.getCaptchaCode().trim().toLowerCase())) {
+        if (redisCaptchaCode == null || registryObj.getCaptchaCode() == null || !redisCaptchaCode.equals(registryObj.getCaptchaCode().trim().toLowerCase())) {
             return R.error(USER_CAPTCHA_CODE_ERROR);
         }
 
