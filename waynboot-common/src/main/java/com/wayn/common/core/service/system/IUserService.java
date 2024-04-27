@@ -3,8 +3,8 @@ package com.wayn.common.core.service.system;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.system.User;
-import com.wayn.common.util.R;
+import com.wayn.common.core.entity.system.User;
+import com.wayn.util.util.R;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -90,5 +90,5 @@ public interface IUserService extends IService<User> {
      * @param file
      * @return
      */
-    R importUser(MultipartFile file);
+    void importUser(MultipartFile file, String username, String password);
 }

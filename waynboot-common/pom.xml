@@ -5,11 +5,11 @@
     <parent>
         <artifactId>waynboot-mall</artifactId>
         <groupId>com.wayn</groupId>
-        <version>1.4.0</version>
+        <version>2.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>waynboot-common</artifactId>
-    <version>1.4.0</version>
+    <version>2.0.0</version>
 
     <dependencies>
         <dependency>
@@ -29,11 +29,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -65,66 +61,6 @@
             <version>${mysql.connector.java.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-        </dependency>
-
-        <!-- Apache工具组件 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
-
-        <!-- Apache 集合工具组件 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>${commons.collections.version}</version>
-        </dependency>
-
-        <!-- 验证码 -->
-        <dependency>
-            <groupId>com.github.whvcse</groupId>
-            <artifactId>easy-captcha</artifactId>
-            <version>${easy-captcha.version}</version>
-        </dependency>
-
-        <!--文件上传工具类 -->
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>${commons.fileupload.version}</version>
-        </dependency>
-
-        <!-- jwt验证 -->
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-            <version>${jwt.version}</version>
-        </dependency>
-
-        <!-- 阿里JSON解析器 -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>
-
-        <!-- 七牛云 -->
-        <dependency>
-            <groupId>com.qiniu</groupId>
-            <artifactId>qiniu-java-sdk</artifactId>
-            <version>${qiniu.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-pay</artifactId>
             <version>4.5.0</version>
@@ -136,30 +72,40 @@
             <artifactId>alipay-sdk-java</artifactId>
             <version>4.38.90.ALL</version>
         </dependency>
-
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>easyexcel</artifactId>
-            <version>3.2.1</version>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-util</artifactId>
+            <version>2.0.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-data-redis</artifactId>
-            <version>1.4.0</version>
+            <version>2.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-data-elastic</artifactId>
-            <version>1.4.0</version>
+            <version>2.0.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-message-core</artifactId>
+            <version>2.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-amqp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 </project>

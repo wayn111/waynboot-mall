@@ -1,8 +1,8 @@
 package com.wayn.admin.framework.security.handle;
 
-import com.wayn.common.constant.Constants;
-import com.wayn.common.util.R;
-import com.wayn.common.util.json.JsonUtil;
+import com.wayn.util.constant.Constants;
+import com.wayn.util.util.R;
+import com.wayn.util.util.json.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

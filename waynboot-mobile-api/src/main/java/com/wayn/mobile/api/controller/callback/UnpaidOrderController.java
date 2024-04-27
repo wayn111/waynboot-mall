@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller.callback;
 
-import com.wayn.common.util.R;
-import com.wayn.mobile.api.service.IOrderUnpaidService;
+import com.wayn.common.core.service.shop.IOrderUnpaidService;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +25,8 @@ public class UnpaidOrderController {
      */
     @PostMapping("unpaid")
     public R unpaid(String orderSn) {
-        return orderUnpaidService.unpaid(orderSn);
+        orderUnpaidService.unpaid(orderSn);
+        return R.success();
     }
+
 }

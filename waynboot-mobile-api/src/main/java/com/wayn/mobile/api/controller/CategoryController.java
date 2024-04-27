@@ -2,9 +2,11 @@ package com.wayn.mobile.api.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.service.shop.ICategoryService;
-import com.wayn.common.util.R;
+import com.wayn.common.core.vo.CategoryGoodsResponseVO;
+import com.wayn.common.core.vo.CategoryIndexResponseVO;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +31,7 @@ public class CategoryController extends BaseController {
      * @return R
      */
     @GetMapping("index")
-    public R index() {
+    public R<CategoryIndexResponseVO> index() {
         return R.success(iCategoryService.index());
     }
 
@@ -40,7 +42,7 @@ public class CategoryController extends BaseController {
      * @return R
      */
     @GetMapping("content")
-    public R content(Long id) {
+    public R<CategoryIndexResponseVO> content(Long id) {
         return R.success(iCategoryService.content(id));
     }
 
@@ -51,7 +53,7 @@ public class CategoryController extends BaseController {
      * @return R
      */
     @GetMapping("firstCategoryGoods")
-    public R firstCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
+    public R<CategoryGoodsResponseVO> firstCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
         Page<Goods> page = getPage();
         return R.success(iCategoryService.firstCateGoods(page, cateId));
     }
@@ -63,7 +65,7 @@ public class CategoryController extends BaseController {
      * @return R
      */
     @GetMapping("secondCategoryGoods")
-    public R secondCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
+    public R<CategoryGoodsResponseVO> secondCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
         Page<Goods> page = getPage();
         return R.success(iCategoryService.secondCateGoods(page, cateId));
     }

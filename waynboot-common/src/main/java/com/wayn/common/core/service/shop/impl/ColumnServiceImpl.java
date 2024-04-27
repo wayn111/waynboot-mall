@@ -3,7 +3,7 @@ package com.wayn.common.core.service.shop.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.core.domain.shop.Column;
+import com.wayn.common.core.entity.shop.Column;
 import com.wayn.common.core.mapper.shop.ColumnMapper;
 import com.wayn.common.core.service.shop.IColumnService;
 import lombok.AllArgsConstructor;

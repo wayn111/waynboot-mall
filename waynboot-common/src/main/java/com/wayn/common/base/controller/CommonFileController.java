@@ -3,12 +3,12 @@ package com.wayn.common.base.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.wayn.common.base.service.UploadService;
 import com.wayn.common.config.WaynConfig;
-import com.wayn.common.core.domain.vo.Base64FileVO;
-import com.wayn.common.enums.ReturnCodeEnum;
-import com.wayn.common.exception.BusinessException;
-import com.wayn.common.util.R;
-import com.wayn.common.util.file.FileUploadUtil;
-import com.wayn.common.util.file.FileUtils;
+import com.wayn.common.core.vo.Base64FileVO;
+import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.exception.BusinessException;
+import com.wayn.util.util.R;
+import com.wayn.util.util.file.FileUploadUtil;
+import com.wayn.util.util.file.FileUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -104,7 +104,7 @@ public class CommonFileController {
             String fileName = FileUploadUtil.uploadFile(file, filePath);
             // 3. 返回文件访问路径
             String fileUrl = "/upload/" + fileName;
-            return R.success().add("url", fileUrl).add("fileName", fileName);
+            return R.success(fileUrl);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return R.error(ReturnCodeEnum.UPLOAD_ERROR);
@@ -125,7 +125,7 @@ public class CommonFileController {
             String filePath = WaynConfig.getUploadDir();
             String fileName = FileUploadUtil.uploadFile(decode, filename, filePath);
             String fileUrl = uploadService.uploadFile(fileName);
-            return R.success().add("url", fileUrl).add("fileName", fileName);
+            return R.success(fileUrl);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return R.error(ReturnCodeEnum.UPLOAD_ERROR);
@@ -153,7 +153,7 @@ public class CommonFileController {
                 jsonObject.put("url", fileUrl);
                 fileList.add(jsonObject);
             }
-            return R.success().add("fileList", fileList);
+            return R.success(fileList);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return R.error(ReturnCodeEnum.UPLOAD_ERROR);

@@ -1,14 +1,15 @@
 package com.wayn.admin.api.controller.shop;
 
 import com.alipay.api.AlipayApiException;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.admin.framework.config.properties.ExpressProperties;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Order;
-import com.wayn.common.core.domain.vo.ShipVO;
+import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.service.shop.IOrderService;
-import com.wayn.common.util.R;
+import com.wayn.common.core.vo.ShipVO;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +34,9 @@ public class OrderController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('shop:order:list')")
     @GetMapping("list")
-    public R list(Order order) {
+    public R<IPage<Order>> list(Order order) {
         Page<Order> page = getPage();
-        return R.success().add("page", iOrderService.listPage(page, order));
+        return R.success(iOrderService.listPage(page, order));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:order:info')")
@@ -58,7 +59,7 @@ public class OrderController extends BaseController {
 
     @PostMapping("listChannel")
     public R channel() {
-        return R.success().add("data", expressProperties.getVendors());
+        return R.success(expressProperties.getVendors());
     }
 
     @PreAuthorize("@ss.hasPermi('shop:order:ship')")

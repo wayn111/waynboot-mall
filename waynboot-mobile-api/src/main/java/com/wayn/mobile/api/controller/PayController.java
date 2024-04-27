@@ -1,10 +1,12 @@
 package com.wayn.mobile.api.controller;
 
 
+import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.vo.OrderVO;
-import com.wayn.common.util.R;
-import com.wayn.mobile.api.service.IPayService;
+import com.wayn.common.core.service.shop.IPayService;
+import com.wayn.common.core.vo.OrderVO;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +34,8 @@ public class PayController extends BaseController {
      * @return
      */
     @PostMapping("weixin/jsapi")
-    public R jsapi(@RequestBody OrderVO orderVO) {
-        return payService.prepay(orderVO.getOrderSn(), orderVO.getPayType(), request);
+    public R<WxPayMpOrderResult> jsapi(@RequestBody OrderVO orderVO) {
+        return R.success(payService.prepay(orderVO.getOrderSn(), orderVO.getPayType(), MobileSecurityUtils.getUserId(), request));
     }
 
     /**
@@ -44,7 +46,7 @@ public class PayController extends BaseController {
      */
     @PostMapping("h5pay")
     public R h5pay(@RequestBody OrderVO orderVO) throws UnsupportedEncodingException {
-        return payService.h5pay(orderVO);
+        return R.success(payService.h5pay(orderVO));
     }
 
 }

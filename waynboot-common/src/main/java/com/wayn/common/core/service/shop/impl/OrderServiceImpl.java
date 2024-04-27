@@ -16,17 +16,17 @@ import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.WaynConfig;
-import com.wayn.common.core.domain.shop.Member;
-import com.wayn.common.core.domain.shop.Order;
-import com.wayn.common.core.domain.shop.OrderGoods;
-import com.wayn.common.core.domain.vo.ShipVO;
+import com.wayn.common.core.entity.shop.Member;
+import com.wayn.common.core.entity.shop.Order;
+import com.wayn.common.core.entity.shop.OrderGoods;
+import com.wayn.common.core.vo.ShipVO;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.*;
-import com.wayn.common.core.util.OrderUtil;
-import com.wayn.common.enums.PayTypeEnum;
-import com.wayn.common.enums.ReturnCodeEnum;
-import com.wayn.common.util.OrderSnGenUtil;
-import com.wayn.common.util.R;
+import com.wayn.common.util.OrderUtil;
+import com.wayn.util.enums.PayTypeEnum;
+import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.util.OrderSnGenUtil;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -193,6 +193,6 @@ public class OrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> imple
         data.put("order", order);
         data.put("orderGoods", orderGoodsList);
         data.put("user", member);
-        return R.success().add("data", data);
+        return R.success(data);
     }
 }

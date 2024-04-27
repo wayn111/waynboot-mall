@@ -1,7 +1,7 @@
 package com.wayn.common.core.service.shop.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.core.domain.shop.GoodsAttribute;
+import com.wayn.common.core.entity.shop.GoodsAttribute;
 import com.wayn.common.core.mapper.shop.GoodsAttributeMapper;
 import com.wayn.common.core.service.shop.IGoodsAttributeService;
 import org.springframework.stereotype.Service;

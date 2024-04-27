@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wayn.common.core.mapper.shop.CategoryMapper">
 
-	<resultMap type="com.wayn.common.core.domain.shop.Category" id="ShopCategoryResult">
+	<resultMap type="com.wayn.common.core.entity.shop.Category" id="ShopCategoryResult">
 		<result property="id"         	column="id"   			/>
 		<result property="name"   		column="name"   		/>
 		<result property="keywords" 	column="keywords"  		/>
@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from shop_category c
     </sql>
 
-	<select id="selectCategoryList" parameterType="com.wayn.common.core.domain.shop.Category" resultMap="ShopCategoryResult">
+	<select id="selectCategoryList" parameterType="com.wayn.common.core.entity.shop.Category" resultMap="ShopCategoryResult">
         <include refid="selectCategoryVo"/>
         <where>
 			del_flag = 0

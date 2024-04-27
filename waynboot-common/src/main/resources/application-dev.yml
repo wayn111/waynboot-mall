@@ -13,7 +13,7 @@ spring:
       auto-commit: true
       idle-timeout: 600000
       max-lifetime: 600000
-      connection-timeout: 30000
+      connection-timeout: 5000
       connection-test-query: SELECT 1
     # 从库数据源
     slave:

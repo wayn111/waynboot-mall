@@ -1,16 +1,17 @@
 package com.wayn.admin.api.controller.system;
 
+import com.wayn.admin.framework.security.model.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
+import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.base.service.UploadService;
 import com.wayn.common.config.WaynConfig;
-import com.wayn.common.core.domain.system.User;
-import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.enums.ReturnCodeEnum;
-import com.wayn.common.util.R;
-import com.wayn.common.util.ServletUtils;
-import com.wayn.common.util.file.FileUploadUtil;
-import com.wayn.common.util.security.SecurityUtils;
+import com.wayn.common.response.UserProfileResVO;
+import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.util.R;
+import com.wayn.util.util.ServletUtils;
+import com.wayn.util.util.file.FileUploadUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,17 +38,17 @@ public class ProfileController {
     private UploadService uploadService;
 
     @GetMapping
-    public R profile() {
-        R success = R.success();
+    public R<UserProfileResVO> profile() {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-        success.add("user", loginUser.getUser());
-        success.add("roleGroup", iUserService.selectUserRoleGroup(loginUser.getUsername()));
-        return success;
+        UserProfileResVO resVO = new UserProfileResVO();
+        resVO.setUser(loginUser.getUser());
+        resVO.setRoleGroup(iUserService.selectUserRoleGroup(loginUser.getUsername()));
+        return R.success(resVO);
     }
 
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PutMapping
-    public R updateProfile(@RequestBody User user) {
+    public R<Boolean> updateProfile(@RequestBody User user) {
         if (iUserService.updateById(user)) {
             LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             // 更新缓存用户信息
@@ -63,7 +64,7 @@ public class ProfileController {
 
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PutMapping("/updatePwd")
-    public R updatePwd(String oldPassword, String newPassword) {
+    public R<Boolean> updatePwd(String oldPassword, String newPassword) {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String password = loginUser.getPassword();
 
@@ -85,19 +86,17 @@ public class ProfileController {
 
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PostMapping("/avatar")
-    public R avatar(@RequestParam("avatarfile") MultipartFile file, HttpServletRequest request) throws IOException {
+    public R<String> avatar(@RequestParam("avatarfile") MultipartFile file, HttpServletRequest request) throws IOException {
         if (!file.isEmpty()) {
             LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             String filename = FileUploadUtil.uploadFile(file, WaynConfig.getUploadDir());
             String fileUrl = uploadService.uploadFile(filename);
             boolean result = iUserService.update().set("avatar", fileUrl).eq("user_name", loginUser.getUsername()).update();
             if (result) {
-                R success = R.success();
-                success.add("imgUrl", fileUrl);
                 // 更新缓存用户头像
                 loginUser.getUser().setAvatar(fileUrl);
                 tokenService.refreshToken(loginUser);
-                return success;
+                return R.success(fileUrl);
             }
         }
         return R.error(ReturnCodeEnum.UPLOAD_ERROR);

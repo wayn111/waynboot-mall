@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wayn.common.core.mapper.shop.AddressMapper">
 
-	<resultMap type="com.wayn.common.core.domain.shop.Address" id="ShopAddressResult">
+	<resultMap type="com.wayn.common.core.entity.shop.Address" id="ShopAddressResult">
 		<result property="id"         		column="id"   				/>
 		<result property="name"   			column="name"   			/>
 		<result property="memberId" 		column="member_id"  		/>

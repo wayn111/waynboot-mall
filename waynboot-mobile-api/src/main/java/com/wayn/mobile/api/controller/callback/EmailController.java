@@ -1,9 +1,9 @@
 package com.wayn.mobile.api.controller.callback;
 
-import com.wayn.common.core.domain.tool.EmailConfig;
-import com.wayn.common.core.domain.vo.SendMailVO;
+import com.wayn.common.core.entity.tool.EmailConfig;
+import com.wayn.common.core.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import com.wayn.common.util.mail.MailUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

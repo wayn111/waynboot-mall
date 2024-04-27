@@ -3,12 +3,14 @@ package com.wayn.mobile.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.util.R;
-import com.wayn.mobile.api.domain.SearchHistory;
-import com.wayn.mobile.api.service.ISearchHistoryService;
+import com.wayn.common.core.entity.shop.SearchHistory;
+import com.wayn.common.core.service.shop.ISearchHistoryService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 搜索历史接口
@@ -24,8 +26,8 @@ public class SearchHistoryController extends BaseController {
     private ISearchHistoryService iSearchHistoryService;
 
     @GetMapping("list")
-    public R list() {
-        return R.success().add("data", iSearchHistoryService.selectList());
+    public R<List<SearchHistory>> list() {
+        return R.success(iSearchHistoryService.selectList(MobileSecurityUtils.getUserId()));
     }
 
     /**
@@ -35,7 +37,7 @@ public class SearchHistoryController extends BaseController {
      * @return R
      */
     @PostMapping
-    public R add(@RequestBody SearchHistory searchHistory) {
+    public R<Boolean> add(@RequestBody SearchHistory searchHistory) {
         Long memberId = MobileSecurityUtils.getUserId();
         searchHistory.setUserId(memberId);
         return R.result(iSearchHistoryService.save(searchHistory));
@@ -48,7 +50,7 @@ public class SearchHistoryController extends BaseController {
      * @return R
      */
     @DeleteMapping("{id}")
-    public R delete(@PathVariable Long id) {
+    public R<Boolean> delete(@PathVariable Long id) {
         return R.result(iSearchHistoryService.removeById(id));
     }
 
@@ -58,7 +60,7 @@ public class SearchHistoryController extends BaseController {
      * @return R
      */
     @DeleteMapping("all")
-    public R delete() {
+    public R<Boolean> delete() {
         Long memberId = MobileSecurityUtils.getUserId();
         return R.result(iSearchHistoryService.remove(new QueryWrapper<SearchHistory>().eq("user_id", memberId)));
     }

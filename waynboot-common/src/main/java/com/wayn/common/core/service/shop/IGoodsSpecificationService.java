@@ -1,8 +1,8 @@
 package com.wayn.common.core.service.shop;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.shop.GoodsSpecification;
-import com.wayn.common.core.domain.shop.vo.SpecificationVO;
+import com.wayn.common.core.entity.shop.GoodsSpecification;
+import com.wayn.common.core.vo.SpecificationVO;
 
 import java.util.List;
 

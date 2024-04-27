@@ -2,6 +2,7 @@ package com.wayn.common.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.base.entity.BaseEntity;
+import com.wayn.util.util.ServletUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

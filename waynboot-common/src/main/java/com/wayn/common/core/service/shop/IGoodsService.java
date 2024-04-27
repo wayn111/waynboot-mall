@@ -3,9 +3,9 @@ package com.wayn.common.core.service.shop;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
-import com.wayn.common.util.R;
+import com.wayn.common.core.entity.shop.Goods;
+import com.wayn.common.core.vo.GoodsSaveRelatedVO;
+import com.wayn.util.util.R;
 
 import java.io.IOException;
 import java.util.List;

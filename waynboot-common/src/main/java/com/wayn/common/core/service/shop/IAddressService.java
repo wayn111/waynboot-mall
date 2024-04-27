@@ -3,7 +3,7 @@ package com.wayn.common.core.service.shop;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.shop.Address;
+import com.wayn.common.core.entity.shop.Address;
 
 public interface IAddressService extends IService<Address> {
     /**

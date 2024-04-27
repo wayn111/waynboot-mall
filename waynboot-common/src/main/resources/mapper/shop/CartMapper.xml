@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.shop.CartMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ShopCartResult" type="com.wayn.common.core.entity.shop.Cart">
+        <result column="id"                 property="id" />
+        <result column="user_id"            property="userId" />
+        <result column="goods_id"           property="goodsId" />
+        <result column="goods_sn"           property="goodsSn" />
+        <result column="goods_name"         property="goodsName" />
+        <result column="product_id"         property="productId" />
+        <result column="price"              property="price" />
+        <result column="number"             property="number" />
+        <result column="specifications"     property="specifications"  typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="checked"            property="checked" />
+        <result column="pic_url"            property="picUrl" />
+        <result column="remark"             property="remark" />
+        <result column="create_time"        property="createTime" />
+        <result column="update_time"        property="updateTime" />
+        <result column="del_flag"           property="delFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="selectCartVo">
+        select id,
+        user_id, goods_id, goods_sn, goods_name, product_id, price, number, specifications, checked, pic_url, create_time, remark, update_time, del_flag
+        from shop_cart
+    </sql>
+    <select id="selectCartPageList" resultMap="ShopCartResult">
+        <include refid="selectCartVo"/>
+        where user_id = #{userId} and del_flag = 0
+        order by id desc
+    </select>
+
+</mapper>

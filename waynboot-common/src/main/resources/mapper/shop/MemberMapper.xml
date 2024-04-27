@@ -3,7 +3,7 @@
 <mapper namespace="com.wayn.common.core.mapper.shop.MemberMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="ShopMemberResult" type="com.wayn.common.core.domain.shop.Member">
+    <resultMap id="ShopMemberResult" type="com.wayn.common.core.entity.shop.Member">
         <result column="id"                 property="id" />
         <result column="password"           property="password" />
         <result column="gender"             property="gender" />

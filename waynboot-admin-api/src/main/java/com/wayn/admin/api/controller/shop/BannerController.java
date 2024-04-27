@@ -2,9 +2,9 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Banner;
+import com.wayn.common.core.entity.shop.Banner;
 import com.wayn.common.core.service.shop.IBannerService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +30,7 @@ public class BannerController extends BaseController {
     @GetMapping("/list")
     public R list(Banner banner) {
         Page<Banner> page = getPage();
-        return R.success().add("page", iBannerService.listPage(page, banner));
+        return R.success(iBannerService.listPage(page, banner));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:banner:add')")
@@ -51,7 +51,7 @@ public class BannerController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:banner:info')")
     @GetMapping("{bannerId}")
     public R getBanner(@PathVariable Long bannerId) {
-        return R.success().add("data", iBannerService.getBannerById(bannerId));
+        return R.success(iBannerService.getBannerById(bannerId));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:banner:delete')")

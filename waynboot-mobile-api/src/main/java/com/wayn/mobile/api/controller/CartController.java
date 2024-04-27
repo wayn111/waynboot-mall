@@ -1,14 +1,16 @@
 package com.wayn.mobile.api.controller;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.config.WaynConfig;
-import com.wayn.common.util.R;
-import com.wayn.mobile.api.domain.Cart;
-import com.wayn.mobile.api.service.ICartService;
+import com.wayn.common.core.entity.shop.Cart;
+import com.wayn.common.core.service.shop.ICartService;
+import com.wayn.common.response.CheckedGoodsResVO;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -36,11 +38,10 @@ public class CartController extends BaseController {
      * @return
      */
     @GetMapping("list")
-    public R list() {
+    public R<JSONArray> list() {
         Long userId = MobileSecurityUtils.getUserId();
         Page<Cart> page = getPage();
-        R list = iCartService.list(page, userId);
-        return list;
+        return R.success(iCartService.list(page, userId));
     }
 
     /**
@@ -49,8 +50,9 @@ public class CartController extends BaseController {
      * @return R
      */
     @PostMapping
-    public R add(@RequestBody Cart cart) {
-        return iCartService.add(cart);
+    public R<Boolean> add(@RequestBody Cart cart) {
+        iCartService.add(cart, MobileSecurityUtils.getUserId());
+        return R.success();
     }
 
     /**
@@ -59,8 +61,9 @@ public class CartController extends BaseController {
      * @return R
      */
     @PostMapping("addDefaultGoodsProduct")
-    public R addDefaultGoodsProduct(@RequestBody Cart cart) {
-        return iCartService.addDefaultGoodsProduct(cart);
+    public R<Boolean> addDefaultGoodsProduct(@RequestBody Cart cart) {
+        iCartService.addDefaultGoodsProduct(cart, MobileSecurityUtils.getUserId());
+        return R.success();
     }
 
     /**
@@ -82,7 +85,7 @@ public class CartController extends BaseController {
      * @return R
      */
     @PostMapping("changeNum/{cartId}/{number}")
-    public R changeNum(@PathVariable Long cartId, @PathVariable Integer number) {
+    public R<Boolean> changeNum(@PathVariable Long cartId, @PathVariable Integer number) {
         return R.result(iCartService.changeNum(cartId, number));
     }
 
@@ -93,7 +96,7 @@ public class CartController extends BaseController {
      * @return R
      */
     @DeleteMapping("{cartId}")
-    public R delete(@PathVariable Long cartId) {
+    public R<Boolean> delete(@PathVariable Long cartId) {
         return R.result(iCartService.removeById(cartId));
     }
 
@@ -103,8 +106,8 @@ public class CartController extends BaseController {
      * @return R
      */
     @GetMapping("goodsCount")
-    public R goodsCount() {
-        return iCartService.goodsCount();
+    public R<Long> goodsCount() {
+        return R.success(iCartService.goodsCount(MobileSecurityUtils.getUserId()));
     }
 
     /**
@@ -113,7 +116,7 @@ public class CartController extends BaseController {
      * @return R
      */
     @PostMapping("getCheckedGoods")
-    public R getCheckedGoods() {
+    public R<CheckedGoodsResVO> getCheckedGoods() {
         Long userId = MobileSecurityUtils.getUserId();
         List<Cart> cartList = iCartService.list(new QueryWrapper<Cart>()
                 .eq("user_id", userId).eq("checked", true));
@@ -130,11 +133,11 @@ public class CartController extends BaseController {
             freightPrice = WaynConfig.getFreightPrice();
         }
         orderTotalAmount = goodsAmount.add(freightPrice);
-
-        return R.success()
-                .add("data", cartList)
-                .add("freightPrice", freightPrice)
-                .add("goodsAmount", goodsAmount)
-                .add("orderTotalAmount", orderTotalAmount);
+        CheckedGoodsResVO resVO = new CheckedGoodsResVO();
+        resVO.setData(cartList);
+        resVO.setFreightPrice(freightPrice);
+        resVO.setGoodsAmount(goodsAmount);
+        resVO.setOrderTotalAmount(orderTotalAmount);
+        return R.success(resVO);
     }
 }

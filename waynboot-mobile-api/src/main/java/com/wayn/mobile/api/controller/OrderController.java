@@ -3,10 +3,13 @@ package com.wayn.mobile.api.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Order;
-import com.wayn.common.core.domain.vo.OrderVO;
-import com.wayn.common.util.R;
-import com.wayn.mobile.api.service.IMobileOrderService;
+import com.wayn.common.core.entity.shop.Order;
+import com.wayn.common.core.service.shop.IMobileOrderService;
+import com.wayn.common.core.vo.OrderDetailVO;
+import com.wayn.common.core.vo.OrderVO;
+import com.wayn.common.response.SubmitOrderResVO;
+import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +36,8 @@ public class OrderController extends BaseController {
      * @return R
      */
     @GetMapping("detail/{orderSn}")
-    public R detail(@PathVariable String orderSn) {
-        return iMobileOrderService.getOrderDetailByOrderSn(orderSn);
+    public R<OrderDetailVO> detail(@PathVariable String orderSn) {
+        return R.success(iMobileOrderService.getOrderDetailByOrderSn(orderSn));
     }
 
     /**
@@ -46,7 +49,7 @@ public class OrderController extends BaseController {
     @GetMapping("list")
     public R list(@RequestParam(defaultValue = "0") Integer showType) {
         Page<Order> page = getPage();
-        return iMobileOrderService.selectListPage(page, showType);
+        return R.success(iMobileOrderService.selectListPage(page, showType, MobileSecurityUtils.getUserId()));
     }
 
     /**
@@ -56,7 +59,7 @@ public class OrderController extends BaseController {
      */
     @PostMapping("statusCount")
     public R statusCount() {
-        return iMobileOrderService.statusCount();
+        return R.success(iMobileOrderService.statusCount(MobileSecurityUtils.getUserId()));
     }
 
     /**
@@ -66,8 +69,8 @@ public class OrderController extends BaseController {
      * @return R
      */
     @PostMapping("submit")
-    public R submit(@RequestBody OrderVO orderVO) throws Exception {
-        return iMobileOrderService.asyncSubmit(orderVO);
+    public R<SubmitOrderResVO> submit(@RequestBody OrderVO orderVO) throws Exception {
+        return R.success(iMobileOrderService.asyncSubmit(orderVO, MobileSecurityUtils.getUserId()));
     }
 
     /**
@@ -78,7 +81,8 @@ public class OrderController extends BaseController {
      */
     @GetMapping("searchResult/{orderSn}")
     public R searchResult(@PathVariable String orderSn) {
-        return iMobileOrderService.searchResult(orderSn);
+        iMobileOrderService.searchResult(orderSn);
+        return R.success();
     }
 
     /**

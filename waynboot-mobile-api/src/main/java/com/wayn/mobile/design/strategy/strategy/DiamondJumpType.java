@@ -1,8 +1,8 @@
 package com.wayn.mobile.design.strategy.strategy;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.core.domain.shop.Diamond;
-import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.entity.shop.Diamond;
+import com.wayn.common.core.entity.shop.Goods;
 
 import java.util.List;
 

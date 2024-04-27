@@ -4,14 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Column;
-import com.wayn.common.core.domain.shop.ColumnGoodsRelation;
-import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.core.domain.vo.ColumnVO;
+import com.wayn.common.core.entity.shop.Column;
+import com.wayn.common.core.entity.shop.ColumnGoodsRelation;
+import com.wayn.common.core.entity.shop.Goods;
+import com.wayn.common.core.vo.ColumnVO;
 import com.wayn.common.core.service.shop.IColumnGoodsRelationService;
 import com.wayn.common.core.service.shop.IColumnService;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -54,13 +54,13 @@ public class ColumnController extends BaseController {
             columnVO.setGoodsNum(count);
             return columnVO;
         }).collect(Collectors.toList());
-        return R.success().add("page", formatPage(columnIPage, columnVOS));
+        return R.success(formatPage(columnIPage, columnVOS));
     }
 
     @GetMapping("/listAll")
     public R listAll() {
         List<Column> columnList = iColumnService.list();
-        return R.success().add("data", columnList);
+        return R.success(columnList);
     }
 
     @PreAuthorize("@ss.hasPermi('shop:column:add')")
@@ -80,7 +80,7 @@ public class ColumnController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:column:info')")
     @GetMapping("{columnId}")
     public R getColumn(@PathVariable Long columnId) {
-        return R.success().add("data", iColumnService.getById(columnId));
+        return R.success(iColumnService.getById(columnId));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:column:delete')")
@@ -95,11 +95,11 @@ public class ColumnController extends BaseController {
         List<ColumnGoodsRelation> goodsRelationList = iColumnGoodsRelationService.list(new QueryWrapper<ColumnGoodsRelation>()
                 .eq("column_id", columnId));
         if (CollectionUtils.isEmpty(goodsRelationList)) {
-            return R.success().add("page", new Page<Goods>());
+            return R.success(new Page<Goods>());
         }
         List<Long> columnGoodsIds = goodsRelationList.stream().map(ColumnGoodsRelation::getGoodsId).collect(Collectors.toList());
         IPage<Goods> listPage = iGoodsService.listColumnBindGoodsPage(page, goods, columnGoodsIds);
-        return R.success().add("page", listPage);
+        return R.success(listPage);
     }
 
     @GetMapping("unBindGoodsList")
@@ -109,7 +109,7 @@ public class ColumnController extends BaseController {
                 .eq("column_id", columnId));
         List<Long> columnGoodsIds = goodsRelationList.stream().map(ColumnGoodsRelation::getGoodsId).collect(Collectors.toList());
         IPage<Goods> listPage = iGoodsService.listColumnUnBindGoodsPage(page, goods, columnGoodsIds);
-        return R.success().add("page", listPage);
+        return R.success(listPage);
     }
 
     @PostMapping("goods")

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.shop.OrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ShopOrderResult" type="com.wayn.common.core.entity.shop.Order">
+        <result column="id"                     property="id" />
+        <result column="user_id"                property="userId" />
+        <result column="order_sn"               property="orderSn" />
+        <result column="order_status"           property="orderStatus" />
+        <result column="aftersale_status"       property="aftersaleStatus" />
+        <result column="consignee"              property="consignee" />
+        <result column="mobile"                 property="mobile" />
+        <result column="address"                property="address" />
+        <result column="message"                property="message" />
+        <result column="goods_price"            property="goodsPrice" />
+        <result column="freight_price"          property="freightPrice" />
+        <result column="coupon_price"           property="couponPrice" />
+        <result column="order_price"            property="orderPrice" />
+        <result column="actual_price"           property="actualPrice" />
+        <result column="pay_id"                 property="payId" />
+        <result column="pay_type"                 property="payType" />
+        <result column="pay_time"               property="payTime" />
+        <result column="ship_sn"                property="shipSn" />
+        <result column="ship_channel"           property="shipChannel" />
+        <result column="ship_time"              property="shipTime" />
+        <result column="refund_amount"          property="refundAmount" />
+        <result column="refund_type"            property="refundType" />
+        <result column="refund_content"         property="refundContent" />
+        <result column="refund_time"            property="refundTime" />
+        <result column="confirm_time"           property="confirmTime" />
+        <result column="comments"               property="comments" />
+        <result column="order_end_time"         property="orderEndTime" />
+        <result column="create_time"            property="createTime" />
+        <result column="update_time"            property="updateTime" />
+        <result column="del_flag"               property="delFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="selectOrderVo">
+        select id,
+               user_id, order_sn, order_status, aftersale_status, consignee, mobile, address, message,
+               goods_price, freight_price, coupon_price, order_price,
+               actual_price, pay_id, pay_time, ship_sn, ship_channel, ship_time, refund_amount, refund_type, pay_type,
+               refund_content, refund_time, confirm_time, comments, order_end_time, create_time, update_time, del_flag
+        from shop_order
+    </sql>
+
+    <select id="selectOrderListPage" resultMap="ShopOrderResult">
+        <include refid="selectOrderVo"/>
+        <where>
+            del_flag = 0
+            <if test="order.orderStatus != null">
+                AND order_status = #{order.orderStatus}
+            </if>
+            <if test="order.payType != null">
+                AND pay_type = #{order.payType}
+            </if>
+            <if test="order.userId != null">
+                AND user_id = #{order.userId}
+            </if>
+            <if test="orderStatusList != null and orderStatusList.size() > 0" >
+                and order_status in
+                <foreach collection="orderStatusList" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                </foreach>
+            </if>
+            order by create_time desc
+        </where>
+    </select>
+
+</mapper>

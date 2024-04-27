@@ -1,7 +1,8 @@
 package com.wayn.common.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.constant.Constants;
+import com.wayn.util.constant.Constants;
+import com.wayn.util.util.ServletUtils;
 
 /**
  * @author: waynaqua

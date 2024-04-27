@@ -3,12 +3,13 @@ package com.wayn.common.core.service.system.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.domain.system.Dept;
-import com.wayn.common.core.domain.vo.TreeVO;
+import com.wayn.common.core.entity.system.Dept;
 import com.wayn.common.core.mapper.system.DeptMapper;
 import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.core.service.system.IUserService;
+import com.wayn.common.core.vo.TreeVO;
+import com.wayn.common.response.DepTreeselectResVO;
+import com.wayn.util.constant.SysConstants;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

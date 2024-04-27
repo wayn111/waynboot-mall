@@ -1,11 +1,11 @@
 package com.wayn.admin.framework.security.filter;
 
+import com.wayn.admin.framework.security.model.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
-import com.wayn.common.constant.Constants;
-import com.wayn.common.core.model.LoginUserDetail;
-import com.wayn.common.enums.ReturnCodeEnum;
-import com.wayn.common.util.R;
-import com.wayn.common.util.json.JsonUtil;
+import com.wayn.util.constant.Constants;
+import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.util.R;
+import com.wayn.util.util.json.JsonUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

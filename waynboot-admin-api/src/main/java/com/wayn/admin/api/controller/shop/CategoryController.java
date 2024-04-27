@@ -2,9 +2,9 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Category;
+import com.wayn.common.core.entity.shop.Category;
 import com.wayn.common.core.service.shop.ICategoryService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -29,7 +29,7 @@ public class CategoryController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:category:list')")
     @GetMapping("/list")
     public R list(Category category) {
-        return R.success().add("data", iCategoryService.list(category));
+        return R.success(iCategoryService.list(category));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:category:add')")
@@ -49,7 +49,7 @@ public class CategoryController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:category:info')")
     @GetMapping("{categoryId}")
     public R getCategory(@PathVariable Long categoryId) {
-        return R.success().add("data", iCategoryService.getById(categoryId));
+        return R.success(iCategoryService.getById(categoryId));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:category:delete')")

@@ -3,7 +3,7 @@
 <mapper namespace="com.wayn.common.core.mapper.shop.GoodsAttributeMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.wayn.common.core.domain.shop.GoodsAttribute">
+    <resultMap id="BaseResultMap" type="com.wayn.common.core.entity.shop.GoodsAttribute">
         <result column="id" property="id" />
         <result column="goods_id" property="goodsId" />
         <result column="attribute" property="attribute" />

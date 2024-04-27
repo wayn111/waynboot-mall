@@ -3,7 +3,7 @@ package com.wayn.common.core.service.shop.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.core.domain.shop.GoodsProduct;
+import com.wayn.common.core.entity.shop.GoodsProduct;
 import com.wayn.common.core.mapper.shop.GoodsProductMapper;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import lombok.AllArgsConstructor;

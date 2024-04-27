@@ -19,8 +19,6 @@ spring:
       max-request-size: 200MB
   jackson:
     default-property-inclusion: non_null # 接口返回字段值为null的属性不展示
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
   boot:
     admin:
       client:

@@ -2,10 +2,11 @@ package com.wayn.mobile.api.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Diamond;
-import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.entity.shop.Diamond;
+import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.service.shop.IDiamondService;
-import com.wayn.common.util.R;
+import com.wayn.common.response.DiamondGoodsResVO;
+import com.wayn.util.util.R;
 import com.wayn.mobile.design.strategy.context.DiamondJumpContext;
 import com.wayn.mobile.design.strategy.strategy.DiamondJumpType;
 import lombok.AllArgsConstructor;
@@ -42,6 +43,9 @@ public class DiamondController extends BaseController {
         Diamond diamond = iDiamondService.getById(diamondId);
         DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(diamond.getJumpType());
         List<Goods> goods = diamondJumpType.getGoods(page, diamond);
-        return R.success().add("diamond", diamond).add("goods", goods);
+        DiamondGoodsResVO resVO = new DiamondGoodsResVO();
+        resVO.setDiamond(diamond);
+        resVO.setGoods(goods);
+        return R.success(resVO);
     }
 }

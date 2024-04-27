@@ -1,8 +1,8 @@
 package com.wayn.mobile.framework.security.service;
 
-import com.wayn.common.enums.ReturnCodeEnum;
-import com.wayn.common.util.R;
-import com.wayn.common.util.json.JsonUtil;
+import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.util.R;
+import com.wayn.util.util.json.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;

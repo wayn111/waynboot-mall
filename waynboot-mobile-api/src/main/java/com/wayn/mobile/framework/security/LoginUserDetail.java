@@ -1,7 +1,7 @@
 package com.wayn.mobile.framework.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wayn.common.core.domain.shop.Member;
+import com.wayn.common.core.entity.shop.Member;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,7 +1,7 @@
 package com.wayn.common.core.mapper.shop;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wayn.common.core.domain.shop.GoodsProduct;
+import com.wayn.common.core.entity.shop.GoodsProduct;
 
 /**
  * 商品货品表 Mapper 接口

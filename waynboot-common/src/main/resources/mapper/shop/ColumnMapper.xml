@@ -3,7 +3,7 @@
 <mapper namespace="com.wayn.common.core.mapper.shop.ColumnMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="ShopColumnResult" type="com.wayn.common.core.domain.shop.Column">
+    <resultMap id="ShopColumnResult" type="com.wayn.common.core.entity.shop.Column">
         <result column="id"             property="id" />
         <result column="sort"           property="sort" />
         <result column="name"           property="name" />

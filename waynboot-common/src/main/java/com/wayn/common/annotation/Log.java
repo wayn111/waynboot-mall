@@ -1,7 +1,7 @@
 package com.wayn.common.annotation;
 
-import com.wayn.common.enums.ModuleEnum;
-import com.wayn.common.enums.OperatorEnum;
+import com.wayn.util.enums.ModuleEnum;
+import com.wayn.util.enums.OperatorEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

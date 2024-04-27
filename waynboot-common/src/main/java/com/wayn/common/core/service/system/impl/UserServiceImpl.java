@@ -6,18 +6,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.domain.system.Role;
-import com.wayn.common.core.domain.system.User;
-import com.wayn.common.core.domain.system.UserRole;
+import com.wayn.util.constant.SysConstants;
+import com.wayn.common.core.entity.system.Role;
+import com.wayn.common.core.entity.system.User;
+import com.wayn.common.core.entity.system.UserRole;
 import com.wayn.common.core.mapper.system.RoleMapper;
 import com.wayn.common.core.mapper.system.UserMapper;
 import com.wayn.common.core.service.system.IUserRoleService;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.exception.BusinessException;
-import com.wayn.common.util.R;
-import com.wayn.common.util.excel.ExcelUtil;
-import com.wayn.common.util.security.SecurityUtils;
+import com.wayn.util.exception.BusinessException;
+import com.wayn.util.util.R;
+import com.wayn.util.util.excel.ExcelUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -116,7 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public R importUser(MultipartFile file) {
+    public void importUser(MultipartFile file, String username, String password) {
         try (InputStream inputStream = file.getInputStream()) {
             List<User> list = new ArrayList<>();
             ExcelUtil.readExcel(inputStream, User.class, new PageReadListener<User>(dataList -> {
@@ -129,13 +128,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         throw new BusinessException(String.format("导入用户[%s]失败，邮箱账号已存在", user.getUserName()));
                     }
                     user.setDeptId(101L);
-                    user.setCreateBy(SecurityUtils.getUsername());
+                    user.setCreateBy(username);
                     user.setCreateTime(new Date());
-                    user.setPassword(SecurityUtils.encryptPassword(SysConstants.DEFAULT_PASSWORD));
+                    user.setPassword(password);
                 }
                 this.saveBatch(list);
             }));
-            return R.success();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
