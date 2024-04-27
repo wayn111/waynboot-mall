@@ -1,7 +1,7 @@
 package com.wayn.common.core.service.shop;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.shop.OrderGoods;
+import com.wayn.common.core.entity.shop.OrderGoods;
 
 /**
  * 订单商品表 服务类

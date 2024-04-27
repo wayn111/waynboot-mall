@@ -4,9 +4,9 @@ import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.binarywang.wxpay.exception.WxPayException;
-import com.wayn.common.core.domain.shop.Order;
-import com.wayn.common.core.domain.vo.ShipVO;
-import com.wayn.common.util.R;
+import com.wayn.common.core.entity.shop.Order;
+import com.wayn.common.core.vo.ShipVO;
+import com.wayn.util.util.R;
 
 import java.io.UnsupportedEncodingException;
 

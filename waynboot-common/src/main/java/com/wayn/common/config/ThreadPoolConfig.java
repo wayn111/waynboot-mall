@@ -1,10 +1,10 @@
 package com.wayn.common.config;
 
 import com.wayn.common.task.ThreadPoolExecutorMdcWrapper;
-import com.wayn.common.util.ThreadUtil;
+import com.wayn.util.util.ThreadUtil;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;

@@ -2,8 +2,8 @@ package com.wayn.mobile.framework.security.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wayn.common.config.TokenConfig;
-import com.wayn.common.constant.SysConstants;
-import com.wayn.common.util.jwt.JwtUtil;
+import com.wayn.util.constant.SysConstants;
+import com.wayn.util.util.jwt.JwtUtil;
 import com.wayn.data.redis.constant.CacheConstants;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.mobile.framework.security.LoginUserDetail;

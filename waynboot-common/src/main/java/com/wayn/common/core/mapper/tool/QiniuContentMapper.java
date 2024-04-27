@@ -3,7 +3,7 @@ package com.wayn.common.core.mapper.tool;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.core.domain.tool.QiniuContent;
+import com.wayn.common.core.entity.tool.QiniuContent;
 
 /**
  * 七牛云文件存储 Mapper 接口

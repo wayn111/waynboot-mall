@@ -36,18 +36,9 @@ public class RegistryObj {
     private String captchaCode;
 
     /**
-     * 邮箱验证码
-     */
-    private String emailCode;
-
-    /**
      * 验证码 key
      */
     private String captchaKey;
 
-    /**
-     * 邮箱验证码 key
-     */
-    private String emailKey;
 
 }

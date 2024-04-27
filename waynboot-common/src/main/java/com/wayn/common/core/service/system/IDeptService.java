@@ -1,8 +1,9 @@
 package com.wayn.common.core.service.system;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.system.Dept;
-import com.wayn.common.core.domain.vo.TreeVO;
+import com.wayn.common.core.entity.system.Dept;
+import com.wayn.common.core.vo.TreeVO;
+import com.wayn.common.response.DepTreeselectResVO;
 
 import java.util.List;
 

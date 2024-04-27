@@ -1,10 +1,9 @@
 package com.wayn.common.core.service.shop.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.wayn.common.config.WaynConfig;
-import com.wayn.common.constant.Constants;
+import com.wayn.util.constant.Constants;
 import com.wayn.common.core.service.shop.IMailService;
-import com.wayn.common.util.IdUtil;
+import com.wayn.util.util.IdUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;

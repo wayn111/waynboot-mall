@@ -3,9 +3,9 @@ package com.wayn.common.core.mapper.shop;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.core.domain.shop.Comment;
-import com.wayn.common.core.domain.vo.CommentTagNumVO;
-import com.wayn.common.core.domain.vo.CommentVO;
+import com.wayn.common.core.entity.shop.Comment;
+import com.wayn.common.core.vo.CommentTagNumVO;
+import com.wayn.common.core.vo.CommentVO;
 
 /**
  * 评论表 Mapper 接口

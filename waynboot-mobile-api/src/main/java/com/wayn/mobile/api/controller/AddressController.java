@@ -1,9 +1,9 @@
 package com.wayn.mobile.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wayn.common.core.domain.shop.Address;
+import com.wayn.common.core.entity.shop.Address;
 import com.wayn.common.core.service.shop.IAddressService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +32,7 @@ public class AddressController {
     @GetMapping("list")
     public R list() {
         Long memberId = MobileSecurityUtils.getUserId();
-        return R.success().add("data", iAddressService.list(new QueryWrapper<Address>().eq("member_id", memberId)));
+        return R.success(iAddressService.list(new QueryWrapper<Address>().eq("member_id", memberId)));
     }
 
     /**

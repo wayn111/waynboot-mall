@@ -1,7 +1,7 @@
 package com.wayn.common.task;
 
 
-import com.wayn.common.util.ThreadMdcUtil;
+import com.wayn.util.util.ThreadMdcUtil;
 import org.slf4j.MDC;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 

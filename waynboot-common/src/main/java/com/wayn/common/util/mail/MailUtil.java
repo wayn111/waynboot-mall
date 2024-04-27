@@ -1,9 +1,9 @@
 package com.wayn.common.util.mail;
 
 import com.sun.mail.util.MailSSLSocketFactory;
-import com.wayn.common.core.domain.tool.EmailConfig;
-import com.wayn.common.core.domain.vo.SendMailVO;
-import com.wayn.common.util.spring.SpringContextUtil;
+import com.wayn.common.core.entity.tool.EmailConfig;
+import com.wayn.common.core.vo.SendMailVO;
+import com.wayn.util.util.spring.SpringContextUtil;
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;

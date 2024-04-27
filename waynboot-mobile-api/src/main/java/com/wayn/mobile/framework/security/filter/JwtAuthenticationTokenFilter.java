@@ -1,10 +1,9 @@
 package com.wayn.mobile.framework.security.filter;
 
-import com.wayn.common.util.ThreadMdcUtil;
+import com.wayn.util.util.ThreadMdcUtil;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.service.TokenService;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
 import java.util.Objects;
 
 /**

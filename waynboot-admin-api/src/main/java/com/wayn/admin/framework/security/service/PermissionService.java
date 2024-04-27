@@ -1,13 +1,13 @@
 package com.wayn.admin.framework.security.service;
 
-import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.domain.system.Role;
-import com.wayn.common.core.domain.system.User;
-import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.admin.framework.security.model.LoginUserDetail;
+import com.wayn.util.constant.SysConstants;
+import com.wayn.common.core.entity.system.Role;
+import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.core.service.system.IRoleService;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.util.ServletUtils;
+import com.wayn.util.util.ServletUtils;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

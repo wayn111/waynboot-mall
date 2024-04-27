@@ -1,11 +1,11 @@
 package com.wayn.admin.framework.security.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wayn.common.core.domain.system.User;
-import com.wayn.common.core.model.LoginUserDetail;
+import com.wayn.admin.framework.security.model.LoginUserDetail;
+import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.enums.UserStatusEnum;
+import com.wayn.util.enums.UserStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.DisabledException;

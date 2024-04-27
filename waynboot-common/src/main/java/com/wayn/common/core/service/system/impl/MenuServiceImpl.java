@@ -3,16 +3,16 @@ package com.wayn.common.core.service.system.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.domain.system.Menu;
-import com.wayn.common.core.domain.system.RoleMenu;
-import com.wayn.common.core.domain.vo.MetaVo;
-import com.wayn.common.core.domain.vo.RouterVo;
-import com.wayn.common.core.domain.vo.TreeVO;
+import com.wayn.util.constant.SysConstants;
+import com.wayn.common.core.entity.system.Menu;
+import com.wayn.common.core.entity.system.RoleMenu;
+import com.wayn.common.core.vo.MetaVo;
+import com.wayn.common.core.vo.RouterVo;
+import com.wayn.common.core.vo.TreeVO;
 import com.wayn.common.core.mapper.system.MenuMapper;
 import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.core.service.system.IRoleMenuService;
-import com.wayn.common.util.security.SecurityUtils;
+import com.wayn.common.util.AdminUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     @Override
     public List<Menu> selectMenuTreeByUserId(Long userId) {
         List<Menu> menus;
-        if (SecurityUtils.isAdmin(userId)) {
+        if (AdminUtil.isAdmin(userId)) {
             menus = menuMapper.selectMenuTreeAll();
         } else {
             menus = menuMapper.selectMenuTreeByUserId(userId);
@@ -76,7 +76,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     @Override
     public List<Menu> selectMenuList(Menu menu, Long userId) {
         List<Menu> menuList;
-        if (SecurityUtils.isAdmin(userId)) {
+        if (AdminUtil.isAdmin(userId)) {
             menuList = list(menu);
         } else {
             menuList = menuMapper.selectMenuListByUserId(menu, userId);

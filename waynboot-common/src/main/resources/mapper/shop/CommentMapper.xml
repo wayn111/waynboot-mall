@@ -3,7 +3,7 @@
 <mapper namespace="com.wayn.common.core.mapper.shop.CommentMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="ShopCommentResult" type="com.wayn.common.core.domain.shop.Comment">
+    <resultMap id="ShopCommentResult" type="com.wayn.common.core.entity.shop.Comment">
         <result column="id"                 property="id" />
         <result column="value_id"           property="valueId" />
         <result column="type"               property="type" />
@@ -18,7 +18,7 @@
         <result column="del_flag"           property="delFlag" />
     </resultMap>
     <!-- 通用查询映射结果 -->
-    <resultMap id="ShopUserCommentResult" type="com.wayn.common.core.domain.vo.CommentVO">
+    <resultMap id="ShopUserCommentResult" type="com.wayn.common.core.vo.CommentVO">
         <result column="id"                 property="id"/>
         <result column="value_id"           property="valueId"/>
         <result column="type"               property="type"/>
@@ -114,7 +114,7 @@
             order by c.create_time desc
         </where>
     </select>
-    <select id="selectTagNum" resultType="com.wayn.common.core.domain.vo.CommentTagNumVO">
+    <select id="selectTagNum" resultType="com.wayn.common.core.vo.CommentTagNumVO">
         select (select count(1)
                 from shop_comment
                 where del_flag = 0

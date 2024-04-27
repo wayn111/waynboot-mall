@@ -2,8 +2,8 @@ package com.wayn.common.core.service.shop.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.constant.SysConstants;
-import com.wayn.common.core.domain.shop.Channel;
+import com.wayn.util.constant.SysConstants;
+import com.wayn.common.core.entity.shop.Channel;
 import com.wayn.common.core.mapper.shop.ChannelMapper;
 import com.wayn.common.core.service.shop.IChannelService;
 import lombok.AllArgsConstructor;

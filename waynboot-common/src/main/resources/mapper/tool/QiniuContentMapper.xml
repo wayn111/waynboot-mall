@@ -3,7 +3,7 @@
 <mapper namespace="com.wayn.common.core.mapper.tool.QiniuContentMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="ToolQiniucontentResult" type="com.wayn.common.core.domain.tool.QiniuContent">
+    <resultMap id="ToolQiniucontentResult" type="com.wayn.common.core.entity.tool.QiniuContent">
         <id column="content_id" property="contentId" />
         <result column="bucket" property="bucket" />
         <result column="name" property="name" />
@@ -22,7 +22,7 @@
         from tool_qiniu_content
     </sql>
 
-    <select id="selectQiniuContentListPage" resultType="com.wayn.common.core.domain.tool.QiniuContent">
+    <select id="selectQiniuContentListPage" resultType="com.wayn.common.core.entity.tool.QiniuContent">
         <include refid="selectQiniuContentVo"/>
         where del_flag = 0
         <if test="qiniuContent.name != null and qiniuContent.name != ''">

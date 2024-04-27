@@ -1,7 +1,7 @@
 package com.wayn.admin.framework.security.service;
 
-import com.wayn.common.core.model.LoginUserDetail;
-import com.wayn.common.exception.BusinessException;
+import com.wayn.admin.framework.security.model.LoginUserDetail;
+import com.wayn.util.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

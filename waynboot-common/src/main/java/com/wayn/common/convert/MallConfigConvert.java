@@ -1,7 +1,7 @@
 package com.wayn.common.convert;
 
 import com.wayn.common.config.WaynConfig;
-import com.wayn.common.core.domain.shop.vo.MallConfigResponseVO;
+import com.wayn.common.core.vo.MallConfigResponseVO;
 
 /**
  * @author: waynaqua

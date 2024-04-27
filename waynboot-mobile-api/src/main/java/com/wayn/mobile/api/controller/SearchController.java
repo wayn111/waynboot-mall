@@ -5,18 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.core.domain.shop.Keyword;
-import com.wayn.common.core.domain.vo.SearchVO;
+import com.wayn.common.core.entity.shop.Goods;
+import com.wayn.common.core.entity.shop.Keyword;
+import com.wayn.common.core.entity.shop.SearchHistory;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IKeywordService;
-import com.wayn.common.task.ThreadPoolExecutorMdcWrapper;
-import com.wayn.common.util.R;
+import com.wayn.common.core.service.shop.ISearchHistoryService;
+import com.wayn.common.core.vo.SearchVO;
+import com.wayn.common.response.HotKeywordsResVO;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
-import com.wayn.mobile.api.domain.SearchHistory;
-import com.wayn.mobile.api.service.ISearchHistoryService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -78,7 +81,7 @@ public class SearchController extends BaseController {
         SuggestBuilder suggestBuilder = new SuggestBuilder();
         suggestBuilder.addSuggestion(suggestName, termSuggestionBuilder);
         List<String> list = elasticDocument.searchSuggest(EsConstants.ES_GOODS_INDEX, suggestName, suggestBuilder);
-        return R.success().add("suggest", list);
+        return R.success(list);
     }
 
     /**
@@ -149,7 +152,7 @@ public class SearchController extends BaseController {
         List<JSONObject> list = elasticDocument.searchResult(EsConstants.ES_GOODS_INDEX, searchSourceBuilder, JSONObject.class);
         List<Integer> goodsIdList = list.stream().map(jsonObject -> (Integer) jsonObject.get("id")).collect(Collectors.toList());
         if (goodsIdList.isEmpty()) {
-            return R.success().add("goods", Collections.emptyList());
+            return R.success(Collections.emptyList());
         }
         // 根据Elasticsearch中返回商品ID查询商品详情并保持es中的排序
         List<Goods> goodsList = iGoodsService.searchResult(goodsIdList);
@@ -170,7 +173,7 @@ public class SearchController extends BaseController {
                 }
             });
         }
-        return R.success().add("goods", returnGoodsList);
+        return R.success(returnGoodsList);
     }
 
     /**
@@ -179,7 +182,7 @@ public class SearchController extends BaseController {
      * @return R
      */
     @GetMapping("hotKeywords")
-    public R hotKeywords() {
+    public R<HotKeywordsResVO> hotKeywords() {
         // 查询配置了热门搜索展示的关键词
         List<Keyword> hotKeywords = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_hot", true).orderByAsc("sort"));
         List<String> hotStrings = hotKeywords.stream().map(Keyword::getKeyword).collect(Collectors.toList());
@@ -187,12 +190,10 @@ public class SearchController extends BaseController {
         // 查询配置了默认搜索展示的关键词，如果有多个配置了默认搜索，就按照排序值从小到大取第一个
         List<Keyword> defaultKeyword = iKeywordService.list(new QueryWrapper<Keyword>().eq("is_default", true).orderByAsc("sort"));
         List<String> defaultStrings = defaultKeyword.stream().map(Keyword::getKeyword).collect(Collectors.toList());
-        R r = R.success();
-        r.add("data", hotStrings);
-        if (CollectionUtils.isNotEmpty(defaultStrings)) {
-            r.add("default", defaultStrings.get(0));
-        }
-        return r;
+        HotKeywordsResVO resVO = new HotKeywordsResVO();
+        resVO.setHotStrings(hotStrings);
+        resVO.setDefaultSearch(defaultStrings.get(0));
+        return R.success(resVO);
     }
 
 }

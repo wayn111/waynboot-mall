@@ -3,7 +3,7 @@ package com.wayn.common.core.service.shop.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.core.domain.shop.Banner;
+import com.wayn.common.core.entity.shop.Banner;
 import com.wayn.common.core.mapper.shop.BannerMapper;
 import com.wayn.common.core.service.shop.IBannerService;
 import lombok.AllArgsConstructor;

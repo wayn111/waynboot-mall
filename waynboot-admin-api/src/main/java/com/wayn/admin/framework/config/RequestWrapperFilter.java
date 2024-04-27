@@ -1,6 +1,6 @@
 package com.wayn.admin.framework.config;
 
-import com.wayn.common.util.http.HttpUtil;
+import com.wayn.util.util.http.HttpUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 

@@ -1,8 +1,8 @@
 package com.wayn.mobile.design.strategy.concretestrategy;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.core.domain.shop.Diamond;
-import com.wayn.common.core.domain.shop.Goods;
+import com.wayn.common.core.entity.shop.Diamond;
+import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.mobile.design.strategy.JumpTypeEnum;
 import com.wayn.mobile.design.strategy.strategy.DiamondJumpType;

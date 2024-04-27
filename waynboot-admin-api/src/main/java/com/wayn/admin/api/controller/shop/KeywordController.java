@@ -2,9 +2,9 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Keyword;
+import com.wayn.common.core.entity.shop.Keyword;
 import com.wayn.common.core.service.shop.IKeywordService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +30,7 @@ public class KeywordController extends BaseController {
     @GetMapping("list")
     public R list(Keyword keyword) {
         Page<Keyword> page = getPage();
-        return R.success().add("page", iKeywordService.listPage(page, keyword));
+        return R.success(iKeywordService.listPage(page, keyword));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:keyword:add')")
@@ -50,7 +50,7 @@ public class KeywordController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:keyword:info')")
     @GetMapping("{keywordId}")
     public R getKeyword(@PathVariable Long keywordId) {
-        return R.success().add("data", iKeywordService.getById(keywordId));
+        return R.success(iKeywordService.getById(keywordId));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:keyword:delete')")

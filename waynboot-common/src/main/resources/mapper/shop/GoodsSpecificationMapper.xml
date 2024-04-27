@@ -3,7 +3,7 @@
 <mapper namespace="com.wayn.common.core.mapper.shop.GoodsSpecificationMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.wayn.common.core.domain.shop.GoodsSpecification">
+    <resultMap id="BaseResultMap" type="com.wayn.common.core.entity.shop.GoodsSpecification">
         <result column="id"                     property="id" />
         <result column="goods_id"               property="goodsId" />
         <result column="specification"          property="specification" />

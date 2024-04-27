@@ -3,9 +3,9 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Address;
+import com.wayn.common.core.entity.shop.Address;
 import com.wayn.common.core.service.shop.IAddressService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +36,7 @@ public class AddressController extends BaseController {
     @GetMapping("list")
     public R list(Address address) {
         Page<Address> page = getPage();
-        return R.success().add("page", iAddressService.listPage(page, address));
+        return R.success(iAddressService.listPage(page, address));
     }
 
     /**
@@ -48,6 +48,6 @@ public class AddressController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:address:info')")
     @GetMapping("{addressId}")
     public R info(@PathVariable Long addressId) {
-        return R.success().add("data", iAddressService.getById(addressId));
+        return R.success(iAddressService.getById(addressId));
     }
 }

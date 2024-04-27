@@ -3,9 +3,9 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Member;
+import com.wayn.common.core.entity.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -30,13 +30,13 @@ public class MemberController extends BaseController {
     @GetMapping("list")
     public R list(Member member) {
         Page<Member> page = getPage();
-        return R.success().add("page", iMemberService.listPage(page, member));
+        return R.success(iMemberService.listPage(page, member));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:member:info')")
     @GetMapping("{memberId}")
     public R getMember(@PathVariable Long memberId) {
-        return R.success().add("data", iMemberService.getById(memberId));
+        return R.success(iMemberService.getById(memberId));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:member:update')")

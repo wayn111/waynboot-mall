@@ -1,7 +1,7 @@
 package com.wayn.common.core.service.shop;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.shop.GoodsProduct;
+import com.wayn.common.core.entity.shop.GoodsProduct;
 
 import java.util.List;
 

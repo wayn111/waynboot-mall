@@ -3,9 +3,9 @@ package com.wayn.admin.api.controller.shop;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Diamond;
+import com.wayn.common.core.entity.shop.Diamond;
 import com.wayn.common.core.service.shop.IDiamondService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +32,7 @@ public class DiamondController extends BaseController {
     public R list(Diamond diamond) {
         Page<Diamond> page = getPage();
         IPage<Diamond> diamondIPage = iDiamondService.listPage(page, diamond);
-        return R.success().add("page", diamondIPage);
+        return R.success(diamondIPage);
     }
 
     @PreAuthorize("@ss.hasPermi('shop:diamond:add')")
@@ -52,7 +52,7 @@ public class DiamondController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:diamond:info')")
     @GetMapping("{diamondId}")
     public R getDiamond(@PathVariable Long diamondId) {
-        return R.success().add("data", iDiamondService.getById(diamondId));
+        return R.success(iDiamondService.getById(diamondId));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:diamond:delete')")

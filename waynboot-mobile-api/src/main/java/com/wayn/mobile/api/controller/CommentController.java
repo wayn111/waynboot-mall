@@ -3,11 +3,11 @@ package com.wayn.mobile.api.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Comment;
-import com.wayn.common.core.domain.vo.CommentTagNumVO;
-import com.wayn.common.core.domain.vo.CommentVO;
+import com.wayn.common.core.entity.shop.Comment;
+import com.wayn.common.core.vo.CommentTagNumVO;
+import com.wayn.common.core.vo.CommentVO;
 import com.wayn.common.core.service.shop.ICommentService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -37,10 +37,10 @@ public class CommentController extends BaseController {
      * @return R
      */
     @PostMapping("list")
-    public R list(Integer tagType, Long goodsId) {
+    public R<IPage<CommentVO>> list(Integer tagType, Long goodsId) {
         Page<Comment> page = getPage();
         IPage<CommentVO> commentIPage = iCommentService.selectByTagType(page, goodsId, tagType);
-        return R.success().add("page", commentIPage);
+        return R.success(commentIPage);
     }
 
     /**
@@ -50,9 +50,9 @@ public class CommentController extends BaseController {
      * @return R
      */
     @PostMapping
-    public R addComment(@Valid @RequestBody CommentVO commentVO) {
+    public R<Boolean> addComment(@Valid @RequestBody CommentVO commentVO) {
         commentVO.setUserId(MobileSecurityUtils.getUserId());
-        return R.success().add("data", iCommentService.saveComment(commentVO));
+        return R.success(iCommentService.saveComment(commentVO));
     }
 
     /**
@@ -62,8 +62,8 @@ public class CommentController extends BaseController {
      * @return R
      */
     @PostMapping("tagNum")
-    public R tagNum(Long goodsId) {
+    public R<CommentTagNumVO> tagNum(Long goodsId) {
         CommentTagNumVO commentTagNumVO = iCommentService.selectTagNum(goodsId);
-        return R.success().add("commentTagNum", commentTagNumVO);
+        return R.success(commentTagNumVO);
     }
 }

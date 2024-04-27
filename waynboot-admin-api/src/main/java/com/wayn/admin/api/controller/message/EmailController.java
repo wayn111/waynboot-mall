@@ -1,9 +1,9 @@
 package com.wayn.admin.api.controller.message;
 
-import com.wayn.common.core.domain.tool.EmailConfig;
-import com.wayn.common.core.domain.vo.SendMailVO;
+import com.wayn.common.core.entity.tool.EmailConfig;
+import com.wayn.common.core.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
-import com.wayn.common.util.R;
+import com.wayn.util.util.R;
 import com.wayn.common.util.mail.MailUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +34,7 @@ public class EmailController {
      * @return R
      */
     @PostMapping
-    public R sendEmail(String subject, String content, String tos) {
+    public R<Boolean> sendEmail(String subject, String content, String tos) {
         EmailConfig emailConfig = mailConfigService.getById(1L);
         SendMailVO sendMailVO = new SendMailVO();
         sendMailVO.setSubject(subject);

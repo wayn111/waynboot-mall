@@ -2,11 +2,11 @@ package com.wayn.common.core.service.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wayn.common.core.domain.shop.Category;
-import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.core.domain.shop.vo.CategoryGoodsResponseVO;
-import com.wayn.common.core.domain.shop.vo.CategoryIndexResponseVO;
-import com.wayn.common.core.domain.vo.VanTreeSelectVO;
+import com.wayn.common.core.entity.shop.Category;
+import com.wayn.common.core.entity.shop.Goods;
+import com.wayn.common.core.vo.CategoryGoodsResponseVO;
+import com.wayn.common.core.vo.CategoryIndexResponseVO;
+import com.wayn.common.core.vo.VanTreeSelectVO;
 
 import java.util.List;
 

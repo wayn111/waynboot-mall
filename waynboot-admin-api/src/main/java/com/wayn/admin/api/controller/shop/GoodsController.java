@@ -3,12 +3,12 @@ package com.wayn.admin.api.controller.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.domain.shop.Goods;
-import com.wayn.common.core.domain.vo.GoodsSaveRelatedVO;
+import com.wayn.common.core.entity.shop.Goods;
+import com.wayn.common.core.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.exception.BusinessException;
-import com.wayn.common.util.R;
-import com.wayn.common.util.file.FileUtils;
+import com.wayn.util.exception.BusinessException;
+import com.wayn.util.util.R;
+import com.wayn.util.util.file.FileUtils;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
@@ -49,7 +49,7 @@ public class GoodsController extends BaseController {
     @GetMapping("/list")
     public R list(Goods goods) {
         Page<Goods> page = getPage();
-        return R.success().add("page", iGoodsService.listPage(page, goods));
+        return R.success(iGoodsService.listPage(page, goods));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:goods:add')")
@@ -67,7 +67,7 @@ public class GoodsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:goods:info')")
     @GetMapping("{goodsId}")
     public R getGoods(@PathVariable Long goodsId) {
-        return R.success().add("data", iGoodsService.getGoodsInfoById(goodsId));
+        return R.success(iGoodsService.getGoodsInfoById(goodsId));
     }
 
     @PreAuthorize("@ss.hasPermi('shop:goods:delete')")

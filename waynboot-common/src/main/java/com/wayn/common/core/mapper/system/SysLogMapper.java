@@ -1,7 +1,7 @@
 package com.wayn.common.core.mapper.system;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wayn.common.core.domain.system.SysLog;
+import com.wayn.common.core.entity.system.SysLog;
 
 /**
 * @author 16697
