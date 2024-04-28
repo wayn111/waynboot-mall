@@ -3,6 +3,7 @@ package com.wayn.common.core.mapper.shop;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wayn.common.core.entity.shop.Order;
+import com.wayn.common.response.OrderManagerResVO;
 
 /**
  * 类目表 Mapper 接口
@@ -12,5 +13,5 @@ import com.wayn.common.core.entity.shop.Order;
  */
 public interface AdminOrderMapper extends BaseMapper<Order> {
 
-    IPage<Order> selectOrderListPage(IPage<Order> page, Order order);
+    IPage<OrderManagerResVO> selectOrderListPage(IPage<Order> page, Order order);
 }

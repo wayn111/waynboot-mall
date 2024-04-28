@@ -73,4 +73,5 @@ public class SysConstants {
      * 校验返回结果码 0 不存在 1 已经存在
      */
     public final static String NOT_UNIQUE = "1";
+    public final static String ORDER_SUBMIT_ERROR_MSG = "下单失败";
 }

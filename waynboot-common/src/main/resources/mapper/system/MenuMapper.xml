@@ -19,16 +19,18 @@
 		<result property="icon"           column="icon"           />
 		<result property="createTime"     column="create_time"    />
 		<result property="remark"         column="remark"         />
+		<result property="delFlag"         column="del_flag"         />
 	</resultMap>
 
     <sql id="selectMenuVo">
-        select menu_id, menu_name, parent_id, sort, path, component, is_frame, menu_type, menu_status, visible, ifnull(perms,'') as perms, icon, create_time
+        select menu_id, menu_name, parent_id, sort, path, component, is_frame, menu_type, menu_status, visible, ifnull(perms,'') as perms, icon, create_time, del_flag
 		from sys_menu m
     </sql>
 
     <select id="selectMenuList" parameterType="com.wayn.common.core.entity.system.Menu" resultMap="SysMenuResult">
         <include refid="selectMenuVo"/>
         <where>
+			m.del_flag = 0
 			<if test="menuName != null  and menuName != '' ">
 				and m.menu_name like CONCAT('%',#{menuName},'%')
 			</if>
@@ -39,7 +41,7 @@
 
     <select id="selectMenuTreeAll" resultMap="SysMenuResult">
 		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.menu_status, m.visible, ifnull(m.perms,'') as perms, m.visible, m.is_frame, m.menu_type, m.icon, m.sort, m.create_time
-		from sys_menu m where m.menu_type in ('M', 'C') and m.menu_status = 0
+		from sys_menu m where m.menu_type in ('M', 'C') and m.menu_status = 0 and m.del_flag = 0
 		order by m.parent_id, m.sort
 	</select>
 
@@ -50,7 +52,7 @@
 			 left join sys_user_role ur on rm.role_id = ur.role_id
 			 left join sys_role ro on ur.role_id = ro.role_id
 			 left join sys_user u on ur.user_id = u.user_id
-		where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.menu_status = 0  AND ro.role_status = 0
+		where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.menu_status = 0  AND ro.role_status = 0 and m.del_flag = 0
 		order by m.parent_id, m.sort
 	</select>
 
@@ -60,7 +62,7 @@
 			 left join sys_role_menu rm on m.menu_id = rm.menu_id
 			 left join sys_user_role ur on rm.role_id = ur.role_id
 			 left join sys_role r on r.role_id = ur.role_id
-		where m.menu_status = '0' and r.role_status = '0' and ur.user_id = #{userId}
+		where m.menu_status = '0' and r.role_status = '0' and ur.user_id = #{userId} and m.del_flag = 0
 	</select>
 
     <select id="selectMenuListByUserId" resultMap="SysMenuResult">
@@ -71,6 +73,7 @@
 		left join sys_role ro on ur.role_id = ro.role_id
 		<where>
 			ur.user_id = #{userId}
+			and m.del_flag = 0
 			<if test="menu.menuName != null and menu.menuName != '' ">
 				and m.menu_name like CONCAT('%',#{menu.menuName},'%')
 			</if>
@@ -84,7 +87,7 @@
 		from sys_menu m
 				 left join sys_role_menu rm on m.menu_id = rm.menu_id
 				 left join sys_role r on r.role_id = rm.role_id
-		where m.menu_status = '0' and r.role_status = '0' and r.role_key = #{roleKey}
+		where m.menu_status = '0' and r.role_status = '0' and r.role_key = #{roleKey} and m.del_flag = 0
 
 	</select>
 </mapper>

@@ -19,9 +19,10 @@ import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.entity.shop.Member;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.entity.shop.OrderGoods;
-import com.wayn.common.core.vo.ShipVO;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.*;
+import com.wayn.common.core.vo.ShipVO;
+import com.wayn.common.response.OrderManagerResVO;
 import com.wayn.common.util.OrderUtil;
 import com.wayn.util.enums.PayTypeEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
@@ -53,7 +54,7 @@ public class OrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> imple
     private WxPayService wxPayService;
 
     @Override
-    public IPage<Order> listPage(IPage<Order> page, Order order) {
+    public IPage<OrderManagerResVO> listPage(IPage<Order> page, Order order) {
         return adminOrderMapper.selectOrderListPage(page, order);
     }
 
@@ -137,14 +138,6 @@ public class OrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> imple
                 throw new RuntimeException("商品货品库存增加失败");
             }
         }
-
-        // 退款成功通知用户, 例如“您申请的订单退款 [ 单号:{1} ] 已成功，请耐心等待到账。”
-        // 注意订单号只发后6位
-        String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotEmpty(email)) {
-            iMailService.sendEmail("订单已经退款", order.getOrderSn().substring(8, 14), email,
-                    WaynConfig.getAdminUrl() + "/callback/email");
-        }
         return R.success();
     }
 
@@ -169,15 +162,6 @@ public class OrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> imple
         order.setShipTime(LocalDateTime.now());
         order.setUpdateTime(new Date());
         updateById(order);
-
-        // 发货会发送通知短信给用户:          *
-        // "您的订单已经发货，快递公司 {1}，快递单 {2} ，请注意查收"
-        String email = iMemberService.getById(order.getUserId()).getEmail();
-        if (StringUtils.isNotEmpty(email)) {
-            iMailService.sendEmail("您的订单已经发货，快递公司 申通，快递单 " + order.getOrderSn().substring(8, 14)
-                    + "，请注意查收", order.getOrderSn().substring(8, 14), email, WaynConfig.getAdminUrl()
-                    + "/callback/email");
-        }
         return R.success();
     }
 
