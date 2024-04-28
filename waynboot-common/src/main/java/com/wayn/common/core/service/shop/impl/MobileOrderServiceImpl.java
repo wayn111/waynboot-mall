@@ -28,7 +28,6 @@ import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
 import com.wayn.util.util.IdUtil;
 import com.wayn.util.util.OrderSnGenUtil;
-import com.wayn.util.util.R;
 import com.wayn.util.util.bean.MyBeanUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -384,16 +383,16 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R cancel(Long orderId) {
+    public void cancel(Long orderId) {
         Order order = getById(orderId);
         ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
         if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
-            return R.error(returnCodeEnum);
+            throw new BusinessException(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isCancel()) {
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_CANCAL_ERROR);
+            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_CANCAL_ERROR);
         }
 
         // 设置订单已取消状态
@@ -413,49 +412,44 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
                 throw new BusinessException("商品货品库存增加失败");
             }
         }
-        // 返还优惠券
-        // releaseCoupon(orderId);
-        return R.success();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R delete(Long orderId) {
+    public void delete(Long orderId) {
         Order order = getById(orderId);
         ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
         if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
-            return R.error(returnCodeEnum);
+            throw new BusinessException(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isDelete()) {
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_DELETE_ERROR);
+            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_DELETE_ERROR);
         }
         // 删除订单
         removeById(orderId);
         // 删除订单商品
         iOrderGoodsService.remove(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
-        return R.success();
     }
 
     @Override
-    public R confirm(Long orderId) {
+    public void confirm(Long orderId) {
         Order order = getById(orderId);
         ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
         if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
-            return R.error(returnCodeEnum);
+            throw new BusinessException(returnCodeEnum);
         }
         // 检测是否能够取消
         OrderHandleOption handleOption = OrderUtil.build(order);
         if (!handleOption.isConfirm()) {
-            return R.error(ReturnCodeEnum.ORDER_CANNOT_CONFIRM_ERROR);
+            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_CONFIRM_ERROR);
         }
         // 更改订单状态为已收货
         order.setOrderStatus(OrderUtil.STATUS_CONFIRM);
         order.setConfirmTime(LocalDateTime.now());
         order.setUpdateTime(new Date());
         updateById(order);
-        return R.success();
     }
 
     @Override

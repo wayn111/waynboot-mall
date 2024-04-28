@@ -1,6 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 import com.wayn.common.core.service.shop.IGoodsDetailService;
+import com.wayn.common.core.vo.GoodsDetailResponseVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class GoodsController {
      * @return R
      */
     @GetMapping("detail/{goodsId}")
-    public R detail(@PathVariable Long goodsId) {
+    public R<GoodsDetailResponseVO> detail(@PathVariable Long goodsId) {
         return R.success(iGoodsDetailService.getGoodsDetailData(goodsId));
     }
 }

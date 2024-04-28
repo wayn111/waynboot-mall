@@ -70,7 +70,7 @@ public class SearchController extends BaseController {
      * @return R
      */
     @GetMapping("sugguest")
-    public R sugguest(SearchVO searchVO) throws IOException {
+    public R<List<String>> sugguest(SearchVO searchVO) throws IOException {
         String keyword = searchVO.getKeyword();
         String suggestField = "name.py";
         String suggestName = "my-suggest";
@@ -91,7 +91,7 @@ public class SearchController extends BaseController {
      * @return R
      */
     @GetMapping("result")
-    public R result(SearchVO searchVO) throws IOException {
+    public R<List<Goods>> result(SearchVO searchVO) throws IOException {
         // 获取筛选、排序条件
         Long memberId = MobileSecurityUtils.getUserId();
         String keyword = searchVO.getKeyword();

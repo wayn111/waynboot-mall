@@ -10,7 +10,6 @@ import com.wayn.common.response.OrderStatusCountResVO;
 import com.wayn.common.response.SubmitOrderResVO;
 import com.wayn.message.core.dto.OrderDTO;
 import com.wayn.util.enums.ReturnCodeEnum;
-import com.wayn.util.util.R;
 
 import java.io.UnsupportedEncodingException;
 
@@ -66,7 +65,7 @@ public interface IMobileOrderService extends IService<Order> {
      * @param orderId 订单ID
      * @return r
      */
-    R cancel(Long orderId);
+    void cancel(Long orderId);
 
     /**
      * 删除订单
@@ -77,7 +76,7 @@ public interface IMobileOrderService extends IService<Order> {
      * @param orderId 订单ID
      * @return r
      */
-    R delete(Long orderId);
+    void delete(Long orderId);
 
     /**
      * 确认订单
@@ -88,7 +87,7 @@ public interface IMobileOrderService extends IService<Order> {
      * @param orderId 订单ID
      * @return r
      */
-    R confirm(Long orderId);
+    void confirm(Long orderId);
 
     /**
      * 查询用户订单各状态数量（包含待支付订单数量、代发货订单数量、待收货订单数量、待评价订单数量）
