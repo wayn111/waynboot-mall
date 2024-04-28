@@ -53,7 +53,7 @@ public interface IMobileOrderService extends IService<Order> {
      * @param orderSn 订单编号
      * @return r
      */
-    void searchResult(String orderSn);
+    String searchResult(String orderSn);
 
     /**
      * 取消订单

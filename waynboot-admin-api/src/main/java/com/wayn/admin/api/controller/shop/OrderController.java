@@ -9,6 +9,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.service.shop.IOrderService;
 import com.wayn.common.core.vo.ShipVO;
+import com.wayn.common.response.OrderManagerResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +35,7 @@ public class OrderController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('shop:order:list')")
     @GetMapping("list")
-    public R<IPage<Order>> list(Order order) {
+    public R<IPage<OrderManagerResVO>> list(Order order) {
         Page<Order> page = getPage();
         return R.success(iOrderService.listPage(page, order));
     }

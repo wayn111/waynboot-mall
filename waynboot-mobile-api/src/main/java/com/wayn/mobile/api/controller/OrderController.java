@@ -9,6 +9,7 @@ import com.wayn.common.core.vo.OrderDetailVO;
 import com.wayn.common.core.vo.OrderVO;
 import com.wayn.common.response.SubmitOrderResVO;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +82,10 @@ public class OrderController extends BaseController {
      */
     @GetMapping("searchResult/{orderSn}")
     public R searchResult(@PathVariable String orderSn) {
-        iMobileOrderService.searchResult(orderSn);
+        String result = iMobileOrderService.searchResult(orderSn);
+        if (!"success".equals(result)) {
+            return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR.getCode(), result);
+        }
         return R.success();
     }
 

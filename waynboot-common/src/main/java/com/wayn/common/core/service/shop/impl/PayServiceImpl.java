@@ -217,11 +217,6 @@ public class PayServiceImpl implements IPayService {
                 if (!orderService.updateById(order)) {
                     return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
                 }
-                // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-                String email = iMemberService.getById(order.getUserId()).getEmail();
-                if (StringUtils.isNotBlank(email)) {
-                    iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
-                }
                 return null;
             }
             default -> {
@@ -290,11 +285,6 @@ public class PayServiceImpl implements IPayService {
                 return WxPayNotifyResponse.fail("更新订单状态失败");
             }
 
-            // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-            String email = iMemberService.getById(order.getUserId()).getEmail();
-            if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
-            }
             return WxPayNotifyResponse.success("处理成功!");
         } catch (Exception e) {
             log.error("微信回调结果异常,异常原因{}", e.getMessage());
@@ -336,11 +326,6 @@ public class PayServiceImpl implements IPayService {
             if (!orderService.updateById(order)) {
                 log.error("支付宝支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
                 return "error";
-            }
-            // 订单支付成功以后，会发送短信给用户，以及发送邮件给管理员
-            String email = iMemberService.getById(order.getUserId()).getEmail();
-            if (StringUtils.isNotBlank(email)) {
-                iMailService.sendEmail("新订单通知", order.toString(), email, WaynConfig.getMobileUrl() + "/callback/email");
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

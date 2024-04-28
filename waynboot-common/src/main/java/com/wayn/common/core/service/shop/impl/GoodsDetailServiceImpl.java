@@ -29,7 +29,7 @@ public class GoodsDetailServiceImpl implements IGoodsDetailService {
     private IGoodsAttributeService iGoodsAttributeService;
     private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
 
-    @Cacheable(value = "goods_detail_cache_#600", unless = "#result == null")
+    // @Cacheable(value = "goods_detail_cache_#600", unless = "#result == null")
     @Override
     public GoodsDetailResponseVO getGoodsDetailData(Long goodsId) {
         GoodsDetailResponseVO responseVO = new GoodsDetailResponseVO();

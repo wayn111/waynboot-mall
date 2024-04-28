@@ -20,7 +20,6 @@ import com.wayn.common.response.OrderStatusCountResVO;
 import com.wayn.common.response.SubmitOrderResVO;
 import com.wayn.common.util.OrderHandleOption;
 import com.wayn.common.util.OrderUtil;
-import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.message.core.constant.MQConstants;
 import com.wayn.message.core.dto.OrderDTO;
@@ -49,6 +48,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.wayn.data.redis.constant.RedisKeyEnum.ORDER_RESULT_KEY;
+import static com.wayn.util.constant.SysConstants.ORDER_SUBMIT_ERROR_MSG;
 
 /**
  * 订单表 服务实现类
@@ -258,8 +260,8 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         }
 
         if (checkedGoodsList.isEmpty()) {
-            redisCache.setCacheObject(RedisKeyEnum.ORDER_RESULT_KEY.getKey(orderSn), "收获地址为空",
-                    RedisKeyEnum.ORDER_RESULT_KEY.getExpireSecond());
+            redisCache.setCacheObject(ORDER_RESULT_KEY.getKey(orderSn), "收获地址为空",
+                    ORDER_RESULT_KEY.getExpireSecond());
             throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_CART_EMPTY_ERROR);
         }
 
@@ -372,14 +374,12 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
     }
 
     @Override
-    public void searchResult(String orderSn) {
-        String value = redisCache.getCacheObject(RedisKeyEnum.ORDER_RESULT_KEY.getKey(orderSn));
+    public String searchResult(String orderSn) {
+        String value = redisCache.getCacheObject(ORDER_RESULT_KEY.getKey(orderSn));
         if (value == null) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+            return ORDER_SUBMIT_ERROR_MSG;
         }
-        if (!"success".equals(value)) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR.getCode(), value);
-        }
+        return value;
     }
 
     @Override

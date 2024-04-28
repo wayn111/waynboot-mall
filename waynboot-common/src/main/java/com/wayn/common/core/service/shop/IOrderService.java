@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.vo.ShipVO;
+import com.wayn.common.response.OrderManagerResVO;
 import com.wayn.util.util.R;
 
 import java.io.UnsupportedEncodingException;
@@ -21,11 +22,11 @@ public interface IOrderService extends IService<Order> {
     /**
      * 获取订单列表
      *
-     * @param page 分页对象
+     * @param page  分页对象
      * @param order 订单对象
      * @return r
      */
-    IPage<Order> listPage(IPage<Order> page, Order order);
+    IPage<OrderManagerResVO> listPage(IPage<Order> page, Order order);
 
     /**
      * 订单退款
@@ -57,6 +58,7 @@ public interface IOrderService extends IService<Order> {
 
     /**
      * 获取订单详情（包含订单信息，订单商品信息，用户信息）
+     *
      * @param orderId
      * @return r
      */

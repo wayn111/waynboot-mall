@@ -86,11 +86,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 }
                 cart.setGoodsSn(goods.getGoodsSn());
                 cart.setGoodsName(goods.getName());
-                if (StringUtils.isEmpty(product.getUrl())) {
-                    cart.setPicUrl(goods.getPicUrl());
-                } else {
-                    cart.setPicUrl(product.getUrl());
-                }
+                cart.setPicUrl(goods.getPicUrl());
                 cart.setPrice(product.getPrice());
                 cart.setSpecifications((product.getSpecifications()));
                 cart.setUserId(Math.toIntExact(userId));

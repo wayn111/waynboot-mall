@@ -45,33 +45,39 @@
         from shop_order
     </sql>
 
-    <select id="selectOrderListPage" resultMap="ShopOrderResult">
-        <include refid="selectOrderVo"/>
+    <select id="selectOrderListPage" resultType="com.wayn.common.response.OrderManagerResVO">
+        select o.id,
+        o.user_id, o.order_sn, o.order_status, o.mobile, o.address, o.message, o.goods_price,
+        o.order_price, o.actual_price, o.pay_type, o.pay_id, o.pay_time,
+        o.ship_time, o.refund_amount, o.refund_type, o.refund_content, o.refund_time, o.confirm_time, o.comments,
+        o.order_end_time, o.create_time, o.update_time, group_concat(g.goods_name) goods_name
+        from shop_order o join shop_order_goods g on o.id = g.order_id
         <where>
-            del_flag = 0
+            o.del_flag = 0 and o.order_status not in (101, 102, 103)
             <if test="order.id != null">
-                AND id = #{order.id}
+                AND o.id = #{order.id}
             </if>
             <if test="order.orderSn != null and order.orderSn != ''">
-                AND order_sn like concat('%', #{order.orderSn}, '%')
+                AND o.order_sn like concat('%', #{order.orderSn}, '%')
             </if>
             <if test="order.orderStatus != null">
-                AND order_status = #{order.orderStatus}
+                AND o.order_status = #{order.orderStatus}
             </if>
             <if test="order.payType != null">
-                AND pay_type = #{order.payType}
+                AND o.pay_type = #{order.payType}
             </if>
             <if test="order.userId != null">
-                AND user_id = #{order.userId}
+                AND o.user_id = #{order.userId}
             </if>
             <if test="order.startTime != null and order.startTime != ''">
-                AND create_time <![CDATA[ >= ]]> DATE_FORMAT(#{order.startTime},'%Y-%m-%d 00:00:00')
+                AND o.create_time <![CDATA[ >= ]]> DATE_FORMAT(#{order.startTime},'%Y-%m-%d 00:00:00')
             </if>
             <if test="order.endTime != null and order.endTime != ''">
-                AND create_time <![CDATA[ <= ]]> DATE_FORMAT(#{order.endTime},'%Y-%m-%d 23:59:59')
+                AND o.create_time <![CDATA[ <= ]]> DATE_FORMAT(#{order.endTime},'%Y-%m-%d 23:59:59')
             </if>
         </where>
-        order by create_time desc, id desc
+        group by o.id
+        order by o.create_time desc, o.id desc
     </select>
 
 </mapper>
