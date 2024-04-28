@@ -3149,7 +3149,7 @@ CREATE TABLE `shop_order`  (
   `ship_sn` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '发货编号',
   `ship_channel` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '发货快递公司',
   `ship_time` datetime NULL DEFAULT NULL COMMENT '发货开始时间',
-  `refund_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT '实际退款金额，（有可能退款金额小于实际支付金额）',
+  `refund_amount` decimal(10, 2) NULL DEFAULT '0.00' COMMENT '实际退款金额，（有可能退款金额小于实际支付金额）',
   `refund_type` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '退款方式',
   `refund_content` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '退款备注',
   `refund_time` datetime NULL DEFAULT NULL COMMENT '退款时间',
@@ -3327,140 +3327,141 @@ INSERT INTO `sys_dict` VALUES (187, '链接', '2', 0, 2, 3, 'diamondJumpType', '
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu`  (
-  `menu_id` bigint NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
-  `menu_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '菜单名称',
-  `parent_id` bigint NULL DEFAULT 0 COMMENT '父菜单ID',
-  `sort` int NULL DEFAULT 0 COMMENT '显示顺序',
-  `path` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '路由地址',
-  `component` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '组件路径',
-  `is_frame` tinyint NULL DEFAULT 1 COMMENT '是否为外链（0是 1否）',
-  `menu_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
-  `menu_status` tinyint NULL DEFAULT NULL COMMENT '菜单状态（0启用 1禁用）',
-  `visible` tinyint NULL DEFAULT 0 COMMENT '显示状态（0显示 1隐藏）',
-  `perms` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '权限标识',
-  `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '#' COMMENT '菜单图标',
-  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
-  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
-  PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+ `menu_id` bigint NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+ `menu_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '菜单名称',
+ `parent_id` bigint NULL DEFAULT 0 COMMENT '父菜单ID',
+ `sort` int NULL DEFAULT 0 COMMENT '显示顺序',
+ `path` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '路由地址',
+ `component` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '组件路径',
+ `is_frame` tinyint NULL DEFAULT 1 COMMENT '是否为外链（0是 1否）',
+ `menu_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
+ `menu_status` tinyint NULL DEFAULT NULL COMMENT '菜单状态（0启用 1禁用）',
+ `visible` tinyint NULL DEFAULT 0 COMMENT '显示状态（0显示 1隐藏）',
+ `perms` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '权限标识',
+ `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '#' COMMENT '菜单图标',
+ `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
+ `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+ `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
+ `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+ `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
+ `del_flag` tinyint NULL DEFAULT 0 COMMENT '逻辑删除 0存在1删除',
+ PRIMARY KEY (`menu_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2115 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
-INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 3, 'system', NULL, 1, 'M', 0, 0, '', 'system', 'admin', '2018-03-16 11:33:00', 'admin', '2020-07-19 15:01:11', '系统管理目录');
-INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 4, 'monitor', NULL, 1, 'M', 1, 1, '', 'monitor', 'admin', '2018-03-16 11:33:00', 'admin', '2023-07-19 23:23:50', '系统监控目录');
-INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 5, 'tool', NULL, 1, 'M', 0, 0, '', 'tool', 'admin', '2018-03-16 11:33:00', 'admin', '2020-07-19 15:03:05', '系统工具目录');
-INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', 1, 'C', 0, 0, 'system:user:list', 'user', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:24', '用户管理菜单');
-INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', 1, 'C', 0, 0, 'system:role:list', 'peoples', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:38', '角色管理菜单');
-INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', 1, 'C', 0, 0, 'system:menu:list', 'tree-table', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:18:46', '菜单管理菜单');
-INSERT INTO `sys_menu` VALUES (115, '系统接口', 3, 3, 'swagger', 'tool/swagger/index', 1, 'C', 1, 1, '', 'swagger', 'admin', '2018-03-16 11:33:00', 'admin', '2023-07-19 23:23:27', '系统接口菜单');
-INSERT INTO `sys_menu` VALUES (1008, '角色查询', 101, 1, '', '', 1, 'F', 0, 0, 'system:role:query', '#', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-22 17:21:06', '');
-INSERT INTO `sys_menu` VALUES (2006, '部门管理', 1, 4, 'dept', 'system/dept/index', 1, 'C', 0, 0, 'system:dept:list', 'tree', 'admin', '2020-04-22 19:08:31', 'admin', '2020-04-26 10:19:53', '');
-INSERT INTO `sys_menu` VALUES (2010, '数据监控', 2, 1, 'druid', 'monitor/druid/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-04-25 15:59:10', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2011, '用户查询', 100, 1, '', NULL, 1, 'F', 0, 0, 'system:user:query', '#', '张三', '2020-04-26 10:12:47', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2012, '用户新增', 100, 2, '', NULL, 1, 'F', 0, 0, 'system:user:add', '#', 'admin', '2020-04-26 10:16:04', 'admin', '2020-04-26 10:16:12', '');
-INSERT INTO `sys_menu` VALUES (2013, '用户修改', 100, 3, '', NULL, 1, 'F', 0, 0, 'system:user:update', '#', 'admin', '2020-04-26 10:16:39', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2014, '用户删除', 100, 4, '', NULL, 1, 'F', 0, 0, 'system:user:delete', '#', 'admin', '2020-04-26 10:17:16', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2015, '用户导出', 100, 5, '', NULL, 1, 'F', 0, 0, 'system:user:export', '#', 'admin', '2020-04-26 10:17:35', 'admin', '2020-05-31 22:04:39', '');
-INSERT INTO `sys_menu` VALUES (2016, '用户导入', 100, 6, '', NULL, 1, 'F', 0, 0, 'system:user:import', '#', 'admin', '2020-04-26 10:17:48', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2017, '角色新增', 101, 2, '', NULL, 1, 'F', 0, 0, 'system:role:add', '#', 'admin', '2020-04-26 10:21:31', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2018, '角色修改', 101, 3, '', NULL, 1, 'F', 0, 0, 'system:role:update', '#', 'admin', '2020-04-26 10:21:47', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2019, '角色删除', 101, 4, '', NULL, 1, 'F', 0, 0, 'system:role:delete', '#', 'admin', '2020-04-26 10:22:01', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2020, '角色导出', 101, 5, '', NULL, 1, 'F', 0, 0, 'system:role:export', '#', 'admin', '2020-04-26 10:23:21', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2021, '菜单新增', 102, 2, '', NULL, 1, 'F', 0, 0, 'system:menu:add', '#', 'admin', '2020-04-26 10:23:50', 'admin', '2020-04-26 10:24:59', '');
-INSERT INTO `sys_menu` VALUES (2022, '菜单修改', 102, 3, '', NULL, 1, 'F', 0, 0, 'system:menu:update', '#', 'admin', '2020-04-26 10:24:05', 'admin', '2020-04-26 10:25:07', '');
-INSERT INTO `sys_menu` VALUES (2023, '部门修改', 2006, 3, '', NULL, 1, 'F', 0, 0, 'system:dept:update', '#', 'admin', '2020-04-26 10:24:18', 'admin', '2020-04-26 10:26:49', '');
-INSERT INTO `sys_menu` VALUES (2024, '菜单查询', 102, 1, '', NULL, 1, 'F', 0, 0, 'system:menu:query', '#', 'admin', '2020-04-26 10:24:47', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2025, '部门查询', 2006, 1, '', NULL, 1, 'F', 0, 0, 'system:dept:query', '#', 'admin', '2020-04-26 10:26:25', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2026, '部门新增', 2006, 2, '', NULL, 1, 'F', 0, 0, 'system:dept:add', '#', 'admin', '2020-04-26 10:27:19', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2027, '部门删除', 2006, 4, '', NULL, 1, 'F', 0, 0, 'system:dept:delete', '#', 'admin', '2020-04-26 10:27:34', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2028, '字典管理', 1, 5, 'dict/type', 'system/dict/index', 1, 'C', 0, 0, 'system:dict:list', 'dict', 'admin', '2020-05-31 16:21:28', 'admin', '2021-05-05 15:53:56', '');
-INSERT INTO `sys_menu` VALUES (2029, '字典新增', 2028, 2, '', NULL, 1, 'F', 0, 0, 'system:dict:add', '#', 'admin', '2020-05-31 21:56:20', 'admin', '2020-05-31 21:57:44', '');
-INSERT INTO `sys_menu` VALUES (2030, '字典修改', 2028, 3, '', NULL, 1, 'F', 0, 0, 'system:dict:update', '#', 'admin', '2020-05-31 21:57:13', 'admin', '2020-05-31 21:57:58', '');
-INSERT INTO `sys_menu` VALUES (2031, '字典查询', 2028, 1, '', NULL, 1, 'F', 0, 0, 'system:dict:query', '#', 'admin', '2020-05-31 21:57:36', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2032, '字典删除', 2028, 4, '', NULL, 1, 'F', 0, 0, 'system:dict:delete', '#', 'admin', '2020-05-31 22:11:36', 'admin', '2020-05-31 22:12:05', '');
-INSERT INTO `sys_menu` VALUES (2033, '商城管理', 0, 2, 'shop', NULL, 1, 'M', 0, 0, NULL, 'shopping', 'admin', '2020-06-14 11:43:25', 'admin', '2020-07-19 15:02:51', '');
-INSERT INTO `sys_menu` VALUES (2034, '栏目管理', 2033, 5, 'channel', 'shop/channel/index', 1, 'C', 0, 0, NULL, 'time-range', 'admin', '2020-06-15 22:40:12', 'admin', '2020-08-20 21:55:12', '');
-INSERT INTO `sys_menu` VALUES (2035, 'banner管理', 2046, 3, 'banner', 'shop/banner/index', 1, 'C', 0, 0, NULL, 'checkbox', 'admin', '2020-06-15 22:44:20', 'admin', '2023-11-14 23:32:34', '');
-INSERT INTO `sys_menu` VALUES (2036, '分类管理', 2033, 4, 'category', 'shop/category/index', 1, 'C', 0, 0, NULL, 'checkbox', 'admin', '2020-06-26 21:32:50', 'admin', '2020-07-06 23:09:46', '');
-INSERT INTO `sys_menu` VALUES (2037, '商品管理', 2033, 2, 'goods', 'shop/goods/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-07-06 23:09:32', 'admin', '2023-08-16 00:02:52', '');
-INSERT INTO `sys_menu` VALUES (2038, '添加商品', 2033, 1, 'goods/add', 'shop/goods/add', 1, 'C', 0, 0, NULL, 'tab', 'admin', '2020-07-08 22:32:04', 'admin', '2023-08-16 00:04:40', '');
-INSERT INTO `sys_menu` VALUES (2040, '用户管理', 0, 1, 'shopUser', NULL, 1, 'M', 0, 0, NULL, 'color', 'admin', '2020-07-19 15:02:34', 'admin', '2023-08-05 16:43:36', '');
-INSERT INTO `sys_menu` VALUES (2041, '会员管理', 2040, 1, 'member', 'shop/user/member/index', 1, 'C', 0, 0, NULL, 'dict', 'admin', '2020-07-19 15:03:43', 'admin', '2020-07-23 16:12:23', '');
-INSERT INTO `sys_menu` VALUES (2042, '地址管理', 2040, 2, 'address', 'shop/user/address/index', 1, 'C', 0, 0, NULL, 'example', 'admin', '2020-07-19 15:05:48', 'admin', '2020-08-23 22:16:27', '');
-INSERT INTO `sys_menu` VALUES (2043, '订单管理', 2033, 3, 'order', 'shop/order/index', 1, 'C', 0, 0, NULL, 'dashboard', 'admin', '2020-08-29 23:02:39', 'admin', '2020-08-29 23:03:21', '');
-INSERT INTO `sys_menu` VALUES (2044, '邮件配置', 3, 2, 'email', 'tool/email/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-10-02 23:41:41', 'admin', '2020-10-02 23:44:21', '');
-INSERT INTO `sys_menu` VALUES (2045, '评论管理', 2040, 3, 'comment', 'shop/user/comment/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-10-04 09:50:44', 'admin', '2020-10-04 09:51:10', '');
-INSERT INTO `sys_menu` VALUES (2046, '运营管理', 0, 2, 'operation', NULL, 1, 'M', 0, 0, NULL, 'drag', 'admin', '2020-10-10 11:07:59', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2047, '金刚区管理', 2046, 1, 'diamond', 'operation/diamond/index', 1, 'C', 0, 0, NULL, 'druid', 'admin', '2020-10-10 11:08:48', 'admin', '2020-10-10 11:09:56', '');
-INSERT INTO `sys_menu` VALUES (2048, '栏目管理', 2046, 2, 'column', 'operation/column/index', 1, 'C', 0, 0, NULL, 'color', 'admin', '2020-10-10 11:17:54', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2049, '关键字管理', 2046, 3, 'keyword', 'operation/keyword/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-11-02 12:25:06', 'admin', '2020-11-02 12:25:47', '');
-INSERT INTO `sys_menu` VALUES (2050, '存储配置', 3, 1, 'storage', 'tool/storage/index', 1, 'C', 0, 0, NULL, 'log', 'admin', '2020-11-02 12:28:10', 'admin', '2020-11-16 11:53:36', '');
-INSERT INTO `sys_menu` VALUES (2051, '用户详情修改', 100, 7, '', NULL, 1, 'F', 0, 0, 'system:profile:update', '#', 'waynboot', '2021-05-05 16:04:57', 'admin', '2021-05-05 16:08:29', '');
-INSERT INTO `sys_menu` VALUES (2052, '客服管理', 0, 3, 'customer', NULL, 1, 'M', 0, 0, NULL, 'chart', 'waynboot', '2021-10-16 15:17:53', 'admin', '2021-10-16 15:26:06', '');
-INSERT INTO `sys_menu` VALUES (2053, '在线聊天', 2052, 1, 'customer/chart', 'customer/chart/index', 1, 'C', 0, 0, NULL, 'chart', 'admin', '2021-10-16 15:25:10', 'admin', '2021-10-16 15:26:14', '');
-INSERT INTO `sys_menu` VALUES (2056, '新增', 2037, 3, '', NULL, 1, 'F', 0, 0, 'shop:goods:add', '#', 'admin', '2023-08-15 22:51:46', 'admin', '2023-08-16 09:55:10', '');
-INSERT INTO `sys_menu` VALUES (2057, '修改', 2037, 2, '', NULL, 1, 'F', 0, 0, 'shop:goods:update', '#', 'admin', '2023-08-15 22:52:03', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2058, '删除', 2037, 4, '', NULL, 1, 'F', 0, 0, 'shop:goods:delete', '#', 'admin', '2023-08-15 22:52:18', 'admin', '2023-08-16 09:55:18', '');
-INSERT INTO `sys_menu` VALUES (2059, '列表', 2037, 1, '', NULL, 1, 'F', 0, 0, 'shop:goods:list', '#', 'admin', '2023-08-15 23:23:39', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2060, '列表', 2043, 1, '', NULL, 1, 'F', 0, 0, 'shop:order:list', '#', 'admin', '2023-08-15 23:24:13', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2061, '详情', 2043, 2, '', NULL, 1, 'F', 0, 0, 'shop:order:info', '#', 'admin', '2023-08-15 23:24:28', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2062, '列表', 2035, 1, '', NULL, 1, 'F', 0, 0, 'shop:banner:list', '#', 'admin', '2023-08-15 23:24:40', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2063, '新增', 2035, 2, '', NULL, 1, 'F', 0, 0, 'shop:banner:add', '#', 'admin', '2023-08-15 23:24:57', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2064, '修改', 2035, 3, '', NULL, 1, 'F', 0, 0, 'shop:banner:update', '#', 'admin', '2023-08-15 23:25:13', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2065, '删除', 2035, 4, '', NULL, 1, 'F', 0, 0, 'shop:banner:delete', '#', 'admin', '2023-08-15 23:25:31', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2066, '列表', 2036, 1, '', NULL, 1, 'F', 0, 0, 'shop:category:list', '#', 'admin', '2023-08-15 23:25:49', 'admin', '2023-08-15 23:57:10', '');
-INSERT INTO `sys_menu` VALUES (2067, '新增', 2036, 2, '', NULL, 1, 'F', 0, 0, 'shop:category:add', '#', 'admin', '2023-08-15 23:26:18', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2068, '修改', 2036, 3, '', NULL, 1, 'F', 0, 0, 'shop:category:update', '#', 'admin', '2023-08-15 23:26:33', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2069, '删除', 2036, 4, '', NULL, 1, 'F', 0, 0, 'shop:category:delete', '#', 'admin', '2023-08-15 23:26:44', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2070, '列表', 2034, 1, '', NULL, 1, 'F', 0, 0, 'shop:channel:list', '#', 'admin', '2023-08-15 23:27:06', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2071, '新增', 2034, 2, '', NULL, 1, 'F', 0, 0, 'shop:channel:add', '#', 'admin', '2023-08-15 23:27:18', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2072, '修改', 2034, 3, '', NULL, 1, 'F', 0, 0, 'shop:channel:update', '#', 'admin', '2023-08-15 23:27:27', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2073, '删除', 2034, 4, '', NULL, 1, 'F', 0, 0, 'shop:channel:delete', '#', 'admin', '2023-08-15 23:27:36', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2074, '列表', 2048, 1, '', NULL, 1, 'F', 0, 0, 'shop:column:list', '#', 'admin', '2023-08-15 23:28:11', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2075, '新增', 2048, 2, '', NULL, 1, 'F', 0, 0, 'shop:column:add', '#', 'admin', '2023-08-15 23:28:22', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2076, '修改', 2048, 3, '', NULL, 1, 'F', 0, 0, 'shop:column:update', '#', 'admin', '2023-08-15 23:28:32', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2077, '删除', 2048, 4, '', NULL, 1, 'F', 0, 0, 'shop:column:delete', '#', 'admin', '2023-08-15 23:28:41', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2078, '列表', 2049, 1, '', NULL, 1, 'F', 0, 0, 'shop:keyword:list', '#', 'admin', '2023-08-15 23:28:59', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2079, '新增', 2049, 1, '', NULL, 1, 'F', 0, 0, 'shop:keyword:add', '#', 'admin', '2023-08-15 23:29:11', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2080, '修改', 2049, 3, '', NULL, 1, 'F', 0, 0, 'shop:keyword:update', '#', 'admin', '2023-08-15 23:29:24', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2081, '删除', 2049, 4, '', NULL, 1, 'F', 0, 0, 'shop:keyword:delete', '#', 'admin', '2023-08-15 23:29:35', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2082, '列表', 2047, 1, '', NULL, 1, 'F', 0, 0, 'shop:diamond:list', '#', 'admin', '2023-08-15 23:29:58', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2083, '新增', 2047, 2, '', NULL, 1, 'F', 0, 0, 'shop:diamond:add', '#', 'admin', '2023-08-15 23:30:09', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2084, '修改', 2047, 3, '', NULL, 1, 'F', 0, 0, 'shop:diamond:update', '#', 'admin', '2023-08-15 23:30:20', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2085, '删除', 2047, 4, '', NULL, 1, 'F', 0, 0, 'shop:diamond:delete', '#', 'admin', '2023-08-15 23:30:31', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2086, '发货', 2043, 3, '', NULL, 1, 'F', 0, 0, 'shop:order:ship', '#', 'admin', '2023-08-15 23:38:27', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2087, '退款', 2043, 4, '', NULL, 1, 'F', 0, 0, 'shop:order:refund', '#', 'admin', '2023-08-15 23:38:40', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2088, '菜单删除', 102, 4, '', NULL, 1, 'F', 0, 0, 'system:menu:delete', '#', 'admin', '2023-08-15 23:47:43', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2089, '列表', 2041, 1, '', NULL, 1, 'F', 0, 0, 'shop:member:list', '#', 'admin', '2023-08-15 23:51:00', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2090, '修改', 2041, 2, '', NULL, 1, 'F', 0, 0, 'shop:member:update', '#', 'admin', '2023-08-15 23:51:20', 'admin', '2023-08-15 23:52:10', '');
-INSERT INTO `sys_menu` VALUES (2091, '详情', 2041, 3, '', NULL, 1, 'F', 0, 0, 'shop:member:info', '#', 'admin', '2023-08-15 23:51:40', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2092, '列表', 2042, 1, '', NULL, 1, 'F', 0, 0, 'shop:address:list', '#', 'admin', '2023-08-15 23:52:28', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2093, '列表', 2045, 1, '', NULL, 1, 'F', 0, 0, 'shop:comment:list', '#', 'admin', '2023-08-15 23:52:40', 'admin', '2023-08-15 23:55:01', '');
-INSERT INTO `sys_menu` VALUES (2094, '修改', 2045, 2, '', NULL, 1, 'F', 0, 0, 'shop:comment:update', '#', 'admin', '2023-08-15 23:53:05', 'admin', '2023-08-15 23:55:06', '');
-INSERT INTO `sys_menu` VALUES (2095, '删除', 2045, 3, '', NULL, 1, 'F', 0, 0, 'shop:comment:delete', '#', 'admin', '2023-08-15 23:53:14', 'admin', '2023-08-15 23:55:09', '');
-INSERT INTO `sys_menu` VALUES (2096, '修改商品', 2033, 1, 'goods/edit', 'shop/goods/edit', 1, 'C', 0, 1, NULL, 'clipboard', 'admin', '2023-08-16 00:03:19', 'admin', '2023-08-16 00:04:36', '');
-INSERT INTO `sys_menu` VALUES (2097, '列表', 2050, 1, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:list', '#', 'admin', '2023-08-16 09:48:25', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2098, '详情', 2050, 2, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:info', '#', 'admin', '2023-08-16 09:50:11', 'admin', '2023-08-16 09:51:52', '');
-INSERT INTO `sys_menu` VALUES (2099, '修改', 2050, 3, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:update', '#', 'admin', '2023-08-16 09:52:07', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2100, '删除', 2050, 4, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:delete', '#', 'admin', '2023-08-16 09:52:30', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2101, '同步七牛', 2050, 5, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:syncQiniu', '#', 'admin', '2023-08-16 09:52:48', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2102, '上传', 2050, 6, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:upload', '#', 'admin', '2023-08-16 09:53:00', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2103, '下载', 2050, 7, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:download', '#', 'admin', '2023-08-16 09:53:11', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2104, '详情', 2044, 1, '', NULL, 1, 'F', 0, 0, 'tool:email:info', '#', 'admin', '2023-08-16 09:54:01', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2105, '修改', 2044, 2, '', NULL, 1, 'F', 0, 0, 'tool:email:update', '#', 'admin', '2023-08-16 09:54:16', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2106, '发送邮件', 2044, 3, '', NULL, 1, 'F', 0, 0, 'tool:email:send', '#', 'admin', '2023-08-16 09:54:45', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2107, '详情', 2037, 5, '', NULL, 1, 'F', 0, 0, 'shop:goods:info', '#', 'admin', '2023-08-16 09:55:30', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2108, '详情', 2045, 4, '', NULL, 1, 'F', 0, 0, 'shop:comment:info', '#', 'admin', '2023-08-16 09:56:20', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2109, '详情', 2035, 5, '', NULL, 1, 'F', 0, 0, 'shop:banner:info', '#', 'admin', '2023-08-16 09:56:40', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2110, '详情', 2036, 5, '', NULL, 1, 'F', 0, 0, 'shop:category:info', '#', 'admin', '2023-08-16 09:57:04', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2111, '详情', 2034, 5, '', NULL, 1, 'F', 0, 0, 'shop:channel:info', '#', 'admin', '2023-08-16 09:57:21', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2112, '详情', 2047, 5, '', NULL, 1, 'F', 0, 0, 'shop:diamond:info', '#', 'admin', '2023-08-16 09:57:33', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2113, '详情', 2048, 5, '', NULL, 1, 'F', 0, 0, 'shop:column:info', '#', 'admin', '2023-08-16 09:57:49', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2114, '详情', 2049, 5, '', NULL, 1, 'F', 0, 0, 'shop:keyword:info', '#', 'admin', '2023-08-16 09:58:12', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 3, 'system', NULL, 1, 'M', 0, 0, '', 'system', 'admin', '2018-03-16 11:33:00', 'admin', '2020-07-19 15:01:11', '系统管理目录', 0);
+INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 4, 'monitor', NULL, 1, 'M', 1, 1, '', 'monitor', 'admin', '2018-03-16 11:33:00', 'admin', '2023-07-19 23:23:50', '系统监控目录', 0);
+INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 5, 'tool', NULL, 1, 'M', 0, 0, '', 'tool', 'admin', '2018-03-16 11:33:00', 'admin', '2020-07-19 15:03:05', '系统工具目录', 0);
+INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', 1, 'C', 0, 0, 'system:user:list', 'user', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:24', '用户管理菜单', 0);
+INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', 1, 'C', 0, 0, 'system:role:list', 'peoples', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:19:38', '角色管理菜单', 0);
+INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', 1, 'C', 0, 0, 'system:menu:list', 'tree-table', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-26 10:18:46', '菜单管理菜单', 0);
+INSERT INTO `sys_menu` VALUES (115, '系统接口', 3, 3, 'swagger', 'tool/swagger/index', 1, 'C', 1, 1, '', 'swagger', 'admin', '2018-03-16 11:33:00', 'admin', '2023-07-19 23:23:27', '系统接口菜单', 0);
+INSERT INTO `sys_menu` VALUES (1008, '角色查询', 101, 1, '', '', 1, 'F', 0, 0, 'system:role:query', '#', 'admin', '2018-03-16 11:33:00', 'admin', '2020-04-22 17:21:06', '', 0);
+INSERT INTO `sys_menu` VALUES (2006, '部门管理', 1, 4, 'dept', 'system/dept/index', 1, 'C', 0, 0, 'system:dept:list', 'tree', 'admin', '2020-04-22 19:08:31', 'admin', '2020-04-26 10:19:53', '', 0);
+INSERT INTO `sys_menu` VALUES (2010, '数据监控', 2, 1, 'druid', 'monitor/druid/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-04-25 15:59:10', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2011, '用户查询', 100, 1, '', NULL, 1, 'F', 0, 0, 'system:user:query', '#', '张三', '2020-04-26 10:12:47', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2012, '用户新增', 100, 2, '', NULL, 1, 'F', 0, 0, 'system:user:add', '#', 'admin', '2020-04-26 10:16:04', 'admin', '2020-04-26 10:16:12', '', 0);
+INSERT INTO `sys_menu` VALUES (2013, '用户修改', 100, 3, '', NULL, 1, 'F', 0, 0, 'system:user:update', '#', 'admin', '2020-04-26 10:16:39', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2014, '用户删除', 100, 4, '', NULL, 1, 'F', 0, 0, 'system:user:delete', '#', 'admin', '2020-04-26 10:17:16', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2015, '用户导出', 100, 5, '', NULL, 1, 'F', 0, 0, 'system:user:export', '#', 'admin', '2020-04-26 10:17:35', 'admin', '2020-05-31 22:04:39', '', 0);
+INSERT INTO `sys_menu` VALUES (2016, '用户导入', 100, 6, '', NULL, 1, 'F', 0, 0, 'system:user:import', '#', 'admin', '2020-04-26 10:17:48', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2017, '角色新增', 101, 2, '', NULL, 1, 'F', 0, 0, 'system:role:add', '#', 'admin', '2020-04-26 10:21:31', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2018, '角色修改', 101, 3, '', NULL, 1, 'F', 0, 0, 'system:role:update', '#', 'admin', '2020-04-26 10:21:47', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2019, '角色删除', 101, 4, '', NULL, 1, 'F', 0, 0, 'system:role:delete', '#', 'admin', '2020-04-26 10:22:01', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2020, '角色导出', 101, 5, '', NULL, 1, 'F', 0, 0, 'system:role:export', '#', 'admin', '2020-04-26 10:23:21', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2021, '菜单新增', 102, 2, '', NULL, 1, 'F', 0, 0, 'system:menu:add', '#', 'admin', '2020-04-26 10:23:50', 'admin', '2020-04-26 10:24:59', '', 0);
+INSERT INTO `sys_menu` VALUES (2022, '菜单修改', 102, 3, '', NULL, 1, 'F', 0, 0, 'system:menu:update', '#', 'admin', '2020-04-26 10:24:05', 'admin', '2020-04-26 10:25:07', '', 0);
+INSERT INTO `sys_menu` VALUES (2023, '部门修改', 2006, 3, '', NULL, 1, 'F', 0, 0, 'system:dept:update', '#', 'admin', '2020-04-26 10:24:18', 'admin', '2020-04-26 10:26:49', '', 0);
+INSERT INTO `sys_menu` VALUES (2024, '菜单查询', 102, 1, '', NULL, 1, 'F', 0, 0, 'system:menu:query', '#', 'admin', '2020-04-26 10:24:47', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2025, '部门查询', 2006, 1, '', NULL, 1, 'F', 0, 0, 'system:dept:query', '#', 'admin', '2020-04-26 10:26:25', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2026, '部门新增', 2006, 2, '', NULL, 1, 'F', 0, 0, 'system:dept:add', '#', 'admin', '2020-04-26 10:27:19', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2027, '部门删除', 2006, 4, '', NULL, 1, 'F', 0, 0, 'system:dept:delete', '#', 'admin', '2020-04-26 10:27:34', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2028, '字典管理', 1, 5, 'dict/type', 'system/dict/index', 1, 'C', 0, 0, 'system:dict:list', 'dict', 'admin', '2020-05-31 16:21:28', 'admin', '2021-05-05 15:53:56', '', 0);
+INSERT INTO `sys_menu` VALUES (2029, '字典新增', 2028, 2, '', NULL, 1, 'F', 0, 0, 'system:dict:add', '#', 'admin', '2020-05-31 21:56:20', 'admin', '2020-05-31 21:57:44', '', 0);
+INSERT INTO `sys_menu` VALUES (2030, '字典修改', 2028, 3, '', NULL, 1, 'F', 0, 0, 'system:dict:update', '#', 'admin', '2020-05-31 21:57:13', 'admin', '2020-05-31 21:57:58', '', 0);
+INSERT INTO `sys_menu` VALUES (2031, '字典查询', 2028, 1, '', NULL, 1, 'F', 0, 0, 'system:dict:query', '#', 'admin', '2020-05-31 21:57:36', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2032, '字典删除', 2028, 4, '', NULL, 1, 'F', 0, 0, 'system:dict:delete', '#', 'admin', '2020-05-31 22:11:36', 'admin', '2020-05-31 22:12:05', '', 0);
+INSERT INTO `sys_menu` VALUES (2033, '商城管理', 0, 2, 'shop', NULL, 1, 'M', 0, 0, NULL, 'shopping', 'admin', '2020-06-14 11:43:25', 'admin', '2020-07-19 15:02:51', '', 0);
+INSERT INTO `sys_menu` VALUES (2034, '栏目管理', 2033, 5, 'channel', 'shop/channel/index', 1, 'C', 1, 1, NULL, 'time-range', 'admin', '2020-06-15 22:40:12', 'admin', '2024-04-27 18:45:02', '', 0);
+INSERT INTO `sys_menu` VALUES (2035, 'banner管理', 2046, 3, 'banner', 'shop/banner/index', 1, 'C', 0, 0, NULL, 'checkbox', 'admin', '2020-06-15 22:44:20', 'admin', '2023-11-14 23:32:34', '', 0);
+INSERT INTO `sys_menu` VALUES (2036, '分类管理', 2033, 4, 'category', 'shop/category/index', 1, 'C', 0, 0, NULL, 'checkbox', 'admin', '2020-06-26 21:32:50', 'admin', '2020-07-06 23:09:46', '', 0);
+INSERT INTO `sys_menu` VALUES (2037, '商品管理', 2033, 2, 'goods', 'shop/goods/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-07-06 23:09:32', 'admin', '2023-08-16 00:02:52', '', 0);
+INSERT INTO `sys_menu` VALUES (2038, '添加商品', 2033, 1, 'goods/add', 'shop/goods/add', 1, 'C', 0, 0, NULL, 'tab', 'admin', '2020-07-08 22:32:04', 'admin', '2023-08-16 00:04:40', '', 0);
+INSERT INTO `sys_menu` VALUES (2040, '用户管理', 0, 1, 'shopUser', NULL, 1, 'M', 0, 0, NULL, 'color', 'admin', '2020-07-19 15:02:34', 'admin', '2023-08-05 16:43:36', '', 0);
+INSERT INTO `sys_menu` VALUES (2041, '会员管理', 2040, 1, 'member', 'shop/user/member/index', 1, 'C', 0, 0, NULL, 'dict', 'admin', '2020-07-19 15:03:43', 'admin', '2020-07-23 16:12:23', '', 0);
+INSERT INTO `sys_menu` VALUES (2042, '地址管理', 2040, 2, 'address', 'shop/user/address/index', 1, 'C', 0, 0, NULL, 'example', 'admin', '2020-07-19 15:05:48', 'admin', '2020-08-23 22:16:27', '', 0);
+INSERT INTO `sys_menu` VALUES (2043, '订单管理', 2033, 3, 'order', 'shop/order/index', 1, 'C', 0, 0, NULL, 'dashboard', 'admin', '2020-08-29 23:02:39', 'admin', '2020-08-29 23:03:21', '', 0);
+INSERT INTO `sys_menu` VALUES (2044, '邮件配置', 3, 2, 'email', 'tool/email/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-10-02 23:41:41', 'admin', '2020-10-02 23:44:21', '', 0);
+INSERT INTO `sys_menu` VALUES (2045, '评论管理', 2040, 3, 'comment', 'shop/user/comment/index', 1, 'C', 0, 0, NULL, 'bug', 'admin', '2020-10-04 09:50:44', 'admin', '2020-10-04 09:51:10', '', 0);
+INSERT INTO `sys_menu` VALUES (2046, '运营管理', 0, 2, 'operation', NULL, 1, 'M', 0, 0, NULL, 'drag', 'admin', '2020-10-10 11:07:59', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2047, '金刚区管理', 2046, 1, 'diamond', 'operation/diamond/index', 1, 'C', 0, 0, NULL, 'druid', 'admin', '2020-10-10 11:08:48', 'admin', '2020-10-10 11:09:56', '', 0);
+INSERT INTO `sys_menu` VALUES (2048, '栏目管理', 2046, 2, 'column', 'operation/column/index', 1, 'C', 0, 0, NULL, 'color', 'admin', '2020-10-10 11:17:54', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2049, '关键字管理', 2046, 3, 'keyword', 'operation/keyword/index', 1, 'C', 0, 0, NULL, 'exit-fullscreen', 'admin', '2020-11-02 12:25:06', 'admin', '2020-11-02 12:25:47', '', 0);
+INSERT INTO `sys_menu` VALUES (2050, '存储配置', 3, 1, 'storage', 'tool/storage/index', 1, 'C', 1, 1, NULL, 'log', 'admin', '2020-11-02 12:28:10', 'admin', '2024-04-27 19:01:12', '', 0);
+INSERT INTO `sys_menu` VALUES (2051, '用户详情修改', 100, 7, '', NULL, 1, 'F', 0, 0, 'system:profile:update', '#', 'waynboot', '2021-05-05 16:04:57', 'admin', '2021-05-05 16:08:29', '', 0);
+INSERT INTO `sys_menu` VALUES (2052, '客服管理', 0, 3, 'customer', NULL, 1, 'M', 0, 0, NULL, 'chart', 'waynboot', '2021-10-16 15:17:53', 'admin', '2021-10-16 15:26:06', '', 0);
+INSERT INTO `sys_menu` VALUES (2053, '在线聊天', 2052, 1, 'customer/chart', 'customer/chart/index', 1, 'C', 0, 0, NULL, 'chart', 'admin', '2021-10-16 15:25:10', 'admin', '2024-04-27 18:51:37', '', 0);
+INSERT INTO `sys_menu` VALUES (2056, '新增', 2037, 3, '', NULL, 1, 'F', 0, 0, 'shop:goods:add', '#', 'admin', '2023-08-15 22:51:46', 'admin', '2023-08-16 09:55:10', '', 0);
+INSERT INTO `sys_menu` VALUES (2057, '修改', 2037, 2, '', NULL, 1, 'F', 0, 0, 'shop:goods:update', '#', 'admin', '2023-08-15 22:52:03', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2058, '删除', 2037, 4, '', NULL, 1, 'F', 0, 0, 'shop:goods:delete', '#', 'admin', '2023-08-15 22:52:18', 'admin', '2023-08-16 09:55:18', '', 0);
+INSERT INTO `sys_menu` VALUES (2059, '列表', 2037, 1, '', NULL, 1, 'F', 0, 0, 'shop:goods:list', '#', 'admin', '2023-08-15 23:23:39', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2060, '列表', 2043, 1, '', NULL, 1, 'F', 0, 0, 'shop:order:list', '#', 'admin', '2023-08-15 23:24:13', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2061, '详情', 2043, 2, '', NULL, 1, 'F', 0, 0, 'shop:order:info', '#', 'admin', '2023-08-15 23:24:28', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2062, '列表', 2035, 1, '', NULL, 1, 'F', 0, 0, 'shop:banner:list', '#', 'admin', '2023-08-15 23:24:40', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2063, '新增', 2035, 2, '', NULL, 1, 'F', 0, 0, 'shop:banner:add', '#', 'admin', '2023-08-15 23:24:57', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2064, '修改', 2035, 3, '', NULL, 1, 'F', 0, 0, 'shop:banner:update', '#', 'admin', '2023-08-15 23:25:13', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2065, '删除', 2035, 4, '', NULL, 1, 'F', 0, 0, 'shop:banner:delete', '#', 'admin', '2023-08-15 23:25:31', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2066, '列表', 2036, 1, '', NULL, 1, 'F', 0, 0, 'shop:category:list', '#', 'admin', '2023-08-15 23:25:49', 'admin', '2023-08-15 23:57:10', '', 0);
+INSERT INTO `sys_menu` VALUES (2067, '新增', 2036, 2, '', NULL, 1, 'F', 0, 0, 'shop:category:add', '#', 'admin', '2023-08-15 23:26:18', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2068, '修改', 2036, 3, '', NULL, 1, 'F', 0, 0, 'shop:category:update', '#', 'admin', '2023-08-15 23:26:33', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2069, '删除', 2036, 4, '', NULL, 1, 'F', 0, 0, 'shop:category:delete', '#', 'admin', '2023-08-15 23:26:44', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2070, '列表', 2034, 1, '', NULL, 1, 'F', 0, 0, 'shop:channel:list', '#', 'admin', '2023-08-15 23:27:06', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2071, '新增', 2034, 2, '', NULL, 1, 'F', 0, 0, 'shop:channel:add', '#', 'admin', '2023-08-15 23:27:18', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2072, '修改', 2034, 3, '', NULL, 1, 'F', 0, 0, 'shop:channel:update', '#', 'admin', '2023-08-15 23:27:27', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2073, '删除', 2034, 4, '', NULL, 1, 'F', 0, 0, 'shop:channel:delete', '#', 'admin', '2023-08-15 23:27:36', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2074, '列表', 2048, 1, '', NULL, 1, 'F', 0, 0, 'shop:column:list', '#', 'admin', '2023-08-15 23:28:11', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2075, '新增', 2048, 2, '', NULL, 1, 'F', 0, 0, 'shop:column:add', '#', 'admin', '2023-08-15 23:28:22', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2076, '修改', 2048, 3, '', NULL, 1, 'F', 0, 0, 'shop:column:update', '#', 'admin', '2023-08-15 23:28:32', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2077, '删除', 2048, 4, '', NULL, 1, 'F', 0, 0, 'shop:column:delete', '#', 'admin', '2023-08-15 23:28:41', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2078, '列表', 2049, 1, '', NULL, 1, 'F', 0, 0, 'shop:keyword:list', '#', 'admin', '2023-08-15 23:28:59', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2079, '新增', 2049, 1, '', NULL, 1, 'F', 0, 0, 'shop:keyword:add', '#', 'admin', '2023-08-15 23:29:11', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2080, '修改', 2049, 3, '', NULL, 1, 'F', 0, 0, 'shop:keyword:update', '#', 'admin', '2023-08-15 23:29:24', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2081, '删除', 2049, 4, '', NULL, 1, 'F', 0, 0, 'shop:keyword:delete', '#', 'admin', '2023-08-15 23:29:35', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2082, '列表', 2047, 1, '', NULL, 1, 'F', 0, 0, 'shop:diamond:list', '#', 'admin', '2023-08-15 23:29:58', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2083, '新增', 2047, 2, '', NULL, 1, 'F', 0, 0, 'shop:diamond:add', '#', 'admin', '2023-08-15 23:30:09', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2084, '修改', 2047, 3, '', NULL, 1, 'F', 0, 0, 'shop:diamond:update', '#', 'admin', '2023-08-15 23:30:20', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2085, '删除', 2047, 4, '', NULL, 1, 'F', 0, 0, 'shop:diamond:delete', '#', 'admin', '2023-08-15 23:30:31', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2086, '发货', 2043, 3, '', NULL, 1, 'F', 0, 0, 'shop:order:ship', '#', 'admin', '2023-08-15 23:38:27', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2087, '退款', 2043, 4, '', NULL, 1, 'F', 0, 0, 'shop:order:refund', '#', 'admin', '2023-08-15 23:38:40', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2088, '菜单删除', 102, 4, '', NULL, 1, 'F', 0, 0, 'system:menu:delete', '#', 'admin', '2023-08-15 23:47:43', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2089, '列表', 2041, 1, '', NULL, 1, 'F', 0, 0, 'shop:member:list', '#', 'admin', '2023-08-15 23:51:00', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2090, '修改', 2041, 2, '', NULL, 1, 'F', 0, 0, 'shop:member:update', '#', 'admin', '2023-08-15 23:51:20', 'admin', '2023-08-15 23:52:10', '', 0);
+INSERT INTO `sys_menu` VALUES (2091, '详情', 2041, 3, '', NULL, 1, 'F', 0, 0, 'shop:member:info', '#', 'admin', '2023-08-15 23:51:40', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2092, '列表', 2042, 1, '', NULL, 1, 'F', 0, 0, 'shop:address:list', '#', 'admin', '2023-08-15 23:52:28', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2093, '列表', 2045, 1, '', NULL, 1, 'F', 0, 0, 'shop:comment:list', '#', 'admin', '2023-08-15 23:52:40', 'admin', '2023-08-15 23:55:01', '', 0);
+INSERT INTO `sys_menu` VALUES (2094, '修改', 2045, 2, '', NULL, 1, 'F', 0, 0, 'shop:comment:update', '#', 'admin', '2023-08-15 23:53:05', 'admin', '2023-08-15 23:55:06', '', 0);
+INSERT INTO `sys_menu` VALUES (2095, '删除', 2045, 3, '', NULL, 1, 'F', 0, 0, 'shop:comment:delete', '#', 'admin', '2023-08-15 23:53:14', 'admin', '2023-08-15 23:55:09', '', 0);
+INSERT INTO `sys_menu` VALUES (2096, '修改商品', 2033, 1, 'goods/edit', 'shop/goods/edit', 1, 'C', 0, 1, NULL, 'clipboard', 'admin', '2023-08-16 00:03:19', 'admin', '2023-08-16 00:04:36', '', 0);
+INSERT INTO `sys_menu` VALUES (2097, '列表', 2050, 1, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:list', '#', 'admin', '2023-08-16 09:48:25', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2098, '详情', 2050, 2, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:info', '#', 'admin', '2023-08-16 09:50:11', 'admin', '2023-08-16 09:51:52', '', 0);
+INSERT INTO `sys_menu` VALUES (2099, '修改', 2050, 3, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:update', '#', 'admin', '2023-08-16 09:52:07', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2100, '删除', 2050, 4, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:delete', '#', 'admin', '2023-08-16 09:52:30', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2101, '同步七牛', 2050, 5, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:syncQiniu', '#', 'admin', '2023-08-16 09:52:48', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2102, '上传', 2050, 6, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:upload', '#', 'admin', '2023-08-16 09:53:00', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2103, '下载', 2050, 7, '', NULL, 1, 'F', 0, 0, 'tool:qiniu:download', '#', 'admin', '2023-08-16 09:53:11', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2104, '详情', 2044, 1, '', NULL, 1, 'F', 0, 0, 'tool:email:info', '#', 'admin', '2023-08-16 09:54:01', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2105, '修改', 2044, 2, '', NULL, 1, 'F', 0, 0, 'tool:email:update', '#', 'admin', '2023-08-16 09:54:16', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2106, '发送邮件', 2044, 3, '', NULL, 1, 'F', 0, 0, 'tool:email:send', '#', 'admin', '2023-08-16 09:54:45', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2107, '详情', 2037, 5, '', NULL, 1, 'F', 0, 0, 'shop:goods:info', '#', 'admin', '2023-08-16 09:55:30', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2108, '详情', 2045, 4, '', NULL, 1, 'F', 0, 0, 'shop:comment:info', '#', 'admin', '2023-08-16 09:56:20', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2109, '详情', 2035, 5, '', NULL, 1, 'F', 0, 0, 'shop:banner:info', '#', 'admin', '2023-08-16 09:56:40', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2110, '详情', 2036, 5, '', NULL, 1, 'F', 0, 0, 'shop:category:info', '#', 'admin', '2023-08-16 09:57:04', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2111, '详情', 2034, 5, '', NULL, 1, 'F', 0, 0, 'shop:channel:info', '#', 'admin', '2023-08-16 09:57:21', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2112, '详情', 2047, 5, '', NULL, 1, 'F', 0, 0, 'shop:diamond:info', '#', 'admin', '2023-08-16 09:57:33', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2113, '详情', 2048, 5, '', NULL, 1, 'F', 0, 0, 'shop:column:info', '#', 'admin', '2023-08-16 09:57:49', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2114, '详情', 2049, 5, '', NULL, 1, 'F', 0, 0, 'shop:keyword:info', '#', 'admin', '2023-08-16 09:58:12', '', NULL, '', 0);
 
 -- ----------------------------
 -- Table structure for sys_role
