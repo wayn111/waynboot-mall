@@ -16,6 +16,7 @@ import com.wayn.util.util.R;
 import com.wf.captcha.SpecCaptcha;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -43,7 +44,7 @@ public class LoginController {
      * @return R
      */
     @PostMapping("/login")
-    public R<String> login(@RequestBody LoginObj loginObj) {
+    public R<String> login(@RequestBody @Validated LoginObj loginObj) {
         // 生成令牌
         String token = loginService.login(loginObj.getMobile(), loginObj.getPassword());
         return R.success(token);
@@ -56,7 +57,7 @@ public class LoginController {
      * @return R
      */
     @PostMapping("/registry")
-    public R<Boolean> registry(@RequestBody RegistryObj registryObj) {
+    public R<Boolean> registry(@RequestBody @Validated RegistryObj registryObj) {
         if (!StringUtils.equals(registryObj.getPassword(), registryObj.getConfirmPassword())) {
             return R.error(USER_TWO_PASSWORD_NOT_SAME_ERROR);
         }
@@ -80,7 +81,6 @@ public class LoginController {
         String avatar = SysConstants.DEFAULT_AVATAR;
         member.setAvatar(avatar);
         member.setMobile(registryObj.getMobile());
-        member.setEmail(registryObj.getEmail());
         member.setPassword(MobileSecurityUtils.encryptPassword(registryObj.getPassword()));
         member.setCreateTime(new Date());
         return R.result(iMemberService.save(member));

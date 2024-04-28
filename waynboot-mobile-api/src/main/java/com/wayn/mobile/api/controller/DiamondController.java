@@ -38,7 +38,7 @@ public class DiamondController extends BaseController {
      * @return R
      */
     @GetMapping("getGoodsList")
-    public R getGoodsList(Long diamondId) {
+    public R<DiamondGoodsResVO> getGoodsList(Long diamondId) {
         Page<Goods> page = getPage();
         Diamond diamond = iDiamondService.getById(diamondId);
         DiamondJumpType diamondJumpType = diamondJumpContext.getInstance(diamond.getJumpType());

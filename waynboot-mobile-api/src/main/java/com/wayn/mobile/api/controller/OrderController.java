@@ -7,6 +7,8 @@ import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.service.shop.IMobileOrderService;
 import com.wayn.common.core.vo.OrderDetailVO;
 import com.wayn.common.core.vo.OrderVO;
+import com.wayn.common.response.OrderListResVO;
+import com.wayn.common.response.OrderStatusCountResVO;
 import com.wayn.common.response.SubmitOrderResVO;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import com.wayn.util.enums.ReturnCodeEnum;
@@ -48,7 +50,7 @@ public class OrderController extends BaseController {
      * @return
      */
     @GetMapping("list")
-    public R list(@RequestParam(defaultValue = "0") Integer showType) {
+    public R<OrderListResVO> list(@RequestParam(defaultValue = "0") Integer showType) {
         Page<Order> page = getPage();
         return R.success(iMobileOrderService.selectListPage(page, showType, MobileSecurityUtils.getUserId()));
     }
@@ -59,7 +61,7 @@ public class OrderController extends BaseController {
      * @return R
      */
     @PostMapping("statusCount")
-    public R statusCount() {
+    public R<OrderStatusCountResVO> statusCount() {
         return R.success(iMobileOrderService.statusCount(MobileSecurityUtils.getUserId()));
     }
 
@@ -81,7 +83,7 @@ public class OrderController extends BaseController {
      * @return R
      */
     @GetMapping("searchResult/{orderSn}")
-    public R searchResult(@PathVariable String orderSn) {
+    public R<Boolean> searchResult(@PathVariable String orderSn) {
         String result = iMobileOrderService.searchResult(orderSn);
         if (!"success".equals(result)) {
             return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR.getCode(), result);
@@ -96,8 +98,9 @@ public class OrderController extends BaseController {
      * @return R
      */
     @PostMapping("cancel/{orderId}")
-    public R cancel(@PathVariable Long orderId) {
-        return iMobileOrderService.cancel(orderId);
+    public R<Boolean> cancel(@PathVariable Long orderId) {
+        iMobileOrderService.cancel(orderId);
+        return R.success();
     }
 
     /**
@@ -107,8 +110,9 @@ public class OrderController extends BaseController {
      * @return R
      */
     @PostMapping("confirm/{orderId}")
-    public R confirm(@PathVariable Long orderId) {
-        return iMobileOrderService.confirm(orderId);
+    public R<Boolean> confirm(@PathVariable Long orderId) {
+        iMobileOrderService.confirm(orderId);
+        return R.success();
     }
 
     /**
@@ -118,8 +122,9 @@ public class OrderController extends BaseController {
      * @return R
      */
     @PostMapping("delete/{orderId}")
-    public R delete(@PathVariable Long orderId) {
-        return iMobileOrderService.delete(orderId);
+    public R<Boolean> delete(@PathVariable Long orderId) {
+        iMobileOrderService.delete(orderId);
+        return R.success();
     }
 
 }

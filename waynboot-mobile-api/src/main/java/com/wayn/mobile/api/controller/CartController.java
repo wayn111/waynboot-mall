@@ -73,7 +73,7 @@ public class CartController extends BaseController {
      * @return R
      */
     @PutMapping
-    public R update(@RequestBody Cart cart) {
+    public R<Boolean> update(@RequestBody Cart cart) {
         return R.result(iCartService.updateById(cart));
     }
 

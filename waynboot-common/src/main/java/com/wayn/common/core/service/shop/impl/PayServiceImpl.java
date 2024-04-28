@@ -14,7 +14,6 @@ import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.WaynConfig;
@@ -31,7 +30,6 @@ import com.wayn.util.enums.PayTypeEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
 import com.wayn.util.util.OrderSnGenUtil;
-import com.wayn.util.util.R;
 import com.wayn.util.util.ServletUtils;
 import com.wayn.util.util.ip.IpUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -215,7 +213,7 @@ public class PayServiceImpl implements IPayService {
                 order.setOrderStatus(OrderUtil.STATUS_PAY);
                 order.setUpdateTime(new Date());
                 if (!orderService.updateById(order)) {
-                    return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+                    throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
                 }
                 return null;
             }

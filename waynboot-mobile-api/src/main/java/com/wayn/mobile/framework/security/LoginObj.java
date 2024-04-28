@@ -1,32 +1,21 @@
 package com.wayn.mobile.framework.security;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class LoginObj {
 
     /**
-     * 用户名
-     */
-    private String username;
-
-    /**
      * 手机号
      */
+    @NotNull
     private String mobile;
 
     /**
      * 用户密码
      */
+    @NotNull
     private String password;
 
-    /**
-     * 验证码
-     */
-    private String code;
-
-    /**
-     * 验证码 key
-     */
-    private String key;
 }

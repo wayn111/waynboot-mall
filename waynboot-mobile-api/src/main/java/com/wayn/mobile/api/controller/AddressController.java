@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,7 +31,7 @@ public class AddressController {
      * @return R
      */
     @GetMapping("list")
-    public R list() {
+    public R<List<Address>> list() {
         Long memberId = MobileSecurityUtils.getUserId();
         return R.success(iAddressService.list(new QueryWrapper<Address>().eq("member_id", memberId)));
     }
@@ -41,7 +42,7 @@ public class AddressController {
      * @return R
      */
     @PostMapping
-    public R add(@RequestBody Address address) {
+    public R<Boolean> add(@RequestBody Address address) {
         Long memberId = MobileSecurityUtils.getUserId();
         if (address.getIsDefault()) {
             iAddressService.update().eq("member_id", memberId).set("is_default", false).update();
@@ -61,7 +62,7 @@ public class AddressController {
      * @return R
      */
     @DeleteMapping("{addressId}")
-    public R delete(@PathVariable Long addressId) {
+    public R<Boolean> delete(@PathVariable Long addressId) {
         return R.result(iAddressService.removeById(addressId));
     }
 }

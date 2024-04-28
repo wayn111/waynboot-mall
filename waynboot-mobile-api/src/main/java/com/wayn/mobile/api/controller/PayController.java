@@ -28,7 +28,7 @@ public class PayController extends BaseController {
     private IPayService payService;
 
     /**
-     * JSAPI支付
+     * 微信JSAPI支付
      *
      * @param orderVO
      * @return
@@ -39,7 +39,7 @@ public class PayController extends BaseController {
     }
 
     /**
-     * H5支付
+     * 商城H5支付
      *
      * @param orderVO
      * @return
