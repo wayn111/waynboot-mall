@@ -177,7 +177,7 @@ public class SearchController extends BaseController {
     }
 
     /**
-     * 热门搜索
+     * 热门搜索词
      *
      * @return R
      */

@@ -33,9 +33,8 @@ public class UserController {
 
     /**
      * 获取用户信息
-     * 需要再 header 中添加 Authorization 参数
      *
-     * @return
+     * @return R
      */
     @GetMapping("info")
     public R<Member> getInfo() {
@@ -50,7 +49,7 @@ public class UserController {
      * @return R
      */
     @PostMapping("profile")
-    public R<Boolean> profile(@RequestBody ProfileVO profileVO) {
+    public R<Boolean> updateProfile(@RequestBody ProfileVO profileVO) {
         String nickname = profileVO.getNickname();
         Integer gender = profileVO.getGender();
         String mobile = profileVO.getMobile();
