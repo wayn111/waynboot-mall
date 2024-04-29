@@ -30,7 +30,7 @@ public class OrderRefundController extends BaseController {
     private IPayService payService;
 
     /**
-     * 退款
+     * 申请退款
      *
      * @param orderId 订单id
      * @return R

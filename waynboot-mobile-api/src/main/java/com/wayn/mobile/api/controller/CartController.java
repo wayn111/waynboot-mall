@@ -1,13 +1,13 @@
 package com.wayn.mobile.api.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.entity.shop.Cart;
 import com.wayn.common.core.service.shop.ICartService;
+import com.wayn.common.response.CartResponseVO;
 import com.wayn.common.response.CheckedGoodsResVO;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import com.wayn.util.util.R;
@@ -38,7 +38,7 @@ public class CartController extends BaseController {
      * @return
      */
     @GetMapping("list")
-    public R<JSONArray> list() {
+    public R<List<CartResponseVO>> list() {
         Long userId = MobileSecurityUtils.getUserId();
         Page<Cart> page = getPage();
         return R.success(iCartService.list(page, userId));
@@ -121,7 +121,7 @@ public class CartController extends BaseController {
         List<Cart> cartList = iCartService.list(new QueryWrapper<Cart>()
                 .eq("user_id", userId).eq("checked", true));
         BigDecimal goodsAmount = BigDecimal.ZERO;
-        BigDecimal orderTotalAmount = BigDecimal.ZERO;
+        BigDecimal orderTotalAmount;
         // 计算总价
         for (Cart cart : cartList) {
             goodsAmount = goodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));

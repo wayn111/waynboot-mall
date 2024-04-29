@@ -1,10 +1,11 @@
 package com.wayn.common.core.service.shop;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alipay.api.domain.UserIdentity;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Cart;
+import com.wayn.common.response.CartResponseVO;
+
+import java.util.List;
 
 /**
  * 购物车商品表 服务类
@@ -48,7 +49,7 @@ public interface ICartService extends IService<Cart> {
      * @param userId 用户ID
      * @return R
      */
-    JSONArray list(Page<Cart> page, Long userId);
+    List<CartResponseVO> list(Page<Cart> page, Long userId);
 
     /**
      * 改变购物车商品数量

@@ -1,7 +1,6 @@
 package com.wayn.common.core.service.shop.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -14,21 +13,19 @@ import com.wayn.common.core.mapper.shop.CartMapper;
 import com.wayn.common.core.service.shop.ICartService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
+import com.wayn.common.response.CartResponseVO;
 import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisLock;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
-import com.wayn.util.util.bean.MyBeanUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -118,41 +115,37 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     }
 
     @Override
-    public JSONArray list(Page<Cart> page, Long userId) {
+    public List<CartResponseVO> list(Page<Cart> page, Long userId) {
         IPage<Cart> goodsIPage = cartMapper.selectCartPageList(page, userId);
         List<Cart> cartList = goodsIPage.getRecords();
         List<Long> goodsIdList = cartList.stream().map(Cart::getGoodsId).toList();
         List<Long> productIdList = cartList.stream().map(Cart::getProductId).toList();
 
-        JSONArray array = new JSONArray();
+        List<CartResponseVO> responseVOS = new ArrayList<>();
         if (CollectionUtils.isEmpty(goodsIdList)) {
-            return array;
+            return responseVOS;
         }
         Map<Long, GoodsProduct> productIdMap = iGoodsProductService.selectProductByIds(productIdList).stream()
                 .collect(Collectors.toMap(GoodsProduct::getId, product -> product));
 
         for (Cart cart : cartList) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                GoodsProduct product = productIdMap.get(cart.getProductId());
-                Integer number = cart.getNumber();
-                Integer maxNumber = product.getNumber();
-                if (maxNumber < number) {
-                    commonThreadPoolTaskExecutor.execute(() -> {
-                        this.lambdaUpdate()
-                                .set(Cart::getChecked, false)
-                                .eq(Cart::getId, cart.getId())
-                                .update();
-                    });
-                }
-                MyBeanUtil.copyProperties2Map(cart, jsonObject);
-                jsonObject.put("maxNum", maxNumber);
-            } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-                log.error(e.getMessage(), e);
+            CartResponseVO responseVO = new CartResponseVO();
+            GoodsProduct product = productIdMap.get(cart.getProductId());
+            Integer number = cart.getNumber();
+            Integer maxNumber = product.getNumber();
+            if (maxNumber < number) {
+                commonThreadPoolTaskExecutor.execute(() -> {
+                    this.lambdaUpdate()
+                            .set(Cart::getChecked, false)
+                            .eq(Cart::getId, cart.getId())
+                            .update();
+                });
             }
-            array.add(jsonObject);
+            BeanUtil.copyProperties(cart, responseVO);
+            responseVO.setMaxNum(maxNumber);
+            responseVOS.add(responseVO);
         }
-        return array;
+        return responseVOS;
     }
 
     @Override
