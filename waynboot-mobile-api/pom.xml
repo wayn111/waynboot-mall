@@ -26,13 +26,11 @@
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-common</artifactId>
-            <version>2.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-message-core</artifactId>
-            <version>2.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -49,11 +47,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>io.github.wayn111</groupId>
-            <artifactId>mybatis-xmlreload-spring-boot-starter</artifactId>
-            <version>3.0.3.m1</version>
-        </dependency>
     </dependencies>
 
     <build>

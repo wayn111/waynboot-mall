@@ -60,38 +60,33 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.connector.java.version}</version>
         </dependency>
+        <!--微信支付-->
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-pay</artifactId>
-            <version>4.5.0</version>
         </dependency>
 
         <!--支付宝依赖-->
         <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
-            <version>4.38.90.ALL</version>
         </dependency>
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-util</artifactId>
-            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-data-redis</artifactId>
-            <version>2.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-data-elastic</artifactId>
-            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-message-core</artifactId>
-            <version>2.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
