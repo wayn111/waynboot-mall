@@ -44,6 +44,8 @@
         <xxl-job.version>2.3.1</xxl-job.version>
         <hutool.version>5.8.20</hutool.version>
         <easyexcel.version>3.2.1</easyexcel.version>
+        <weixin-java-pay.version>4.5.0</weixin-java-pay.version>
+        <alipay-sdk-java.version>4.38.90.ALL</alipay-sdk-java.version>
     </properties>
 
     <dependencies>
@@ -192,13 +194,6 @@
                 <version>${fastjson.version}</version>
             </dependency>
 
-            <!-- 七牛云 -->
-            <dependency>
-                <groupId>com.qiniu</groupId>
-                <artifactId>qiniu-java-sdk</artifactId>
-                <version>${qiniu.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.sun.mail</groupId>
                 <artifactId>jakarta.mail</artifactId>
@@ -216,12 +211,26 @@
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
             </dependency>
+            <!--微信支付-->
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-pay</artifactId>
+                <version>${weixin-java-pay.version}</version>
+            </dependency>
+
+            <!--支付宝依赖-->
+            <dependency>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${alipay-sdk-java.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
                 <version>${elasticsearch.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-client</artifactId>
@@ -232,6 +241,33 @@
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-high-level-client</artifactId>
                 <version>${elasticsearch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-data-redis</artifactId>
+                <version>${version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-data-elastic</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-common</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-message-core</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-util</artifactId>
+                <version>${version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

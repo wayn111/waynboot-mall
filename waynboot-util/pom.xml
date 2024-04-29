@@ -75,25 +75,21 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>3.2.1</version>
         </dependency>
 
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
         </dependency>
 
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-data-redis</artifactId>
-            <version>2.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-data-elastic</artifactId>
-            <version>2.0.0</version>
         </dependency>
 
     </dependencies>
