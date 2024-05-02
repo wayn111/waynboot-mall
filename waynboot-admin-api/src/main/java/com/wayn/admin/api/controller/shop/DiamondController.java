@@ -27,37 +27,67 @@ public class DiamondController extends BaseController {
 
     private IDiamondService iDiamondService;
 
+    /**
+     * 金刚区列表
+     *
+     * @param diamond
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:diamond:list')")
     @GetMapping("/list")
-    public R list(Diamond diamond) {
+    public R<IPage<Diamond>> list(Diamond diamond) {
         Page<Diamond> page = getPage();
         IPage<Diamond> diamondIPage = iDiamondService.listPage(page, diamond);
         return R.success(diamondIPage);
     }
 
+    /**
+     * 添加金刚区
+     *
+     * @param diamond
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:diamond:add')")
     @PostMapping
-    public R addDiamond(@Validated @RequestBody Diamond diamond) {
+    public R<Boolean> addDiamond(@Validated @RequestBody Diamond diamond) {
         diamond.setCreateTime(new Date());
         return R.result(iDiamondService.save(diamond));
     }
 
+    /**
+     * 修改金刚区
+     *
+     * @param diamond
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:diamond:update')")
     @PutMapping
-    public R updateDiamond(@Validated @RequestBody Diamond diamond) {
+    public R<Boolean> updateDiamond(@Validated @RequestBody Diamond diamond) {
         diamond.setUpdateTime(new Date());
         return R.result(iDiamondService.updateById(diamond));
     }
 
+    /**
+     * 获取金刚区信息
+     *
+     * @param diamondId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:diamond:info')")
     @GetMapping("{diamondId}")
-    public R getDiamond(@PathVariable Long diamondId) {
+    public R<Diamond> getDiamond(@PathVariable Long diamondId) {
         return R.success(iDiamondService.getById(diamondId));
     }
 
+    /**
+     * 删除金刚区
+     *
+     * @param diamondIds
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:diamond:delete')")
     @DeleteMapping("{diamondIds}")
-    public R deleteDiamond(@PathVariable List<Long> diamondIds) {
+    public R<Boolean> deleteDiamond(@PathVariable List<Long> diamondIds) {
         return R.result(iDiamondService.removeByIds(diamondIds));
     }
 }

@@ -1,8 +1,11 @@
 package com.wayn.util.enums;
 
+import lombok.Getter;
+
 /**
  * 用户状态
  */
+@Getter
 public enum UserStatusEnum {
     OK(0, "正常"), DISABLE(1, "停用"), DELETED(2, "删除");
 
@@ -14,11 +17,4 @@ public enum UserStatusEnum {
         this.info = info;
     }
 
-    public Integer getCode() {
-        return code;
-    }
-
-    public String getInfo() {
-        return info;
-    }
 }

@@ -5,20 +5,21 @@ import com.wayn.admin.framework.security.model.LoginUserDetail;
 import com.wayn.admin.framework.security.service.LoginService;
 import com.wayn.admin.framework.security.service.PermissionService;
 import com.wayn.admin.framework.security.service.TokenService;
-import com.wayn.common.core.vo.RouterVo;
-import com.wayn.common.response.CaptchaResVO;
-import com.wayn.common.response.UserInfoResVO;
-import com.wayn.util.constant.SysConstants;
 import com.wayn.common.core.entity.system.Menu;
 import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IMenuService;
+import com.wayn.common.core.vo.RouterVo;
+import com.wayn.common.response.CaptchaResVO;
+import com.wayn.common.response.UserInfoResVO;
+import com.wayn.data.redis.manager.RedisCache;
+import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.IdUtil;
 import com.wayn.util.util.R;
-import com.wayn.data.redis.manager.RedisCache;
 import com.wf.captcha.SpecCaptcha;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,8 +44,14 @@ public class LoginController {
     private IMenuService iMenuService;
     private RedisCache redisCache;
 
+    /**
+     * 用户登录
+     *
+     * @param loginObj
+     * @return
+     */
     @PostMapping("/login")
-    public R login(@RequestBody LoginObj loginObj) {
+    public R login(@RequestBody @Validated LoginObj loginObj) {
         // 获取redis中的验证码
         String redisCode = redisCache.getCacheObject(loginObj.getKey());
         // 判断验证码
@@ -58,6 +65,12 @@ public class LoginController {
         return R.success(token);
     }
 
+    /**
+     * 获取用户信息
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("/getInfo")
     public R<UserInfoResVO> userInfo(HttpServletRequest request) {
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
@@ -71,6 +84,12 @@ public class LoginController {
         return R.success(userInfoResVO);
     }
 
+    /**
+     * 获取用户路由菜单
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("/getRouters")
     public R<List<RouterVo>> getRouters(HttpServletRequest request) {
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
@@ -80,6 +99,11 @@ public class LoginController {
         return R.success(iMenuService.buildMenus(menus));
     }
 
+    /**
+     * 验证码
+     *
+     * @return
+     */
     @GetMapping("/captcha")
     public R<CaptchaResVO> captcha() {
         SpecCaptcha specCaptcha = new SpecCaptcha(100, 43, 4);

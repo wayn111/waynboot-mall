@@ -1,11 +1,10 @@
 package com.wayn.mobile.api.controller;
 
 
-import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.service.shop.IPayService;
-import com.wayn.common.core.vo.OrderVO;
-import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
+import com.wayn.common.request.OrderPayReqVO;
+import com.wayn.common.response.OrderPayResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,25 +27,15 @@ public class PayController extends BaseController {
     private IPayService payService;
 
     /**
-     * 微信JSAPI支付
+     * 商城统一支付下单接口
      *
-     * @param orderVO
+     * @param reqVO
      * @return
      */
-    @PostMapping("weixin/jsapi")
-    public R<WxPayMpOrderResult> jsapi(@RequestBody OrderVO orderVO) {
-        return R.success(payService.prepay(orderVO.getOrderSn(), orderVO.getPayType(), MobileSecurityUtils.getUserId(), request));
-    }
-
-    /**
-     * 商城H5支付
-     *
-     * @param orderVO
-     * @return
-     */
-    @PostMapping("h5pay")
-    public R h5pay(@RequestBody OrderVO orderVO) throws UnsupportedEncodingException {
-        return R.success(payService.h5pay(orderVO));
+    @PostMapping("prepay")
+    public R<OrderPayResVO> prepay(@RequestBody OrderPayReqVO reqVO) throws UnsupportedEncodingException {
+        log.info("order prepay reqVO is {}", reqVO);
+        return R.success(payService.prepay(reqVO));
     }
 
 }

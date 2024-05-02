@@ -35,6 +35,11 @@ public class OrderManagerResVO implements Serializable {
     private Short orderStatus;
 
     /**
+     * 订单状态说明
+     */
+    private String orderStatusMsg;
+
+    /**
      * 售后状态，0是可申请，1是用户已申请，2是管理员审核通过，3是管理员退款成功，4是管理员审核拒绝，5是用户已取消
      */
     private Short aftersaleStatus;
@@ -91,9 +96,16 @@ public class OrderManagerResVO implements Serializable {
     private String payId;
 
     /**
-     * 支付方式 1微信 2支付宝
+     * 支付方式
+     *
+     * @see com.wayn.common.design.strategy.pay.PayTypeEnum
      */
     private Integer payType;
+
+    /**
+     * 支付方式说明
+     */
+    private String payTypeMsg;
 
     /**
      * 付款时间
@@ -126,6 +138,11 @@ public class OrderManagerResVO implements Serializable {
      * 退款方式
      */
     private Integer refundType;
+
+    /**
+     * 退款方式说明
+     */
+    private String refundTypeMsg;
 
     /**
      * 退款备注
@@ -164,4 +181,13 @@ public class OrderManagerResVO implements Serializable {
      * 商品名称
      */
     private String goodsName;
+
+    /**
+     * 退款状态 0未退款 1申请退款 2退款成功 3退款失败
+     */
+    private Integer refundStatus;
+    /**
+     * 退款状态说明
+     */
+    private String refundStatusMsg;
 }

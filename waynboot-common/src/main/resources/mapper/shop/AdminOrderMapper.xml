@@ -48,7 +48,7 @@
     <select id="selectOrderListPage" resultType="com.wayn.common.response.OrderManagerResVO">
         select o.id,
         o.user_id, o.order_sn, o.order_status, o.mobile, o.address, o.message, o.goods_price,
-        o.order_price, o.actual_price, o.pay_type, o.pay_id, o.pay_time,
+        o.order_price, o.actual_price, o.pay_type, o.pay_id, o.pay_time,o.refund_status,
         o.ship_time, o.refund_amount, o.refund_type, o.refund_content, o.refund_time, o.confirm_time, o.comments,
         o.order_end_time, o.create_time, o.update_time, group_concat(g.goods_name) goods_name
         from shop_order o join shop_order_goods g on o.id = g.order_id

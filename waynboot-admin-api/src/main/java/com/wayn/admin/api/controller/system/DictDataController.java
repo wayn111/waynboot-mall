@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 字典值管理
+ * 后台字典值管理
  *
  * @author wayn
  * @since 2020-07-21

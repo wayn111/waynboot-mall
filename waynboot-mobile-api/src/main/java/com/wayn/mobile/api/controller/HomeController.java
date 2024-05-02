@@ -6,7 +6,6 @@ import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.service.shop.IHomeService;
 import com.wayn.common.core.vo.HomeIndexResponseVO;
 import com.wayn.common.core.vo.MallConfigResponseVO;
-import com.wayn.common.core.vo.RecommonGoodsResponseVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +45,7 @@ public class HomeController extends BaseController {
     }
 
     /**
-     * 为你推荐
+     * 为你推荐商品列表
      *
      * @return R
      */

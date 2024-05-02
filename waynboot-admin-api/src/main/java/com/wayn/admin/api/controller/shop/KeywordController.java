@@ -1,5 +1,6 @@
 package com.wayn.admin.api.controller.shop;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Keyword;
@@ -26,36 +27,68 @@ public class KeywordController extends BaseController {
 
     private IKeywordService iKeywordService;
 
+    /**
+     * 关键字列表
+     *
+     * @param keyword
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:keyword:list')")
     @GetMapping("list")
-    public R list(Keyword keyword) {
+    public R<IPage<Keyword>> list(Keyword keyword) {
         Page<Keyword> page = getPage();
         return R.success(iKeywordService.listPage(page, keyword));
     }
 
+    /**
+     * 添加关键字
+     *
+     * @param keyword
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:keyword:add')")
     @PostMapping
-    public R addKeyword(@Validated @RequestBody Keyword keyword) {
+    public R<Boolean> addKeyword(@Validated @RequestBody Keyword keyword) {
         keyword.setCreateTime(new Date());
         return R.result(iKeywordService.save(keyword));
     }
 
+    /**
+     * 修改关键字
+     *
+     * @param keyword
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:keyword:update')")
     @PutMapping
-    public R updateKeyword(@Validated @RequestBody Keyword keyword) {
+    public R<Boolean> updateKeyword(@Validated @RequestBody Keyword keyword) {
         keyword.setUpdateTime(new Date());
         return R.result(iKeywordService.updateById(keyword));
     }
 
+
+    /**
+     * 获取关键字信息
+     *
+     * @param keywordId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:keyword:info')")
     @GetMapping("{keywordId}")
-    public R getKeyword(@PathVariable Long keywordId) {
+    public R<Keyword> getKeyword(@PathVariable Long keywordId) {
         return R.success(iKeywordService.getById(keywordId));
     }
 
+
+    /**
+     * 删除关键字
+     *
+     * @param keywordIds
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:keyword:delete')")
     @DeleteMapping("{keywordIds}")
-    public R deleteKeyword(@PathVariable List<Long> keywordIds) {
+    public R<Boolean> deleteKeyword(@PathVariable List<Long> keywordIds) {
         return R.result(iKeywordService.removeByIds(keywordIds));
     }
 }

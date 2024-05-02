@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.vo.OrderDetailVO;
-import com.wayn.common.core.vo.OrderVO;
+import com.wayn.common.request.OrderCommitReqVO;
 import com.wayn.common.response.OrderListResVO;
 import com.wayn.common.response.OrderStatusCountResVO;
 import com.wayn.common.response.SubmitOrderResVO;
@@ -33,9 +33,9 @@ public interface IMobileOrderService extends IService<Order> {
     /**
      * 异步下单
      *
-     * @param orderVO 订单VO
+     * @param orderCommitReqVO 订单VO
      */
-    SubmitOrderResVO asyncSubmit(OrderVO orderVO, Long userId) throws Exception;
+    SubmitOrderResVO asyncSubmit(OrderCommitReqVO orderCommitReqVO, Long userId) throws Exception;
 
     /**
      * 获取订单列表
@@ -53,6 +53,17 @@ public interface IMobileOrderService extends IService<Order> {
      * @return r
      */
     String searchResult(String orderSn);
+
+    /**
+     * 订单退款
+     * <p>
+     * 1. 检测当前订单是否可以退款；
+     * 2. 更改订单状态为已退款。
+     *
+     * @param orderId 订单ID
+     * @return void
+     */
+    void refund(Long orderId);
 
     /**
      * 取消订单

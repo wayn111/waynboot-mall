@@ -6,7 +6,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.service.shop.IMobileOrderService;
 import com.wayn.common.core.vo.OrderDetailVO;
-import com.wayn.common.core.vo.OrderVO;
+import com.wayn.common.request.OrderCommitReqVO;
 import com.wayn.common.response.OrderListResVO;
 import com.wayn.common.response.OrderStatusCountResVO;
 import com.wayn.common.response.SubmitOrderResVO;
@@ -68,12 +68,12 @@ public class OrderController extends BaseController {
     /**
      * 下单接口
      *
-     * @param orderVO 订单参数
+     * @param orderCommitReqVO 订单参数
      * @return R
      */
     @PostMapping("submit")
-    public R<SubmitOrderResVO> submit(@RequestBody OrderVO orderVO) throws Exception {
-        return R.success(iMobileOrderService.asyncSubmit(orderVO, MobileSecurityUtils.getUserId()));
+    public R<SubmitOrderResVO> submit(@RequestBody OrderCommitReqVO orderCommitReqVO) throws Exception {
+        return R.success(iMobileOrderService.asyncSubmit(orderCommitReqVO, MobileSecurityUtils.getUserId()));
     }
 
     /**

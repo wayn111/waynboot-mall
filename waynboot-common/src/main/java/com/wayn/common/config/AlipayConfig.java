@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "shop.alipay")
 public class AlipayConfig {
-
     private String appId;
     private String rsaPrivateKey;
     private String alipayPublicKey;
@@ -17,4 +16,5 @@ public class AlipayConfig {
     private String format;
     private String logPath;
     private String signtype;
+    private String notifyUrl;
 }

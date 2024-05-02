@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.vo.ShipVO;
+import com.wayn.common.request.OrderManagerReqVO;
+import com.wayn.common.request.OrderRefundReqVO;
+import com.wayn.common.response.OrderDetailResVO;
 import com.wayn.common.response.OrderManagerResVO;
-import com.wayn.util.util.R;
 
 import java.io.UnsupportedEncodingException;
 
@@ -26,7 +28,7 @@ public interface IOrderService extends IService<Order> {
      * @param order 订单对象
      * @return r
      */
-    IPage<OrderManagerResVO> listPage(IPage<Order> page, Order order);
+    IPage<OrderManagerResVO> listPage(IPage<Order> page, OrderManagerReqVO order);
 
     /**
      * 订单退款
@@ -41,10 +43,9 @@ public interface IOrderService extends IService<Order> {
      * 1. 管理员登录微信官方支付平台点击退款操作进行退款
      * 2. 管理员登录litemall管理后台点击退款操作进行订单状态修改和商品库存回库
      *
-     * @param orderId 订单id
-     * @return r
+     * @param reqVO
      */
-    R refund(Long orderId) throws UnsupportedEncodingException, WxPayException, AlipayApiException;
+    void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException;
 
     /**
      * 发货
@@ -54,13 +55,13 @@ public interface IOrderService extends IService<Order> {
      * @param shipVO 订单信息，{ orderId：xxx, shipSn: xxx, shipChannel: xxx }
      * @return r
      */
-    R ship(ShipVO shipVO) throws UnsupportedEncodingException;
+    void ship(ShipVO shipVO) throws UnsupportedEncodingException;
 
     /**
      * 获取订单详情（包含订单信息，订单商品信息，用户信息）
      *
      * @param orderId
-     * @return r
+     * @return OrderDetailResVO
      */
-    R detail(Long orderId);
+    OrderDetailResVO detail(Long orderId);
 }

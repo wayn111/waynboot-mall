@@ -20,6 +20,7 @@ public enum ReturnCodeEnum {
      */
     PARAMETER_MISS_ERROR(4001, "参数缺失"),
     PARAMETER_TYPE_ERROR(4002, "参数类型错误"),
+    PARAMETER_ERROR(4003, "参数错误"),
 
     /**
      * 50xx，订单错误
@@ -48,6 +49,8 @@ public enum ReturnCodeEnum {
     ORDER_ERROR_ADDRESS_ERROR(50143, "下单失败，当前地址错误"),
     ORDER_REFUND_ERROR(50144, "退款失败"),
     ORDER_ERROR_STOCK_NOT_ENOUGH(50145, "%s,%s 库存不足，请重新选择商品"),
+    ORDER_NOT_FOUND(50146, "订单未找到"),
+    ORDER_REFUND_MONEY_LARGE(50147, "退款金额超过订单金额"),
 
     // 用户错误
     USER_NOT_EXISTS_ERROR(5101, "用户不存在"),
