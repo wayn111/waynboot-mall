@@ -4,11 +4,11 @@ import com.wayn.admin.framework.security.model.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
 import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.base.controller.BaseController;
+import com.wayn.common.core.entity.system.Menu;
+import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.core.vo.TreeVO;
 import com.wayn.common.response.RoleMenuTreeselectResVO;
 import com.wayn.util.constant.SysConstants;
-import com.wayn.common.core.entity.system.Menu;
-import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
 import com.wayn.util.util.ServletUtils;
@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 菜单管理
+ * 后台菜单管理
  *
  * @author wayn
  * @since 2020-07-21
@@ -37,6 +37,12 @@ public class MenuController extends BaseController {
 
     private TokenService tokenService;
 
+    /**
+     * 菜单列表
+     *
+     * @param menu
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:menu:list')")
     @GetMapping("/list")
     public R<List<Menu>> list(Menu menu) {
@@ -71,9 +77,15 @@ public class MenuController extends BaseController {
         return R.success(resVO);
     }
 
+    /**
+     * 添加菜单
+     *
+     * @param menu
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:menu:add')")
     @PostMapping
-    public R<Boolean> addRole(@Validated @RequestBody Menu menu) {
+    public R<Boolean> addMenu(@Validated @RequestBody Menu menu) {
         if (SysConstants.NOT_UNIQUE.equals(iMenuService.checkMenuNameUnique(menu))) {
             return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("新增菜单[%s]失败，菜单名称已存在", menu.getMenuName())));
         }
@@ -82,9 +94,15 @@ public class MenuController extends BaseController {
         return R.result(iMenuService.save(menu));
     }
 
+    /**
+     * 修改菜单
+     *
+     * @param menu
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:menu:update')")
     @PutMapping
-    public R<Boolean> updateRole(@Validated @RequestBody Menu menu) {
+    public R<Boolean> updateMenu(@Validated @RequestBody Menu menu) {
         if (SysConstants.NOT_UNIQUE.equals(iMenuService.checkMenuNameUnique(menu))) {
             return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新菜单[%s]失败，菜单名称已存在", menu.getMenuName())));
         }
@@ -93,12 +111,24 @@ public class MenuController extends BaseController {
         return R.result(iMenuService.updateById(menu));
     }
 
+    /**
+     * 获取菜单信息
+     *
+     * @param menuId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:menu:query')")
     @GetMapping("/{menuId}")
     public R<Menu> getMenu(@PathVariable Long menuId) {
         return R.success(iMenuService.getById(menuId));
     }
 
+    /**
+     * 删除菜单
+     *
+     * @param menuId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:menu:delete')")
     @DeleteMapping("/{menuId}")
     public R<Boolean> deleteMenu(@PathVariable Long menuId) {

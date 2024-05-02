@@ -1,6 +1,7 @@
 package com.wayn.admin.api.controller.shop;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Address;
@@ -34,7 +35,7 @@ public class AddressController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('shop:address:list')")
     @GetMapping("list")
-    public R list(Address address) {
+    public R<IPage<Address>> list(Address address) {
         Page<Address> page = getPage();
         return R.success(iAddressService.listPage(page, address));
     }
@@ -47,7 +48,7 @@ public class AddressController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('shop:address:info')")
     @GetMapping("{addressId}")
-    public R info(@PathVariable Long addressId) {
+    public R<Address> info(@PathVariable Long addressId) {
         return R.success(iAddressService.getById(addressId));
     }
 }

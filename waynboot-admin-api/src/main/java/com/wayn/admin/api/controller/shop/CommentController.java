@@ -1,6 +1,7 @@
 package com.wayn.admin.api.controller.shop;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Comment;
@@ -26,28 +27,52 @@ public class CommentController extends BaseController {
 
     private ICommentService iCommentService;
 
+    /**
+     * 评论列表
+     *
+     * @param comment
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:comment:list')")
     @GetMapping("list")
-    public R list(Comment comment) {
+    public R<IPage<Comment>> list(Comment comment) {
         Page<Comment> page = getPage();
         return R.success(iCommentService.listPage(page, comment));
     }
 
+    /**
+     * 获取评论信息
+     *
+     * @param commentId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:comment:info')")
     @GetMapping("{commentId}")
-    public R getComment(@PathVariable Long commentId) {
+    public R<Comment> getComment(@PathVariable Long commentId) {
         return R.success(iCommentService.getById(commentId));
     }
 
+    /**
+     * 修改评论
+     *
+     * @param comment
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:comment:update')")
     @PutMapping
-    public R updateComment(@Valid @RequestBody Comment comment) {
+    public R<Boolean> updateComment(@Valid @RequestBody Comment comment) {
         return R.success(iCommentService.updateById(comment));
     }
 
+    /**
+     * 删除评论
+     *
+     * @param commentIds
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:comment:delete')")
     @DeleteMapping("{commentIds}")
-    public R delComment(@PathVariable List<Long> commentIds) {
+    public R<Boolean> delComment(@PathVariable List<Long> commentIds) {
         return R.success(iCommentService.removeByIds(commentIds));
     }
 

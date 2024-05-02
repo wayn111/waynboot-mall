@@ -10,6 +10,7 @@ import com.wayn.common.core.service.shop.IMobileOrderService;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.core.service.shop.IOrderUnpaidService;
 import com.wayn.common.util.OrderUtil;
+import com.wayn.util.enums.OrderStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class OrderUnpaidServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         }
         Long orderId = order.getId();
         // 设置订单为已取消状态
-        order.setOrderStatus(OrderUtil.STATUS_AUTO_CANCEL);
+        order.setOrderStatus(OrderStatusEnum.STATUS_AUTO_CANCEL.getStatus());
         order.setOrderEndTime(LocalDateTime.now());
         if (!orderService.updateById(order)) {
             log.info("订单编号：{} 更新订单状态失败", orderSn);

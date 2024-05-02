@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.annotation.Log;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.response.UserGetInfoResVO;
-import com.wayn.util.constant.SysConstants;
 import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IRoleService;
 import com.wayn.common.core.service.system.IUserService;
+import com.wayn.common.response.UserGetInfoResVO;
+import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ModuleEnum;
 import com.wayn.util.enums.OperatorEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
@@ -43,6 +43,12 @@ public class UserController extends BaseController {
 
     private IRoleService iRoleService;
 
+    /**
+     * 用户列表
+     *
+     * @param user
+     * @return
+     */
     @Log(value = ModuleEnum.USER, operator = OperatorEnum.SELECT)
     @PreAuthorize("@ss.hasPermi('system:user:list')")
     @GetMapping("/list")
@@ -51,6 +57,11 @@ public class UserController extends BaseController {
         return R.success(iUserService.listPage(page, user));
     }
 
+    /**
+     * 获取用户信息
+     *
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:user:query')")
     @GetMapping(value = {"/", "/{userId}"})
     public R<UserGetInfoResVO> getInfo(@PathVariable(value = "userId", required = false) Long userId) {
@@ -63,6 +74,12 @@ public class UserController extends BaseController {
         return R.success(resVO);
     }
 
+    /**
+     * 添加用户
+     *
+     * @param user
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:user:add')")
     @PostMapping
     public R<Boolean> addUser(@Validated @RequestBody User user) {
@@ -80,6 +97,12 @@ public class UserController extends BaseController {
         return R.result(iUserService.insertUserAndRole(user));
     }
 
+    /**
+     * 修改用户
+     *
+     * @param user
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:user:update')")
     @PutMapping
     public R<Boolean> updateUser(@Validated @RequestBody User user) {
@@ -94,6 +117,12 @@ public class UserController extends BaseController {
         return R.result(iUserService.updateUserAndRole(user));
     }
 
+    /**
+     * 重置密码
+     *
+     * @param user
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
     @PutMapping("resetPwd")
     public R<Boolean> resetPwd(@RequestBody User user) {
@@ -104,6 +133,12 @@ public class UserController extends BaseController {
         return R.result(iUserService.updateById(user));
     }
 
+    /**
+     * 更新用户状态
+     *
+     * @param user
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:user:update')")
     @PutMapping("changeStatus")
     public R<Boolean> changeStatus(@RequestBody User user) {
@@ -112,12 +147,24 @@ public class UserController extends BaseController {
         return R.result(iUserService.updateById(user));
     }
 
+    /**
+     * 删除用户
+     *
+     * @param userIds
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:user:delete')")
     @DeleteMapping("/{userIds}")
     public R<Boolean> deleteUser(@PathVariable List<Long> userIds) {
         return R.result(iUserService.removeByIds(userIds));
     }
 
+    /**
+     * 用户导出
+     *
+     * @param user
+     * @param response
+     */
     @PreAuthorize("@ss.hasPermi('system:user:export')")
     @GetMapping("/export")
     public void export(User user, HttpServletResponse response) {
@@ -126,6 +173,12 @@ public class UserController extends BaseController {
         ExcelUtil.exportExcel(response, list, User.class, "用户数据.xlsx");
     }
 
+    /**
+     * 用户导入
+     *
+     * @param file
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:user:import')")
     @ResponseBody
     @PostMapping("/importData")

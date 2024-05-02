@@ -80,3 +80,10 @@ shop:
     format: json
     log_path: /opt/waynboot-mall/log
     signtype: RSA2
+    notify-url: xxxxx
+  # 易支付
+  epay:
+    apiurl: "https://epay.beiyunzd.cn/"
+    pid: ""
+    key: ""
+    notify-url: xxxxx

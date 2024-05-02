@@ -14,7 +14,7 @@ import com.wayn.common.core.mapper.shop.OrderMapper;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.vo.OrderDetailVO;
 import com.wayn.common.core.vo.OrderGoodsVO;
-import com.wayn.common.core.vo.OrderVO;
+import com.wayn.common.request.OrderCommitReqVO;
 import com.wayn.common.response.OrderListResVO;
 import com.wayn.common.response.OrderStatusCountResVO;
 import com.wayn.common.response.SubmitOrderResVO;
@@ -24,6 +24,7 @@ import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.message.core.constant.MQConstants;
 import com.wayn.message.core.dto.OrderDTO;
 import com.wayn.util.constant.Constants;
+import com.wayn.util.enums.OrderStatusEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
 import com.wayn.util.util.IdUtil;
@@ -168,9 +169,9 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
     }
 
     @Override
-    public SubmitOrderResVO asyncSubmit(OrderVO orderVO, Long userId) {
+    public SubmitOrderResVO asyncSubmit(OrderCommitReqVO orderCommitReqVO, Long userId) {
         OrderDTO orderDTO = new OrderDTO();
-        MyBeanUtil.copyProperties(orderVO, orderDTO);
+        MyBeanUtil.copyProperties(orderCommitReqVO, orderDTO);
         Long addressId = orderDTO.getAddressId();
         orderDTO.setUserId(userId);
         Address address = iAddressService.getById(addressId);
@@ -311,7 +312,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         Order order = new Order();
         order.setUserId(userId);
         order.setOrderSn(orderDTO.getOrderSn());
-        order.setOrderStatus(OrderUtil.STATUS_CREATE);
+        order.setOrderStatus(OrderStatusEnum.STATUS_CREATE.getStatus());
         order.setConsignee(checkedAddress.getName());
         order.setMobile(checkedAddress.getTel());
         order.setMessage(orderDTO.getMessage());
@@ -381,6 +382,31 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         return value;
     }
 
+
+    @Override
+    public void refund(Long orderId) {
+        Order order = this.getById(orderId);
+        ReturnCodeEnum returnCodeEnum = this.checkOrderOperator(order);
+        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
+            throw new BusinessException(returnCodeEnum);
+        }
+
+        OrderHandleOption handleOption = OrderUtil.build(order);
+        if (!handleOption.isRefund()) {
+            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
+        }
+
+        // 设置订单申请退款状态
+        if (!this.lambdaUpdate()
+                .set(Order::getOrderStatus, OrderStatusEnum.STATUS_REFUND.getStatus())
+                .set(Order::getUpdateTime, new Date())
+                .set(Order::getRefundStatus, 1)
+                .eq(Order::getId, orderId)
+                .update()) {
+            throw new BusinessException(ReturnCodeEnum.ERROR);
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void cancel(Long orderId) {
@@ -396,7 +422,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         }
 
         // 设置订单已取消状态
-        order.setOrderStatus(OrderUtil.STATUS_CANCEL);
+        order.setOrderStatus(OrderStatusEnum.STATUS_CANCEL.getStatus());
         order.setOrderEndTime(LocalDateTime.now());
         order.setUpdateTime(new Date());
         if (!updateById(order)) {
@@ -446,7 +472,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
             throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_CONFIRM_ERROR);
         }
         // 更改订单状态为已收货
-        order.setOrderStatus(OrderUtil.STATUS_CONFIRM);
+        order.setOrderStatus(OrderStatusEnum.STATUS_CONFIRM.getStatus());
         order.setConfirmTime(LocalDateTime.now());
         order.setUpdateTime(new Date());
         updateById(order);

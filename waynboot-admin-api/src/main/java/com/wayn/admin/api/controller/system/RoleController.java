@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.util.constant.SysConstants;
 import com.wayn.common.core.entity.system.Role;
 import com.wayn.common.core.service.system.IRoleService;
+import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
 import com.wayn.util.util.excel.ExcelUtil;
@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 角色管理
+ * 后台角色管理
  *
  * @author wayn
  * @since 2020-07-21
@@ -33,6 +33,12 @@ public class RoleController extends BaseController {
 
     private IRoleService iRoleService;
 
+    /**
+     * 角色列表
+     *
+     * @param role
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:role:list')")
     @GetMapping("/list")
     public R<IPage<Role>> list(Role role) {
@@ -40,6 +46,12 @@ public class RoleController extends BaseController {
         return R.success(iRoleService.listPage(page, role));
     }
 
+    /**
+     * 添加角色
+     *
+     * @param role
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:role:add')")
     @PostMapping
     public R<Boolean> addRole(@Validated @RequestBody Role role) {
@@ -53,6 +65,12 @@ public class RoleController extends BaseController {
         return R.result(iRoleService.insertRoleAndMenu(role));
     }
 
+    /**
+     * 修改角色
+     *
+     * @param role
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:role:update')")
     @PutMapping
     public R<Boolean> updateRole(@Validated @RequestBody Role role) {
@@ -67,6 +85,12 @@ public class RoleController extends BaseController {
         return R.result(iRoleService.updateRoleAndMenu(role));
     }
 
+    /**
+     * 更新角色状态
+     *
+     * @param role
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:role:update')")
     @PutMapping("changeStatus")
     public R<Boolean> changeStatus(@RequestBody Role role) {
@@ -75,18 +99,35 @@ public class RoleController extends BaseController {
         return R.result(iRoleService.updateById(role));
     }
 
+    /**
+     * 获取角色信息
+     *
+     * @param roleId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:role:query')")
     @GetMapping("/{roleId}")
     public R<Role> getRole(@PathVariable Long roleId) {
         return R.success(iRoleService.getById(roleId));
     }
 
+    /**
+     * 删除角色
+     *
+     * @param roleIds
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:role:delete')")
     @DeleteMapping("/{roleIds}")
     public R<Boolean> deleteRole(@PathVariable List<Long> roleIds) {
         return R.result(iRoleService.deleteRoleByIds(roleIds));
     }
 
+    /**
+     * 角色导出
+     *
+     * @param role
+     */
     @PreAuthorize("@ss.hasPermi('system:role:export')")
     @GetMapping("/export")
     public void export(Role role) {

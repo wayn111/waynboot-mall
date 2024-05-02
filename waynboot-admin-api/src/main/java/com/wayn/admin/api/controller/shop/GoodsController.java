@@ -1,20 +1,21 @@
 package com.wayn.admin.api.controller.shop;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.util.exception.BusinessException;
-import com.wayn.util.util.R;
-import com.wayn.util.util.file.FileUtils;
+import com.wayn.common.core.vo.GoodsSaveRelatedVO;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
 import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.data.redis.manager.RedisLock;
+import com.wayn.util.exception.BusinessException;
+import com.wayn.util.util.R;
+import com.wayn.util.util.file.FileUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,40 +46,76 @@ public class GoodsController extends BaseController {
     private RedisCache redisCache;
     private RedisLock redisLock;
 
+    /**
+     * 商品列表
+     *
+     * @param goods
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:goods:list')")
     @GetMapping("/list")
-    public R list(Goods goods) {
+    public R<IPage<Goods>> list(Goods goods) {
         Page<Goods> page = getPage();
         return R.success(iGoodsService.listPage(page, goods));
     }
 
+    /**
+     * 添加商品
+     *
+     * @param goodsSaveRelatedVO
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:goods:add')")
     @PostMapping
-    public R addGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
+    public R<Boolean> addGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
         return iGoodsService.saveGoodsRelated(goodsSaveRelatedVO);
     }
 
+    /**
+     * 添加商品
+     *
+     * @param goodsSaveRelatedVO
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:goods:update')")
     @PutMapping
-    public R updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
+    public R<Boolean> updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
         return iGoodsService.updateGoodsRelated(goodsSaveRelatedVO);
     }
 
+    /**
+     * 获取商品信息
+     *
+     * @param goodsId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:goods:info')")
     @GetMapping("{goodsId}")
-    public R getGoods(@PathVariable Long goodsId) {
+    public R<Map<String, Object>> getGoods(@PathVariable Long goodsId) {
         return R.success(iGoodsService.getGoodsInfoById(goodsId));
     }
 
+    /**
+     * 删除商品
+     *
+     * @param goodsId
+     * @return
+     * @throws IOException
+     */
     @PreAuthorize("@ss.hasPermi('shop:goods:delete')")
     @DeleteMapping("{goodsId}")
-    public R deleteGoods(@PathVariable Long goodsId) throws IOException {
+    public R<Boolean> deleteGoods(@PathVariable Long goodsId) throws IOException {
         return R.result(iGoodsService.deleteGoodsRelatedByGoodsId(goodsId));
     }
 
+    /**
+     * 商品列表同步es
+     *
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:goods:syncEs')")
     @PostMapping("syncEs")
-    public R syncEs() {
+    public R<Boolean> syncEs() {
         boolean flag = false;
         try {
             boolean lock = redisLock.lock(RedisKeyEnum.ES_SYNC_CACHE.getKey(), 2);

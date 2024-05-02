@@ -100,6 +100,8 @@ public class Order extends ShopBaseEntity implements Serializable {
 
     /**
      * 支付方式 1微信 2支付宝
+     *
+     * @see com.wayn.common.design.strategy.pay.PayTypeEnum
      */
     private Integer payType;
 
@@ -124,6 +126,11 @@ public class Order extends ShopBaseEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime shipTime;
+
+    /**
+     * 退款状态 0未退款 1申请退款 2退款成功 3退款失败
+     */
+    private Integer refundStatus;
 
     /**
      * 实际退款金额，（有可能退款金额小于实际支付金额）

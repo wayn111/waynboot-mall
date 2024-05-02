@@ -37,6 +37,11 @@ public class ProfileController {
 
     private UploadService uploadService;
 
+    /**
+     * 获取用户个人资料
+     *
+     * @return
+     */
     @GetMapping
     public R<UserProfileResVO> profile() {
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -46,6 +51,12 @@ public class ProfileController {
         return R.success(resVO);
     }
 
+    /**
+     * 修改用户个人资料
+     *
+     * @param user
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PutMapping
     public R<Boolean> updateProfile(@RequestBody User user) {
@@ -62,6 +73,13 @@ public class ProfileController {
         return R.error();
     }
 
+    /**
+     * 更新用户密码
+     *
+     * @param oldPassword
+     * @param newPassword
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PutMapping("/updatePwd")
     public R<Boolean> updatePwd(String oldPassword, String newPassword) {
@@ -84,6 +102,14 @@ public class ProfileController {
         return R.error();
     }
 
+    /**
+     * 用户上传头像
+     *
+     * @param file
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @PreAuthorize("@ss.hasPermi('system:profile:update')")
     @PostMapping("/avatar")
     public R<String> avatar(@RequestParam("avatarfile") MultipartFile file, HttpServletRequest request) throws IOException {

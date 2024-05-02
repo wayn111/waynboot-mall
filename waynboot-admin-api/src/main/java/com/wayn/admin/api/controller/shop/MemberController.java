@@ -1,6 +1,7 @@
 package com.wayn.admin.api.controller.shop;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Member;
@@ -26,22 +27,38 @@ public class MemberController extends BaseController {
 
     private IMemberService iMemberService;
 
+    /**
+     * 会员列表
+     *
+     * @param member
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:member:list')")
     @GetMapping("list")
-    public R list(Member member) {
+    public R<IPage<Member>> list(Member member) {
         Page<Member> page = getPage();
         return R.success(iMemberService.listPage(page, member));
     }
 
+    /**
+     * 获取会员信息
+     * @param memberId
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:member:info')")
     @GetMapping("{memberId}")
-    public R getMember(@PathVariable Long memberId) {
+    public R<Member> getMember(@PathVariable Long memberId) {
         return R.success(iMemberService.getById(memberId));
     }
 
+    /**
+     * 修改会员信息
+     * @param member
+     * @return
+     */
     @PreAuthorize("@ss.hasPermi('shop:member:update')")
     @PutMapping
-    public R updateMember(@Validated @RequestBody Member member) {
+    public R<Boolean> updateMember(@Validated @RequestBody Member member) {
         member.setUpdateTime(new Date());
         return R.result(iMemberService.updateById(member));
     }
