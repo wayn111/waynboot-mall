@@ -15,6 +15,7 @@ import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.vo.OrderDetailVO;
 import com.wayn.common.core.vo.OrderGoodsVO;
 import com.wayn.common.request.OrderCommitReqVO;
+import com.wayn.common.response.OrderListDataResVO;
 import com.wayn.common.response.OrderListResVO;
 import com.wayn.common.response.OrderStatusCountResVO;
 import com.wayn.common.response.SubmitOrderResVO;
@@ -82,40 +83,25 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         order.setUserId(userId);
         IPage<Order> orderIPage = orderMapper.selectOrderListPage(page, order, orderStatus);
         List<Order> orderList = orderIPage.getRecords();
-        List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
         List<Long> idList = orderList.stream().map(Order::getId).collect(Collectors.toList());
         Map<Long, List<OrderGoods>> orderGoodsListMap = iOrderGoodsService
                 .list(Wrappers.lambdaQuery(OrderGoods.class).in(CollectionUtils.isNotEmpty(idList), OrderGoods::getOrderId, idList))
                 .stream().collect(Collectors.groupingBy(OrderGoods::getOrderId));
-
+        List<OrderListDataResVO> dataList = new ArrayList<>();
         for (Order o : orderList) {
-            Map<String, Object> orderVo = new HashMap<>();
-            orderVo.put("id", o.getId());
-            orderVo.put("orderSn", o.getOrderSn());
-            orderVo.put("actualPrice", o.getActualPrice());
-            orderVo.put("orderStatusText", OrderUtil.orderStatusText(o));
-            orderVo.put("handleOption", OrderUtil.build(o));
-            orderVo.put("aftersaleStatus", o.getAftersaleStatus());
-
+            OrderListDataResVO data = new OrderListDataResVO();
+            data.setId(o.getId());
+            data.setOrderSn(o.getOrderSn());
+            data.setActualPrice(o.getActualPrice());
+            data.setHandleOption(OrderUtil.build(o));
+            data.setOrderStatusText(OrderUtil.orderStatusText(o));
             List<OrderGoods> orderGoodsList = orderGoodsListMap.get(o.getId());
-            List<Map<String, Object>> orderGoodsVoList = new ArrayList<>(orderGoodsList.size());
-            for (OrderGoods orderGoods : orderGoodsList) {
-                Map<String, Object> orderGoodsVo = new HashMap<>();
-                orderGoodsVo.put("id", orderGoods.getId());
-                orderGoodsVo.put("goodsId", orderGoods.getGoodsId());
-                orderGoodsVo.put("goodsName", orderGoods.getGoodsName());
-                orderGoodsVo.put("number", orderGoods.getNumber());
-                orderGoodsVo.put("picUrl", orderGoods.getPicUrl());
-                orderGoodsVo.put("specifications", orderGoods.getSpecifications());
-                orderGoodsVo.put("price", orderGoods.getPrice());
-                orderGoodsVo.put("comment", orderGoods.getComment());
-                orderGoodsVoList.add(orderGoodsVo);
-            }
-            orderVo.put("goodsList", orderGoodsVoList);
-            orderVoList.add(orderVo);
+            List<OrderGoodsVO> orderGoodsVOS = BeanUtil.copyToList(orderGoodsList, OrderGoodsVO.class);
+            data.setGoodsList(orderGoodsVOS);
+            dataList.add(data);
         }
         OrderListResVO resVO = new OrderListResVO();
-        resVO.setData(orderVoList);
+        resVO.setData(dataList);
         resVO.setPage(orderIPage.getCurrent());
         resVO.setPages(orderIPage.getPages());
         return resVO;

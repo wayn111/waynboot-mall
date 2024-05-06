@@ -78,11 +78,4 @@ public class Address extends ShopBaseEntity implements Serializable {
      */
     private Boolean delFlag;
 
-    public boolean getIsDefault() {
-        return isDefault;
-    }
-
-    public void setIsDefault(boolean aDefault) {
-        isDefault = aDefault;
-    }
 }

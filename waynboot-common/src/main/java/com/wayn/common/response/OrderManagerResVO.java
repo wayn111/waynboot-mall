@@ -17,6 +17,9 @@ public class OrderManagerResVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 3129813461714576208L;
 
+    /**
+     * 订单ID
+     */
     private Long id;
 
     /**

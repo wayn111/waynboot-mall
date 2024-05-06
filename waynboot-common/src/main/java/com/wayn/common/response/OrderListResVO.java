@@ -5,11 +5,9 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
- * @author: waynaqua
- * @date: 2024/4/27 16:41
+ * 我的订单接口返回
  */
 @Data
 public class OrderListResVO implements Serializable {
@@ -19,7 +17,7 @@ public class OrderListResVO implements Serializable {
     /**
      * 我的订单列表
      */
-    private List<Map<String, Object>> data;
+    private List<OrderListDataResVO> data;
     /**
      * 总页数
      */
