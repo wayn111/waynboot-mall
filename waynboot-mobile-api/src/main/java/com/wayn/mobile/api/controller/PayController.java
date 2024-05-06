@@ -8,12 +8,11 @@ import com.wayn.common.response.OrderPayResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * 支付接口
@@ -33,7 +32,7 @@ public class PayController extends BaseController {
      * @return
      */
     @PostMapping("prepay")
-    public R<OrderPayResVO> prepay(@RequestBody OrderPayReqVO reqVO) throws UnsupportedEncodingException {
+    public R<OrderPayResVO> prepay(@RequestBody @Validated OrderPayReqVO reqVO) {
         log.info("order prepay reqVO is {}", reqVO);
         return R.success(payService.prepay(reqVO));
     }

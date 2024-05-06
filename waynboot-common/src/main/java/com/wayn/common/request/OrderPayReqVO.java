@@ -1,5 +1,7 @@
 package com.wayn.common.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,6 +15,7 @@ public class OrderPayReqVO {
     /**
      * 订单编号
      */
+    @NotBlank(message = "订单编号不能为空")
     private String orderSn;
 
     /**
@@ -23,6 +26,7 @@ public class OrderPayReqVO {
     /**
      * 支付方式 1微信 2支付宝
      */
+    @NotNull(message = "支付方式不能为空")
     private Integer payType;
 
     /**
