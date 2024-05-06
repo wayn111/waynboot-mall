@@ -28,7 +28,7 @@ spring:
       host: 127.0.0.1
       port: 6379
       password:
-      database: 2
+      database: 0
       timeout: 300
       lettuce:
         shutdown-timeout: 100ms

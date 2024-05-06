@@ -75,12 +75,3 @@ wayn:
   uploadDir: ${UPLOAD_DIR:D:/waynshop/webp}
   adminUrl: http://localhost:81
   mobileUrl: http://localhost:82
-  ssh-proxy: # ssh端口代理设置，eg:通过ssh连接公网服务器，在通过端口转发访问内网服务器的服务
-    enabled: false                      # 是否启用
-    host:                               # 服务器host
-    port:                               # 服务器port
-    username:                           # 服务器登陆用户名称
-    password:                           # 服务器登陆用户密码
-    localPort:                          # 代理本地端口
-    remoteHost:                         # 需要代理的服务host
-    remotePort:                         # 需要代理的服务port

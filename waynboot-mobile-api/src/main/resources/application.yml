@@ -64,7 +64,7 @@ wayn:
   adminUrl: ${ADMIN_URL:http://localhost:81}
   mobileUrl: ${MOBILE_URL:http://localhost:82}
   freightLimit: "88"  # 运费限额
-  freightPrice: "10"  # 运费
+  freightPrice: "0"  # 运费
   unpaidOrderCancelDelayTime: 30 # 未支付订单超时时间
 
 management:
