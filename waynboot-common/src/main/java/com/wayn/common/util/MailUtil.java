@@ -1,4 +1,4 @@
-package com.wayn.common.util.mail;
+package com.wayn.common.util;
 
 import com.sun.mail.util.MailSSLSocketFactory;
 import com.wayn.common.core.entity.tool.EmailConfig;
