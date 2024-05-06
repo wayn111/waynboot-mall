@@ -44,7 +44,7 @@ public class AddressController {
     @PostMapping
     public R<Boolean> add(@RequestBody Address address) {
         Long memberId = MobileSecurityUtils.getUserId();
-        if (address.getIsDefault()) {
+        if (address.isDefault()) {
             iAddressService.update().eq("member_id", memberId).set("is_default", false).update();
         }
         if (Objects.nonNull(address.getId())) {
