@@ -4,7 +4,7 @@ import com.wayn.common.core.entity.tool.EmailConfig;
 import com.wayn.common.core.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.util.util.R;
-import com.wayn.common.util.mail.MailUtil;
+import com.wayn.common.util.MailUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

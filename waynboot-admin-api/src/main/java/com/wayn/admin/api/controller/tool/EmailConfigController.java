@@ -7,7 +7,7 @@ import com.wayn.common.core.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
-import com.wayn.common.util.mail.MailUtil;
+import com.wayn.common.util.MailUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
