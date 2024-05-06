@@ -11,8 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * @author: waynaqua
- * @date: 2024/4/29 11:19
+ * 购物车列表
  */
 @Data
 public class CartResponseVO implements Serializable {
@@ -20,6 +19,9 @@ public class CartResponseVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 购物车id
+     */
     private Long id;
 
     /**

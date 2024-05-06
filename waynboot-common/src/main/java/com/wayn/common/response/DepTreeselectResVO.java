@@ -7,10 +7,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @author: waynaqua
- * @date: 2024/4/27 15:15
- */
 @Data
 public class DepTreeselectResVO implements Serializable {
     @Serial

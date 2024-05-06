@@ -1,4 +1,4 @@
-package com.wayn.common.core.vo;
+package com.wayn.common.response;
 
 import com.wayn.common.core.entity.shop.Category;
 import com.wayn.common.core.entity.shop.Goods;
@@ -17,6 +17,13 @@ public class CategoryGoodsResponseVO implements Serializable {
     @Serial
     private static final long serialVersionUID = -7580503521421359029L;
 
+    /**
+     * 商品列表
+     */
     private List<Goods> goods;
+
+    /**
+     * 分类详情
+     */
     private Category category;
 }

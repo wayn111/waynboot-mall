@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.core.entity.shop.GoodsAttribute;
 import com.wayn.common.core.entity.shop.GoodsProduct;
 import com.wayn.common.core.service.shop.*;
-import com.wayn.common.core.vo.GoodsDetailResponseVO;
+import com.wayn.common.response.GoodsDetailResponseVO;
 import com.wayn.common.core.vo.SpecificationVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.wayn.common.core.service.shop;
 
-import com.wayn.common.core.vo.GoodsDetailResponseVO;
+import com.wayn.common.response.GoodsDetailResponseVO;
 
 public interface IGoodsDetailService {
 

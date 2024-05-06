@@ -1,4 +1,4 @@
-package com.wayn.common.core.vo;
+package com.wayn.common.response;
 
 import lombok.Builder;
 import lombok.Data;

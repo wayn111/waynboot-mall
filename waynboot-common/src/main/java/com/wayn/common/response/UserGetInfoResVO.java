@@ -7,11 +7,9 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 /**
- * @author: waynaqua
- * @date: 2024/4/27 15:38
+ * 获取用户详情
  */
 @Data
 public class UserGetInfoResVO implements Serializable {
@@ -22,6 +20,14 @@ public class UserGetInfoResVO implements Serializable {
      * 用户信息
      */
     private User user;
+
+    /**
+     * 角色id列表
+     */
     private List<Integer> roleIds;
+
+    /**
+     * 角色列表
+     */
     private List<Role> roles;
 }
