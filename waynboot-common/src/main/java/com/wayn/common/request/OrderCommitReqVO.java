@@ -25,11 +25,18 @@ public class OrderCommitReqVO {
      */
     private Long addressId;
 
+    /**
+     * 备注
+     */
     private String message;
 
     /**
      * 支付方式 1微信 2支付宝
      */
     private Integer payType;
+
+    /**
+     * 返回url
+     */
     private String returnUrl;
 }

@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller;
 
 import com.wayn.common.core.service.shop.IGoodsDetailService;
-import com.wayn.common.core.vo.GoodsDetailResponseVO;
+import com.wayn.common.response.GoodsDetailResponseVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

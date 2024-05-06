@@ -27,13 +27,14 @@ public class ColumnManagerResVO {
      */
     private Integer goodsNum;
 
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    private Date updateTime;
-
     /**
-     * 删除标志（0代表存在 1代表删除）
+     * 更新时间
      */
-    private Boolean delFlag;
+    private Date updateTime;
 
 }

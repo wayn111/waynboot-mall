@@ -9,15 +9,21 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author: waynaqua
- * @date: 2024/4/27 16:16
+ * 金刚区跳转接口返回
  */
 @Data
 public class DiamondGoodsResVO implements Serializable {
     @Serial
     private static final long serialVersionUID = -2451449889097496018L;
 
+    /**
+     * 金刚区详情
+     */
     private Diamond diamond;
+
+    /**
+     * 跳转商品列表
+     */
     private List<Goods> goods;
 
 }

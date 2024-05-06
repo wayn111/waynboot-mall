@@ -15,6 +15,12 @@ public class HotKeywordsResVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 5468848317089294933L;
 
+    /**
+     * 热词列表
+     */
     private List<String> hotStrings;
+    /**
+     * 默认搜索
+     */
     private String defaultSearch;
 }

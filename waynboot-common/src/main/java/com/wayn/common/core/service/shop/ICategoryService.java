@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Category;
 import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.vo.CategoryGoodsResponseVO;
-import com.wayn.common.core.vo.CategoryIndexResponseVO;
+import com.wayn.common.response.CategoryGoodsResponseVO;
+import com.wayn.common.response.CategoryIndexResponseVO;
 import com.wayn.common.core.vo.VanTreeSelectVO;
 
 import java.util.List;
