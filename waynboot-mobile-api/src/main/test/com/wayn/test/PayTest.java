@@ -1,6 +1,7 @@
 package com.wayn.test;
 
 import com.wayn.common.core.service.shop.IPayService;
+import com.wayn.common.design.strategy.pay.PayTypeEnum;
 import com.wayn.common.request.OrderPayReqVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.wayn.common.design.strategy.pay.PayTypeEnum.EPAY_MOBILE;
 
 /**
  * @author: waynaqua
@@ -30,7 +30,7 @@ public class PayTest {
     public void epayPreapreTest() {
         OrderPayReqVO orderPayReqVO = new OrderPayReqVO();
         orderPayReqVO.setOrderSn("1702220024000013");
-        orderPayReqVO.setPayType(EPAY_MOBILE.getType());
+        orderPayReqVO.setPayType(PayTypeEnum.EPAY_ALI.getType());
         orderPayReqVO.setReturnUrl("http://www.baidu.com");
         payService.prepay(orderPayReqVO);
     }
