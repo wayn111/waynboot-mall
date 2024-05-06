@@ -25,6 +25,11 @@ public class SearchHistoryController extends BaseController {
 
     private ISearchHistoryService iSearchHistoryService;
 
+    /**
+     * 用户搜索历史列表
+     *
+     * @return
+     */
     @GetMapping("list")
     public R<List<SearchHistory>> list() {
         return R.success(iSearchHistoryService.selectList(MobileSecurityUtils.getUserId()));
