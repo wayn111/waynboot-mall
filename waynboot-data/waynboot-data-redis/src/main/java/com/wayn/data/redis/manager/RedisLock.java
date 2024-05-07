@@ -22,14 +22,12 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisLock {
 
-    @Autowired
-    public RedisTemplate redisTemplate;
-
     /**
      * 默认锁过期时间30秒
      */
     public static final Integer DEFAULT_TIME_OUT = 30;
-
+    @Autowired
+    public RedisTemplate redisTemplate;
     /**
      * 保存线程id-ThreadLocal
      */
