@@ -63,7 +63,7 @@ public enum ReturnCodeEnum {
     USER_NEW_OLD_PASSWORD_NOT_SAME_ERROR(5105, "新密码不能与旧密码相同"),
     USER_CAPTCHA_CODE_ERROR(5106, "图形验证码不正确"),
     USER_REGISTER_MOBILE_ERROR(5107, "注册手机号错误"),
-    OLD_PASSWORD_NOT_EQUALS_ERROR(5108, "旧密码错误" ),
+    OLD_PASSWORD_NOT_EQUALS_ERROR(5108, "旧密码错误"),
 
     // 上传错误
     UPLOAD_ERROR(5201, "上传图片失败"),
@@ -88,8 +88,7 @@ public enum ReturnCodeEnum {
 
 
     REDIS_CONNECTION_TIMEOUT_ERROR(5701, "redis连接超时"),
-    ES_CONNECTION_TIMEOUT_ERROR(5702, "es连接超时")
-    ;
+    ES_CONNECTION_TIMEOUT_ERROR(5702, "es连接超时");
     private final int code;
     private String msg;
 

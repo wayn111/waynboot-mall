@@ -24,6 +24,7 @@ public class ThreadMdcUtil {
 
     /**
      * 存在userId则添加到REQUEST_ID中
+     *
      * @param userId
      */
     public static void setUserId(String userId) {

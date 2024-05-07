@@ -13,11 +13,6 @@ public class SpringContextUtil implements BeanFactoryPostProcessor {
      */
     private static ConfigurableListableBeanFactory beanFactory;
 
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        SpringContextUtil.beanFactory = beanFactory;
-    }
-
     /**
      * 获取对象
      *
@@ -80,5 +75,10 @@ public class SpringContextUtil implements BeanFactoryPostProcessor {
      */
     public static String[] getAliases(String name) throws NoSuchBeanDefinitionException {
         return beanFactory.getAliases(name);
+    }
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        SpringContextUtil.beanFactory = beanFactory;
     }
 }
