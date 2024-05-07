@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 /**
- * 微信JSAPI支付策略
+ * 微信JSAPI退款策略
  */
 @Slf4j
 @Component

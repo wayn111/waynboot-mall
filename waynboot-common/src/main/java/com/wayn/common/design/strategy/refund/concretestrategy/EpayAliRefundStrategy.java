@@ -15,7 +15,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 /**
- * 微信H5支付策略
+ * 易支付-支付宝退款策略
  */
 @Slf4j
 @Component
@@ -30,7 +30,8 @@ public class EpayAliRefundStrategy implements RefundInterface {
     @Override
     public OrderRefundResVO refund(OrderRefundReqVO reqVo) {
         String refundSn = orderSnGenUtil.generateRefundOrderSn();
-        EpayRefundRequest request = new EpayRefundRequest(epayConfig.getPid(), epayConfig.getKey(), reqVo.getOrderSn(),
+        EpayRefundRequest request = new EpayRefundRequest(epayConfig.getPid(),
+                epayConfig.getKey(), reqVo.getOrderSn(),
                 reqVo.getRefundMoney().toString());
         String refund = epayapi.refund(request);
         return new OrderRefundResVO();

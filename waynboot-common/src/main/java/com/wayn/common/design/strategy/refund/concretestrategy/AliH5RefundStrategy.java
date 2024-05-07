@@ -22,7 +22,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 /**
- * 支付宝H5支付策略
+ * 支付宝H5退款策略
  */
 @Slf4j
 @Component
@@ -36,8 +36,8 @@ public class AliH5RefundStrategy implements RefundInterface {
     @Override
     public OrderRefundResVO refund(OrderRefundReqVO reqVo) {
         AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGateway(), alipayConfig.getAppId(),
-                alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(), alipayConfig.getAlipayPublicKey(),
-                alipayConfig.getSigntype());
+                alipayConfig.getRsaPrivateKey(), alipayConfig.getFormat(), alipayConfig.getCharset(),
+                alipayConfig.getAlipayPublicKey(), alipayConfig.getSigntype());
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         JSONObject bizContent = new JSONObject();
         String refundSn = orderSnGenUtil.generateRefundOrderSn();
