@@ -11,7 +11,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 /**
- * 支付宝H5支付策略
+ * 测试退款策略
  */
 @Slf4j
 @Component
