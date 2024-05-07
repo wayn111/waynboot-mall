@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.util.constant.SysConstants;
 import com.wayn.common.core.entity.system.Dict;
 import com.wayn.common.core.service.system.IDictService;
+import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
 import com.wayn.util.util.excel.ExcelUtil;
@@ -34,6 +34,7 @@ public class DictTypeController extends BaseController {
 
     /**
      * 分页列表
+     *
      * @param dict
      * @return
      */
@@ -46,6 +47,7 @@ public class DictTypeController extends BaseController {
 
     /**
      * 添加字典
+     *
      * @param dict
      * @return
      */
@@ -65,6 +67,7 @@ public class DictTypeController extends BaseController {
 
     /**
      * 修改字典
+     *
      * @param dict
      * @return
      */
@@ -83,6 +86,7 @@ public class DictTypeController extends BaseController {
 
     /**
      * 获取字典
+     *
      * @param dictId
      * @return
      */
@@ -94,6 +98,7 @@ public class DictTypeController extends BaseController {
 
     /**
      * 删除字典
+     *
      * @param dictIds
      * @return
      */
@@ -105,6 +110,7 @@ public class DictTypeController extends BaseController {
 
     /**
      * 导出字典
+     *
      * @param dict
      * @param response
      */

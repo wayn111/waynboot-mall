@@ -42,6 +42,7 @@ public class MemberController extends BaseController {
 
     /**
      * 获取会员信息
+     *
      * @param memberId
      * @return
      */
@@ -53,6 +54,7 @@ public class MemberController extends BaseController {
 
     /**
      * 修改会员信息
+     *
      * @param member
      * @return
      */

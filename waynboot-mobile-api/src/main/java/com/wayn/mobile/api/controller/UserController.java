@@ -2,7 +2,7 @@ package com.wayn.mobile.api.controller;
 
 import com.wayn.common.core.entity.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
-import com.wayn.common.core.vo.ProfileVO;
+import com.wayn.common.request.ProfileRequestVO;
 import com.wayn.common.request.UpdatePasswordReqVO;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.service.TokenService;
@@ -45,16 +45,16 @@ public class UserController {
     /**
      * 修改用户资料
      *
-     * @param profileVO 用户资料参数
+     * @param profileRequestVO 用户资料参数
      * @return R
      */
     @PostMapping("profile")
-    public R<Boolean> updateProfile(@RequestBody ProfileVO profileVO) {
-        String nickname = profileVO.getNickname();
-        Integer gender = profileVO.getGender();
-        String mobile = profileVO.getMobile();
-        String email = profileVO.getEmail();
-        LocalDate birthday = profileVO.getBirthday();
+    public R<Boolean> updateProfile(@RequestBody ProfileRequestVO profileRequestVO) {
+        String nickname = profileRequestVO.getNickname();
+        Integer gender = profileRequestVO.getGender();
+        String mobile = profileRequestVO.getMobile();
+        String email = profileRequestVO.getEmail();
+        LocalDate birthday = profileRequestVO.getBirthday();
         LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Member member = loginUser.getMember();
         if (StringUtils.isNotBlank(nickname)) {

@@ -1,11 +1,10 @@
 package com.wayn.admin.api.controller.system;
 
 import com.wayn.admin.framework.security.util.SecurityUtils;
-import com.wayn.common.core.vo.TreeVO;
-import com.wayn.common.response.DepTreeselectResVO;
-import com.wayn.util.constant.SysConstants;
 import com.wayn.common.core.entity.system.Dept;
 import com.wayn.common.core.service.system.IDeptService;
+import com.wayn.common.core.vo.TreeVO;
+import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;

@@ -1,20 +1,24 @@
 package com.wayn.common.core.service.shop.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.util.constant.SysConstants;
 import com.wayn.common.core.entity.shop.*;
-import com.wayn.common.core.vo.GoodsSaveRelatedVO;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.core.service.shop.*;
-import com.wayn.util.enums.ReturnCodeEnum;
-import com.wayn.util.exception.BusinessException;
-import com.wayn.util.util.R;
+import com.wayn.common.core.vo.GoodsAttributeVO;
+import com.wayn.common.core.vo.GoodsProductVO;
+import com.wayn.common.core.vo.GoodsSpecificationVO;
+import com.wayn.common.core.vo.GoodsVO;
+import com.wayn.common.request.GoodsSaveRelatedReqVO;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
+import com.wayn.util.constant.SysConstants;
+import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,14 +91,17 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) {
-        Goods goods = goodsSaveRelatedVO.getGoods();
-        GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
-        GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
-        GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
-        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
-            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("添加商品[%s]失败，商品名称已存在", goods.getName())));
+    public void saveGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
+        GoodsVO goodsVO = goodsSaveRelatedReqVO.getGoods();
+        GoodsAttributeVO[] attributesVO = goodsSaveRelatedReqVO.getAttributes();
+        GoodsSpecificationVO[] specificationsVO = goodsSaveRelatedReqVO.getSpecifications();
+        GoodsProductVO[] productsVO = goodsSaveRelatedReqVO.getProducts();
+        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goodsVO))) {
+            throw new BusinessException(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("添加商品[%s]失败，商品名称已存在", goodsVO.getName())));
         }
+        List<GoodsSpecification> specifications = BeanUtil.copyToList(Arrays.asList(specificationsVO), GoodsSpecification.class);
+        List<GoodsAttribute> attributes = BeanUtil.copyToList(Arrays.asList(attributesVO), GoodsAttribute.class);
+        List<GoodsProduct> products = BeanUtil.copyToList(Arrays.asList(productsVO), GoodsProduct.class);
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
         for (GoodsProduct product : products) {
@@ -104,6 +111,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             }
         }
         // 保存商品
+        Goods goods = BeanUtil.copyProperties(goodsVO, Goods.class);
         goods.setRetailPrice(retailPrice);
         goods.setCreateTime(new Date());
         save(goods);
@@ -122,28 +130,27 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             goodsProduct.setCreateTime(new Date());
         }
         // 判断启用默认选中的规格是否超过一个
-        if (Arrays.stream(products).filter(goodsProduct -> {
+        if (products.stream().filter(goodsProduct -> {
             if (goodsProduct.getDefaultSelected() == null) {
                 return false;
             }
             return goodsProduct.getDefaultSelected();
         }).count() > 1) {
-            return R.error(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
+            throw new BusinessException(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
         }
 
         // 保存商品规格
-        iGoodsSpecificationService.saveBatch(Arrays.asList(specifications));
+        iGoodsSpecificationService.saveBatch(specifications);
         // 保存商品属性
-        iGoodsAttributeService.saveBatch(Arrays.asList(attributes));
+        iGoodsAttributeService.saveBatch(attributes);
         // 保存商品货品
-        iGoodsProductService.saveBatch(Arrays.asList(products));
+        iGoodsProductService.saveBatch(products);
 
         // baseElasticService.syncGoods2Es(goods);
-        return R.success();
     }
 
     @Override
-    public String checkGoodsNameUnique(Goods goods) {
+    public String checkGoodsNameUnique(GoodsVO goods) {
         long goodsId = Objects.isNull(goods.getId()) ? -1L : goods.getId();
         Goods shopGoods = getOne(new QueryWrapper<Goods>().eq("name", goods.getName()));
         if (shopGoods != null && shopGoods.getId() != goodsId) {
@@ -168,16 +175,19 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
-        Goods goods = goodsSaveRelatedVO.getGoods();
-        GoodsAttribute[] attributes = goodsSaveRelatedVO.getAttributes();
+    public void updateGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
+        GoodsVO goodsVO = goodsSaveRelatedReqVO.getGoods();
+        GoodsAttributeVO[] attributesVO = goodsSaveRelatedReqVO.getAttributes();
+        GoodsSpecificationVO[] specificationsVO = goodsSaveRelatedReqVO.getSpecifications();
+        GoodsProductVO[] productsVO = goodsSaveRelatedReqVO.getProducts();
+        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goodsVO))) {
+            throw new BusinessException(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新商品[%s]失败，商品名称已存在", goodsVO.getName())));
+        }
+        List<GoodsSpecification> specifications = BeanUtil.copyToList(Arrays.asList(specificationsVO), GoodsSpecification.class);
+        List<GoodsAttribute> attributes = BeanUtil.copyToList(Arrays.asList(attributesVO), GoodsAttribute.class);
         List<GoodsAttribute> updateAttributes = new ArrayList<>();
         List<GoodsAttribute> insertAttributes = new ArrayList<>();
-        GoodsSpecification[] specifications = goodsSaveRelatedVO.getSpecifications();
-        GoodsProduct[] products = goodsSaveRelatedVO.getProducts();
-        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goods))) {
-            return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新商品[%s]失败，商品名称已存在", goods.getName())));
-        }
+        List<GoodsProduct> products = BeanUtil.copyToList(Arrays.asList(productsVO), GoodsProduct.class);
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
         for (GoodsProduct product : products) {
@@ -187,6 +197,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             }
         }
         // 保存商品
+        Goods goods = BeanUtil.copyProperties(goodsVO, Goods.class);
         goods.setRetailPrice(retailPrice);
         goods.setUpdateTime(new Date());
         updateById(goods);
@@ -208,20 +219,18 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             goodsProduct.setUpdateTime(new Date());
         }
         // 判断启用默认选中的规格是否超过一个
-        if (Arrays.stream(products).filter(GoodsProduct::getDefaultSelected).count() > 1) {
-            return R.error(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
+        if (products.stream().filter(GoodsProduct::getDefaultSelected).count() > 1) {
+            throw new BusinessException(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
         }
 
         // 更新商品规格
-        iGoodsSpecificationService.updateBatchById(Arrays.asList(specifications));
+        iGoodsSpecificationService.updateBatchById(specifications);
         // 更新商品属性
         iGoodsAttributeService.updateBatchById(updateAttributes);
         // 添加商品属性
         iGoodsAttributeService.saveBatch(insertAttributes);
         // 更新商品货品
-        iGoodsProductService.updateBatchById(Arrays.asList(products));
-
-        return R.result(syncGoods2Es(goods));
+        iGoodsProductService.updateBatchById(products);
     }
 
     @Override

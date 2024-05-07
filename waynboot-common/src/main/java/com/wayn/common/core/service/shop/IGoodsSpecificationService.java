@@ -14,6 +14,5 @@ import java.util.List;
  */
 public interface IGoodsSpecificationService extends IService<GoodsSpecification> {
 
-
     List<SpecificationVO> getSpecificationVOList(Long goodsId);
 }

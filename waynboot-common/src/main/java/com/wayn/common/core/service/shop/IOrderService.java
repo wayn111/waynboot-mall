@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.common.core.entity.shop.Order;
-import com.wayn.common.core.vo.ShipVO;
 import com.wayn.common.request.OrderManagerReqVO;
 import com.wayn.common.request.OrderRefundReqVO;
+import com.wayn.common.request.ShipRequestVO;
 import com.wayn.common.response.OrderDetailResVO;
 import com.wayn.common.response.OrderManagerResVO;
 
@@ -50,7 +50,7 @@ public interface IOrderService extends IService<Order> {
      * @param shipVO 订单信息，{ orderId：xxx, shipSn: xxx, shipChannel: xxx }
      * @return r
      */
-    void ship(ShipVO shipVO) throws UnsupportedEncodingException;
+    void ship(ShipRequestVO shipVO) throws UnsupportedEncodingException;
 
     /**
      * 获取订单详情（包含订单信息，订单商品信息，用户信息）

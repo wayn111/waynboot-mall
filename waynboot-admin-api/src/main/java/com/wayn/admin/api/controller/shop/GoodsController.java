@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.core.vo.GoodsSaveRelatedVO;
+import com.wayn.common.request.GoodsSaveRelatedReqVO;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
@@ -62,25 +62,27 @@ public class GoodsController extends BaseController {
     /**
      * 添加商品
      *
-     * @param goodsSaveRelatedVO
+     * @param goodsSaveRelatedReqVO
      * @return
      */
     @PreAuthorize("@ss.hasPermi('shop:goods:add')")
     @PostMapping
-    public R<Boolean> addGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) {
-        return iGoodsService.saveGoodsRelated(goodsSaveRelatedVO);
+    public R<Boolean> addGoods(@Validated @RequestBody GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
+        iGoodsService.saveGoodsRelated(goodsSaveRelatedReqVO);
+        return R.success();
     }
 
     /**
      * 添加商品
      *
-     * @param goodsSaveRelatedVO
+     * @param goodsSaveRelatedReqVO
      * @return
      */
     @PreAuthorize("@ss.hasPermi('shop:goods:update')")
     @PutMapping
-    public R<Boolean> updateGoods(@Validated @RequestBody GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException {
-        return iGoodsService.updateGoodsRelated(goodsSaveRelatedVO);
+    public R<Boolean> updateGoods(@Validated @RequestBody GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) throws IOException {
+        iGoodsService.updateGoodsRelated(goodsSaveRelatedReqVO);
+        return R.success();
     }
 
     /**

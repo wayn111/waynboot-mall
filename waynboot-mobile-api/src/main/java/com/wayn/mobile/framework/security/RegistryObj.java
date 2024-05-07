@@ -6,34 +6,29 @@ import lombok.Data;
 @Data
 public class RegistryObj {
 
-    /**
-     * 用户名
-     */
-    @NotBlank
-    private String username;
 
     /**
      * 手机号
      */
-    @NotBlank
+    @NotBlank(message = "手机号不能为空")
     private String mobile;
 
     /**
      * 用户密码
      */
-    @NotBlank
+    @NotBlank(message = "用户密码不能为空")
     private String password;
 
     /**
      * 重复密码
      */
-    @NotBlank
+    @NotBlank(message = "重复密码不能为空")
     private String confirmPassword;
 
     /**
      * 验证码
      */
-    @NotBlank
+    @NotBlank(message = "验证码不能为空")
     private String captchaCode;
 
     /**

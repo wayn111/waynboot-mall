@@ -9,13 +9,13 @@ public class LoginObj {
     /**
      * 手机号
      */
-    @NotNull
+    @NotNull(message = "手机号不能为空")
     private String mobile;
 
     /**
      * 用户密码
      */
-    @NotNull
+    @NotNull(message = "用户密码不能为空")
     private String password;
 
 }

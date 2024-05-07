@@ -1,4 +1,4 @@
-package com.wayn.common.core.vo;
+package com.wayn.common.request;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
  * 搜索查询VO对象
  */
 @Data
-public class SearchVO {
+public class SearchRequestVO {
 
     private String keyword;
 

@@ -95,7 +95,7 @@ public class CommonFileController {
      */
     @PostMapping("upload")
     @ResponseBody
-    public R uploadFile(MultipartFile file, HttpServletRequest request) {
+    public R<String> uploadFile(MultipartFile file, HttpServletRequest request) {
         try {
             // 1. 获取上传文件的保存路径
             String filePath = WaynConfig.getUploadDir();
@@ -116,7 +116,7 @@ public class CommonFileController {
      */
     @PostMapping("base64uploadFile")
     @ResponseBody
-    public R base64uploadFile(String filename,
+    public R<String> base64uploadFile(String filename,
                               String base64content,
                               HttpServletRequest request) {
         try {
@@ -137,7 +137,7 @@ public class CommonFileController {
      */
     @PostMapping("base64uploadFileList")
     @ResponseBody
-    public R base64uploadFileList(@RequestBody List<Base64FileVO> list, HttpServletRequest request) {
+    public R<List<JSONObject>> base64uploadFileList(@RequestBody List<Base64FileVO> list, HttpServletRequest request) {
         try {
             List<JSONObject> fileList = new ArrayList<>();
             for (Base64FileVO base64FileVO : list) {

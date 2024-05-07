@@ -1,11 +1,11 @@
-package com.wayn.common.core.vo;
+package com.wayn.common.request;
 
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
-public class ProfileVO {
+public class ProfileRequestVO {
     /**
      * 用户昵称或网络名称
      */

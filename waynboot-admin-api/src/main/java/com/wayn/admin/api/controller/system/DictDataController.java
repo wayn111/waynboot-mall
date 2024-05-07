@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.util.constant.SysConstants;
 import com.wayn.common.core.entity.system.Dict;
 import com.wayn.common.core.service.system.IDictService;
+import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
@@ -46,6 +46,7 @@ public class DictDataController extends BaseController {
 
     /**
      * 查询字典类型列表
+     *
      * @return
      */
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
@@ -57,6 +58,7 @@ public class DictDataController extends BaseController {
 
     /**
      * 根据字典类型获取字典值列表
+     *
      * @param parentType
      * @return
      */
@@ -68,6 +70,7 @@ public class DictDataController extends BaseController {
 
     /**
      * 添加字典值
+     *
      * @param dict
      * @return
      */
@@ -88,6 +91,7 @@ public class DictDataController extends BaseController {
 
     /**
      * 修改字典值
+     *
      * @param dict
      * @return
      */
@@ -108,6 +112,7 @@ public class DictDataController extends BaseController {
 
     /**
      * 获取字典值
+     *
      * @param dictId
      * @return
      */
@@ -119,6 +124,7 @@ public class DictDataController extends BaseController {
 
     /**
      * 删除字典值
+     *
      * @param dictIds
      * @return
      */

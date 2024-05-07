@@ -5,7 +5,6 @@ import com.wayn.admin.framework.security.handle.AuthenticationEntryPointImpl;
 import com.wayn.admin.framework.security.handle.LogoutSuccessHandlerImpl;
 import com.wayn.admin.framework.security.service.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,22 +48,22 @@ public class SecurityConfig {
                 // 过滤请求
                 .authorizeHttpRequests(
                         registry -> registry
-                            .requestMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
-                            .requestMatchers("/slider/**").anonymous()
-                            .requestMatchers("/captcha/**").anonymous()
-                            .requestMatchers("/upload/**").anonymous()
-                            .requestMatchers("/common/download**").anonymous()
-                            .requestMatchers("/doc.html").anonymous()
-                            .requestMatchers("/swagger-ui/**").anonymous()
-                            .requestMatchers("/swagger-resources/**").anonymous()
-                            .requestMatchers("/webjars/**").anonymous()
-                            .requestMatchers("/*/api-docs").anonymous()
-                            .requestMatchers("/druid/**").anonymous()
-                            .requestMatchers("/elastic/**").anonymous()
-                            .requestMatchers("/callback/**").anonymous()
-                            .requestMatchers("/ws/**").anonymous()
-                            // 除上面外的所有请求全部需要鉴权认证
-                            .anyRequest().authenticated()
+                                .requestMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
+                                .requestMatchers("/slider/**").anonymous()
+                                .requestMatchers("/captcha/**").anonymous()
+                                .requestMatchers("/upload/**").anonymous()
+                                .requestMatchers("/common/download**").anonymous()
+                                .requestMatchers("/doc.html").anonymous()
+                                .requestMatchers("/swagger-ui/**").anonymous()
+                                .requestMatchers("/swagger-resources/**").anonymous()
+                                .requestMatchers("/webjars/**").anonymous()
+                                .requestMatchers("/*/api-docs").anonymous()
+                                .requestMatchers("/druid/**").anonymous()
+                                .requestMatchers("/elastic/**").anonymous()
+                                .requestMatchers("/callback/**").anonymous()
+                                .requestMatchers("/ws/**").anonymous()
+                                // 除上面外的所有请求全部需要鉴权认证
+                                .anyRequest().authenticated()
                 )
                 .logout(configurer -> configurer.logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler))
                 .headers(configurer -> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
