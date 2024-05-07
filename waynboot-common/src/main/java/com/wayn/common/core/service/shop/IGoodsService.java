@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.vo.GoodsSaveRelatedVO;
-import com.wayn.util.util.R;
+import com.wayn.common.core.vo.GoodsVO;
+import com.wayn.common.request.GoodsSaveRelatedReqVO;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,10 +52,10 @@ public interface IGoodsService extends IService<Goods> {
     /**
      * 保存商品相关对象
      *
-     * @param goodsSaveRelatedVO 商品保存关联VO对象
+     * @param goodsSaveRelatedReqVO 商品保存关联VO对象
      * @return R
      */
-    R saveGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO);
+    void saveGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO);
 
     /**
      * 校验商品名称是否唯一
@@ -63,7 +63,7 @@ public interface IGoodsService extends IService<Goods> {
      * @param goods 栏目信息
      * @return 状态码 0 唯一 1 不唯一
      */
-    String checkGoodsNameUnique(Goods goods);
+    String checkGoodsNameUnique(GoodsVO goods);
 
     /**
      * 删除商品相关对象
@@ -76,10 +76,10 @@ public interface IGoodsService extends IService<Goods> {
     /**
      * 更新商品相关对象
      *
-     * @param goodsSaveRelatedVO 商品保存关联VO对象
+     * @param goodsSaveRelatedReqVO 商品保存关联VO对象
      * @return R
      */
-    R updateGoodsRelated(GoodsSaveRelatedVO goodsSaveRelatedVO) throws IOException;
+    void updateGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) throws IOException;
 
     /**
      * 根据二级分类Id集合获取对应商品

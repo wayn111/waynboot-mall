@@ -11,7 +11,7 @@ import com.wayn.common.core.entity.shop.SearchHistory;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IKeywordService;
 import com.wayn.common.core.service.shop.ISearchHistoryService;
-import com.wayn.common.core.vo.SearchVO;
+import com.wayn.common.request.SearchRequestVO;
 import com.wayn.common.response.HotKeywordsResVO;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
@@ -66,12 +66,12 @@ public class SearchController extends BaseController {
     /**
      * 商城搜索建议
      *
-     * @param searchVO 搜索参数
+     * @param searchRequestVO 搜索参数
      * @return R
      */
     @GetMapping("sugguest")
-    public R<List<String>> sugguest(SearchVO searchVO) throws IOException {
-        String keyword = searchVO.getKeyword();
+    public R<List<String>> sugguest(SearchRequestVO searchRequestVO) throws IOException {
+        String keyword = searchRequestVO.getKeyword();
         String suggestField = "name.py";
         String suggestName = "my-suggest";
         SuggestionBuilder<CompletionSuggestionBuilder> termSuggestionBuilder = SuggestBuilders.completionSuggestion(suggestField)
@@ -87,23 +87,23 @@ public class SearchController extends BaseController {
     /**
      * 商城搜索结果
      *
-     * @param searchVO 搜索参数
+     * @param searchRequestVO 搜索参数
      * @return R
      */
     @GetMapping("result")
-    public R<List<Goods>> result(SearchVO searchVO) throws IOException {
+    public R<List<Goods>> result(SearchRequestVO searchRequestVO) throws IOException {
         // 获取筛选、排序条件
         Long memberId = MobileSecurityUtils.getUserId();
-        String keyword = searchVO.getKeyword();
-        Boolean filterNew = searchVO.getFilterNew();
-        Boolean filterHot = searchVO.getFilterHot();
-        Boolean isNew = searchVO.getIsNew();
-        Boolean isHot = searchVO.getIsHot();
-        Boolean isPrice = searchVO.getIsPrice();
-        Boolean isSales = searchVO.getIsSales();
-        String orderBy = searchVO.getOrderBy();
+        String keyword = searchRequestVO.getKeyword();
+        Boolean filterNew = searchRequestVO.getFilterNew();
+        Boolean filterHot = searchRequestVO.getFilterHot();
+        Boolean isNew = searchRequestVO.getIsNew();
+        Boolean isHot = searchRequestVO.getIsHot();
+        Boolean isPrice = searchRequestVO.getIsPrice();
+        Boolean isSales = searchRequestVO.getIsSales();
+        String orderBy = searchRequestVO.getOrderBy();
 
-        Page<SearchVO> page = getPage();
+        Page<SearchRequestVO> page = getPage();
         // 查询包含关键字、已上架商品
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();

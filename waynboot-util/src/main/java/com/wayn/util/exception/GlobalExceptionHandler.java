@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
      * 业务异常
      */
     @ExceptionHandler(BusinessException.class)
-    public R businessException(BusinessException e) {
+    public R<Void> businessException(BusinessException e) {
         log.error(e.getMessage(), e);
         if (Objects.isNull(e.getCode())) {
             return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(e.getMsg()));
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
      * 用户名不存在异常
      */
     @ExceptionHandler(UsernameNotFoundException.class)
-    public R usernameNotFoundException(UsernameNotFoundException e) {
+    public R<Void> usernameNotFoundException(UsernameNotFoundException e) {
         log.error(e.getMessage(), e);
         return R.error(ReturnCodeEnum.USER_NOT_EXISTS_ERROR);
     }
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
      * 自定义验证异常
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public R validExceptionHandler(MethodArgumentNotValidException e) {
+    public R<Void> validExceptionHandler(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
         String message = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
         return R.error(ReturnCodeEnum.CUSTOM_ERROR.setMsg(message));
@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
      * 登陆错误异常
      */
     @ExceptionHandler(BadCredentialsException.class)
-    public R badCredentialsException(BadCredentialsException e) {
+    public R<Void> badCredentialsException(BadCredentialsException e) {
         log.error(e.getMessage(), e);
         return R.error(ReturnCodeEnum.USER_ACCOUNT_PASSWORD_ERROR);
     }
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
      * 404异常
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    public R handlerNoFoundException(Exception e) {
+    public R<Void> handlerNoFoundException(Exception e) {
         log.error(e.getMessage(), e);
         return R.error(ReturnCodeEnum.NOT_FOUND);
     }
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
      * 拒绝访问异常
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public R handleAuthorizationException(AccessDeniedException e) {
+    public R<Void> handleAuthorizationException(AccessDeniedException e) {
         log.error(e.getMessage());
         return R.error(ReturnCodeEnum.UNAUTHORIZED);
     }
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
      * 认证失败异常
      */
     @ExceptionHandler(AuthenticationException.class)
-    public R handleAuthenticationException(AuthenticationException e) {
+    public R<Void> handleAuthenticationException(AuthenticationException e) {
         log.error(e.getMessage());
         return R.error(ReturnCodeEnum.FORBIDDEN);
     }
@@ -93,7 +93,7 @@ public class GlobalExceptionHandler {
      * 全局异常
      */
     @ExceptionHandler(Exception.class)
-    public R handleException(Exception e) {
+    public R<Void> handleException(Exception e) {
         log.error(e.getMessage(), e);
         return R.error();
     }

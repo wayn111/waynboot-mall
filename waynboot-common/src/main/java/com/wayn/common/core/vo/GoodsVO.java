@@ -1,11 +1,17 @@
 package com.wayn.common.core.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.format.DateTimeFormat;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -116,12 +122,27 @@ public class GoodsVO extends ShopBaseEntity implements Serializable {
      */
     private String detail;
 
-    private List<Long> goodsIdList;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
     /**
-     * 删除标志（0代表存在 1代表删除）
+     * 更新时间
      */
-    private Boolean delFlag;
+    private Date updateTime;
+
+    /**
+     * 开始时间
+     */
+    private String startTime;
+
+    /**
+     * 结束时间
+     */
+    private String endTime;
+
+    private List<Long> goodsIdList;
 
 
 }

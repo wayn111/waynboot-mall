@@ -2,12 +2,12 @@ package com.wayn.admin.api.controller.tool;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.wayn.common.core.entity.tool.EmailConfig;
+import com.wayn.common.core.service.tool.IMailConfigService;
 import com.wayn.common.core.vo.EmailConfigVO;
 import com.wayn.common.core.vo.SendMailVO;
-import com.wayn.common.core.service.tool.IMailConfigService;
+import com.wayn.common.util.MailUtil;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
-import com.wayn.common.util.MailUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

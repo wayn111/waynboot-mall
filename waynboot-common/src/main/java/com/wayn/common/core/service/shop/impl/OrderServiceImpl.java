@@ -17,12 +17,12 @@ import com.wayn.common.core.service.shop.IOrderService;
 import com.wayn.common.core.vo.MemberVO;
 import com.wayn.common.core.vo.OrderGoodsVO;
 import com.wayn.common.core.vo.OrderVO;
-import com.wayn.common.core.vo.ShipVO;
 import com.wayn.common.design.strategy.pay.PayTypeEnum;
 import com.wayn.common.design.strategy.refund.context.RefundContext;
 import com.wayn.common.design.strategy.refund.strategy.RefundInterface;
 import com.wayn.common.request.OrderManagerReqVO;
 import com.wayn.common.request.OrderRefundReqVO;
+import com.wayn.common.request.ShipRequestVO;
 import com.wayn.common.response.OrderDetailResVO;
 import com.wayn.common.response.OrderManagerResVO;
 import com.wayn.util.enums.OrderStatusEnum;
@@ -135,7 +135,7 @@ public class OrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> imple
     }
 
     @Override
-    public void ship(ShipVO shipVO) {
+    public void ship(ShipRequestVO shipVO) {
         Long orderId = shipVO.getOrderId();
         String shipChannel = shipVO.getShipChannel();
         String shipSn = shipVO.getShipSn();

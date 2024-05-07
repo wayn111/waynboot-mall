@@ -1,4 +1,4 @@
-package com.wayn.common.core.vo;
+package com.wayn.common.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +8,7 @@ import lombok.Data;
  * 订单发货VO
  */
 @Data
-public class ShipVO {
+public class ShipRequestVO {
 
     /**
      * 订单ID

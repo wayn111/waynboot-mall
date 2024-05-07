@@ -3,7 +3,6 @@ package com.wayn.common.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,12 +13,14 @@ import java.time.LocalDateTime;
  * 订单列表请求
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 public class OrderManagerReqVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 3129813461714576208L;
 
+    /**
+     * 订单id
+     */
     private Long id;
 
     /**

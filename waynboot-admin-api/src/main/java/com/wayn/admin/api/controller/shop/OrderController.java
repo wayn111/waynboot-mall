@@ -9,10 +9,10 @@ import com.wayn.admin.framework.config.properties.ExpressProperties;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.service.shop.IOrderService;
-import com.wayn.common.core.vo.ShipVO;
 import com.wayn.common.dto.OrderExportDTO;
 import com.wayn.common.request.OrderManagerReqVO;
 import com.wayn.common.request.OrderRefundReqVO;
+import com.wayn.common.request.ShipRequestVO;
 import com.wayn.common.response.OrderDetailResVO;
 import com.wayn.common.response.OrderManagerResVO;
 import com.wayn.util.util.R;
@@ -118,7 +118,7 @@ public class OrderController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('shop:order:ship')")
     @PostMapping("ship")
-    public R<Boolean> ship(@RequestBody ShipVO shipVO) throws UnsupportedEncodingException {
+    public R<Boolean> ship(@RequestBody ShipRequestVO shipVO) throws UnsupportedEncodingException {
         iOrderService.ship(shipVO);
         return R.success();
     }

@@ -19,9 +19,9 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
         log.info("登录失败");
-        //设置状态码
+        // 设置状态码
         response.setStatus(500);
-        //将 登录失败 信息打包成json格式返回
+        // 将 登录失败 信息打包成json格式返回
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().print(JsonUtil.marshal(R.error(ReturnCodeEnum.USER_ACCOUNT_PASSWORD_ERROR)));
     }
