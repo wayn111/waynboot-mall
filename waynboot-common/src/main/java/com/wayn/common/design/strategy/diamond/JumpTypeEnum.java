@@ -10,8 +10,7 @@ public enum JumpTypeEnum {
     // 栏目
     COLUMN(0),
     // 分类
-    CATEGORY(1)
-    ;
+    CATEGORY(1);
 
     private Integer type;
 

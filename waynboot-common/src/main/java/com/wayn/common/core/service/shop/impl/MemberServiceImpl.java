@@ -23,6 +23,6 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Override
     public IPage<Member> listPage(Page<Member> page, Member member) {
-        return memberMapper.selectMemberListPage(page,member);
+        return memberMapper.selectMemberListPage(page, member);
     }
 }

@@ -1,10 +1,5 @@
 package com.wayn.common.core.vo;
 
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.annotation.format.DateTimeFormat;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wayn.common.base.entity.ShopBaseEntity;
 import lombok.*;
 

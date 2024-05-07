@@ -121,11 +121,11 @@ public class WaynConfig {
         WaynConfig.freightPrice = freightPrice;
     }
 
-    public void setUnpaidOrderCancelDelayTime(Integer unpaidOrderCancelDelayTime) {
-        WaynConfig.unpaidOrderCancelDelayTime = unpaidOrderCancelDelayTime;
-    }
-
     public static Integer getUnpaidOrderCancelDelayTime() {
         return unpaidOrderCancelDelayTime;
+    }
+
+    public void setUnpaidOrderCancelDelayTime(Integer unpaidOrderCancelDelayTime) {
+        WaynConfig.unpaidOrderCancelDelayTime = unpaidOrderCancelDelayTime;
     }
 }

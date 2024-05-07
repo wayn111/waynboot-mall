@@ -15,16 +15,18 @@ public interface IGoodsProductService extends IService<GoodsProduct> {
 
     /**
      * 减少库存
+     *
      * @param productId 商品货品ID
-     * @param number 减少数量
+     * @param number    减少数量
      * @return boolean
      */
     boolean reduceStock(Long productId, Integer number);
 
     /**
      * 增加库存
+     *
      * @param productId 商品货品ID
-     * @param number 增加数量
+     * @param number    增加数量
      * @return boolean
      */
     boolean addStock(Long productId, Integer number);

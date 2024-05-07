@@ -117,8 +117,8 @@ public class CommonFileController {
     @PostMapping("base64uploadFile")
     @ResponseBody
     public R<String> base64uploadFile(String filename,
-                              String base64content,
-                              HttpServletRequest request) {
+                                      String base64content,
+                                      HttpServletRequest request) {
         try {
             byte[] decode = Base64.getDecoder().decode(base64content.substring(base64content.indexOf(IMAGE_BASE64_FLAG) + IMAGE_BASE64_FLAG.length()));
             // 上传文件路径

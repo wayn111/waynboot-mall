@@ -1,9 +1,8 @@
 package com.wayn.common.wapper.epay.util;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class HttpBuildQuery {
     public static String httpBuildQuery(Map<String, Object> params) {

@@ -1,6 +1,5 @@
 package com.wayn.common.wapper.epay.util;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.crypto.SecureUtil;
 
