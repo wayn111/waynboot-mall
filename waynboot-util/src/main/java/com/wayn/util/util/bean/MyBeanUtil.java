@@ -43,21 +43,21 @@ public class MyBeanUtil extends BeanUtils {
      * @param target 目标map
      */
     public static void copyProperties2Map(Object source, Map<String, Object> target) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-        //1.获取bean信息
+        // 1.获取bean信息
         BeanInfo beanInfo = Introspector.getBeanInfo(source.getClass());
         PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
         if (properties != null) {
             for (PropertyDescriptor prop : properties) {
-                //2.得到属性名
+                // 2.得到属性名
                 String name = prop.getName();
-                //3.过滤class属性
+                // 3.过滤class属性
                 if (!"class".equals(name)) {
-                    //4.得到属性的get方法
+                    // 4.得到属性的get方法
                     Method getter = prop.getReadMethod();
 
-                    //5.获取属性值
+                    // 5.获取属性值
                     Object value = getter.invoke(source);
-                    //6.放入map中
+                    // 6.放入map中
                     if (value != null) {
                         target.put(name, value);
                     }
@@ -78,20 +78,20 @@ public class MyBeanUtil extends BeanUtils {
      * @throws IllegalAccessException
      */
     public static Object getValue(Object source, String filed) throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-        //1.获取bean信息
+        // 1.获取bean信息
         BeanInfo beanInfo = Introspector.getBeanInfo(source.getClass());
         PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
 
         if (properties != null) {
             for (PropertyDescriptor prop : properties) {
-                //2.得到属性名
+                // 2.得到属性名
                 String name = prop.getName();
-                //3.过滤class属性
+                // 3.过滤class属性
                 if (!"class".equals(name) && Objects.equals(filed, name)) {
-                    //4.得到属性的get方法
+                    // 4.得到属性的get方法
                     Method getter = prop.getReadMethod();
 
-                    //5.获取属性值
+                    // 5.获取属性值
                     return getter.invoke(source);
 
                 }

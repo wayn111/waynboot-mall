@@ -52,7 +52,7 @@ public class JwtUtil {
     /**
      * 生成签名
      *
-     * @param token 用户唯一标识
+     * @param token  用户唯一标识
      * @param secret 用户的密码
      * @return 加密的token
      */

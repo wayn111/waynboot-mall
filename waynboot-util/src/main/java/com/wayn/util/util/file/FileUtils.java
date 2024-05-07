@@ -18,8 +18,6 @@ import java.text.DecimalFormat;
 @Slf4j
 public class FileUtils extends org.apache.commons.io.FileUtils {
 
-    private static int counter = 0;
-
     /**
      * 定义GB的计算常量
      */
@@ -32,8 +30,8 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      * 定义KB的计算常量
      */
     private static final int KB = 1024;
-
     private static final DecimalFormat DF = new DecimalFormat("0.00");
+    private static int counter = 0;
 
     /**
      * 输出指定文件的byte数组

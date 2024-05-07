@@ -82,11 +82,12 @@ public class ExcelUtil {
 
     /**
      * 读取excel输入流
-     * @param inputStream excel输入流
-     * @param clazz 导入class
+     *
+     * @param inputStream  excel输入流
+     * @param clazz        导入class
      * @param readListener 导入监听
-     * @return list
      * @param <T>
+     * @return list
      */
     public static <T> List<T> readExcelList(InputStream inputStream, Class clazz, ReadListener readListener) {
         return EasyExcel.read(inputStream, clazz, readListener).sheet().doReadSync();
@@ -94,8 +95,9 @@ public class ExcelUtil {
 
     /**
      * 读取excel输入流
-     * @param inputStream excel输入流
-     * @param clazz 导入class
+     *
+     * @param inputStream  excel输入流
+     * @param clazz        导入class
      * @param readListener 导入监听
      */
     public static void readExcel(InputStream inputStream, Class clazz, ReadListener readListener) {
