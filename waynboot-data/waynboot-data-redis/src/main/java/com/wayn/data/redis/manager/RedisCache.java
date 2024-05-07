@@ -22,6 +22,22 @@ public class RedisCache {
     public RedisTemplate redisTemplate;
 
     /**
+     * lua原子脚本
+     */
+    public static String buildLuaIncrKeyScript() {
+        return """
+                local key = KEYS[1]
+                local limit = ARGV[1]
+                local c = redis.call('get', key)
+                if c and tonumber(c) > tonumber(limit) then
+                    redis.call('set', key, 0)
+                    return c
+                end
+                return redis.call('incr', key)
+                """;
+    }
+
+    /**
      * 缓存基本的对象，Integer、String、实体类等
      *
      * @param key   缓存的键值
@@ -42,9 +58,11 @@ public class RedisCache {
     public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
+
     public <T> void setCacheObject(final String key, final T value, final Integer timeout) {
         redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
     }
+
     /**
      * 设置有效时间
      *
@@ -309,22 +327,6 @@ public class RedisCache {
             }
             return keysTmp;
         });
-    }
-
-    /**
-     * lua原子脚本
-     */
-    public static String buildLuaIncrKeyScript() {
-        return """
-                local key = KEYS[1]
-                local limit = ARGV[1]
-                local c = redis.call('get', key)
-                if c and tonumber(c) > tonumber(limit) then
-                    redis.call('set', key, 0)
-                    return c
-                end
-                return redis.call('incr', key)
-                """;
     }
 
 }
