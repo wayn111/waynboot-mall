@@ -1,7 +1,7 @@
 package com.wayn.mobile.framework.security.service;
 
-import com.wayn.util.exception.BusinessException;
 import com.wayn.mobile.framework.security.LoginUserDetail;
+import com.wayn.util.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

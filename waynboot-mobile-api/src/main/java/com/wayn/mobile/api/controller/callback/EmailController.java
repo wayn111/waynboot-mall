@@ -1,10 +1,10 @@
 package com.wayn.mobile.api.controller.callback;
 
 import com.wayn.common.core.entity.tool.EmailConfig;
-import com.wayn.common.core.vo.SendMailVO;
 import com.wayn.common.core.service.tool.IMailConfigService;
-import com.wayn.util.util.R;
+import com.wayn.common.core.vo.SendMailVO;
 import com.wayn.common.util.MailUtil;
+import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +24,10 @@ public class EmailController {
 
     /**
      * 发送邮件
+     *
      * @param subject 标题
      * @param content 内容
-     * @param tos 接收人
+     * @param tos     接收人
      * @return R
      */
     @PostMapping
