@@ -1,8 +1,8 @@
 package com.wayn.mobile.framework.security.util;
 
+import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
-import com.wayn.mobile.framework.security.LoginUserDetail;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
