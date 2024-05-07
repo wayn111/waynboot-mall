@@ -9,7 +9,7 @@ public interface IAddressService extends IService<Address> {
     /**
      * 查询用户地址分页列表
      *
-     * @param page   分页对象
+     * @param page    分页对象
      * @param address 查询参数
      * @return 地址分页列表
      */

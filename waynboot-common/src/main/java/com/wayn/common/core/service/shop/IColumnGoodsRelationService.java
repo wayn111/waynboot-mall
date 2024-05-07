@@ -13,6 +13,7 @@ public interface IColumnGoodsRelationService extends IService<ColumnGoodsRelatio
 
     /**
      * 获取栏目配置的商品数量
+     *
      * @param columnId 栏目ID
      * @return 商品数量
      */

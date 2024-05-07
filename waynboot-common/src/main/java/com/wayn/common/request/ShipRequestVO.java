@@ -18,7 +18,7 @@ public class ShipRequestVO {
 
     /**
      * 发货渠道
-      */
+     */
     @NotBlank(message = "发货渠道不能为空")
     private String shipChannel;
 

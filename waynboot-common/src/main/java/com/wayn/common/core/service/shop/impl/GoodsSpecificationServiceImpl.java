@@ -3,9 +3,9 @@ package com.wayn.common.core.service.shop.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.entity.shop.GoodsSpecification;
-import com.wayn.common.core.vo.SpecificationVO;
 import com.wayn.common.core.mapper.shop.GoodsSpecificationMapper;
 import com.wayn.common.core.service.shop.IGoodsSpecificationService;
+import com.wayn.common.core.vo.SpecificationVO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

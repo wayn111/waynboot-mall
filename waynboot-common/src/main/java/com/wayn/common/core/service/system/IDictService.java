@@ -54,6 +54,7 @@ public interface IDictService extends IService<Dict> {
 
     /**
      * 删除字典类型以及子数据
+     *
      * @param dictIds 字典id集合
      * @return boolean
      */

@@ -1,8 +1,8 @@
 package com.wayn.common.core.service.shop.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.wayn.util.constant.Constants;
 import com.wayn.common.core.service.shop.IMailService;
+import com.wayn.util.constant.Constants;
 import com.wayn.util.util.IdUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.Map;
 @Service
 @AllArgsConstructor
 public class IMailServiceImpl implements IMailService {
-    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
+    RabbitTemplate rabbitTemplate;  // 使用RabbitTemplate,这提供了接收/发送等等方法
 
     @Override
     public void sendEmail(String subject, String content, String tos, String notifyUrl) throws UnsupportedEncodingException {

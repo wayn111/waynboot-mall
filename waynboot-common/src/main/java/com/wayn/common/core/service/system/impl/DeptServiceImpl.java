@@ -8,7 +8,6 @@ import com.wayn.common.core.mapper.system.DeptMapper;
 import com.wayn.common.core.service.system.IDeptService;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.core.vo.TreeVO;
-import com.wayn.common.response.DepTreeselectResVO;
 import com.wayn.util.constant.SysConstants;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
