@@ -12,6 +12,7 @@
 - [系统架构](#系统架构)
 - [功能设计](#功能设计)
 - [系统设计](#系统设计)
+- [接口文档](#接口文档)
 - [技术选型](#技术选型)
 - [文件目录](#文件目录)
 - [todo](#todo)
@@ -64,6 +65,16 @@ Mysql、Redis、RabbitMQ、ElasticSearch、Nginx 等常用中间件，根据我�
 
 <img src="images/wx-mp-code.png" width = "200"  alt="扫码关注公众号"/>
 
+---
+
+# 接口文档
+本项目使用 apifox 提供的在线文档功能供大家在线查看以及浏览。
+
+文档地址：https://apifox.com/apidoc/shared-f48b11f5-6137-4722-9c70-b9c5c3e5b09b
+
+![apifox-前台接口.png](images%2Fapifox-%E5%89%8D%E5%8F%B0%E6%8E%A5%E5%8F%A3.png)
+
+![apifox-前台接口.png](images%2Fapifox-%E5%89%8D%E5%8F%B0%E6%8E%A5%E5%8F%A3.png)
 ---
 
 # 技术选型

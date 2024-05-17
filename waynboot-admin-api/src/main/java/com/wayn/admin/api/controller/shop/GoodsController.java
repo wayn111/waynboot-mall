@@ -157,4 +157,5 @@ public class GoodsController extends BaseController {
         }
         return R.result(flag);
     }
+
 }
