@@ -23,6 +23,6 @@ public class AliH5PayStrategy implements PayTypeInterface {
 
     @Override
     public Integer getType() {
-        return PayTypeEnum.TEST.getType();
+        return PayTypeEnum.ALI_H5.getType();
     }
 }
