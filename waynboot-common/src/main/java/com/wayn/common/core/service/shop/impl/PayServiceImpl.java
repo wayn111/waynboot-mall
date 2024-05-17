@@ -86,6 +86,7 @@ public class PayServiceImpl implements IPayService {
         if (!update) {
             throw new BusinessException(ReturnCodeEnum.ORDER_SET_PAY_ERROR);
         }
+        // 调用第三方支付
         PayTypeInterface instance = payTypeContext.getInstance(reqVO.getPayType());
         return instance.pay(reqVO);
     }
