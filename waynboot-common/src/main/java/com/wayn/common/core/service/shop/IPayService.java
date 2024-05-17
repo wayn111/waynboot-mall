@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface IPayService {
 
     /**
-     * 微信H5支付
+     * 统一下单支付接口，获取第三方支付平台返回的支付参数
      *
      * @param reqVO 订单VO
      * @return OrderPayResVO
