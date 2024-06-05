@@ -108,6 +108,20 @@ public class RedisCache {
     }
 
     /**
+     * 获取key剩余过期时间
+     * 在 Redis 2.6 或更早版本中，如果键不存在或者键存在但没有关联的过期时间，则命令返回 -1。 <br>
+     * 从 Redis 2.8 开始，发生错误时的返回值发生了变化：<br>
+     * - 如果该键不存在，该命令将返回 -2。<br>
+     * - 如果密钥存在但没有关联的过期时间，则该命令返回 -1。<br>
+     * @param key redis key
+     * @return long
+     */
+    public <T> Long ttl(final String key) {
+        ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        return operation.getOperations().getExpire(key);
+    }
+
+    /**
      * 获取多个key的
      *
      * @param keys 多个key组成的集合
