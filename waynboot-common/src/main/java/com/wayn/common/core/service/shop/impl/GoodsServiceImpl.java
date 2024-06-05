@@ -105,6 +105,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
         for (GoodsProduct product : products) {
+            product.setId(null);
             BigDecimal productPrice = product.getPrice();
             if (retailPrice.compareTo(productPrice) > 0) {
                 retailPrice = productPrice;
@@ -168,9 +169,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
         // 同步es
         boolean one = elasticDocument.delete(EsConstants.ES_GOODS_INDEX, goodsId.toString());
-        if (!one) {
-            throw new BusinessException("删除商品，同步es失败");
-        }
+        // if (!one) {
+        //     throw new BusinessException("删除商品，同步es失败");
+        // }
         return true;
     }
 
