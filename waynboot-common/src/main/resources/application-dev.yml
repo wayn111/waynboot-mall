@@ -67,9 +67,11 @@ shop:
     app-secret:
     mch-id:
     mch-key:
-    # 商户证书文件路径
-    # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
-    key-path: xxxxx
+    api-v3key: ""
+    # 将v3支付证书解压放到项目resource文件夹下
+    key-path: "classpath:apiclient_cert.p12"
+    private-cert-path: "classpath:apiclient_cert.pem"
+    private-key-path: "classpath:apiclient_key.pem"
     notify-url: xxxxx
   # alipay
   alipay:

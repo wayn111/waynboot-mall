@@ -19,10 +19,12 @@ public class WxPayServiceConfig {
         payConfig.setAppId(weixinPayConfig.getAppId());
         payConfig.setMchId(weixinPayConfig.getMchId());
         payConfig.setMchKey(weixinPayConfig.getMchKey());
-        payConfig.setNotifyUrl(weixinPayConfig.getNotifyUrl());
+        payConfig.setApiV3Key(weixinPayConfig.getApiV3key());
         payConfig.setKeyPath(weixinPayConfig.getKeyPath());
-        payConfig.setTradeType("JSAPI");
+        payConfig.setPrivateKeyPath(weixinPayConfig.getPrivateKeyPath());
+        payConfig.setPrivateCertPath(weixinPayConfig.getPrivateCertPath());
         payConfig.setSignType("MD5");
+        payConfig.setNotifyUrl(weixinPayConfig.getNotifyUrl());
         return payConfig;
     }
 
