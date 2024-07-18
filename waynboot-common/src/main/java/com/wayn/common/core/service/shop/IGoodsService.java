@@ -108,4 +108,6 @@ public interface IGoodsService extends IService<Goods> {
     IPage<Goods> selectColumnGoodsPageByColumnId(Page<Goods> page, Long columnId);
 
     List<Goods> selectGoodsByIds(List<Long> goodsIdList);
+
+    void updateVirtualSales(Long goodsId, Integer number);
 }

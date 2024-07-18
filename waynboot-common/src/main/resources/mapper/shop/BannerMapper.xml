@@ -47,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="banner.endTime != null and banner.endTime != ''">
 				and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{banner.endTime},'%Y-%m-%d')
 			</if>
+			order by sort asc, id desc
 		</where>
 	</select>
 

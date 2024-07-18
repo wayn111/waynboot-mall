@@ -131,19 +131,21 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         for (Cart cart : cartList) {
             CartResponseVO responseVO = new CartResponseVO();
             GoodsProduct product = productIdMap.get(cart.getProductId());
-            Integer number = cart.getNumber();
-            Integer maxNumber = product.getNumber();
-            if (maxNumber < number) {
-                commonThreadPoolTaskExecutor.execute(() -> {
-                    this.lambdaUpdate()
-                            .set(Cart::getChecked, false)
-                            .eq(Cart::getId, cart.getId())
-                            .update();
-                });
+            if (product != null) {
+                Integer number = cart.getNumber();
+                Integer maxNumber = product.getNumber();
+                if (maxNumber < number) {
+                    commonThreadPoolTaskExecutor.execute(() -> {
+                        this.lambdaUpdate()
+                                .set(Cart::getChecked, false)
+                                .eq(Cart::getId, cart.getId())
+                                .update();
+                    });
+                }
+                BeanUtil.copyProperties(cart, responseVO);
+                responseVO.setMaxNum(maxNumber);
+                responseVOS.add(responseVO);
             }
-            BeanUtil.copyProperties(cart, responseVO);
-            responseVO.setMaxNum(maxNumber);
-            responseVOS.add(responseVO);
         }
         return responseVOS;
     }

@@ -33,10 +33,19 @@ public class Banner extends ShopBaseEntity implements Serializable {
     @NotBlank(message = "banner图片不能为空")
     private String imgUrl;
 
+    /**
+     * 条跳转链接
+     */
     private String jumpUrl;
 
+    /**
+     * 排序默认从小到大
+     */
     private Integer sort;
 
+    /**
+     * banner状态（0启用 1禁用）
+     */
     private Integer status;
 
     /**

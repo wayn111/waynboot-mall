@@ -254,6 +254,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         return goodsMapper.selectGoodsListByIds(goodsIdList);
     }
 
+    @Override
+    public void updateVirtualSales(Long goodsId, Integer number) {
+        goodsMapper.updateVirtualSales(goodsId, number);
+    }
+
     /**
      * 同步商品信息到es中
      *

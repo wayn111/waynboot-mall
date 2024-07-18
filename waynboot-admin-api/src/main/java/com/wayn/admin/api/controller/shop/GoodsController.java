@@ -136,7 +136,7 @@ public class GoodsController extends BaseController {
                     map.put("id", goods.getId());
                     map.put("name", goods.getName());
                     map.put("pyname", goods.getName());
-                    map.put("sales", goods.getActualSales() + goods.getVirtualSales());
+                    map.put("sales", goods.getVirtualSales());
                     map.put("isHot", goods.getIsHot());
                     map.put("isNew", goods.getIsNew());
                     map.put("countPrice", goods.getCounterPrice());
