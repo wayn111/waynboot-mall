@@ -40,4 +40,10 @@ public class BusinessException extends RuntimeException {
     public BusinessException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public BusinessException(ReturnCodeEnum returnCodeEnum, String message) {
+        super(message);
+        this.code = returnCodeEnum.getCode();
+        this.msg = message;
+    }
 }

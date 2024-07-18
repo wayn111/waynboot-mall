@@ -53,6 +53,11 @@
         from shop_goods
     </sql>
 
+    <update id="updateVirtualSales">
+        update shop_goods set virtual_sales = virtual_sales + #{number}, actual_sales = actual_sales + #{number}
+        where id = #{goodsId}
+    </update>
+
     <select id="selectGoodsListPage" resultMap="ShopGoodsResult">
         <include refid="goods_info"/>
         <where>

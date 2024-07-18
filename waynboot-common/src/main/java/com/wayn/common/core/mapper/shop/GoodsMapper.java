@@ -30,4 +30,6 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     List<Goods> selectHomeIndex(Goods goods);
 
     IPage<Goods> selectColumnGoodsPage(Page<Goods> page, Long columnId);
+
+    void updateVirtualSales(Long goodsId, Integer number);
 }

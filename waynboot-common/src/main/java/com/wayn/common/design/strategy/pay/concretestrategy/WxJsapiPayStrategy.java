@@ -1,5 +1,6 @@
 package com.wayn.common.design.strategy.pay.concretestrategy;
 
+import com.alibaba.fastjson.JSON;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderV3Request;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderV3Result;
 import com.github.binarywang.wxpay.bean.result.enums.TradeTypeEnum;
@@ -45,7 +46,9 @@ public class WxJsapiPayStrategy implements PayTypeInterface {
             int fee = actualPrice.multiply(new BigDecimal(100)).intValue();
             amount.setTotal(fee);
             orderRequest.setAmount(amount);
+            log.info("wxpay request is {}", orderRequest);
             result = wxPayService.createOrderV3(TradeTypeEnum.JSAPI, orderRequest);
+            log.info("wxpay result is {}", result);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);

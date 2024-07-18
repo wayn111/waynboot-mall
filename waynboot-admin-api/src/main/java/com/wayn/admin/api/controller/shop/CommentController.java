@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +52,20 @@ public class CommentController extends BaseController {
     public R<Comment> getComment(@PathVariable Long commentId) {
         return R.success(iCommentService.getById(commentId));
     }
+
+    /**
+     * 修改评论
+     *
+     * @param comment
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('shop:comment:update')")
+    @PostMapping
+    public R<Boolean> addComment(@Valid @RequestBody Comment comment) {
+        comment.setCreateTime(new Date());
+        return R.success(iCommentService.save(comment));
+    }
+
 
     /**
      * 修改评论
