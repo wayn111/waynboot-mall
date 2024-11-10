@@ -92,7 +92,10 @@ public class ProfileController {
         if (SecurityUtils.matchesPassword(newPassword, password)) {
             return R.error(ReturnCodeEnum.USER_NEW_OLD_PASSWORD_NOT_SAME_ERROR);
         }
-        boolean result = iUserService.update().set("password", SecurityUtils.encryptPassword(newPassword)).update();
+        boolean result = iUserService.update()
+                .set("password", SecurityUtils.encryptPassword(newPassword))
+                .eq("id", SecurityUtils.getUserId())
+                .update();
         if (result) {
             // 更新缓存用户信息
             loginUser.getUser().setPassword(SecurityUtils.encryptPassword(newPassword));
