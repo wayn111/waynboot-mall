@@ -10,27 +10,9 @@ import com.wayn.util.constant.SysConstants;
 import java.util.Date;
 
 public class JwtUtil {
-    // token过期时间30天
-    private static long EXPIRE = 30 * 24 * 60 * 60 * 1000L;
-    /**
-     * 生成签名
-     *
-     * @param token  用户唯一标识
-     * @param secret 用户的密码
-     * @return 加密的token
-     */
-    public static String sign(String token, String secret) {
-        long millis = System.currentTimeMillis();
-        Date date = new Date(millis + EXPIRE);
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        return JWT.create()
-                .withClaim(SysConstants.SIGN_KEY, token)
-                .withIssuedAt(new Date())
-                // 设置过期时间
-                .withExpiresAt(date)
-                .sign(algorithm);
-    }
 
+    // 过期时间30分钟
+    private static final long EXPIRE_TIME = 30 * 60 * 1000;
 
     /**
      * 校验token是否正确
@@ -66,6 +48,19 @@ public class JwtUtil {
         }
     }
 
+
+    /**
+     * 生成签名
+     *
+     * @param token  用户唯一标识
+     * @param secret 用户的密码
+     * @return 加密的token
+     */
+    public static String sign(String token, String secret) {
+        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        return JWT.create().withClaim(SysConstants.SIGN_KEY, token).withIssuedAt(new Date()).withExpiresAt(date).sign(algorithm);
+    }
 
     /**
      * 根据token获取解析后的Claims

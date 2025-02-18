@@ -19,6 +19,8 @@ spring:
       max-request-size: 200MB
   jackson:
     default-property-inclusion: non_null # 接口返回字段值为null的属性不展示
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   boot:
     admin:
       client:
@@ -63,7 +65,7 @@ wayn:
   uploadDir: ${UPLOAD_DIR:D:/waynshop/webp}
   adminUrl: ${ADMIN_URL:http://localhost:81}
   mobileUrl: ${MOBILE_URL:http://localhost:82}
-  freightLimit: "88"  # 运费限额
+  freightLimit: "0"  # 运费限额
   freightPrice: "0"  # 运费
   unpaidOrderCancelDelayTime: 30 # 未支付订单超时时间
 

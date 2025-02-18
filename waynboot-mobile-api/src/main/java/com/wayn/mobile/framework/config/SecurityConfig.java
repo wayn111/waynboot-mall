@@ -52,9 +52,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         registry -> registry
                                 .requestMatchers("favicon.ico", "/actuator/**", "/login", "/registry",
-                                        "/sendEmailCode", "/test/**", "/seckill/**", "/captcha").anonymous()
+                                        "/genMobileCode", "/test/**", "/seckill/**", "/captcha").anonymous()
                                 .requestMatchers("/home/**", "/category/**", "/comment/**", "/search/**",
-                                        "/goods/detail/**", "/cart/goodsCount", "/diamond/**").permitAll()
+                                        "/goods/detail/**", "/cart/goodsCount", "/diamond/**", "/coupon/list",
+                                        "wx/jsSdkInit")
+                                .permitAll()
                                 .requestMatchers("/upload/**").anonymous()
                                 .requestMatchers("/common/download**").anonymous()
                                 .requestMatchers("/doc.html").anonymous()

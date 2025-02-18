@@ -90,3 +90,7 @@ shop:
     pid: ""
     key: ""
     notify-url: xxxxx
+
+wx:
+  appId: ""
+  appSecret: ""

@@ -1,6 +1,6 @@
 version: '3'
 services:
-  # RabbitMQ
+  # RabbitMQ，启动报错时执行chmod 777 -R rabbitmq/
   rabbitmq:
     image: rabbitmq:3.12.7-management
     ports:
@@ -18,7 +18,7 @@ services:
       #rabbitmq的初始密码
       RABBITMQ_DEFAULT_PASS: guest
     network_mode: "host"
-  # Elasticsearch服务
+  # Elasticsearch服务，启动报错时执行chmod 777 -R es/
   elasticsearch:
     image: elasticsearch:7.14.0
     ports:

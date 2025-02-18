@@ -22,6 +22,11 @@ public class CheckedGoodsResVO implements Serializable {
     private List<Cart> data;
 
     /**
+     * 可用优惠卷列表
+     */
+    private List<MemberCouponResVO> couponList;
+
+    /**
      * 运费
      */
     private BigDecimal freightPrice;

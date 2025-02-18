@@ -23,10 +23,14 @@ public class CommentVO {
     private Long valueId;
 
     /**
-     * 评论类型，如果type=0，则是商品评论；如果是type=1，则是专题评论；
+     * 评论类型，如果type=0，则是用户评论；如果是type=1，则是后台评论；
      */
     private Integer type;
 
+    /**
+     * 头像
+     */
+    private String avatar;
     /**
      * 评论内容
      */
@@ -41,11 +45,6 @@ public class CommentVO {
      * 用户表的用户ID
      */
     private Long userId;
-
-    /**
-     * 评论用户头像
-     */
-    private String avatar;
 
     /**
      * 评论用户名称
