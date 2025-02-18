@@ -10,8 +10,10 @@ import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.EpayConfig;
+import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.entity.shop.OrderGoods;
+import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IMobileOrderService;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.core.service.shop.IPayService;
@@ -58,6 +60,7 @@ public class PayServiceImpl implements IPayService {
     private PayTypeContext payTypeContext;
     private AlipayConfig alipayConfig;
     private WxPayService wxPayService;
+    private IGoodsService iGoodsService;
 
     @Override
     public OrderPayResVO prepay(OrderPayReqVO reqVO) {
@@ -128,7 +131,7 @@ public class PayServiceImpl implements IPayService {
                 log.error("微信支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
                 return WxPayNotifyResponse.fail("更新订单状态失败");
             }
-
+            updateVirtualSales(order.getId());
             return WxPayNotifyResponse.success("处理成功!");
         } catch (Exception e) {
             log.error("微信回调结果异常,异常原因{}", e.getMessage());
@@ -171,6 +174,7 @@ public class PayServiceImpl implements IPayService {
                 log.error("支付宝支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
                 return "error";
             }
+            updateVirtualSales(order.getId());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return "error";
@@ -214,11 +218,26 @@ public class PayServiceImpl implements IPayService {
                 log.error("易支付回调: 更新订单状态失败，order：{}", JSON.toJSONString(order.getOrderSn()));
                 return "error";
             }
+            updateVirtualSales(order.getId());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return "error";
         }
         log.info("易支付回调：结束");
         return "success";
+    }
+
+    private void updateVirtualSales(Long orderId) {
+        try {
+            List<OrderGoods> orderGoods = iOrderGoodsService.list(Wrappers.lambdaQuery(OrderGoods.class)
+                    .eq(OrderGoods::getOrderId, orderId));
+            for (OrderGoods orderGood : orderGoods) {
+                Long goodsId = orderGood.getGoodsId();
+                Integer number = orderGood.getNumber();
+                iGoodsService.updateVirtualSales(goodsId, number);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.wayn.common.core.service.shop.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -74,7 +75,8 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
     private RabbitTemplate rabbitTemplate;
     private RabbitTemplate delayRabbitTemplate;
     private OrderSnGenUtil orderSnGenUtil;
-
+    private ShopMemberCouponService shopMemberCouponService;
+    private IOrderUnpaidService orderUnpaidService;
 
     @Override
     public OrderListResVO selectListPage(IPage<Order> page, Integer showType, Long userId) {
@@ -159,6 +161,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         OrderDTO orderDTO = new OrderDTO();
         MyBeanUtil.copyProperties(orderCommitReqVO, orderDTO);
         Long addressId = orderDTO.getAddressId();
+        Long userCouponId = orderDTO.getUserCouponId();
         orderDTO.setUserId(userId);
         Address address = iAddressService.getById(addressId);
         if (!Objects.equals(address.getMemberId(), userId)) {
@@ -189,14 +192,28 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
             freightPrice = WaynConfig.getFreightPrice();
         }
 
+        // 订单费用
+        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice);
+
         // 优惠卷抵扣费用
         BigDecimal couponPrice = BigDecimal.ZERO;
-
-        // 订单费用
-        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(BigDecimal.ZERO);
+        if (userCouponId != null) {
+            ShopMemberCoupon memberCoupon = shopMemberCouponService.getById(userCouponId);
+            if (memberCoupon == null || memberCoupon.getUserId() != Math.toIntExact(userId)) {
+                throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "优惠卷错误");
+            }
+            if (memberCoupon.getUseStatus() != 0 || DateUtil.compare(memberCoupon.getExpireTime(), new Date()) < 0) {
+                throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "优惠卷不可用");
+            }
+            if (memberCoupon.getMin() > orderTotalPrice.intValue()) {
+                throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "优惠卷使用门槛未达到");
+            }
+            couponPrice = BigDecimal.valueOf(memberCoupon.getDiscount());
+        }
 
         // 最终支付费用
-        BigDecimal actualPrice = orderTotalPrice;
+        BigDecimal actualPrice = orderTotalPrice.subtract(couponPrice).max(BigDecimal.ZERO);
+        ;
         String orderSn = orderSnGenUtil.generateOrderSn();
         orderDTO.setOrderSn(orderSn);
 
@@ -227,7 +244,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
     public void submit(OrderDTO orderDTO) throws UnsupportedEncodingException {
         Long userId = orderDTO.getUserId();
         String orderSn = orderDTO.getOrderSn();
-
+        Long userCouponId = orderDTO.getUserCouponId();
         // 获取用户地址
         Long addressId = orderDTO.getAddressId();
         Address checkedAddress;
@@ -260,16 +277,18 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
             Long productId = checkGoods.getProductId();
             Long goodsId = checkGoods.getGoodsId();
             GoodsProduct product = goodsIdMap.get(productId);
-            int remainNumber = product.getNumber() - checkGoods.getNumber();
-            if (remainNumber < 0) {
-                Goods goods = iGoodsService.getById(goodsId);
-                String goodsName = goods.getName();
-                String[] specifications = product.getSpecifications();
-                throw new BusinessException(String.format(ReturnCodeEnum.ORDER_ERROR_STOCK_NOT_ENOUGH.getMsg(),
-                        goodsName, StringUtils.join(specifications, " ")));
-            }
-            if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
-                throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+            if (product != null) {
+                int remainNumber = product.getNumber() - checkGoods.getNumber();
+                if (remainNumber < 0) {
+                    Goods goods = iGoodsService.getById(goodsId);
+                    String goodsName = goods.getName();
+                    String[] specifications = product.getSpecifications();
+                    throw new BusinessException(String.format(ReturnCodeEnum.ORDER_ERROR_STOCK_NOT_ENOUGH.getMsg(),
+                            goodsName, StringUtils.join(specifications, " ")));
+                }
+                if (!iGoodsProductService.reduceStock(productId, checkGoods.getNumber())) {
+                    throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
+                }
             }
         }
 
@@ -285,14 +304,18 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
             freightPrice = WaynConfig.getFreightPrice();
         }
 
-        // 优惠卷抵扣费用
-        BigDecimal couponPrice = new BigDecimal("0.00");
-
         // 订单费用
-        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal("0.00"));
+        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).max(BigDecimal.ZERO);
+
+        // 优惠卷抵扣费用
+        BigDecimal couponPrice = BigDecimal.ZERO;
+        if (userCouponId != null) {
+            ShopMemberCoupon memberCoupon = shopMemberCouponService.getById(userCouponId);
+            couponPrice = BigDecimal.valueOf(memberCoupon.getDiscount());
+        }
 
         // 最终支付费用
-        BigDecimal actualPrice = orderTotalPrice;
+        BigDecimal actualPrice = orderTotalPrice.subtract(couponPrice).max(BigDecimal.ZERO);
 
         // 组装订单数据
         Order order = new Order();
@@ -342,6 +365,16 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
         } else {
             iCartService.removeByIds(cartIdArr);
         }
+        // 修改优惠卷使用状态
+        if (userCouponId != null) {
+            shopMemberCouponService.lambdaUpdate()
+                    .set(ShopMemberCoupon::getUseStatus, 1)
+                    .set(ShopMemberCoupon::getOrderId, orderId)
+                    .eq(ShopMemberCoupon::getId, userCouponId)
+                    .eq(ShopMemberCoupon::getUseStatus, 0)
+                    .update();
+        }
+
         // 下单30分钟内未支付自动取消订单
         Map<String, Object> map = new HashMap<>();
         map.put("orderSn", orderDTO.getOrderSn());
@@ -352,7 +385,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
                 .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
                 .build();
         delayRabbitTemplate.convertAndSend(MQConstants.ORDER_DELAY_EXCHANGE, MQConstants.ORDER_DELAY_ROUTING, message, messagePostProcessor -> {
-            // 延迟10s
+            // 默认延迟30分钟
             long delayTime = WaynConfig.getUnpaidOrderCancelDelayTime() * DateUnit.MINUTE.getMillis();
             messagePostProcessor.getMessageProperties().setDelay(Math.toIntExact(delayTime));
             return messagePostProcessor;
@@ -397,33 +430,7 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
     @Transactional(rollbackFor = Exception.class)
     public void cancel(Long orderId) {
         Order order = getById(orderId);
-        ReturnCodeEnum returnCodeEnum = checkOrderOperator(order);
-        if (!ReturnCodeEnum.SUCCESS.equals(returnCodeEnum)) {
-            throw new BusinessException(returnCodeEnum);
-        }
-        // 检测是否能够取消
-        OrderHandleOption handleOption = OrderUtil.build(order);
-        if (!handleOption.isCancel()) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_CANCAL_ERROR);
-        }
-
-        // 设置订单已取消状态
-        order.setOrderStatus(OrderStatusEnum.STATUS_CANCEL.getStatus());
-        order.setOrderEndTime(LocalDateTime.now());
-        order.setUpdateTime(new Date());
-        if (!updateById(order)) {
-            throw new BusinessException("更新数据已失效");
-        }
-
-        // 商品货品数量增加
-        List<OrderGoods> goodsList = iOrderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
-        for (OrderGoods orderGoods : goodsList) {
-            Long productId = orderGoods.getProductId();
-            Integer number = orderGoods.getNumber();
-            if (!iGoodsProductService.addStock(productId, number)) {
-                throw new BusinessException("商品货品库存增加失败");
-            }
-        }
+        orderUnpaidService.unpaid(order.getOrderSn(), OrderStatusEnum.STATUS_CANCEL);
     }
 
     @Override

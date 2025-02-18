@@ -42,6 +42,11 @@ public class Comment extends ShopBaseEntity implements Serializable {
     private String content;
 
     /**
+     * 用户头像
+     */
+    private String avatar;
+
+    /**
      * 管理员回复内容
      */
     private String adminContent;

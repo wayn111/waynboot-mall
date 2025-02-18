@@ -1,14 +1,19 @@
 package com.wayn.mobile.api.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.entity.shop.Cart;
+import com.wayn.common.core.entity.shop.ShopMemberCoupon;
 import com.wayn.common.core.service.shop.ICartService;
+import com.wayn.common.core.service.shop.ShopMemberCouponService;
 import com.wayn.common.response.CartResponseVO;
 import com.wayn.common.response.CheckedGoodsResVO;
+import com.wayn.common.response.MemberCouponResVO;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
@@ -16,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +38,7 @@ import java.util.List;
 public class CartController extends BaseController {
 
     private ICartService iCartService;
+    private ShopMemberCouponService shopMemberCouponService;
 
     /**
      * 购物车列表
@@ -118,10 +126,11 @@ public class CartController extends BaseController {
     @PostMapping("getCheckedGoods")
     public R<CheckedGoodsResVO> getCheckedGoods() {
         Long userId = MobileSecurityUtils.getUserId();
+        Date nowTime = new Date();
         List<Cart> cartList = iCartService.list(new QueryWrapper<Cart>()
                 .eq("user_id", userId).eq("checked", true));
         BigDecimal goodsAmount = BigDecimal.ZERO;
-        BigDecimal orderTotalAmount;
+        BigDecimal orderActualAmount = BigDecimal.ZERO;
         // 计算总价
         for (Cart cart : cartList) {
             goodsAmount = goodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
@@ -132,12 +141,26 @@ public class CartController extends BaseController {
         if (goodsAmount.compareTo(WaynConfig.getFreightLimit()) < 0) {
             freightPrice = WaynConfig.getFreightPrice();
         }
-        orderTotalAmount = goodsAmount.add(freightPrice);
+        goodsAmount = goodsAmount.add(freightPrice);
+        // 查询可用优惠券列表
+        List<ShopMemberCoupon> memberCoupons = shopMemberCouponService.lambdaQuery()
+                .eq(ShopMemberCoupon::getUserId, userId)
+                .list();
+        BigDecimal finalGoodsAmount = goodsAmount;
+        orderActualAmount = goodsAmount.max(BigDecimal.ZERO);
+        memberCoupons = memberCoupons.stream().filter(item -> item.getUseStatus() == 0
+                        && DateUtil.compare(item.getExpireTime(), nowTime) > 0
+                        && finalGoodsAmount.compareTo(new BigDecimal(item.getMin())) >= 0)
+                .toList();
+        if (!memberCoupons.isEmpty()) {
+            memberCoupons = memberCoupons.stream().sorted(Comparator.comparingInt(ShopMemberCoupon::getDiscount).reversed()).toList();
+        }
         CheckedGoodsResVO resVO = new CheckedGoodsResVO();
         resVO.setData(cartList);
+        resVO.setCouponList(BeanUtil.copyToList(memberCoupons, MemberCouponResVO.class));
         resVO.setFreightPrice(freightPrice);
         resVO.setGoodsAmount(goodsAmount);
-        resVO.setOrderTotalAmount(orderTotalAmount);
+        resVO.setOrderTotalAmount(orderActualAmount);
         return R.success(resVO);
     }
 }

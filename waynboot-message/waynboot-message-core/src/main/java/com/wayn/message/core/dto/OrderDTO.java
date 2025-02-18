@@ -18,7 +18,7 @@ public class OrderDTO implements Serializable {
     /**
      * 订单编号
      */
-    private String orderSn;
+    private String OrderSn;
 
     /**
      * 用户购物车列表
@@ -34,6 +34,10 @@ public class OrderDTO implements Serializable {
      * 地址id
      */
     private Long addressId;
+    /**
+     * 用户持有的优惠券id
+     */
+    private Long userCouponId;
 
     /**
      * 订单备注

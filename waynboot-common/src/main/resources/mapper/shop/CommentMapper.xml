@@ -62,7 +62,7 @@
                c.create_time,
                c.update_time,
                m.nickname,
-               m.avatar
+               c.avatar
         from shop_comment c
                  left join shop_member m on c.user_id = m.id
     </sql>

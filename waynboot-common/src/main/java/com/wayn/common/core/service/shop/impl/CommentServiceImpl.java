@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.entity.shop.Comment;
+import com.wayn.common.core.entity.shop.Member;
 import com.wayn.common.core.mapper.shop.CommentMapper;
 import com.wayn.common.core.service.shop.ICommentService;
+import com.wayn.common.core.service.shop.IMemberService;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.core.vo.CommentTagNumVO;
 import com.wayn.common.core.vo.CommentVO;
@@ -31,6 +33,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     private IOrderGoodsService iOrderGoodsService;
 
+    private IMemberService iMemberService;
+
     @Override
     public IPage<Comment> listPage(Page<Comment> page, Comment comment) {
         return commentMapper.selectListPage(page, comment);
@@ -53,6 +57,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         BeanUtils.copyProperties(commentVO, comment);
         comment.setCreateTime(new Date());
         comment.setHasPicture(comment.getPicUrls().length > 0);
+        Member member = iMemberService.getById(commentVO.getUserId());
+        comment.setAvatar(member.getAvatar());
         if (!save(comment)) {
             throw new BusinessException("保存评论信息失败");
         }

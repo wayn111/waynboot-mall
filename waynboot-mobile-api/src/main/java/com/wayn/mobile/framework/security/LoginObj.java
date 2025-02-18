@@ -13,9 +13,9 @@ public class LoginObj {
     private String mobile;
 
     /**
-     * 用户密码
+     * 验证码
      */
-    @NotNull(message = "用户密码不能为空")
-    private String password;
+    @NotNull(message = "验证码不能为空")
+    private String yzm;
 
 }

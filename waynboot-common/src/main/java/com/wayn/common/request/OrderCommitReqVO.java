@@ -26,6 +26,11 @@ public class OrderCommitReqVO {
     private Long addressId;
 
     /**
+     * 用户持有的优惠券id
+     */
+    private Long userCouponId;
+
+    /**
      * 备注
      */
     private String message;

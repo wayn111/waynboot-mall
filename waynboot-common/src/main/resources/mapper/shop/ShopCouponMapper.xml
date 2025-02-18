@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.common.core.mapper.shop.ShopCouponMapper">
+
+    <resultMap id="BaseResultMap" type="com.wayn.common.core.entity.shop.ShopCoupon">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="num" column="num" jdbcType="INTEGER"/>
+            <result property="discount" column="discount" jdbcType="INTEGER"/>
+            <result property="min" column="min" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="type" column="type" jdbcType="INTEGER"/>
+            <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+            <result property="receiveNum" column="receive_num" jdbcType="INTEGER"/>
+            <result property="delFlag" column="del_flag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,num,
+        discount,min,status,
+        type,expire_time,create_time,
+        create_by,update_time,update_by,
+        del_flag
+    </sql>
+
+    <update id="updateReceiveNum">
+        update shop_coupon set receive_num = receive_num + 1 where id = #{couponId}
+    </update>
+
+    <select id="selectCouponListPage" resultType="com.wayn.common.core.entity.shop.ShopCoupon">
+        select * from shop_coupon
+        <where>
+            del_flag = 0
+            <if test="reqVO.title != null and reqVO.title != ''">
+                AND title like concat('%', #{reqVO.title}, '%')
+            </if>
+            <if test="reqVO.status != null">
+                AND status = #{reqVO.status}
+            </if>
+            <if test="reqVO.startTime != null and reqVO.startTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{reqVO.startTime},'%Y-%m-%d')
+            </if>
+            <if test="reqVO.endTime != null and reqVO.endTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{reqVO.endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+    <select id="fontList" resultType="com.wayn.common.response.ShopCouponResVO">
+        select * from shop_coupon
+        <where>
+            del_flag = 0 AND `status` = 1 AND expire_time <![CDATA[ > ]]> now()
+                 AND `type` = 2
+        </where>
+    </select>
+
+    <select id="myList" resultType="com.wayn.common.response.MemberCouponResVO">
+        select * from shop_member_coupon
+        <where>
+            del_flag = 0 AND user_id = #{userId}
+        </where>
+    </select>
+</mapper>

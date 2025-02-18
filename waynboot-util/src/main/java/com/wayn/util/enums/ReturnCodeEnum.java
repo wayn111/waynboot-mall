@@ -51,6 +51,7 @@ public enum ReturnCodeEnum {
     ORDER_ERROR_STOCK_NOT_ENOUGH(50145, "%s,%s 库存不足，请重新选择商品"),
     ORDER_NOT_FOUND(50146, "订单未找到"),
     ORDER_REFUND_MONEY_LARGE(50147, "退款金额超过订单金额"),
+    WX_ERROR(50148, "微信错误"),
 
     // 用户错误
     USER_NOT_EXISTS_ERROR(5101, "用户不存在"),
@@ -64,6 +65,10 @@ public enum ReturnCodeEnum {
     USER_CAPTCHA_CODE_ERROR(5106, "图形验证码不正确"),
     USER_REGISTER_MOBILE_ERROR(5107, "注册手机号错误"),
     OLD_PASSWORD_NOT_EQUALS_ERROR(5108, "旧密码错误"),
+    MOBILE_ERROR(5107, "手机号错误"),
+    MOBILE_YZM_SEND_ERROR(5109, "短信验证码发送失败" ),
+    YZM_ENTER_ERROR(5110, "验证码输入错误" ),
+    YZM_ENTER_BUSY_ERROR(5110, "验证码输入频繁，请稍等" ),
 
     // 上传错误
     UPLOAD_ERROR(5201, "上传图片失败"),
