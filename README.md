@@ -5,7 +5,6 @@
 | [master](https://github.com/wayn111/waynboot-mall)                             | 3.1.4          | 17     |
 | [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7) | 2.7            | 1.8    | 
 
- 
 ---
 
 - [简介](#简介)
