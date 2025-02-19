@@ -304,6 +304,7 @@ CREATE TABLE `shop_comment`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `value_id` int NOT NULL DEFAULT 0 COMMENT '如果type=0，则是商品评论；如果是type=1，则是专题评论。',
   `type` tinyint NOT NULL DEFAULT 0 COMMENT '评论类型，如果type=0，则是商品评论；如果是type=1，则是专题评论；',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '头像',
   `content` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '评论内容',
   `admin_content` varchar(511) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '管理员回复内容',
   `user_id` int NOT NULL DEFAULT 0 COMMENT '用户表的用户ID',
@@ -2700,5 +2701,50 @@ CREATE TABLE `sys_log` (
                            `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '日志时间',
                            PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志表';
+
+
+-- ----------------------------
+-- Table structure for shop_coupon
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_coupon`;
+CREATE TABLE `shop_coupon`  (
+                                `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '优惠券名称',
+                                `num` int NOT NULL DEFAULT 0 COMMENT '发放数量',
+                                `receive_num` int NOT NULL DEFAULT 0 COMMENT '已领取数量',
+                                `discount` int NOT NULL DEFAULT 0 COMMENT '优惠金额',
+                                `min` int NOT NULL DEFAULT 0 COMMENT '使用门槛金额',
+                                `status` tinyint NOT NULL DEFAULT 0 COMMENT '状体 0下架 1上架',
+                                `type` int NOT NULL DEFAULT 1 COMMENT '类型 1注册赠送 2普通使用',
+                                `expire_time` datetime NULL DEFAULT NULL COMMENT '过期时间',
+                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                `create_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '创建人',
+                                `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                `update_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新人',
+                                `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除 0存在 1删除',
+                                PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '优惠券' ROW_FORMAT = DYNAMIC;
+-- ----------------------------
+-- Table structure for shop_member_coupon
+-- ----------------------------
+DROP TABLE IF EXISTS `shop_member_coupon`;
+CREATE TABLE `shop_member_coupon`  (
+                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'v',
+                                       `user_id` int NOT NULL COMMENT '用户ID',
+                                       `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '优惠券',
+                                       `coupon_id` int NOT NULL COMMENT '优惠券ID',
+                                       `discount` int NOT NULL DEFAULT 0 COMMENT '优惠金额',
+                                       `min` int NOT NULL DEFAULT 0 COMMENT '使用门槛金额',
+                                       `expire_time` datetime NULL DEFAULT NULL COMMENT '过期时间',
+                                       `use_status` tinyint NULL DEFAULT 0 COMMENT '使用状态 0未使用 1已使用 2已过期',
+                                       `used_time` datetime NULL DEFAULT NULL COMMENT '使用时间',
+                                       `order_id` bigint NULL DEFAULT NULL COMMENT '订单ID',
+                                       `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                       `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+                                       `del_flag` tinyint NULL DEFAULT 0 COMMENT '逻辑删除 0存在 1删除',
+                                       PRIMARY KEY (`id`) USING BTREE,
+                                       INDEX `user_coupin_index`(`user_id` ASC, `coupon_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '优惠券用户使用表' ROW_FORMAT = DYNAMIC;
+
 
 SET FOREIGN_KEY_CHECKS = 1;
