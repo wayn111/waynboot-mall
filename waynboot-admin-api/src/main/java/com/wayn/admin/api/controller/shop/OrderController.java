@@ -67,6 +67,7 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:info')")
     @GetMapping("{orderId}")
     public R<OrderDetailResVO> info(@PathVariable Long orderId) {
+        log.info("order info req is {}", orderId);
         return R.success(iOrderService.detail(orderId));
     }
 
