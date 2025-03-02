@@ -14,7 +14,6 @@ import java.util.Collections;
 
 /**
  * 邮件处理器
- *
  * @author wayn
  * @since 2020-07-06
  */
