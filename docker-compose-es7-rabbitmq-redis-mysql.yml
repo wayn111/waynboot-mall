@@ -13,9 +13,9 @@ services:
       - ./rabbitmq/data:/var/lib/rabbitmq
       - ./rabbitmq/log:/var/lib/rabbitmq
     environment:
-      #rabbitmq的初始用户名
+      # rabbitmq的初始用户名
       RABBITMQ_DEFAULT_USER: guest
-      #rabbitmq的初始密码
+      # rabbitmq的初始密码
       RABBITMQ_DEFAULT_PASS: guest
     network_mode: "host"
   # Elasticsearch服务，启动报错时执行chmod 777 -R es/
