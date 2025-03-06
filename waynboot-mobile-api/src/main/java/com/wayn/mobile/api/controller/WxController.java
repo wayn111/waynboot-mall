@@ -36,6 +36,13 @@ public class WxController {
     @Value("${wx.appSecret}")
     private String appSecret;
 
+    /**
+     * 微信环境js-sdk初始化
+     *
+     * @param url
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     @GetMapping("jsSdkInit")
     public R<JsSdkInitResVO> jsSdkInit(String url) throws NoSuchAlgorithmException {
         return R.success(getJsSdkSign(url));
