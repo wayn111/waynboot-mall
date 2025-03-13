@@ -2748,5 +2748,4 @@ CREATE TABLE `shop_member_coupon`  (
                                        INDEX `user_coupin_index`(`user_id` ASC, `coupon_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '优惠券用户使用表' ROW_FORMAT = DYNAMIC;
 
-
 SET FOREIGN_KEY_CHECKS = 1;
