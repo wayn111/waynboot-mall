@@ -22,7 +22,7 @@ public class RedisCache {
     public RedisTemplate redisTemplate;
 
     /**
-     * lua原子脚本
+     * lua原子递增脚本
      */
     public static String buildLuaIncrKeyScript() {
         return """
