@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.*;
 
 /**
- * 线程相关工具类.
+ * 线程相关工具类
  */
 public class ThreadUtil {
     private static final Logger logger = LoggerFactory.getLogger(ThreadUtil.class);
