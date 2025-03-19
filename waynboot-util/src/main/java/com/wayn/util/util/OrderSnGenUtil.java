@@ -38,7 +38,7 @@ public class OrderSnGenUtil {
     /**
      * 返回退款订单编号，生成规则：秒级时间戳 + 递增id
      *
-     * @return 订单编号
+     * @return 退款订单编号
      */
     public String generateRefundOrderSn() {
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
