@@ -25,7 +25,7 @@ public class IdUtil {
     }
 
     /**
-     * 生成分布式ID，依赖雪花算法
+     * 生成雪花id
      *
      * @return long
      */
