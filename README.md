@@ -148,20 +148,11 @@ git clone git@github.com:wayn111/waynboot-mall.git
 
 请查看商城H5前端项目 https://github.com/wayn111/waynboot-mobile ，readme文档，进行本地启动
 
+- 使用手机号（11位手机号） + 验证码登陆（默认1234）
+
 ## 9. 启动商城后管项目
 
 请查看商城后管前端项目 https://github.com/wayn111/waynboot-admin ，readme文档，进行本地启动
-
----
-
-# 在线体验
-
-前台
-
-- 使用邮箱 + 手机号注册商城用户
-- 使用手机号 + 密码登陆
-
-演示地址以及账号：关注我的公众号【程序员wayn】，发送 演示账号
 
 ---
 
