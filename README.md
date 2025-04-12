@@ -100,8 +100,6 @@ Mysql、Redis、RabbitMQ、ElasticSearch、Nginx 等常用中间件，根据我�
 
 - [x] 订单详情页面
 - [x] 完善支付功能
-- [ ] 商城资讯流
-- [ ] 联系客服
 
 ---
 
