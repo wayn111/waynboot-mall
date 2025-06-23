@@ -2292,8 +2292,8 @@ INSERT INTO `sys_dept` VALUES (206, 102, '0,100,102', '划水部', 3, 'test', '1
 DROP TABLE IF EXISTS `sys_dict`;
 CREATE TABLE `sys_dict`  (
   `dict_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标签名',
-  `value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '数据值',
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标签名',
+  `value` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '数据值',
   `dict_status` tinyint NULL DEFAULT NULL COMMENT '部门状态（0启用  1禁用）',
   `type` tinyint NULL DEFAULT NULL COMMENT '字典类型（1字典类型  2字典数据）',
   `sort` int NULL DEFAULT NULL COMMENT '排序',
@@ -2302,7 +2302,7 @@ CREATE TABLE `sys_dict`  (
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注信息',
+  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注信息',
   `del_flag` tinyint(1) NULL DEFAULT 0 COMMENT '删除标记（0存在 1删除）',
   PRIMARY KEY (`dict_id`) USING BTREE,
   INDEX `sys_dict_value`(`value`) USING BTREE,
