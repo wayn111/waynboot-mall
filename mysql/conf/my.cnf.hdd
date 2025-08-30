@@ -1,0 +1,47 @@
+[mysqld]
+
+# 连接设置
+max_connections = 200
+table_open_cache = 2000
+
+# SQL模式
+sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+
+# 字符集设置
+character_set_server = utf8mb4
+
+# 基础内存分配
+innodb_buffer_pool_size = 12G       # 16GB 机器，分给 MySQL ~75% 用作数据页缓存
+innodb_buffer_pool_instances = 4    # 避免锁竞争，4个实例够用
+
+# 日志与刷新策略
+# =================
+innodb_log_file_size = 2G                  # 增加到2G，进一步减少checkpoint频率
+innodb_log_files_in_group = 2              # 明确设置日志文件组数量
+innodb_log_buffer_size = 128M               # 增加到128M，更好的批量写入
+innodb_flush_log_at_trx_commit = 2
+
+# InnoDB I/O 优化 (HDD专项调优)
+innodb_io_capacity = 150                   # 降低到150，HDD友好值
+innodb_io_capacity_max = 300               # 相应调整最大值
+innodb_flush_method = O_DIRECT
+innodb_read_ahead_threshold = 0            # 禁用线性预读，减少不必要的随机I/O
+innodb_random_read_ahead = OFF             # 显式关闭随机预读
+
+# 并发线程
+innodb_read_io_threads = 4
+innodb_write_io_threads = 4
+
+# 文件系统和表定义
+innodb_file_per_table = 1           # 独立表空间，便于管理和压缩
+innodb_flush_neighbors = 2          # HDD 环境减少相邻页刷新
+
+# 查询优化
+# query_cache_type = 0                # MySQL 8.x 已废弃，确保关闭
+tmp_table_size = 64M
+max_heap_table_size = 64M
+
+# 慢查询日志
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow.log
+long_query_time = 2
