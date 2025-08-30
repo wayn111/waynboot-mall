@@ -56,6 +56,7 @@ services:
       MYSQL_DATABASE: 'wayn_shop'
     volumes:
       - ./mysql/data:/var/lib/mysql
+      - ./mysql/log:/var/log/mysql
       - ./db-init:/docker-entrypoint-initdb.d
       - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
     command: mysqld --lower_case_table_names=1 --slow_query_log=1 --max_connections=1000 --default-authentication-plugin=mysql_native_password
