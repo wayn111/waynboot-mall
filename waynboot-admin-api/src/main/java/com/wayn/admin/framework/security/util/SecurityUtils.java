@@ -53,14 +53,16 @@ public class SecurityUtils {
     }
 
     /**
-     * 生成BCryptPasswordEncoder密码
+     * 生成BCryptPasswordEncoder密码并进行SM4二次加密
      *
      * @param password 密码
      * @return 加密字符串
      */
     public static String encryptPassword(String password) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.encode(password);
+        String bcryptPassword = passwordEncoder.encode(password);
+        // 进行SM4二次加密
+        return com.wayn.util.security.SM4Util.encrypt(bcryptPassword);
     }
 
     /**
@@ -71,8 +73,10 @@ public class SecurityUtils {
      * @return 结果
      */
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
+        // 先进行SM4解密
+        String bcryptPassword = com.wayn.util.security.SM4Util.decrypt(encodedPassword);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+        return passwordEncoder.matches(rawPassword, bcryptPassword);
     }
 
 }

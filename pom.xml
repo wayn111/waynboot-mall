@@ -96,6 +96,12 @@
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
+            <!-- Redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.23.2</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
             <dependency>
                 <groupId>io.lettuce</groupId>

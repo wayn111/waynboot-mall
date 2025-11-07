@@ -1,0 +1,36 @@
+# Redisson配置
+
+# 单节点模式
+singleServerConfig:
+  # Redis服务器地址
+  address: "redis://127.0.0.1:6379"
+  # Redis数据库索引(默认为0)
+  database: 0
+  # 连接超时时间(毫秒)
+  connectTimeout: 10000
+  # 命令等待超时时间(毫秒)
+  timeout: 3000
+  # 连接池最大容量(默认值:64)
+  connectionPoolSize: 64
+  # 连接池最小空闲连接数(默认值:24)
+  connectionMinimumIdleSize: 24
+  # 从连接池获取连接时的最小空闲时间(毫秒)
+  idleConnectionTimeout: 10000
+  # 客户端名称
+  clientName: null
+  # 发布和订阅连接池大小(默认值:50)
+  subscriptionConnectionPoolSize: 50
+  # 发布和订阅连接的最小空闲连接数(默认值:1)
+  subscriptionConnectionMinimumIdleSize: 1
+  # DNS监测时间间隔(毫秒)
+  dnsMonitoringInterval: 5000
+
+# 线程池数量
+threads: 0
+# Netty线程池数量
+nettyThreads: 0
+# 编码方式
+codec:
+  class: org.redisson.codec.JsonJacksonCodec
+# 传输模式
+transportMode: "NIO"
