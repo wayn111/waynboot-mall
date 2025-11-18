@@ -58,6 +58,7 @@ Mysql、Redis、RabbitMQ、ElasticSearch、Nginx 等常用中间件，根据我�
 关注我的公众号：程序员wayn，专注技术干货输出、分享开源项目。回复关键字：
 
 - **加群**：加群交流，探讨技术问题。
+- **演示账号**：获得 waynboot-mall 商城后台演示账号。
 - **开源项目**：获取我写的三个开源项目，包含PC、H5商城、后台权限管理系统等。
 - **wayn商城资料**：获取wayhboot-mall项目配套资料以及商城图片压缩包下载地址。
 - **加微信**：联系我。
@@ -150,6 +151,17 @@ git clone git@github.com:wayn111/waynboot-mall.git
 ## 9. 启动商城后管项目
 
 请查看商城后管前端项目 https://github.com/wayn111/waynboot-admin ，readme文档，进行本地启动
+
+---
+
+# 在线体验
+
+前台
+
+- 使用邮箱 + 手机号注册商城用户
+- 使用手机号 + 密码登陆
+
+演示地址以及账号：关注我的公众号【程序员wayn】，发送 演示账号
 
 ---
 
