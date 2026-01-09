@@ -127,6 +127,8 @@ public class UserController extends BaseController {
     @PutMapping("resetPwd")
     public R<Boolean> resetPwd(@RequestBody User user) {
         iUserService.checkUserAllowed(user);
+        Long userId = SecurityUtils.getUserId();
+        user.setUserId(userId);
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         user.setUpdateBy(SecurityUtils.getUsername());
         user.setUpdateTime(new Date());
