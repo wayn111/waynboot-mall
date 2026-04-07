@@ -13,6 +13,7 @@ import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ModuleEnum;
 import com.wayn.util.enums.OperatorEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.exception.BusinessException;
 import com.wayn.util.util.R;
 import com.wayn.util.util.excel.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -126,9 +127,10 @@ public class UserController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
     @PutMapping("resetPwd")
     public R<Boolean> resetPwd(@RequestBody User user) {
+        if (user.getUserId() == null) {
+            throw new BusinessException("用户错误");
+        }
         iUserService.checkUserAllowed(user);
-        Long userId = SecurityUtils.getUserId();
-        user.setUserId(userId);
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         user.setUpdateBy(SecurityUtils.getUsername());
         user.setUpdateTime(new Date());
