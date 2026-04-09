@@ -18,34 +18,6 @@ Tech stack: Spring Boot 3.1.4, JDK 17, MyBatis Plus, Spring Security, Redis, Rab
 mvn clean install
 ```
 
-### Run individual services
-
-**Admin API (port 81):**
-```bash
-cd waynboot-admin-api
-mvn spring-boot:run
-```
-Or run `com.wayn.AdminApplication` directly in IDE
-
-**Mobile API (port 82):**
-```bash
-cd waynboot-mobile-api
-mvn spring-boot:run
-```
-Or run `com.wayn.MobileApplication` directly in IDE
-
-**Message Consumer:**
-```bash
-cd waynboot-message/waynboot-message-consumer
-mvn spring-boot:run
-```
-Or run `com.wayn.MessageApplication` directly in IDE
-
-### Run tests
-```bash
-mvn test
-```
-
 ## Architecture
 
 ### Module Structure
@@ -102,47 +74,6 @@ Before running locally, ensure these services are running:
 - `waynboot-common/src/main/resources/application-dev.yml`: Database, Redis, RabbitMQ, ES, payment gateway configs
 - `waynboot-admin-api/src/main/resources/application.yml`: Admin API settings (port 81)
 - `waynboot-mobile-api/src/main/resources/application.yml`: Mobile API settings (port 82)
-
-### Database Setup
-
-Import SQL files from project root: `wayn_shop_*.sql` into MySQL database named `wayn_shop`
-
-### Image Storage
-
-Product images are stored locally at `D:/waynshop/webp` by default. Configure via `wayn.uploadDir` in application.yml or `UPLOAD_DIR` environment variable.
-
-### Payment Integration
-
-The system supports three payment methods (configured in application-dev.yml):
-- WeChat Pay (`shop.wxpay.*`)
-- Alipay (`shop.alipay.*`)
-- EPay (`shop.epay.*`)
-
-Certificate files for WeChat Pay should be placed in resources folder.
-
-## Development Conventions
-
-### Security
-
-- Admin API uses Spring Security with JWT tokens (header: `Authorization`)
-- Token expiry configured via `token.expireTime` (default 120 minutes)
-- Mobile API has separate security configuration for H5 users
-
-### MyBatis Plus
-
-- Logical delete enabled globally: `delFlag` field (0=active, 1=deleted)
-- Mapper XMLs located in `classpath*:mapper/**/*Mapper.xml`
-- Entity aliases package: `com.wayn.**.domain`
-
-### Logging
-
-- Log files written to `${LOG_PATH_PREFIX}/${spring.application.name}/info.log`
-- Default log path: `E:/home` (Windows) or `/home` (Linux)
-- Log level: INFO for application and Spring framework
-
-### API Documentation
-
-API documentation is maintained in Apifox: https://apifox.com/apidoc/shared-f48b11f5-6137-4722-9c70-b9c5c3e5b09b
 
 ## Important Notes
 

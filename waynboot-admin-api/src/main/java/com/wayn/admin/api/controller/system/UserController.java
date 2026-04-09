@@ -8,7 +8,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IRoleService;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.response.UserGetInfoResVO;
+import com.wayn.common.model.response.UserGetInfoResVO;
 import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ModuleEnum;
 import com.wayn.util.enums.OperatorEnum;

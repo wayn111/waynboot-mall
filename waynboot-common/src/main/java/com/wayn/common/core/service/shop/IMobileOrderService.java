@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.vo.OrderDetailVO;
-import com.wayn.common.request.OrderCommitReqVO;
-import com.wayn.common.response.OrderListResVO;
-import com.wayn.common.response.OrderStatusCountResVO;
-import com.wayn.common.response.SubmitOrderResVO;
+import com.wayn.common.model.request.OrderCommitReqVO;
+import com.wayn.common.model.response.OrderListResVO;
+import com.wayn.common.model.response.OrderStatusCountResVO;
+import com.wayn.common.model.response.SubmitOrderResVO;
 import com.wayn.message.core.dto.OrderDTO;
 import com.wayn.util.enums.ReturnCodeEnum;
 

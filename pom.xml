@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!-- Inherit defaults from Spring Boot -->
+
     <modules>
         <module>waynboot-common</module>
         <module>waynboot-admin-api</module>
@@ -13,16 +14,18 @@
         <module>waynboot-job</module>
         <module>waynboot-util</module>
     </modules>
+
     <groupId>com.wayn</groupId>
     <artifactId>waynboot-mall</artifactId>
     <version>2.0.0</version>
     <packaging>pom</packaging>
     <name>waynboot</name>
-    <description>waynboot mall商城</description>
+    <description>waynboot mall 商城</description>
 
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <spring-boot.version>3.1.4</spring-boot.version>
         <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
@@ -96,7 +99,6 @@
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
             <dependency>
                 <groupId>io.lettuce</groupId>
                 <artifactId>lettuce-core</artifactId>
@@ -148,14 +150,14 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <!-- Apache工具组件 -->
+            <!-- Apache 工具组件 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
 
-            <!-- Apache 集合工具组件 -->
+            <!-- Apache 集合组件 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
@@ -169,21 +171,21 @@
                 <version>${easy-captcha.version}</version>
             </dependency>
 
-            <!-- 文件上传工具类 -->
+            <!-- 文件上传工具 -->
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
                 <version>${commons.fileupload.version}</version>
             </dependency>
 
-            <!-- jwt验证 -->
+            <!-- JWT -->
             <dependency>
                 <groupId>com.auth0</groupId>
                 <artifactId>java-jwt</artifactId>
                 <version>${jwt.version}</version>
             </dependency>
 
-            <!-- 阿里JSON解析器 -->
+            <!-- Fastjson -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
@@ -212,14 +214,15 @@
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
             </dependency>
-            <!--微信支付-->
+
+            <!-- 微信支付 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-pay</artifactId>
                 <version>${weixin-java-pay.version}</version>
             </dependency>
 
-            <!--支付宝依赖-->
+            <!-- 支付宝依赖 -->
             <dependency>
                 <groupId>com.alipay.sdk</groupId>
                 <artifactId>alipay-sdk-java</artifactId>
@@ -310,7 +313,6 @@
         </pluginRepository>
     </pluginRepositories>
 
-
     <build>
         <plugins>
             <plugin>
@@ -318,6 +320,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <compilerArgs>
@@ -327,5 +330,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

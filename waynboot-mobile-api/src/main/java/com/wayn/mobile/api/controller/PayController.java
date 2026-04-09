@@ -3,8 +3,8 @@ package com.wayn.mobile.api.controller;
 
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.service.shop.IPayService;
-import com.wayn.common.request.OrderPayReqVO;
-import com.wayn.common.response.OrderPayResVO;
+import com.wayn.common.model.request.OrderPayReqVO;
+import com.wayn.common.model.response.OrderPayResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

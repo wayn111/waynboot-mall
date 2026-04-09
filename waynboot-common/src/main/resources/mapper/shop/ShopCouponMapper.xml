@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -51,7 +51,7 @@
             </if>
         </where>
     </select>
-    <select id="fontList" resultType="com.wayn.common.response.ShopCouponResVO">
+    <select id="fontList" resultType="com.wayn.common.model.response.ShopCouponResVO">
         select * from shop_coupon
         <where>
             del_flag = 0 AND `status` = 1 AND expire_time <![CDATA[ > ]]> now()
@@ -59,10 +59,11 @@
         </where>
     </select>
 
-    <select id="myList" resultType="com.wayn.common.response.MemberCouponResVO">
+    <select id="myList" resultType="com.wayn.common.model.response.MemberCouponResVO">
         select * from shop_member_coupon
         <where>
             del_flag = 0 AND user_id = #{userId}
         </where>
     </select>
 </mapper>
+

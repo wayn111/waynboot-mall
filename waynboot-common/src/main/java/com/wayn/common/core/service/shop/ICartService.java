@@ -3,7 +3,7 @@ package com.wayn.common.core.service.shop;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Cart;
-import com.wayn.common.response.CartResponseVO;
+import com.wayn.common.model.response.CartResponseVO;
 
 import java.util.List;
 

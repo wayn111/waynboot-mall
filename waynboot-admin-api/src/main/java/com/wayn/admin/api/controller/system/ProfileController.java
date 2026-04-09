@@ -7,7 +7,7 @@ import com.wayn.common.base.service.UploadService;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IUserService;
-import com.wayn.common.response.UserProfileResVO;
+import com.wayn.common.model.response.UserProfileResVO;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;
 import com.wayn.util.util.ServletUtils;

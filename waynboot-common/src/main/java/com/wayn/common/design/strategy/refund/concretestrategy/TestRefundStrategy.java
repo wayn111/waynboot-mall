@@ -2,8 +2,8 @@ package com.wayn.common.design.strategy.refund.concretestrategy;
 
 import com.wayn.common.design.strategy.pay.PayTypeEnum;
 import com.wayn.common.design.strategy.refund.strategy.RefundInterface;
-import com.wayn.common.request.OrderRefundReqVO;
-import com.wayn.common.response.OrderRefundResVO;
+import com.wayn.common.model.request.OrderRefundReqVO;
+import com.wayn.common.model.response.OrderRefundResVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;

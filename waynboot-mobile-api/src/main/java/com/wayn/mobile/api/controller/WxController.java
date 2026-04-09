@@ -2,7 +2,7 @@ package com.wayn.mobile.api.controller;
 
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.wayn.common.response.JsSdkInitResVO;
+import com.wayn.common.model.response.JsSdkInitResVO;
 import com.wayn.common.util.SHA1Util;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.util.enums.ReturnCodeEnum;

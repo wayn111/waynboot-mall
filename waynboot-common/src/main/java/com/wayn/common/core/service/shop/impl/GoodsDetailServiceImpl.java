@@ -5,7 +5,7 @@ import com.wayn.common.core.entity.shop.GoodsAttribute;
 import com.wayn.common.core.entity.shop.GoodsProduct;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.vo.SpecificationVO;
-import com.wayn.common.response.GoodsDetailResponseVO;
+import com.wayn.common.model.response.GoodsDetailResponseVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;

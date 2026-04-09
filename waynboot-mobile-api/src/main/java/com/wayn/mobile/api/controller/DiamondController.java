@@ -7,7 +7,7 @@ import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.service.shop.IDiamondService;
 import com.wayn.common.design.strategy.diamond.context.DiamondJumpContext;
 import com.wayn.common.design.strategy.diamond.strategy.DiamondJumpTypeInterface;
-import com.wayn.common.response.DiamondGoodsResVO;
+import com.wayn.common.model.response.DiamondGoodsResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

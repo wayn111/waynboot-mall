@@ -6,7 +6,7 @@ import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
 import com.wayn.common.design.strategy.diamond.JumpTypeEnum;
 import com.wayn.common.design.strategy.diamond.strategy.DiamondJumpTypeInterface;
-import com.wayn.common.response.DiamondGoodsResVO;
+import com.wayn.common.model.response.DiamondGoodsResVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

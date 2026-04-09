@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.common.core.entity.shop.Order;
-import com.wayn.common.request.OrderManagerReqVO;
-import com.wayn.common.request.OrderRefundReqVO;
-import com.wayn.common.request.ShipRequestVO;
-import com.wayn.common.response.OrderDetailResVO;
-import com.wayn.common.response.OrderManagerResVO;
+import com.wayn.common.model.request.OrderManagerReqVO;
+import com.wayn.common.model.request.OrderRefundReqVO;
+import com.wayn.common.model.request.ShipRequestVO;
+import com.wayn.common.model.response.OrderDetailResVO;
+import com.wayn.common.model.response.OrderManagerResVO;
 
 import java.io.UnsupportedEncodingException;
 

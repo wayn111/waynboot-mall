@@ -5,30 +5,50 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.core.entity.shop.*;
+import com.wayn.common.core.entity.shop.Category;
+import com.wayn.common.core.entity.shop.Goods;
+import com.wayn.common.core.entity.shop.GoodsAttribute;
+import com.wayn.common.core.entity.shop.GoodsProduct;
+import com.wayn.common.core.entity.shop.GoodsSpecification;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
-import com.wayn.common.core.service.shop.*;
+import com.wayn.common.core.service.shop.ICategoryService;
+import com.wayn.common.core.service.shop.IGoodsAttributeService;
+import com.wayn.common.core.service.shop.IGoodsProductService;
+import com.wayn.common.core.service.shop.IGoodsService;
+import com.wayn.common.core.service.shop.IGoodsSpecificationService;
 import com.wayn.common.core.vo.GoodsAttributeVO;
 import com.wayn.common.core.vo.GoodsProductVO;
 import com.wayn.common.core.vo.GoodsSpecificationVO;
 import com.wayn.common.core.vo.GoodsVO;
-import com.wayn.common.request.GoodsSaveRelatedReqVO;
+import com.wayn.common.model.request.GoodsSaveRelatedReqVO;
+import com.wayn.common.model.response.GoodsManageDetailResVO;
 import com.wayn.data.elastic.constant.EsConstants;
 import com.wayn.data.elastic.manager.ElasticDocument;
 import com.wayn.data.elastic.manager.ElasticEntity;
+import com.wayn.data.redis.constant.RedisKeyEnum;
+import com.wayn.data.redis.manager.RedisLock;
 import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
+import com.wayn.util.util.file.FileUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
- * 商品基本信息表 服务实现类
+ * 商品基本信息表服务实现
  *
  * @author wayn
  * @since 2020-07-06
@@ -43,18 +63,17 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     private IGoodsSpecificationService iGoodsSpecificationService;
     private ICategoryService iCategoryService;
     private ElasticDocument elasticDocument;
+    private RedisLock redisLock;
 
     @Override
     public IPage<Goods> listPage(Page<Goods> page, Goods goods) {
         return goodsMapper.selectGoodsListPage(page, goods);
     }
 
-
     @Override
     public List<Goods> selectHomeIndexGoods(Goods goods) {
         return goodsMapper.selectHomeIndex(goods);
     }
-
 
     @Override
     public IPage<Goods> listColumnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
@@ -67,8 +86,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public Map<String, Object> getGoodsInfoById(Long goodsId) {
+    public GoodsManageDetailResVO getGoodsInfoById(Long goodsId) {
         Goods goods = goodsMapper.selectById(goodsId);
+        if (goods == null) {
+            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
+        }
         List<GoodsProduct> goodsProducts = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
         List<GoodsAttribute> goodsAttributes = iGoodsAttributeService.list(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
         List<GoodsSpecification> goodsSpecifications = iGoodsSpecificationService.list(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
@@ -80,12 +102,13 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             categoryIds.add(parentCategoryId);
             categoryIds.add(categoryId);
         }
-        Map<String, Object> data = new HashMap<>();
-        data.put("goods", goods);
-        data.put("specifications", goodsSpecifications);
-        data.put("products", goodsProducts);
-        data.put("attributes", goodsAttributes);
-        data.put("categoryIds", categoryIds);
+        GoodsManageDetailResVO data = new GoodsManageDetailResVO();
+        data.setGoods(goods);
+        data.setSpecifications(goodsSpecifications);
+        data.setProducts(goodsProducts);
+        data.setAttributes(goodsAttributes);
+        data.setCategoryIds(categoryIds);
+        data.setCategory(category);
         return data;
     }
 
@@ -102,22 +125,18 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         List<GoodsSpecification> specifications = BeanUtil.copyToList(Arrays.asList(specificationsVO), GoodsSpecification.class);
         List<GoodsAttribute> attributes = BeanUtil.copyToList(Arrays.asList(attributesVO), GoodsAttribute.class);
         List<GoodsProduct> products = BeanUtil.copyToList(Arrays.asList(productsVO), GoodsProduct.class);
-        // 商品表里面有一个字段retailPrice记录当前商品的最低价
-        BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
-        for (GoodsProduct product : products) {
-            product.setId(null);
-            BigDecimal productPrice = product.getPrice();
-            if (retailPrice.compareTo(productPrice) > 0) {
-                retailPrice = productPrice;
-            }
-        }
-        // 保存商品
+        // 商品表中的 retailPrice 记录当前商品最低售价
+        validateProducts(products);
+        BigDecimal retailPrice = resolveRetailPrice(products);
+        products.forEach(product -> product.setId(null));
+
         Goods goods = BeanUtil.copyProperties(goodsVO, Goods.class);
         goods.setRetailPrice(retailPrice);
         goods.setCreateTime(new Date());
         save(goods);
         goods.setGoodsSn(goods.getId().toString());
         updateById(goods);
+
         for (GoodsSpecification specification : specifications) {
             specification.setGoodsId(goods.getId());
             specification.setCreateTime(new Date());
@@ -130,24 +149,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             goodsProduct.setGoodsId(goods.getId());
             goodsProduct.setCreateTime(new Date());
         }
-        // 判断启用默认选中的规格是否超过一个
-        if (products.stream().filter(goodsProduct -> {
-            if (goodsProduct.getDefaultSelected() == null) {
-                return false;
-            }
-            return goodsProduct.getDefaultSelected();
-        }).count() > 1) {
-            throw new BusinessException(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
-        }
 
-        // 保存商品规格
+        validateDefaultSelected(products);
+
         iGoodsSpecificationService.saveBatch(specifications);
-        // 保存商品属性
         iGoodsAttributeService.saveBatch(attributes);
-        // 保存商品货品
         iGoodsProductService.saveBatch(products);
-
-        // baseElasticService.syncGoods2Es(goods);
     }
 
     @Override
@@ -167,11 +174,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         iGoodsSpecificationService.remove(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
         iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
         iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
-        // 同步es
-        boolean one = elasticDocument.delete(EsConstants.ES_GOODS_INDEX, goodsId.toString());
-        // if (!one) {
-        //     throw new BusinessException("删除商品，同步es失败");
-        // }
+        elasticDocument.delete(EsConstants.ES_GOODS_INDEX, goodsId.toString());
         return true;
     }
 
@@ -189,15 +192,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         List<GoodsAttribute> updateAttributes = new ArrayList<>();
         List<GoodsAttribute> insertAttributes = new ArrayList<>();
         List<GoodsProduct> products = BeanUtil.copyToList(Arrays.asList(productsVO), GoodsProduct.class);
-        // 商品表里面有一个字段retailPrice记录当前商品的最低价
-        BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
-        for (GoodsProduct product : products) {
-            BigDecimal productPrice = product.getPrice();
-            if (retailPrice.compareTo(productPrice) > 0) {
-                retailPrice = productPrice;
-            }
-        }
-        // 保存商品
+        validateProducts(products);
+        BigDecimal retailPrice = resolveRetailPrice(products);
+
         Goods goods = BeanUtil.copyProperties(goodsVO, Goods.class);
         goods.setRetailPrice(retailPrice);
         goods.setUpdateTime(new Date());
@@ -219,18 +216,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         for (GoodsProduct goodsProduct : products) {
             goodsProduct.setUpdateTime(new Date());
         }
-        // 判断启用默认选中的规格是否超过一个
-        if (products.stream().filter(GoodsProduct::getDefaultSelected).count() > 1) {
-            throw new BusinessException(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
-        }
 
-        // 更新商品规格
+        validateDefaultSelected(products);
+
         iGoodsSpecificationService.updateBatchById(specifications);
-        // 更新商品属性
         iGoodsAttributeService.updateBatchById(updateAttributes);
-        // 添加商品属性
         iGoodsAttributeService.saveBatch(insertAttributes);
-        // 更新商品货品
         iGoodsProductService.updateBatchById(products);
     }
 
@@ -259,27 +250,97 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goodsMapper.updateVirtualSales(goodsId, number);
     }
 
+    @Override
+    public boolean syncGoodsToEs() {
+        boolean lock = redisLock.lock(RedisKeyEnum.ES_SYNC_CACHE.getKey(), 2);
+        if (!lock) {
+            throw new BusinessException("加锁失败");
+        }
+        try {
+            elasticDocument.deleteIndex(EsConstants.ES_GOODS_INDEX);
+            try (InputStream inputStream = this.getClass().getResourceAsStream(EsConstants.ES_INDEX_GOODS_FILENAME)) {
+                if (inputStream == null) {
+                    throw new BusinessException("ES 索引配置不存在");
+                }
+                if (!elasticDocument.createIndex(EsConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
+                    return false;
+                }
+            }
+            List<ElasticEntity> entities = list().stream()
+                    .map(this::buildGoodsElasticEntity)
+                    .toList();
+            return elasticDocument.insertBatch(EsConstants.ES_GOODS_INDEX, entities);
+        } catch (IOException e) {
+            throw new BusinessException("读取 ES 索引配置失败");
+        } finally {
+            redisLock.unLock(RedisKeyEnum.ES_SYNC_CACHE.getKey());
+        }
+    }
+
     /**
-     * 同步商品信息到es中
+     * 同步单个商品到 ES
      *
      * @param goods 商品信息
+     * @return 处理结果
      */
     public boolean syncGoods2Es(Goods goods) throws IOException {
-        // 同步es
+        ElasticEntity elasticEntity = buildGoodsElasticEntity(goods);
+        if (!elasticDocument.insertOrUpdateOne(EsConstants.ES_GOODS_INDEX, elasticEntity)) {
+            throw new BusinessException("商品同步 ES 失败");
+        }
+        return true;
+    }
+
+    private void validateProducts(List<GoodsProduct> products) {
+        if (products == null || products.isEmpty()) {
+            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
+        }
+    }
+
+    private BigDecimal resolveRetailPrice(List<GoodsProduct> products) {
+        return products.stream()
+                .map(GoodsProduct::getPrice)
+                .filter(Objects::nonNull)
+                .min(BigDecimal::compareTo)
+                .orElseThrow(() -> new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR));
+    }
+
+    private void validateDefaultSelected(List<GoodsProduct> products) {
+        long defaultSelectedCount = products.stream()
+                .filter(product -> Boolean.TRUE.equals(product.getDefaultSelected()))
+                .count();
+        if (defaultSelectedCount > 1) {
+            throw new BusinessException(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
+        }
+    }
+
+    private ElasticEntity buildGoodsElasticEntity(Goods goods) {
         ElasticEntity elasticEntity = new ElasticEntity();
         elasticEntity.setId(goods.getId().toString());
         Map<String, Object> map = new HashMap<>();
         map.put("id", goods.getId());
         map.put("name", goods.getName());
+        map.put("pyname", goods.getName());
+        map.put("sales", goods.getVirtualSales());
+        map.put("isHot", goods.getIsHot());
+        map.put("isNew", goods.getIsNew());
         map.put("countPrice", goods.getCounterPrice());
         map.put("retailPrice", goods.getRetailPrice());
-        map.put("keyword", Objects.isNull(goods.getKeywords()) ? Collections.emptyList() : goods.getKeywords().split(","));
+        map.put("keyword", resolveKeywords(goods.getKeywords()));
         map.put("isOnSale", goods.getIsOnSale());
         map.put("createTime", goods.getCreateTime());
         elasticEntity.setData(map);
-        if (!elasticDocument.insertOrUpdateOne(EsConstants.ES_GOODS_INDEX, elasticEntity)) {
-            throw new BusinessException("商品同步es失败");
+        return elasticEntity;
+    }
+
+    private List<String> resolveKeywords(String keywords) {
+        if (keywords == null || keywords.isBlank()) {
+            return Collections.emptyList();
         }
-        return true;
+        return Arrays.stream(keywords.split(","))
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(keyword -> !keyword.isEmpty())
+                .toList();
     }
 }

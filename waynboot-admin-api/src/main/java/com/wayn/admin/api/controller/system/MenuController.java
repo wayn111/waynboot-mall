@@ -7,7 +7,7 @@ import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.system.Menu;
 import com.wayn.common.core.service.system.IMenuService;
 import com.wayn.common.core.vo.TreeVO;
-import com.wayn.common.response.RoleMenuTreeselectResVO;
+import com.wayn.common.model.response.RoleMenuTreeselectResVO;
 import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.util.R;

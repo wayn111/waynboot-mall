@@ -3,7 +3,7 @@ package com.wayn.common.design.strategy.diamond.strategy;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.entity.shop.Diamond;
 import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.response.DiamondGoodsResVO;
+import com.wayn.common.model.response.DiamondGoodsResVO;
 
 /**
  * 金刚位跳转策略接口

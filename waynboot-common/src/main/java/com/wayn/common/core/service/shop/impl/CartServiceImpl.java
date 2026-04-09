@@ -13,7 +13,7 @@ import com.wayn.common.core.mapper.shop.CartMapper;
 import com.wayn.common.core.service.shop.ICartService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.response.CartResponseVO;
+import com.wayn.common.model.response.CartResponseVO;
 import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisLock;
 import com.wayn.util.enums.ReturnCodeEnum;
@@ -32,7 +32,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 购物车商品表 服务实现类
+ * 购物车商品服务实现
  *
  * @author wayn
  * @since 2020-08-03
@@ -67,6 +67,9 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
         }
         Goods goods = iGoodsService.getById(goodsId);
+        if (goods == null) {
+            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
+        }
         if (!goods.getIsOnSale()) {
             throw new BusinessException(ReturnCodeEnum.GOODS_HAS_OFFSHELF_ERROR);
         }
@@ -85,19 +88,22 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 cart.setGoodsName(goods.getName());
                 cart.setPicUrl(goods.getPicUrl());
                 cart.setPrice(product.getPrice());
-                cart.setSpecifications((product.getSpecifications()));
+                cart.setSpecifications(product.getSpecifications());
                 cart.setUserId(Math.toIntExact(userId));
                 cart.setChecked(true);
                 cart.setRemark(goods.getBrief());
                 cart.setCreateTime(LocalDateTime.now());
                 save(cart);
             } else {
+                if (Objects.isNull(product)) {
+                    throw new BusinessException(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
+                }
                 int num = existsCart.getNumber() + number;
                 if (num > product.getNumber()) {
                     throw new BusinessException(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
                 }
                 existsCart.setNumber(num);
-                cart.setUpdateTime(LocalDateTime.now());
+                existsCart.setUpdateTime(LocalDateTime.now());
                 updateById(existsCart);
             }
         } finally {
@@ -107,7 +113,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public Long goodsCount(Long userId) {
-        // 用户未登录时，直接返回0
+        // 用户未登录时直接返回 0
         if (userId == null) {
             return 0L;
         }
@@ -135,12 +141,10 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 Integer number = cart.getNumber();
                 Integer maxNumber = product.getNumber();
                 if (maxNumber < number) {
-                    commonThreadPoolTaskExecutor.execute(() -> {
-                        this.lambdaUpdate()
-                                .set(Cart::getChecked, false)
-                                .eq(Cart::getId, cart.getId())
-                                .update();
-                    });
+                    commonThreadPoolTaskExecutor.execute(() -> this.lambdaUpdate()
+                            .set(Cart::getChecked, false)
+                            .eq(Cart::getId, cart.getId())
+                            .update());
                 }
                 BeanUtil.copyProperties(cart, responseVO);
                 responseVO.setMaxNum(maxNumber);
@@ -152,10 +156,15 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     @Override
     public Boolean changeNum(Long cartId, Integer number) {
-        // todo 并发问题，后续可以通过 mq 实现
-        commonThreadPoolTaskExecutor.execute(() -> {
-            lambdaUpdate().setSql("number = " + number).eq(Cart::getId, cartId).update();
-        });
+        if (cartId == null || number == null || number <= 0) {
+            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
+        }
+        // 并发问题后续可以通过 MQ 或串行化处理进一步优化
+        commonThreadPoolTaskExecutor.execute(() -> lambdaUpdate()
+                .set(Cart::getNumber, number)
+                .set(Cart::getUpdateTime, LocalDateTime.now())
+                .eq(Cart::getId, cartId)
+                .update());
         return true;
     }
 
@@ -163,9 +172,14 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     public void addDefaultGoodsProduct(Cart cart, Long userId) {
         Long goodsId = cart.getGoodsId();
         List<GoodsProduct> products = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
-        List<GoodsProduct> goodsProducts = products.stream().filter(GoodsProduct::getDefaultSelected).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(products)) {
+            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
+        }
+        List<GoodsProduct> goodsProducts = products.stream()
+                .filter(product -> Boolean.TRUE.equals(product.getDefaultSelected()))
+                .collect(Collectors.toList());
         GoodsProduct defaultProduct;
-        // 如果默认选中货品不为空则取默认选中货品，否则取第一个货品
+        // 优先使用默认选中的货品，否则回退到第一个货品
         if (CollectionUtils.isNotEmpty(goodsProducts)) {
             defaultProduct = goodsProducts.get(0);
         } else {
