@@ -1,7 +1,7 @@
 package com.wayn.common.core.service.shop;
 
-import com.wayn.common.request.OrderPayReqVO;
-import com.wayn.common.response.OrderPayResVO;
+import com.wayn.common.model.request.OrderPayReqVO;
+import com.wayn.common.model.response.OrderPayResVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

@@ -2,7 +2,7 @@ package com.wayn.test;
 
 import com.wayn.common.core.service.shop.IPayService;
 import com.wayn.common.design.strategy.pay.PayTypeEnum;
-import com.wayn.common.request.OrderPayReqVO;
+import com.wayn.common.model.request.OrderPayReqVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class PayTest {
     private IPayService payService;
 
     /**
-     * 易支付下单测试
+     * 鏄撴敮浠樹笅鍗曟祴璇?
      */
     @Test
     public void epayPreapreTest() {
@@ -35,3 +35,4 @@ public class PayTest {
         payService.prepay(orderPayReqVO);
     }
 }
+

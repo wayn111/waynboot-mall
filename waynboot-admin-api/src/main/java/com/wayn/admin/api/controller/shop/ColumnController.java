@@ -10,7 +10,7 @@ import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.service.shop.IColumnGoodsRelationService;
 import com.wayn.common.core.service.shop.IColumnService;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.response.ColumnManagerResVO;
+import com.wayn.common.model.response.ColumnManagerResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

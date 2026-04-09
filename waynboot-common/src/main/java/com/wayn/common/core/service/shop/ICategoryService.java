@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Category;
 import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.vo.VanTreeSelectVO;
-import com.wayn.common.response.CategoryGoodsResponseVO;
-import com.wayn.common.response.CategoryIndexResponseVO;
+import com.wayn.common.model.response.CategoryGoodsResponseVO;
+import com.wayn.common.model.response.CategoryIndexResponseVO;
 
 import java.util.List;
 

@@ -2,8 +2,8 @@ package com.wayn.common.core.service.shop;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.response.HomeIndexResponseVO;
-import com.wayn.common.response.MallConfigResponseVO;
+import com.wayn.common.model.response.HomeIndexResponseVO;
+import com.wayn.common.model.response.MallConfigResponseVO;
 
 import java.util.List;
 

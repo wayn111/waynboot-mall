@@ -2,8 +2,8 @@ package com.wayn.mobile.api.controller;
 
 import com.wayn.common.core.entity.shop.Member;
 import com.wayn.common.core.service.shop.IMemberService;
-import com.wayn.common.request.ProfileRequestVO;
-import com.wayn.common.request.UpdatePasswordReqVO;
+import com.wayn.common.model.request.ProfileRequestVO;
+import com.wayn.common.model.request.UpdatePasswordReqVO;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.mobile.framework.security.service.TokenService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;

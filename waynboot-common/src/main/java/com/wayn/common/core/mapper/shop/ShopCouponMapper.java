@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.entity.shop.ShopCoupon;
-import com.wayn.common.request.ShopCouponReqVO;
-import com.wayn.common.response.MemberCouponResVO;
-import com.wayn.common.response.ShopCouponResVO;
+import com.wayn.common.model.request.ShopCouponReqVO;
+import com.wayn.common.model.response.MemberCouponResVO;
+import com.wayn.common.model.response.ShopCouponResVO;
 
 /**
  * @author Administrator
