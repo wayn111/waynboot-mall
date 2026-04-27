@@ -10,6 +10,7 @@ import com.wayn.common.core.service.shop.ShopCouponService;
 import com.wayn.common.model.request.ShopCouponAddReqVO;
 import com.wayn.common.model.request.ShopCouponGiveUserReqVO;
 import com.wayn.common.model.request.ShopCouponReqVO;
+import com.wayn.common.model.response.ShopCouponManageResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +40,13 @@ public class CouponController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('shop:coupon:list')")
     @GetMapping("list")
-    public R<IPage<ShopCoupon>> list(ShopCouponReqVO reqVO) {
+    public R<IPage<ShopCouponManageResVO>> list(ShopCouponReqVO reqVO) {
         Page<ShopCoupon> page = getPage();
-        return R.success(shopCouponService.listPage(page, reqVO));
+        log.info("查询优惠券列表开始, pageNum={}, pageSize={}, title={}, status={}",
+                page.getCurrent(), page.getSize(), reqVO.getTitle(), reqVO.getStatus());
+        IPage<ShopCouponManageResVO> couponPage = shopCouponService.listPage(page, reqVO);
+        log.info("查询优惠券列表完成, count={}", couponPage.getRecords().size());
+        return R.success(couponPage);
     }
 
     /**
@@ -56,7 +61,10 @@ public class CouponController extends BaseController {
         ShopCoupon shopCoupon = BeanUtil.copyProperties(reqVO, ShopCoupon.class);
         shopCoupon.setCreateTime(new Date());
         shopCoupon.setCreateBy(SecurityUtils.getUsername());
-        return R.result(shopCouponService.save(shopCoupon));
+        log.info("新增优惠券开始, title={}", shopCoupon.getTitle());
+        Boolean saved = shopCouponService.save(shopCoupon);
+        log.info("新增优惠券完成, title={}, result={}", shopCoupon.getTitle(), saved);
+        return R.result(saved);
     }
 
     /**
@@ -71,7 +79,10 @@ public class CouponController extends BaseController {
         ShopCoupon shopCoupon = BeanUtil.copyProperties(reqVO, ShopCoupon.class);
         shopCoupon.setUpdateTime(new Date());
         shopCoupon.setUpdateBy(SecurityUtils.getUsername());
-        return R.result(shopCouponService.updateById(shopCoupon));
+        log.info("更新优惠券开始, couponId={}, title={}", shopCoupon.getId(), shopCoupon.getTitle());
+        Boolean updated = shopCouponService.updateById(shopCoupon);
+        log.info("更新优惠券完成, couponId={}, result={}", shopCoupon.getId(), updated);
+        return R.result(updated);
     }
 
 
@@ -83,8 +94,12 @@ public class CouponController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('shop:coupon:info')")
     @GetMapping("{id}")
-    public R<ShopCoupon> getShopCoupon(@PathVariable Long id) {
-        return R.success(shopCouponService.getById(id));
+    public R<ShopCouponManageResVO> getShopCoupon(@PathVariable Long id) {
+        log.info("查询优惠券详情开始, couponId={}", id);
+        ShopCoupon shopCoupon = shopCouponService.getById(id);
+        ShopCouponManageResVO resVO = BeanUtil.copyProperties(shopCoupon, ShopCouponManageResVO.class);
+        log.info("查询优惠券详情完成, couponId={}", id);
+        return R.success(resVO);
     }
 
 
@@ -97,8 +112,10 @@ public class CouponController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:coupon:delete')")
     @DeleteMapping("{ids}")
     public R<Boolean> deleteShopCoupon(@PathVariable List<Long> ids) {
-        shopCouponService.removeByIds(ids);
-        return R.success();
+        log.info("删除优惠券开始, ids={}", ids);
+        boolean removed = shopCouponService.removeByIds(ids);
+        log.info("删除优惠券完成, ids={}, result={}", ids, removed);
+        return R.result(removed);
     }
 
 
@@ -111,8 +128,9 @@ public class CouponController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:coupon:add')")
     @PostMapping("giveUser")
     public R<Boolean> giveUser(@Validated @RequestBody ShopCouponGiveUserReqVO reqVO) {
-        log.info("shop coupon giveUser reqVO:{}", reqVO);
+        log.info("赠送优惠券开始, couponId={}, userId={}", reqVO.getCouponId(), reqVO.getUserId());
         shopCouponService.giveUser(reqVO);
+        log.info("赠送优惠券完成, couponId={}, userId={}", reqVO.getCouponId(), reqVO.getUserId());
         return R.success();
     }
 }

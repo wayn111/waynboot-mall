@@ -33,8 +33,10 @@ public class PayController extends BaseController {
      */
     @PostMapping("prepay")
     public R<OrderPayResVO> prepay(@RequestBody @Validated OrderPayReqVO reqVO) {
-        log.info("order prepay reqVO is {}", reqVO);
-        return R.success(payService.prepay(reqVO));
+        log.info("预支付开始, orderSn={}, payType={}", reqVO.getOrderSn(), reqVO.getPayType());
+        OrderPayResVO resVO = payService.prepay(reqVO);
+        log.info("预支付完成, orderSn={}, payType={}", reqVO.getOrderSn(), reqVO.getPayType());
+        return R.success(resVO);
     }
 
 }

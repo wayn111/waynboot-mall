@@ -8,6 +8,7 @@ import com.wayn.common.model.request.CouponReceiveReqVO;
 import com.wayn.common.model.request.ShopCouponGiveUserReqVO;
 import com.wayn.common.model.request.ShopCouponReqVO;
 import com.wayn.common.model.response.MemberCouponResVO;
+import com.wayn.common.model.response.ShopCouponManageResVO;
 import com.wayn.common.model.response.ShopCouponResVO;
 
 /**
@@ -17,7 +18,7 @@ import com.wayn.common.model.response.ShopCouponResVO;
  */
 public interface ShopCouponService extends IService<ShopCoupon> {
 
-    IPage<ShopCoupon> listPage(Page<ShopCoupon> page, ShopCouponReqVO reqVO);
+    IPage<ShopCouponManageResVO> listPage(Page<ShopCoupon> page, ShopCouponReqVO reqVO);
 
     void giveUser(ShopCouponGiveUserReqVO reqVO);
 

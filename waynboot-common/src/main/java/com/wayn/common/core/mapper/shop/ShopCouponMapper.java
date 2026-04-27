@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.core.entity.shop.ShopCoupon;
 import com.wayn.common.model.request.ShopCouponReqVO;
 import com.wayn.common.model.response.MemberCouponResVO;
+import com.wayn.common.model.response.ShopCouponManageResVO;
 import com.wayn.common.model.response.ShopCouponResVO;
 
 /**
@@ -16,15 +17,13 @@ import com.wayn.common.model.response.ShopCouponResVO;
  */
 public interface ShopCouponMapper extends BaseMapper<ShopCoupon> {
 
-    IPage<ShopCoupon> selectCouponListPage(Page<ShopCoupon> page, ShopCouponReqVO reqVO);
+    IPage<ShopCouponManageResVO> selectCouponListPage(Page<ShopCoupon> page, ShopCouponReqVO reqVO);
 
     IPage<ShopCouponResVO> fontList(Page<ShopCoupon> page);
 
     IPage<MemberCouponResVO> myList(Page<ShopCoupon> page, Long userId);
 
-    void updateReceiveNum(Integer couponId);
+    int updateReceiveNum(Integer couponId);
 }
-
-
 
 

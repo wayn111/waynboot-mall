@@ -45,7 +45,10 @@ public class WxController {
      */
     @GetMapping("jsSdkInit")
     public R<JsSdkInitResVO> jsSdkInit(String url) throws NoSuchAlgorithmException {
-        return R.success(getJsSdkSign(url));
+        log.info("初始化微信 JSSDK 开始, hasUrl={}", StringUtils.isNotBlank(url));
+        JsSdkInitResVO resVO = getJsSdkSign(url);
+        log.info("初始化微信 JSSDK 完成, hasUrl={}", StringUtils.isNotBlank(url));
+        return R.success(resVO);
     }
 
     /**
@@ -117,17 +120,17 @@ public class WxController {
      */
     public JsSdkInitResVO getJsSdkSign(String url) throws NoSuchAlgorithmException {
         JsSdkInitResVO resVO = new JsSdkInitResVO();
-        Map paramMap = new HashMap();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("url", url);
-        String noncestr = generateRandomString();
-        paramMap.put("noncestr", noncestr);
+        String nonceStr = generateRandomString();
+        paramMap.put("noncestr", nonceStr);
         paramMap.put("jsapi_ticket", getTicket());
         long timestamp = System.currentTimeMillis() / 1000;
         paramMap.put("timestamp", timestamp);
         String requestParam = formatUrlMap(paramMap, false, false);
         String signature = SHA1Util.sha1(requestParam);
         resVO.setAppId(appId);
-        resVO.setNonceStr(noncestr);
+        resVO.setNonceStr(nonceStr);
         resVO.setTimestamp(String.valueOf(timestamp));
         resVO.setSignature(signature);
         return resVO;

@@ -64,6 +64,21 @@ public class RedisCache {
     }
 
     /**
+     * 当 key 不存在时写入缓存对象。
+     * 用于业务幂等和短时去重场景，依赖 Redis SET NX EX 保证并发下只有一个线程写入成功。
+     *
+     * @param key 缓存键值
+     * @param value 缓存值
+     * @param timeout 超时时间，单位秒
+     * @param <T> 缓存值类型
+     * @return true=写入成功；false=key 已存在或 Redis 返回失败
+     */
+    public <T> boolean setCacheObjectIfAbsent(final String key, final T value, final Integer timeout) {
+        Boolean result = redisTemplate.opsForValue().setIfAbsent(key, value, timeout, TimeUnit.SECONDS);
+        return Boolean.TRUE.equals(result);
+    }
+
+    /**
      * 设置有效时间
      *
      * @param key     Redis键

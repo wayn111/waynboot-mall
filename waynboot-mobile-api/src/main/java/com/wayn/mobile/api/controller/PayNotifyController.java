@@ -1,7 +1,5 @@
 package com.wayn.mobile.api.controller;
 
-
-import com.alibaba.fastjson.JSONObject;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.service.shop.IPayService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +29,7 @@ public class PayNotifyController extends BaseController {
      */
     @RequestMapping("wxPayNotify")
     public String wxPayNotify(HttpServletRequest request, HttpServletResponse response) {
-        log.info("微信paySuccess通知数据记录：req：{}", JSONObject.toJSONString(request.getParameterMap()));
+        log.info("收到微信支付回调, summary={}", summarizeCallback(request));
         return payService.wxPayNotify(request, response);
     }
 
@@ -44,7 +42,7 @@ public class PayNotifyController extends BaseController {
      */
     @RequestMapping("aliPayNotify")
     public String aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
-        log.info("支付宝paySuccess通知数据记录：req: {}", JSONObject.toJSONString(request.getParameterMap()));
+        log.info("收到支付宝支付回调, summary={}", summarizeCallback(request));
         return payService.aliPayNotify(request, response);
     }
 
@@ -58,7 +56,21 @@ public class PayNotifyController extends BaseController {
      */
     @RequestMapping("epayNotify")
     public String epayNotify(HttpServletRequest request, HttpServletResponse response) {
-        log.info("易支付paySuccess通知数据记录：req：{}", JSONObject.toJSONString(request.getParameterMap()));
+        log.info("收到易支付回调, summary={}", summarizeCallback(request));
         return payService.epayPayNotify(request, response);
+    }
+
+    /**
+     * 生成回调日志摘要，避免直接打印完整签名参数。
+     *
+     * @param request HTTP 请求
+     * @return 日志摘要
+     */
+    private String summarizeCallback(HttpServletRequest request) {
+        String orderSn = request.getParameter("out_trade_no");
+        String tradeNo = request.getParameter("trade_no");
+        String transactionId = request.getParameter("transaction_id");
+        return String.format("path=%s, orderSn=%s, tradeNo=%s, transactionId=%s",
+                request.getRequestURI(), orderSn, tradeNo, transactionId);
     }
 }

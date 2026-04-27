@@ -32,7 +32,10 @@ public class CategoryController extends BaseController {
      */
     @GetMapping("index")
     public R<CategoryIndexResponseVO> index() {
-        return R.success(iCategoryService.index());
+        log.info("查询分类首页开始");
+        CategoryIndexResponseVO resVO = iCategoryService.index();
+        log.info("查询分类首页完成");
+        return R.success(resVO);
     }
 
     /**
@@ -43,7 +46,10 @@ public class CategoryController extends BaseController {
      */
     @GetMapping("content")
     public R<CategoryIndexResponseVO> content(Long id) {
-        return R.success(iCategoryService.content(id));
+        log.info("查询分类详情开始, categoryId={}", id);
+        CategoryIndexResponseVO resVO = iCategoryService.content(id);
+        log.info("查询分类详情完成, categoryId={}", id);
+        return R.success(resVO);
     }
 
     /**
@@ -55,7 +61,10 @@ public class CategoryController extends BaseController {
     @GetMapping("firstCategoryGoods")
     public R<CategoryGoodsResponseVO> firstCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
         Page<Goods> page = getPage();
-        return R.success(iCategoryService.firstCateGoods(page, cateId));
+        log.info("查询一级分类商品开始, categoryId={}, pageNum={}, pageSize={}", cateId, page.getCurrent(), page.getSize());
+        CategoryGoodsResponseVO resVO = iCategoryService.firstCateGoods(page, cateId);
+        log.info("查询一级分类商品完成, categoryId={}", cateId);
+        return R.success(resVO);
     }
 
     /**
@@ -67,6 +76,9 @@ public class CategoryController extends BaseController {
     @GetMapping("secondCategoryGoods")
     public R<CategoryGoodsResponseVO> secondCateGoods(@RequestParam(defaultValue = "0") Long cateId) {
         Page<Goods> page = getPage();
-        return R.success(iCategoryService.secondCateGoods(page, cateId));
+        log.info("查询二级分类商品开始, categoryId={}, pageNum={}, pageSize={}", cateId, page.getCurrent(), page.getSize());
+        CategoryGoodsResponseVO resVO = iCategoryService.secondCateGoods(page, cateId);
+        log.info("查询二级分类商品完成, categoryId={}", cateId);
+        return R.success(resVO);
     }
 }

@@ -28,6 +28,7 @@ import org.dromara.sms4j.api.SmsBlend;
 import org.dromara.sms4j.api.entity.SmsResponse;
 import org.dromara.sms4j.core.factory.SmsFactory;
 import org.dromara.sms4j.provider.enumerate.SupplierType;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,12 +51,12 @@ import static com.wayn.util.enums.ReturnCodeEnum.*;
 @AllArgsConstructor
 public class LoginController {
 
-    private LoginService loginService;
-    private RedisCache redisCache;
-    private IMemberService iMemberService;
-    private ProfileUtil profileUtil;
-    private ShopCouponService shopCouponService;
-    private ShopMemberCouponService shopMemberCouponService;
+    private final LoginService loginService;
+    private final RedisCache redisCache;
+    private final IMemberService iMemberService;
+    private final ProfileUtil profileUtil;
+    private final ShopCouponService shopCouponService;
+    private final ShopMemberCouponService shopMemberCouponService;
 
     /**
      * 用户登录
@@ -65,12 +66,13 @@ public class LoginController {
      */
     @PostMapping("/login")
     public R<String> login(@RequestBody @Validated LoginObj loginObj) {
-        log.info("login req is {}", loginObj.toString());
         String mobile = loginObj.getMobile();
         String yzm = loginObj.getYzm();
+        log.info("手机号登录开始, mobile={}", maskMobile(mobile));
         // 校验验证码
         Object value = redisCache.getCacheObject(MOBILE_CODE_CACHE.getKey(mobile + "_" + yzm));
         if (!Objects.equals("1", value)) {
+            log.warn("手机号登录失败, mobile={}, reason=invalid_code", maskMobile(mobile));
             return R.error(YZM_ENTER_ERROR);
         }
         // 验证手机号是否唯一
@@ -79,6 +81,7 @@ public class LoginController {
             // 生成令牌
             String token = loginService.login(mobile, SysConstants.DEFAULT_PASSWORD);
             redisCache.deleteObject(MOBILE_CODE_CACHE.getKey(mobile + "_" + yzm));
+            log.info("手机号登录完成, mobile={}, type=existing_user", maskMobile(mobile));
             return R.success(token);
         }
         Member member = new Member();
@@ -111,6 +114,7 @@ public class LoginController {
         // 生成令牌
         String token = loginService.login(mobile, SysConstants.DEFAULT_PASSWORD);
         redisCache.deleteObject(MOBILE_CODE_CACHE.getKey(mobile + "_" + yzm));
+        log.info("手机号登录完成, mobile={}, type=new_user, couponCount={}", maskMobile(mobile), list.size());
         return R.success(token);
     }
 
@@ -122,6 +126,7 @@ public class LoginController {
     @ResponseBody
     @RequestMapping("/captcha")
     public R<CaptchaResVO> captcha() {
+        log.info("生成图形验证码开始");
         // 创建验证码对象，定义验证码图形的长、宽、以及字数
         SpecCaptcha specCaptcha = new SpecCaptcha(80, 32, 4);
         // 生成验证码
@@ -134,14 +139,15 @@ public class LoginController {
         CaptchaResVO resVO = new CaptchaResVO();
         resVO.setKey(key);
         resVO.setImage(specCaptcha.toBase64());
+        log.info("生成图形验证码完成");
         return R.success(resVO);
     }
 
     // 发送短信
     @RequestMapping("genMobileCode")
     public R<Boolean> genMobileCode(@RequestBody @Validated GenMobileCodeReqVO reqVO) {
-        log.info("genMobileCode req is {}", reqVO);
         String mobile = reqVO.getMobile();
+        log.info("发送短信验证码开始, mobile={}", maskMobile(mobile));
         if (!PhoneUtil.isMobile(mobile)) {
             throw new BusinessException(MOBILE_ERROR);
         }
@@ -154,15 +160,22 @@ public class LoginController {
             SmsBlend smsBlend = SmsFactory.createSmsBlend(SupplierType.ALIBABA);
             code = RandomUtil.randomNumbers(4);
             SmsResponse smsResponse = smsBlend.sendMessage(mobile, code);
-            log.info("smsResponse is {}", smsResponse);
             if (!smsResponse.isSuccess()) {
+                log.error("发送短信验证码失败, mobile={}, message={}", maskMobile(mobile), smsResponse.getMessage());
                 redisCache.setCacheObject(MOBILE_CODE_SEND_CACHE.getKey(mobile), "1", MOBILE_CODE_SEND_CACHE.getExpireSecond());
                 throw new BusinessException(MOBILE_YZM_SEND_ERROR.getCode(), smsResponse.getMessage());
             }
         }
-        log.info("手机号：{}，发送短信：{}", mobile, code);
         redisCache.setCacheObject(MOBILE_CODE_SEND_CACHE.getKey(mobile), "1", MOBILE_CODE_SEND_CACHE.getExpireSecond());
         redisCache.setCacheObject(MOBILE_CODE_CACHE.getKey(mobile + "_" + code), "1", MOBILE_CODE_CACHE.getExpireSecond());
+        log.info("发送短信验证码完成, mobile={}", maskMobile(mobile));
         return R.success();
+    }
+
+    private String maskMobile(String mobile) {
+        if (StringUtils.isBlank(mobile) || mobile.length() < 7) {
+            return mobile;
+        }
+        return mobile.substring(0, 3) + "****" + mobile.substring(mobile.length() - 4);
     }
 }

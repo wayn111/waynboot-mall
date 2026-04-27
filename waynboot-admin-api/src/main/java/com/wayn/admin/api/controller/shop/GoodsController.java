@@ -1,5 +1,6 @@
 package com.wayn.admin.api.controller.shop;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
@@ -7,8 +8,10 @@ import com.wayn.common.core.entity.shop.Goods;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.model.request.GoodsSaveRelatedReqVO;
 import com.wayn.common.model.response.GoodsManageDetailResVO;
+import com.wayn.common.model.response.GoodsManageListItemResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +32,7 @@ import java.io.IOException;
  * @since 2020-07-06
  */
 @RestController
+@Slf4j
 @AllArgsConstructor
 @RequestMapping("/shop/goods")
 public class GoodsController extends BaseController {
@@ -43,9 +47,14 @@ public class GoodsController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('shop:goods:list')")
     @GetMapping("/list")
-    public R<IPage<Goods>> list(Goods goods) {
+    public R<IPage<GoodsManageListItemResVO>> list(Goods goods) {
         Page<Goods> page = getPage();
-        return R.success(iGoodsService.listPage(page, goods));
+        log.info("查询商品列表开始, pageNum={}, pageSize={}, goodsName={}", page.getCurrent(), page.getSize(), goods.getName());
+        IPage<Goods> goodsPage = iGoodsService.listPage(page, goods);
+        Page<GoodsManageListItemResVO> resPage = new Page<>(goodsPage.getCurrent(), goodsPage.getSize(), goodsPage.getTotal());
+        resPage.setRecords(BeanUtil.copyToList(goodsPage.getRecords(), GoodsManageListItemResVO.class));
+        log.info("查询商品列表完成, count={}", resPage.getRecords().size());
+        return R.success(resPage);
     }
 
     /**
@@ -57,7 +66,9 @@ public class GoodsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:goods:add')")
     @PostMapping
     public R<Boolean> addGoods(@Validated @RequestBody GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
+        log.info("新增商品开始, goodsName={}", goodsSaveRelatedReqVO.getGoods().getName());
         iGoodsService.saveGoodsRelated(goodsSaveRelatedReqVO);
+        log.info("新增商品完成, goodsName={}", goodsSaveRelatedReqVO.getGoods().getName());
         return R.success();
     }
 
@@ -70,7 +81,11 @@ public class GoodsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:goods:update')")
     @PutMapping
     public R<Boolean> updateGoods(@Validated @RequestBody GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) throws IOException {
+        log.info("更新商品开始, goodsId={}, goodsName={}",
+                goodsSaveRelatedReqVO.getGoods().getId(),
+                goodsSaveRelatedReqVO.getGoods().getName());
         iGoodsService.updateGoodsRelated(goodsSaveRelatedReqVO);
+        log.info("更新商品完成, goodsId={}", goodsSaveRelatedReqVO.getGoods().getId());
         return R.success();
     }
 
@@ -83,7 +98,10 @@ public class GoodsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:goods:info')")
     @GetMapping("{goodsId}")
     public R<GoodsManageDetailResVO> getGoods(@PathVariable Long goodsId) {
-        return R.success(iGoodsService.getGoodsInfoById(goodsId));
+        log.info("查询商品详情开始, goodsId={}", goodsId);
+        GoodsManageDetailResVO resVO = iGoodsService.getGoodsInfoById(goodsId);
+        log.info("查询商品详情完成, goodsId={}", goodsId);
+        return R.success(resVO);
     }
 
     /**
@@ -95,7 +113,10 @@ public class GoodsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:goods:delete')")
     @DeleteMapping("{goodsId}")
     public R<Boolean> deleteGoods(@PathVariable Long goodsId) throws IOException {
-        return R.result(iGoodsService.deleteGoodsRelatedByGoodsId(goodsId));
+        log.info("删除商品开始, goodsId={}", goodsId);
+        Boolean deleted = iGoodsService.deleteGoodsRelatedByGoodsId(goodsId);
+        log.info("删除商品完成, goodsId={}, result={}", goodsId, deleted);
+        return R.result(deleted);
     }
 
     /**
@@ -106,6 +127,9 @@ public class GoodsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:goods:syncEs')")
     @PostMapping("syncEs")
     public R<Boolean> syncEs() {
-        return R.result(iGoodsService.syncGoodsToEs());
+        log.info("同步商品索引开始");
+        Boolean synced = iGoodsService.syncGoodsToEs();
+        log.info("同步商品索引完成, result={}", synced);
+        return R.result(synced);
     }
 }

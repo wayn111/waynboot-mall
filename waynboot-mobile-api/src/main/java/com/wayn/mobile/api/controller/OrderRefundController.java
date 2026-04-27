@@ -33,7 +33,9 @@ public class OrderRefundController extends BaseController {
      */
     @PostMapping("{orderId}")
     public R<Boolean> refund(@PathVariable Long orderId) {
+        log.info("申请退款开始, userId={}, orderId={}", com.wayn.mobile.framework.security.util.MobileSecurityUtils.getUserId(), orderId);
         mobileOrderService.refund(orderId);
+        log.info("申请退款完成, userId={}, orderId={}", com.wayn.mobile.framework.security.util.MobileSecurityUtils.getUserId(), orderId);
         return R.success();
     }
 
