@@ -9,6 +9,7 @@ import com.wayn.common.core.service.shop.IGoodsProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,8 +31,11 @@ public class GoodsProductServiceImpl extends ServiceImpl<GoodsProductMapper, Goo
 
     @Override
     public List<GoodsProduct> selectProductByIds(List<Long> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         LambdaQueryWrapper<GoodsProduct> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.in(GoodsProduct::getId, productIds);
+        queryWrapper.in(GoodsProduct::getId, productIds.stream().distinct().toList());
         return list(queryWrapper);
     }
 

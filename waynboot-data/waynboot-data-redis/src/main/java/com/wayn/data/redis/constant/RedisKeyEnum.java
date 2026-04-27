@@ -20,6 +20,9 @@ public enum RedisKeyEnum {
     UNPAID_ORDER_CONSUMER_MAP(CacheConstants.CACHE_PREFIX + "unpaid_order_consumer_key", 60),
     ORDER_RESULT_KEY(CacheConstants.CACHE_PREFIX + "order_result_key:", 60),
     ORDER_UNPAID_KEY(CacheConstants.CACHE_PREFIX + "order_unpaid_key:", 60),
+    ORDER_SUBMIT_LOCK(CacheConstants.CACHE_PREFIX + "order_submit_lock:", 60),
+    ORDER_SUBMIT_DEDUP_KEY(CacheConstants.CACHE_PREFIX + "order_submit_dedup:", 60),
+    COUPON_RECEIVE_LOCK(CacheConstants.CACHE_PREFIX + "coupon_receive_lock:", 60),
     ;
 
     private String key;

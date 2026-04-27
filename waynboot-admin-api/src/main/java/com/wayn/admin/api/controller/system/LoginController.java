@@ -19,6 +19,7 @@ import com.wayn.util.util.R;
 import com.wf.captcha.SpecCaptcha;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2020-07-21
  */
 @RestController
+@Slf4j
 @AllArgsConstructor
 public class LoginController {
     private LoginService loginService;
@@ -52,16 +54,19 @@ public class LoginController {
      */
     @PostMapping("/login")
     public R login(@RequestBody @Validated LoginObj loginObj) {
+        log.info("后台登录开始, username={}", loginObj.getUsername());
         // 获取redis中的验证码
         String redisCode = redisCache.getCacheObject(loginObj.getKey());
         // 判断验证码
         if (loginObj.getCode() == null || !redisCode.equals(loginObj.getCode().trim().toLowerCase())) {
+            log.warn("后台登录失败, username={}, reason=invalid_captcha", loginObj.getUsername());
             return R.error(ReturnCodeEnum.USER_VERIFY_CODE_ERROR);
         }
         // 删除验证码
         redisCache.deleteObject(loginObj.getKey());
         // 生成令牌
         String token = loginService.login(loginObj.getUsername(), loginObj.getPassword());
+        log.info("后台登录完成, username={}", loginObj.getUsername());
         return R.success(token);
     }
 
@@ -75,12 +80,14 @@ public class LoginController {
     public R<UserInfoResVO> userInfo(HttpServletRequest request) {
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
         User user = loginUser.getUser();
+        log.info("查询后台用户信息开始, userId={}", user.getUserId());
         Set<String> rolePermission = permissionService.getRolePermission(user);
         Set<String> menuPermission = permissionService.getMenuPermission(rolePermission);
         UserInfoResVO userInfoResVO = new UserInfoResVO();
         userInfoResVO.setUser(user);
         userInfoResVO.setRoles(rolePermission);
         userInfoResVO.setPermissions(menuPermission);
+        log.info("查询后台用户信息完成, userId={}", user.getUserId());
         return R.success(userInfoResVO);
     }
 
@@ -95,8 +102,11 @@ public class LoginController {
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
         // 用户信息
         User user = loginUser.getUser();
+        log.info("查询后台路由开始, userId={}", user.getUserId());
         List<Menu> menus = iMenuService.selectMenuTreeByUserId(user.getUserId());
-        return R.success(iMenuService.buildMenus(menus));
+        List<RouterVo> routers = iMenuService.buildMenus(menus);
+        log.info("查询后台路由完成, userId={}, count={}", user.getUserId(), routers.size());
+        return R.success(routers);
     }
 
     /**
@@ -106,6 +116,7 @@ public class LoginController {
      */
     @GetMapping("/captcha")
     public R<CaptchaResVO> captcha() {
+        log.info("生成后台验证码开始");
         SpecCaptcha specCaptcha = new SpecCaptcha(100, 43, 4);
         String verCode = specCaptcha.text().toLowerCase();
         String key = IdUtil.getUid();
@@ -115,6 +126,7 @@ public class LoginController {
         CaptchaResVO captchaResVO = new CaptchaResVO();
         captchaResVO.setImage(specCaptcha.toBase64());
         captchaResVO.setKey(key);
+        log.info("生成后台验证码完成");
         return R.success(captchaResVO);
     }
 }

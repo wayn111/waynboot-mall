@@ -35,7 +35,10 @@ public class CouponController extends BaseController {
     public R<IPage<ShopCouponResVO>> fontList() {
         Page<ShopCoupon> page = getPage();
         Long userId = MobileSecurityUtils.getUserId();
-        return R.success(shopCouponService.fontList(page, userId));
+        log.info("查询优惠券列表开始, userId={}, pageNum={}, pageSize={}", userId, page.getCurrent(), page.getSize());
+        IPage<ShopCouponResVO> couponPage = shopCouponService.fontList(page, userId);
+        log.info("查询优惠券列表完成, userId={}, count={}", userId, couponPage.getRecords().size());
+        return R.success(couponPage);
     }
 
     /**
@@ -46,7 +49,10 @@ public class CouponController extends BaseController {
     @PostMapping("receive")
     public R<Boolean> receive(@RequestBody @Validated CouponReceiveReqVO reqVO) {
         Long userId = MobileSecurityUtils.getUserId();
-        return R.success(shopCouponService.receive(reqVO, userId));
+        log.info("用户领取优惠券开始, userId={}, couponId={}", userId, reqVO.getCouponId());
+        Boolean received = shopCouponService.receive(reqVO, userId);
+        log.info("用户领取优惠券完成, userId={}, couponId={}, result={}", userId, reqVO.getCouponId(), received);
+        return R.success(received);
     }
 
     /**
@@ -58,6 +64,9 @@ public class CouponController extends BaseController {
     public R<IPage<MemberCouponResVO>> myList() {
         Page<ShopCoupon> page = getPage();
         Long userId = MobileSecurityUtils.getUserId();
-        return R.success(shopCouponService.myList(page, userId));
+        log.info("查询我的优惠券开始, userId={}, pageNum={}, pageSize={}", userId, page.getCurrent(), page.getSize());
+        IPage<MemberCouponResVO> couponPage = shopCouponService.myList(page, userId);
+        log.info("查询我的优惠券完成, userId={}, count={}", userId, couponPage.getRecords().size());
+        return R.success(couponPage);
     }
 }

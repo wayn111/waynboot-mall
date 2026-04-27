@@ -1,346 +1,215 @@
 package com.wayn.common.core.service.shop.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wayn.common.core.entity.shop.Category;
 import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.entity.shop.GoodsAttribute;
-import com.wayn.common.core.entity.shop.GoodsProduct;
-import com.wayn.common.core.entity.shop.GoodsSpecification;
 import com.wayn.common.core.mapper.shop.GoodsMapper;
-import com.wayn.common.core.service.shop.ICategoryService;
-import com.wayn.common.core.service.shop.IGoodsAttributeService;
-import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.core.service.shop.IGoodsSpecificationService;
-import com.wayn.common.core.vo.GoodsAttributeVO;
-import com.wayn.common.core.vo.GoodsProductVO;
-import com.wayn.common.core.vo.GoodsSpecificationVO;
+import com.wayn.common.core.service.shop.support.GoodsElasticSyncSupport;
+import com.wayn.common.core.service.shop.support.GoodsMutationSupport;
+import com.wayn.common.core.service.shop.support.GoodsQuerySupport;
+import com.wayn.common.core.service.shop.support.GoodsValidationSupport;
 import com.wayn.common.core.vo.GoodsVO;
 import com.wayn.common.model.request.GoodsSaveRelatedReqVO;
 import com.wayn.common.model.response.GoodsManageDetailResVO;
-import com.wayn.data.elastic.constant.EsConstants;
-import com.wayn.data.elastic.manager.ElasticDocument;
-import com.wayn.data.elastic.manager.ElasticEntity;
-import com.wayn.data.redis.constant.RedisKeyEnum;
-import com.wayn.data.redis.manager.RedisLock;
-import com.wayn.util.constant.SysConstants;
-import com.wayn.util.enums.ReturnCodeEnum;
-import com.wayn.util.exception.BusinessException;
-import com.wayn.util.util.file.FileUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
- * 商品基本信息表服务实现
- *
- * @author wayn
- * @since 2020-07-06
+ * 商品服务外观层。
+ * 对外保留原有 `IGoodsService` 契约，内部把查询、校验、聚合写入和 ES 同步委托给支撑服务。
  */
 @Service
 @AllArgsConstructor
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements IGoodsService {
 
-    private GoodsMapper goodsMapper;
-    private IGoodsProductService iGoodsProductService;
-    private IGoodsAttributeService iGoodsAttributeService;
-    private IGoodsSpecificationService iGoodsSpecificationService;
-    private ICategoryService iCategoryService;
-    private ElasticDocument elasticDocument;
-    private RedisLock redisLock;
+    private final GoodsQuerySupport goodsQuerySupport;
+    private final GoodsMutationSupport goodsMutationSupport;
+    private final GoodsValidationSupport goodsValidationSupport;
+    private final GoodsElasticSyncSupport goodsElasticSyncSupport;
 
+    /**
+     * 委托查询商品分页。
+     *
+     * @param page 分页参数
+     * @param goods 查询条件
+     * @return 商品分页结果
+     */
     @Override
     public IPage<Goods> listPage(Page<Goods> page, Goods goods) {
-        return goodsMapper.selectGoodsListPage(page, goods);
-    }
-
-    @Override
-    public List<Goods> selectHomeIndexGoods(Goods goods) {
-        return goodsMapper.selectHomeIndex(goods);
-    }
-
-    @Override
-    public IPage<Goods> listColumnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
-        return goodsMapper.selectColumnBindGoodsListPage(page, goods, columnGoodsIds);
-    }
-
-    @Override
-    public IPage<Goods> listColumnUnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
-        return goodsMapper.selectColumnUnBindGoodsListPage(page, goods, columnGoodsIds);
-    }
-
-    @Override
-    public GoodsManageDetailResVO getGoodsInfoById(Long goodsId) {
-        Goods goods = goodsMapper.selectById(goodsId);
-        if (goods == null) {
-            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
-        }
-        List<GoodsProduct> goodsProducts = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
-        List<GoodsAttribute> goodsAttributes = iGoodsAttributeService.list(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
-        List<GoodsSpecification> goodsSpecifications = iGoodsSpecificationService.list(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
-        Long categoryId = goods.getCategoryId();
-        Category category = iCategoryService.getById(categoryId);
-        List<Long> categoryIds = new ArrayList<>();
-        if (category != null) {
-            Long parentCategoryId = category.getPid();
-            categoryIds.add(parentCategoryId);
-            categoryIds.add(categoryId);
-        }
-        GoodsManageDetailResVO data = new GoodsManageDetailResVO();
-        data.setGoods(goods);
-        data.setSpecifications(goodsSpecifications);
-        data.setProducts(goodsProducts);
-        data.setAttributes(goodsAttributes);
-        data.setCategoryIds(categoryIds);
-        data.setCategory(category);
-        return data;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void saveGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
-        GoodsVO goodsVO = goodsSaveRelatedReqVO.getGoods();
-        GoodsAttributeVO[] attributesVO = goodsSaveRelatedReqVO.getAttributes();
-        GoodsSpecificationVO[] specificationsVO = goodsSaveRelatedReqVO.getSpecifications();
-        GoodsProductVO[] productsVO = goodsSaveRelatedReqVO.getProducts();
-        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goodsVO))) {
-            throw new BusinessException(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("添加商品[%s]失败，商品名称已存在", goodsVO.getName())));
-        }
-        List<GoodsSpecification> specifications = BeanUtil.copyToList(Arrays.asList(specificationsVO), GoodsSpecification.class);
-        List<GoodsAttribute> attributes = BeanUtil.copyToList(Arrays.asList(attributesVO), GoodsAttribute.class);
-        List<GoodsProduct> products = BeanUtil.copyToList(Arrays.asList(productsVO), GoodsProduct.class);
-        // 商品表中的 retailPrice 记录当前商品最低售价
-        validateProducts(products);
-        BigDecimal retailPrice = resolveRetailPrice(products);
-        products.forEach(product -> product.setId(null));
-
-        Goods goods = BeanUtil.copyProperties(goodsVO, Goods.class);
-        goods.setRetailPrice(retailPrice);
-        goods.setCreateTime(new Date());
-        save(goods);
-        goods.setGoodsSn(goods.getId().toString());
-        updateById(goods);
-
-        for (GoodsSpecification specification : specifications) {
-            specification.setGoodsId(goods.getId());
-            specification.setCreateTime(new Date());
-        }
-        for (GoodsAttribute goodsAttribute : attributes) {
-            goodsAttribute.setGoodsId(goods.getId());
-            goodsAttribute.setCreateTime(new Date());
-        }
-        for (GoodsProduct goodsProduct : products) {
-            goodsProduct.setGoodsId(goods.getId());
-            goodsProduct.setCreateTime(new Date());
-        }
-
-        validateDefaultSelected(products);
-
-        iGoodsSpecificationService.saveBatch(specifications);
-        iGoodsAttributeService.saveBatch(attributes);
-        iGoodsProductService.saveBatch(products);
-    }
-
-    @Override
-    public String checkGoodsNameUnique(GoodsVO goods) {
-        long goodsId = Objects.isNull(goods.getId()) ? -1L : goods.getId();
-        Goods shopGoods = getOne(new QueryWrapper<Goods>().eq("name", goods.getName()));
-        if (shopGoods != null && shopGoods.getId() != goodsId) {
-            return SysConstants.NOT_UNIQUE;
-        }
-        return SysConstants.UNIQUE;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean deleteGoodsRelatedByGoodsId(Long goodsId) throws IOException {
-        removeById(goodsId);
-        iGoodsSpecificationService.remove(new QueryWrapper<GoodsSpecification>().eq("goods_id", goodsId));
-        iGoodsAttributeService.remove(new QueryWrapper<GoodsAttribute>().eq("goods_id", goodsId));
-        iGoodsProductService.remove(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
-        elasticDocument.delete(EsConstants.ES_GOODS_INDEX, goodsId.toString());
-        return true;
-    }
-
-    @Override
-    public void updateGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
-        GoodsVO goodsVO = goodsSaveRelatedReqVO.getGoods();
-        GoodsAttributeVO[] attributesVO = goodsSaveRelatedReqVO.getAttributes();
-        GoodsSpecificationVO[] specificationsVO = goodsSaveRelatedReqVO.getSpecifications();
-        GoodsProductVO[] productsVO = goodsSaveRelatedReqVO.getProducts();
-        if (SysConstants.NOT_UNIQUE.equals(checkGoodsNameUnique(goodsVO))) {
-            throw new BusinessException(ReturnCodeEnum.CUSTOM_ERROR.setMsg(String.format("更新商品[%s]失败，商品名称已存在", goodsVO.getName())));
-        }
-        List<GoodsSpecification> specifications = BeanUtil.copyToList(Arrays.asList(specificationsVO), GoodsSpecification.class);
-        List<GoodsAttribute> attributes = BeanUtil.copyToList(Arrays.asList(attributesVO), GoodsAttribute.class);
-        List<GoodsAttribute> updateAttributes = new ArrayList<>();
-        List<GoodsAttribute> insertAttributes = new ArrayList<>();
-        List<GoodsProduct> products = BeanUtil.copyToList(Arrays.asList(productsVO), GoodsProduct.class);
-        validateProducts(products);
-        BigDecimal retailPrice = resolveRetailPrice(products);
-
-        Goods goods = BeanUtil.copyProperties(goodsVO, Goods.class);
-        goods.setRetailPrice(retailPrice);
-        goods.setUpdateTime(new Date());
-        updateById(goods);
-        for (GoodsSpecification specification : specifications) {
-            specification.setUpdateTime(new Date());
-        }
-
-        for (GoodsAttribute goodsAttribute : attributes) {
-            goodsAttribute.setUpdateTime(new Date());
-            if (goodsAttribute.getId() != null) {
-                updateAttributes.add(goodsAttribute);
-            } else {
-                goodsAttribute.setGoodsId(goods.getId());
-                insertAttributes.add(goodsAttribute);
-            }
-        }
-
-        for (GoodsProduct goodsProduct : products) {
-            goodsProduct.setUpdateTime(new Date());
-        }
-
-        validateDefaultSelected(products);
-
-        iGoodsSpecificationService.updateBatchById(specifications);
-        iGoodsAttributeService.updateBatchById(updateAttributes);
-        iGoodsAttributeService.saveBatch(insertAttributes);
-        iGoodsProductService.updateBatchById(products);
-    }
-
-    @Override
-    public List<Goods> selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList) {
-        return goodsMapper.selectGoodsListPageByl2CateId(page, l2cateList).getRecords();
-    }
-
-    @Override
-    public List<Goods> searchResult(List<?> goodsIdList) {
-        return goodsMapper.selectHomeGoodsListByIds(goodsIdList);
-    }
-
-    @Override
-    public IPage<Goods> selectColumnGoodsPageByColumnId(Page<Goods> page, Long columnId) {
-        return goodsMapper.selectColumnGoodsPage(page, columnId);
-    }
-
-    @Override
-    public List<Goods> selectGoodsByIds(List<Long> goodsIdList) {
-        return goodsMapper.selectGoodsListByIds(goodsIdList);
-    }
-
-    @Override
-    public void updateVirtualSales(Long goodsId, Integer number) {
-        goodsMapper.updateVirtualSales(goodsId, number);
-    }
-
-    @Override
-    public boolean syncGoodsToEs() {
-        boolean lock = redisLock.lock(RedisKeyEnum.ES_SYNC_CACHE.getKey(), 2);
-        if (!lock) {
-            throw new BusinessException("加锁失败");
-        }
-        try {
-            elasticDocument.deleteIndex(EsConstants.ES_GOODS_INDEX);
-            try (InputStream inputStream = this.getClass().getResourceAsStream(EsConstants.ES_INDEX_GOODS_FILENAME)) {
-                if (inputStream == null) {
-                    throw new BusinessException("ES 索引配置不存在");
-                }
-                if (!elasticDocument.createIndex(EsConstants.ES_GOODS_INDEX, FileUtils.getContent(inputStream))) {
-                    return false;
-                }
-            }
-            List<ElasticEntity> entities = list().stream()
-                    .map(this::buildGoodsElasticEntity)
-                    .toList();
-            return elasticDocument.insertBatch(EsConstants.ES_GOODS_INDEX, entities);
-        } catch (IOException e) {
-            throw new BusinessException("读取 ES 索引配置失败");
-        } finally {
-            redisLock.unLock(RedisKeyEnum.ES_SYNC_CACHE.getKey());
-        }
+        return goodsQuerySupport.listPage(page, goods);
     }
 
     /**
-     * 同步单个商品到 ES
+     * 委托查询首页商品。
+     *
+     * @param goods 查询条件
+     * @return 商品列表
+     */
+    @Override
+    public List<Goods> selectHomeIndexGoods(Goods goods) {
+        return goodsQuerySupport.selectHomeIndexGoods(goods);
+    }
+
+    /**
+     * 委托查询栏目已绑定商品分页。
+     *
+     * @param page 分页参数
+     * @param goods 查询条件
+     * @param columnGoodsIds 已绑定商品 ID
+     * @return 分页结果
+     */
+    @Override
+    public IPage<Goods> listColumnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
+        return goodsQuerySupport.listColumnBindGoodsPage(page, goods, columnGoodsIds);
+    }
+
+    /**
+     * 委托查询栏目未绑定商品分页。
+     *
+     * @param page 分页参数
+     * @param goods 查询条件
+     * @param columnGoodsIds 已绑定商品 ID
+     * @return 分页结果
+     */
+    @Override
+    public IPage<Goods> listColumnUnBindGoodsPage(Page<Goods> page, Goods goods, List<Long> columnGoodsIds) {
+        return goodsQuerySupport.listColumnUnBindGoodsPage(page, goods, columnGoodsIds);
+    }
+
+    /**
+     * 委托查询商品管理详情。
+     *
+     * @param goodsId 商品 ID
+     * @return 商品详情
+     */
+    @Override
+    public GoodsManageDetailResVO getGoodsInfoById(Long goodsId) {
+        return goodsQuerySupport.getGoodsInfoById(goodsId);
+    }
+
+    /**
+     * 委托保存商品聚合数据。
+     *
+     * @param goodsSaveRelatedReqVO 商品保存参数
+     */
+    @Override
+    public void saveGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
+        goodsMutationSupport.saveGoodsRelated(goodsSaveRelatedReqVO);
+    }
+
+    /**
+     * 委托校验商品名称唯一性。
      *
      * @param goods 商品信息
-     * @return 处理结果
+     * @return 唯一性标识
+     */
+    @Override
+    public String checkGoodsNameUnique(GoodsVO goods) {
+        return goodsValidationSupport.checkGoodsNameUnique(goods);
+    }
+
+    /**
+     * 委托删除商品聚合数据。
+     *
+     * @param goodsId 商品 ID
+     * @return 删除结果
+     * @throws IOException 删除 ES 文档时的 IO 异常
+     */
+    @Override
+    public boolean deleteGoodsRelatedByGoodsId(Long goodsId) throws IOException {
+        return goodsMutationSupport.deleteGoodsRelatedByGoodsId(goodsId);
+    }
+
+    /**
+     * 委托更新商品聚合数据。
+     *
+     * @param goodsSaveRelatedReqVO 商品更新参数
+     */
+    @Override
+    public void updateGoodsRelated(GoodsSaveRelatedReqVO goodsSaveRelatedReqVO) {
+        goodsMutationSupport.updateGoodsRelated(goodsSaveRelatedReqVO);
+    }
+
+    /**
+     * 委托按二级分类查询商品。
+     *
+     * @param page 分页参数
+     * @param l2cateList 二级分类 ID 列表
+     * @return 商品列表
+     */
+    @Override
+    public List<Goods> selectListPageByCateIds(Page<Goods> page, List<Long> l2cateList) {
+        return goodsQuerySupport.selectListPageByCateIds(page, l2cateList);
+    }
+
+    /**
+     * 委托按搜索结果商品 ID 查询商品。
+     *
+     * @param goodsIdList 商品 ID 列表
+     * @return 商品列表
+     */
+    @Override
+    public List<Goods> searchResult(List<?> goodsIdList) {
+        return goodsQuerySupport.searchResult(goodsIdList);
+    }
+
+    /**
+     * 委托查询栏目商品分页。
+     *
+     * @param page 分页参数
+     * @param columnId 栏目 ID
+     * @return 分页结果
+     */
+    @Override
+    public IPage<Goods> selectColumnGoodsPageByColumnId(Page<Goods> page, Long columnId) {
+        return goodsQuerySupport.selectColumnGoodsPageByColumnId(page, columnId);
+    }
+
+    /**
+     * 委托按商品 ID 批量查询商品。
+     *
+     * @param goodsIdList 商品 ID 列表
+     * @return 商品列表
+     */
+    @Override
+    public List<Goods> selectGoodsByIds(List<Long> goodsIdList) {
+        return goodsQuerySupport.selectGoodsByIds(goodsIdList);
+    }
+
+    /**
+     * 委托更新商品虚拟销量。
+     *
+     * @param goodsId 商品 ID
+     * @param number 销量增量
+     */
+    @Override
+    public void updateVirtualSales(Long goodsId, Integer number) {
+        goodsMutationSupport.updateVirtualSales(goodsId, number);
+    }
+
+    /**
+     * 委托执行商品全量 ES 同步。
+     *
+     * @return 同步结果
+     */
+    @Override
+    public boolean syncGoodsToEs() {
+        return goodsElasticSyncSupport.syncGoodsToEs();
+    }
+
+    /**
+     * 委托执行单商品 ES 同步。
+     *
+     * @param goods 商品信息
+     * @return 同步结果
+     * @throws IOException 写入 ES 时的 IO 异常
      */
     public boolean syncGoods2Es(Goods goods) throws IOException {
-        ElasticEntity elasticEntity = buildGoodsElasticEntity(goods);
-        if (!elasticDocument.insertOrUpdateOne(EsConstants.ES_GOODS_INDEX, elasticEntity)) {
-            throw new BusinessException("商品同步 ES 失败");
-        }
-        return true;
-    }
-
-    private void validateProducts(List<GoodsProduct> products) {
-        if (products == null || products.isEmpty()) {
-            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
-        }
-    }
-
-    private BigDecimal resolveRetailPrice(List<GoodsProduct> products) {
-        return products.stream()
-                .map(GoodsProduct::getPrice)
-                .filter(Objects::nonNull)
-                .min(BigDecimal::compareTo)
-                .orElseThrow(() -> new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR));
-    }
-
-    private void validateDefaultSelected(List<GoodsProduct> products) {
-        long defaultSelectedCount = products.stream()
-                .filter(product -> Boolean.TRUE.equals(product.getDefaultSelected()))
-                .count();
-        if (defaultSelectedCount > 1) {
-            throw new BusinessException(ReturnCodeEnum.GOODS_SPEC_ONLY_START_ONE_DEFAULT_SELECTED_ERROR);
-        }
-    }
-
-    private ElasticEntity buildGoodsElasticEntity(Goods goods) {
-        ElasticEntity elasticEntity = new ElasticEntity();
-        elasticEntity.setId(goods.getId().toString());
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", goods.getId());
-        map.put("name", goods.getName());
-        map.put("pyname", goods.getName());
-        map.put("sales", goods.getVirtualSales());
-        map.put("isHot", goods.getIsHot());
-        map.put("isNew", goods.getIsNew());
-        map.put("countPrice", goods.getCounterPrice());
-        map.put("retailPrice", goods.getRetailPrice());
-        map.put("keyword", resolveKeywords(goods.getKeywords()));
-        map.put("isOnSale", goods.getIsOnSale());
-        map.put("createTime", goods.getCreateTime());
-        elasticEntity.setData(map);
-        return elasticEntity;
-    }
-
-    private List<String> resolveKeywords(String keywords) {
-        if (keywords == null || keywords.isBlank()) {
-            return Collections.emptyList();
-        }
-        return Arrays.stream(keywords.split(","))
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(keyword -> !keyword.isEmpty())
-                .toList();
+        return goodsElasticSyncSupport.syncGoods2Es(goods);
     }
 }

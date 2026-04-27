@@ -1,6 +1,5 @@
 package com.wayn.common.model.response;
 
-import com.wayn.common.core.entity.shop.Cart;
 import lombok.Data;
 
 import java.io.Serial;
@@ -19,7 +18,7 @@ public class CheckedGoodsResVO implements Serializable {
     /**
      * 购物车列表
      */
-    private List<Cart> data;
+    private List<CartCheckedItemResVO> data;
 
     /**
      * 可用优惠卷列表

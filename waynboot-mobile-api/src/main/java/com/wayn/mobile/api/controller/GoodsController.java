@@ -4,6 +4,7 @@ import com.wayn.common.core.service.shop.IGoodsDetailService;
 import com.wayn.common.model.response.GoodsDetailResponseVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024/1/15
  */
 @RestController
+@Slf4j
 @AllArgsConstructor
 @RequestMapping("goods")
 public class GoodsController {
@@ -30,6 +32,9 @@ public class GoodsController {
      */
     @GetMapping("detail/{goodsId}")
     public R<GoodsDetailResponseVO> detail(@PathVariable Long goodsId) {
-        return R.success(iGoodsDetailService.getGoodsDetailData(goodsId));
+        log.info("查询商品详情开始, goodsId={}", goodsId);
+        GoodsDetailResponseVO resVO = iGoodsDetailService.getGoodsDetailData(goodsId);
+        log.info("查询商品详情完成, goodsId={}", goodsId);
+        return R.success(resVO);
     }
 }

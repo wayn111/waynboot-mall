@@ -11,6 +11,7 @@ import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import com.wayn.util.util.R;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024/1/15
  */
 @RestController
+@Slf4j
 @AllArgsConstructor
 @RequestMapping("comment")
 public class CommentController extends BaseController {
@@ -39,7 +41,10 @@ public class CommentController extends BaseController {
     @PostMapping("list")
     public R<IPage<CommentVO>> list(Integer tagType, Long goodsId) {
         Page<Comment> page = getPage();
+        log.info("查询商品评论开始, goodsId={}, tagType={}, pageNum={}, pageSize={}",
+                goodsId, tagType, page.getCurrent(), page.getSize());
         IPage<CommentVO> commentIPage = iCommentService.selectByTagType(page, goodsId, tagType);
+        log.info("查询商品评论完成, goodsId={}, count={}", goodsId, commentIPage.getRecords().size());
         return R.success(commentIPage);
     }
 
@@ -52,7 +57,10 @@ public class CommentController extends BaseController {
     @PostMapping
     public R<Boolean> addComment(@Valid @RequestBody CommentVO commentVO) {
         commentVO.setUserId(MobileSecurityUtils.getUserId());
-        return R.success(iCommentService.saveComment(commentVO));
+        log.info("新增商品评论开始, userId={}, goodsId={}", commentVO.getUserId(), commentVO.getValueId());
+        Boolean saved = iCommentService.saveComment(commentVO);
+        log.info("新增商品评论完成, userId={}, goodsId={}, result={}", commentVO.getUserId(), commentVO.getValueId(), saved);
+        return R.success(saved);
     }
 
     /**
@@ -63,7 +71,9 @@ public class CommentController extends BaseController {
      */
     @PostMapping("tagNum")
     public R<CommentTagNumVO> tagNum(Long goodsId) {
+        log.info("查询评论标签统计开始, goodsId={}", goodsId);
         CommentTagNumVO commentTagNumVO = iCommentService.selectTagNum(goodsId);
+        log.info("查询评论标签统计完成, goodsId={}", goodsId);
         return R.success(commentTagNumVO);
     }
 }

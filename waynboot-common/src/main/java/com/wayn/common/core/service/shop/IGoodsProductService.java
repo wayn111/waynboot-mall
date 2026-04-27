@@ -31,5 +31,11 @@ public interface IGoodsProductService extends IService<GoodsProduct> {
      */
     boolean addStock(Long productId, Integer number);
 
+    /**
+     * 根据商品货品 ID 批量查询货品。
+     *
+     * @param productIds 商品货品 ID 列表
+     * @return 商品货品列表
+     */
     List<GoodsProduct> selectProductByIds(List<Long> productIds);
 }

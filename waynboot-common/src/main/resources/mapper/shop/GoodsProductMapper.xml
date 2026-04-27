@@ -31,7 +31,9 @@
     </update>
 
     <update id="reduceStock">
-        update shop_goods_product set number = number - #{number} where id = #{productId} and number - #{number} >= 0
+        update shop_goods_product
+        set number = number - #{number}, update_time = now()
+        where id = #{productId} and number >= #{number}
     </update>
 
 </mapper>

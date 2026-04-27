@@ -13,6 +13,7 @@ import com.wayn.common.model.dto.OrderExportDTO;
 import com.wayn.common.model.request.OrderManagerReqVO;
 import com.wayn.common.model.request.OrderRefundReqVO;
 import com.wayn.common.model.request.ShipRequestVO;
+import com.wayn.common.model.response.ExpressVendorResVO;
 import com.wayn.common.model.response.OrderDetailResVO;
 import com.wayn.common.model.response.OrderManagerResVO;
 import com.wayn.util.util.R;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -55,7 +55,11 @@ public class OrderController extends BaseController {
     @GetMapping("list")
     public R<IPage<OrderManagerResVO>> list(OrderManagerReqVO order) {
         Page<Order> page = getPage();
-        return R.success(iOrderService.listPage(page, order));
+        log.info("查询订单列表开始, pageNum={}, pageSize={}, orderSn={}, orderStatus={}",
+                page.getCurrent(), page.getSize(), order.getOrderSn(), order.getOrderStatus());
+        IPage<OrderManagerResVO> orderPage = iOrderService.listPage(page, order);
+        log.info("查询订单列表完成, count={}", orderPage.getRecords().size());
+        return R.success(orderPage);
     }
 
     /**
@@ -67,8 +71,10 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:info')")
     @GetMapping("{orderId}")
     public R<OrderDetailResVO> info(@PathVariable Long orderId) {
-        log.info("order info req is {}", orderId);
-        return R.success(iOrderService.detail(orderId));
+        log.info("查询订单详情开始, orderId={}", orderId);
+        OrderDetailResVO resVO = iOrderService.detail(orderId);
+        log.info("查询订单详情完成, orderId={}", orderId);
+        return R.success(resVO);
     }
 
     /**
@@ -80,7 +86,10 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:delete')")
     @DeleteMapping("{orderId}")
     public R<Boolean> deleteOrder(@PathVariable Long orderId) {
-        return R.result(iOrderService.removeById(orderId));
+        log.info("删除订单开始, orderId={}", orderId);
+        Boolean removed = iOrderService.removeById(orderId);
+        log.info("删除订单完成, orderId={}, result={}", orderId, removed);
+        return R.result(removed);
     }
 
     /**
@@ -95,8 +104,9 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:refund')")
     @PostMapping("refund")
     public R<Boolean> refund(@RequestBody @Validated OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException {
-        log.info("order refund req is {}", reqVO);
+        log.info("订单退款开始, orderSn={}, refundMoney={}", reqVO.getOrderSn(), reqVO.getRefundMoney());
         iOrderService.refund(reqVO);
+        log.info("订单退款完成, orderSn={}", reqVO.getOrderSn());
         return R.success();
     }
 
@@ -106,8 +116,17 @@ public class OrderController extends BaseController {
      * @return
      */
     @PostMapping("listChannel")
-    public R<List<Map<String, String>>> channel() {
-        return R.success(expressProperties.getVendors());
+    public R<List<ExpressVendorResVO>> channel() {
+        List<ExpressVendorResVO> vendors = expressProperties.getVendors().stream()
+                .map(item -> {
+                    ExpressVendorResVO resVO = new ExpressVendorResVO();
+                    resVO.setCode(item.get("code"));
+                    resVO.setName(item.get("name"));
+                    return resVO;
+                })
+                .toList();
+        log.info("查询发货渠道完成, count={}", vendors.size());
+        return R.success(vendors);
     }
 
     /**
@@ -120,7 +139,9 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:ship')")
     @PostMapping("ship")
     public R<Boolean> ship(@RequestBody ShipRequestVO shipVO) throws UnsupportedEncodingException {
+        log.info("订单发货开始, orderId={}, shipChannel={}", shipVO.getOrderId(), shipVO.getShipChannel());
         iOrderService.ship(shipVO);
+        log.info("订单发货完成, orderId={}", shipVO.getOrderId());
         return R.success();
     }
 
@@ -140,4 +161,3 @@ public class OrderController extends BaseController {
         ExcelUtil.exportExcel(response, list, OrderExportDTO.class, "订单数据.xlsx");
     }
 }
-

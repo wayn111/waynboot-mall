@@ -40,7 +40,10 @@ public class OrderController extends BaseController {
      */
     @GetMapping("detail/{orderSn}")
     public R<OrderDetailVO> detail(@PathVariable String orderSn) {
-        return R.success(iMobileOrderService.getOrderDetailByOrderSn(orderSn));
+        log.info("查询订单详情开始, userId={}, orderSn={}", MobileSecurityUtils.getUserId(), orderSn);
+        OrderDetailVO detailVO = iMobileOrderService.getOrderDetailByOrderSn(orderSn);
+        log.info("查询订单详情完成, userId={}, orderSn={}", MobileSecurityUtils.getUserId(), orderSn);
+        return R.success(detailVO);
     }
 
     /**
@@ -52,7 +55,12 @@ public class OrderController extends BaseController {
     @GetMapping("list")
     public R<OrderListResVO> list(@RequestParam(defaultValue = "0") Integer showType) {
         Page<Order> page = getPage();
-        return R.success(iMobileOrderService.selectListPage(page, showType, MobileSecurityUtils.getUserId()));
+        Long userId = MobileSecurityUtils.getUserId();
+        log.info("查询订单列表开始, userId={}, showType={}, pageNum={}, pageSize={}", userId, showType, page.getCurrent(), page.getSize());
+        OrderListResVO resVO = iMobileOrderService.selectListPage(page, showType, userId);
+        log.info("查询订单列表完成, userId={}, showType={}, count={}",
+                userId, showType, resVO.getData() == null ? 0 : resVO.getData().size());
+        return R.success(resVO);
     }
 
     /**
@@ -62,7 +70,11 @@ public class OrderController extends BaseController {
      */
     @PostMapping("statusCount")
     public R<OrderStatusCountResVO> statusCount() {
-        return R.success(iMobileOrderService.statusCount(MobileSecurityUtils.getUserId()));
+        Long userId = MobileSecurityUtils.getUserId();
+        log.info("查询订单状态统计开始, userId={}", userId);
+        OrderStatusCountResVO resVO = iMobileOrderService.statusCount(userId);
+        log.info("查询订单状态统计完成, userId={}", userId);
+        return R.success(resVO);
     }
 
     /**
@@ -73,7 +85,15 @@ public class OrderController extends BaseController {
      */
     @PostMapping("submit")
     public R<SubmitOrderResVO> submit(@RequestBody OrderCommitReqVO orderCommitReqVO) throws Exception {
-        return R.success(iMobileOrderService.asyncSubmit(orderCommitReqVO, MobileSecurityUtils.getUserId()));
+        Long userId = MobileSecurityUtils.getUserId();
+        log.info("异步提交订单开始, userId={}, addressId={}, cartCount={}, couponId={}",
+                userId,
+                orderCommitReqVO.getAddressId(),
+                orderCommitReqVO.getCartIdArr() == null ? 0 : orderCommitReqVO.getCartIdArr().size(),
+                orderCommitReqVO.getUserCouponId());
+        SubmitOrderResVO resVO = iMobileOrderService.asyncSubmit(orderCommitReqVO, userId);
+        log.info("异步提交订单完成, userId={}, orderSn={}", userId, resVO.getOrderSn());
+        return R.success(resVO);
     }
 
     /**
@@ -84,10 +104,13 @@ public class OrderController extends BaseController {
      */
     @GetMapping("searchResult/{orderSn}")
     public R<Boolean> searchResult(@PathVariable String orderSn) {
+        log.info("查询下单结果开始, userId={}, orderSn={}", MobileSecurityUtils.getUserId(), orderSn);
         String result = iMobileOrderService.searchResult(orderSn);
         if (!"success".equals(result)) {
+            log.warn("查询下单结果失败, userId={}, orderSn={}, result={}", MobileSecurityUtils.getUserId(), orderSn, result);
             return R.error(ReturnCodeEnum.ORDER_SUBMIT_ERROR.getCode(), result);
         }
+        log.info("查询下单结果完成, userId={}, orderSn={}", MobileSecurityUtils.getUserId(), orderSn);
         return R.success();
     }
 
@@ -99,7 +122,9 @@ public class OrderController extends BaseController {
      */
     @PostMapping("cancel/{orderId}")
     public R<Boolean> cancel(@PathVariable Long orderId) {
+        log.info("取消订单开始, userId={}, orderId={}", MobileSecurityUtils.getUserId(), orderId);
         iMobileOrderService.cancel(orderId);
+        log.info("取消订单完成, userId={}, orderId={}", MobileSecurityUtils.getUserId(), orderId);
         return R.success();
     }
 
@@ -111,7 +136,9 @@ public class OrderController extends BaseController {
      */
     @PostMapping("confirm/{orderId}")
     public R<Boolean> confirm(@PathVariable Long orderId) {
+        log.info("确认收货开始, userId={}, orderId={}", MobileSecurityUtils.getUserId(), orderId);
         iMobileOrderService.confirm(orderId);
+        log.info("确认收货完成, userId={}, orderId={}", MobileSecurityUtils.getUserId(), orderId);
         return R.success();
     }
 
@@ -123,7 +150,9 @@ public class OrderController extends BaseController {
      */
     @PostMapping("delete/{orderId}")
     public R<Boolean> delete(@PathVariable Long orderId) {
+        log.info("删除订单开始, userId={}, orderId={}", MobileSecurityUtils.getUserId(), orderId);
         iMobileOrderService.delete(orderId);
+        log.info("删除订单完成, userId={}, orderId={}", MobileSecurityUtils.getUserId(), orderId);
         return R.success();
     }
 

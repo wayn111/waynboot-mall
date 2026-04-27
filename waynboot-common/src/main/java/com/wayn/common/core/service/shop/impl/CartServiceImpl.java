@@ -1,191 +1,121 @@
 package com.wayn.common.core.service.shop.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wayn.common.core.entity.shop.Cart;
-import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.entity.shop.GoodsProduct;
 import com.wayn.common.core.mapper.shop.CartMapper;
 import com.wayn.common.core.service.shop.ICartService;
-import com.wayn.common.core.service.shop.IGoodsProductService;
-import com.wayn.common.core.service.shop.IGoodsService;
+import com.wayn.common.core.service.shop.support.CartReadSupport;
+import com.wayn.common.core.service.shop.support.CartWriteSupport;
 import com.wayn.common.model.response.CartResponseVO;
-import com.wayn.data.redis.constant.RedisKeyEnum;
-import com.wayn.data.redis.manager.RedisLock;
-import com.wayn.util.enums.ReturnCodeEnum;
-import com.wayn.util.exception.BusinessException;
+import com.wayn.common.model.response.CheckedGoodsResVO;
 import lombok.AllArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
- * 购物车商品服务实现
- *
- * @author wayn
- * @since 2020-08-03
+ * 购物车服务外观层。
+ * 读路径和写路径已经拆到独立支撑服务，这里仅保留对外兼容接口。
  */
 @Service
 @AllArgsConstructor
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
 
-    private RedisLock redisLock;
+    private final CartWriteSupport cartWriteSupport;
+    private final CartReadSupport cartReadSupport;
 
-    private IGoodsService iGoodsService;
-
-    private IGoodsProductService iGoodsProductService;
-
-    private CartMapper cartMapper;
-    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
-
+    /**
+     * 委托查询购物车中是否存在相同商品。
+     *
+     * @param userId 用户 ID
+     * @param goodsId 商品 ID
+     * @param productId 货品 ID
+     * @return 购物车项
+     */
     @Override
     public Cart checkExistsGoods(Long userId, Long goodsId, Long productId) {
-        return getOne(new QueryWrapper<Cart>()
-                .eq("user_id", userId)
-                .eq("goods_id", goodsId)
-                .eq("product_id", productId));
+        return cartWriteSupport.checkExistsGoods(userId, goodsId, productId);
     }
 
+    /**
+     * 委托添加购物车。
+     *
+     * @param cart 购物车请求
+     * @param userId 用户 ID
+     */
     @Override
     public void add(Cart cart, Long userId) {
-        Long goodsId = cart.getGoodsId();
-        Long productId = cart.getProductId();
-        Integer number = cart.getNumber();
-        if (!ObjectUtils.allNotNull(goodsId, productId, number) || number <= 0) {
-            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
-        }
-        Goods goods = iGoodsService.getById(goodsId);
-        if (goods == null) {
-            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
-        }
-        if (!goods.getIsOnSale()) {
-            throw new BusinessException(ReturnCodeEnum.GOODS_HAS_OFFSHELF_ERROR);
-        }
-        GoodsProduct product = iGoodsProductService.getById(productId);
-        boolean lock = redisLock.lock(RedisKeyEnum.CART_LOCK.getKey(userId), 2);
-        if (!lock) {
-            throw new BusinessException("加锁失败");
-        }
-        try {
-            Cart existsCart = checkExistsGoods(userId, goodsId, productId);
-            if (Objects.isNull(existsCart)) {
-                if (Objects.isNull(product) || number > product.getNumber()) {
-                    throw new BusinessException(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
-                }
-                cart.setGoodsSn(goods.getGoodsSn());
-                cart.setGoodsName(goods.getName());
-                cart.setPicUrl(goods.getPicUrl());
-                cart.setPrice(product.getPrice());
-                cart.setSpecifications(product.getSpecifications());
-                cart.setUserId(Math.toIntExact(userId));
-                cart.setChecked(true);
-                cart.setRemark(goods.getBrief());
-                cart.setCreateTime(LocalDateTime.now());
-                save(cart);
-            } else {
-                if (Objects.isNull(product)) {
-                    throw new BusinessException(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
-                }
-                int num = existsCart.getNumber() + number;
-                if (num > product.getNumber()) {
-                    throw new BusinessException(ReturnCodeEnum.GOODS_STOCK_NOT_ENOUGH_ERROR);
-                }
-                existsCart.setNumber(num);
-                existsCart.setUpdateTime(LocalDateTime.now());
-                updateById(existsCart);
-            }
-        } finally {
-            redisLock.unLock(RedisKeyEnum.CART_LOCK.getKey(userId));
-        }
+        cartWriteSupport.add(cart, userId);
     }
 
+    /**
+     * 委托统计购物车数量。
+     *
+     * @param userId 用户 ID
+     * @return 商品数
+     */
     @Override
     public Long goodsCount(Long userId) {
-        // 用户未登录时直接返回 0
-        if (userId == null) {
-            return 0L;
-        }
-        return count(Wrappers.lambdaQuery(Cart.class).eq(Cart::getUserId, userId));
+        return cartReadSupport.goodsCount(userId);
     }
 
+    /**
+     * 委托查询购物车列表。
+     *
+     * @param page 分页参数
+     * @param userId 用户 ID
+     * @return 购物车列表
+     */
     @Override
     public List<CartResponseVO> list(Page<Cart> page, Long userId) {
-        IPage<Cart> goodsIPage = cartMapper.selectCartPageList(page, userId);
-        List<Cart> cartList = goodsIPage.getRecords();
-        List<Long> goodsIdList = cartList.stream().map(Cart::getGoodsId).toList();
-        List<Long> productIdList = cartList.stream().map(Cart::getProductId).toList();
-
-        List<CartResponseVO> responseVOS = new ArrayList<>();
-        if (CollectionUtils.isEmpty(goodsIdList)) {
-            return responseVOS;
-        }
-        Map<Long, GoodsProduct> productIdMap = iGoodsProductService.selectProductByIds(productIdList).stream()
-                .collect(Collectors.toMap(GoodsProduct::getId, product -> product));
-
-        for (Cart cart : cartList) {
-            CartResponseVO responseVO = new CartResponseVO();
-            GoodsProduct product = productIdMap.get(cart.getProductId());
-            if (product != null) {
-                Integer number = cart.getNumber();
-                Integer maxNumber = product.getNumber();
-                if (maxNumber < number) {
-                    commonThreadPoolTaskExecutor.execute(() -> this.lambdaUpdate()
-                            .set(Cart::getChecked, false)
-                            .eq(Cart::getId, cart.getId())
-                            .update());
-                }
-                BeanUtil.copyProperties(cart, responseVO);
-                responseVO.setMaxNum(maxNumber);
-                responseVOS.add(responseVO);
-            }
-        }
-        return responseVOS;
+        return cartReadSupport.list(page, userId);
     }
 
+    /**
+     * 委托修改购物车数量。
+     *
+     * @param cartId 购物车 ID
+     * @param number 目标数量
+     * @return 是否修改成功
+     */
     @Override
     public Boolean changeNum(Long cartId, Integer number) {
-        if (cartId == null || number == null || number <= 0) {
-            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
-        }
-        // 并发问题后续可以通过 MQ 或串行化处理进一步优化
-        commonThreadPoolTaskExecutor.execute(() -> lambdaUpdate()
-                .set(Cart::getNumber, number)
-                .set(Cart::getUpdateTime, LocalDateTime.now())
-                .eq(Cart::getId, cartId)
-                .update());
-        return true;
+        return cartWriteSupport.changeNum(cartId, number);
     }
 
+    /**
+     * 委托修改购物车勾选状态。
+     *
+     * @param cartId 购物车 ID
+     * @param checked 勾选状态
+     * @param userId 用户 ID
+     * @return 是否修改成功
+     */
+    @Override
+    public Boolean updateChecked(Long cartId, Boolean checked, Long userId) {
+        return cartWriteSupport.updateChecked(cartId, checked, userId);
+    }
+
+    /**
+     * 委托按默认货品加入购物车。
+     *
+     * @param cart 购物车请求
+     * @param userId 用户 ID
+     */
     @Override
     public void addDefaultGoodsProduct(Cart cart, Long userId) {
-        Long goodsId = cart.getGoodsId();
-        List<GoodsProduct> products = iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
-        if (CollectionUtils.isEmpty(products)) {
-            throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
-        }
-        List<GoodsProduct> goodsProducts = products.stream()
-                .filter(product -> Boolean.TRUE.equals(product.getDefaultSelected()))
-                .collect(Collectors.toList());
-        GoodsProduct defaultProduct;
-        // 优先使用默认选中的货品，否则回退到第一个货品
-        if (CollectionUtils.isNotEmpty(goodsProducts)) {
-            defaultProduct = goodsProducts.get(0);
-        } else {
-            defaultProduct = products.get(0);
-        }
-        cart.setProductId(defaultProduct.getId());
-        this.add(cart, userId);
+        cartWriteSupport.addDefaultGoodsProduct(cart, userId);
+    }
+
+    /**
+     * 委托查询已勾选商品汇总。
+     *
+     * @param userId 用户 ID
+     * @return 汇总结果
+     */
+    @Override
+    public CheckedGoodsResVO getCheckedGoods(Long userId) {
+        return cartReadSupport.getCheckedGoods(userId);
     }
 }

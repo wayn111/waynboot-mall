@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Cart;
 import com.wayn.common.model.response.CartResponseVO;
+import com.wayn.common.model.response.CheckedGoodsResVO;
 
 import java.util.List;
 
@@ -61,10 +62,28 @@ public interface ICartService extends IService<Cart> {
     Boolean changeNum(Long cartId, Integer number);
 
     /**
+     * 修改购物车勾选状态。
+     *
+     * @param cartId 购物车 ID
+     * @param checked 勾选状态
+     * @param userId 用户 ID
+     * @return 是否修改成功
+     */
+    Boolean updateChecked(Long cartId, Boolean checked, Long userId);
+
+    /**
      * 添加商品的默认选中货品至购物车
      *
      * @param cart 购物车对象
      * @return r
      */
     void addDefaultGoodsProduct(Cart cart, Long userId);
+
+    /**
+     * 查询已勾选商品汇总。
+     *
+     * @param userId 用户 ID
+     * @return 已勾选商品汇总
+     */
+    CheckedGoodsResVO getCheckedGoods(Long userId);
 }
