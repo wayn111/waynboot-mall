@@ -74,6 +74,40 @@ public class OrderStockSupport {
     }
 
     /**
+     * 按订单商品快照扣减库存。
+     * 资源确认事件只持有订单 ID，必须从订单商品表读取下单时固化的 SKU 和数量，避免被后续购物车变化影响。
+     *
+     * @param orderId 订单 ID
+     */
+    public void reduceStockByOrderId(Long orderId) {
+        List<OrderGoods> orderGoodsList = orderGoodsService.list(com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaQuery(OrderGoods.class)
+                .eq(OrderGoods::getOrderId, orderId));
+        if (CollectionUtils.isEmpty(orderGoodsList)) {
+            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "订单商品快照为空");
+        }
+        reduceStock(convertOrderGoodsToCartSnapshot(orderGoodsList));
+    }
+
+    /**
+     * 将订单商品快照转换为库存扣减所需的购物车快照结构。
+     * 复用原有扣库存聚合和条件更新逻辑，避免订单确认链路再维护一套库存扣减规则。
+     *
+     * @param orderGoodsList 订单商品快照
+     * @return 库存扣减快照
+     */
+    private List<Cart> convertOrderGoodsToCartSnapshot(List<OrderGoods> orderGoodsList) {
+        return orderGoodsList.stream()
+                .map(orderGoods -> {
+                    Cart cart = new Cart();
+                    cart.setGoodsId(orderGoods.getGoodsId());
+                    cart.setProductId(orderGoods.getProductId());
+                    cart.setNumber(orderGoods.getNumber());
+                    return cart;
+                })
+                .toList();
+    }
+
+    /**
      * 按 SKU 聚合本次下单需要扣减的数量。
      *
      * @param checkedGoodsList 已勾选购物车商品
