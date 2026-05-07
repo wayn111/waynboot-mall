@@ -69,4 +69,41 @@
         </where>
     </select>
 
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into shop_order
+        (
+            user_id,
+            order_sn,
+            order_status,
+            consignee,
+            mobile,
+            address,
+            message,
+            goods_price,
+            freight_price,
+            coupon_price,
+            order_price,
+            actual_price,
+            create_time
+        )
+        values
+        <foreach collection="list" item="order" separator=",">
+            (
+                #{order.userId},
+                #{order.orderSn},
+                #{order.orderStatus},
+                #{order.consignee},
+                #{order.mobile},
+                #{order.address},
+                #{order.message},
+                #{order.goodsPrice},
+                #{order.freightPrice},
+                #{order.couponPrice},
+                #{order.orderPrice},
+                #{order.actualPrice},
+                #{order.createTime}
+            )
+        </foreach>
+    </insert>
+
 </mapper>

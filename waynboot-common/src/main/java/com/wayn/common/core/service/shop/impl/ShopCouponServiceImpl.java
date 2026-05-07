@@ -8,7 +8,7 @@ import com.wayn.common.core.entity.shop.ShopMemberCoupon;
 import com.wayn.common.core.mapper.shop.ShopCouponMapper;
 import com.wayn.common.core.service.shop.ShopCouponService;
 import com.wayn.common.core.service.shop.ShopMemberCouponService;
-import com.wayn.common.core.service.shop.support.CouponAcquireSupport;
+import com.wayn.common.core.service.shop.support.coupon.CouponAcquireSupport;
 import com.wayn.common.model.request.CouponReceiveReqVO;
 import com.wayn.common.model.request.ShopCouponGiveUserReqVO;
 import com.wayn.common.model.request.ShopCouponReqVO;
