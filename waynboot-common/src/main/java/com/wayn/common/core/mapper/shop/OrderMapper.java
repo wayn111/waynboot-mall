@@ -15,4 +15,13 @@ import java.util.List;
 public interface OrderMapper extends BaseMapper<Order> {
 
     IPage<Order> selectOrderListPage(IPage<Order> page, Order order, List<Short> orderStatusList);
+
+    /**
+     * 批量插入订单主表。
+     * 用于 MQ 批量下单消费链路，依赖 MyBatis generated keys 回填每个订单 ID，供订单商品明细批量写入使用。
+     *
+     * @param orderList 待插入订单列表
+     * @return 插入行数
+     */
+    int insertBatch(List<Order> orderList);
 }
