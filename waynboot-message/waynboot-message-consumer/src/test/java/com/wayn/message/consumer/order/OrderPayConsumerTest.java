@@ -3,14 +3,13 @@ package com.wayn.message.consumer.order;
 import com.rabbitmq.client.Channel;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.message.consumer.client.mobile.MobileApi;
+import com.wayn.message.consumer.support.MessageConsumerSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static com.wayn.data.redis.constant.RedisKeyEnum.ORDER_CONSUMER_MAP;
 import static org.mockito.Mockito.eq;
@@ -22,42 +21,52 @@ import static org.mockito.Mockito.when;
 class OrderPayConsumerTest {
 
     @Test
-    void processBatchAcksDuplicatesAndSubmitsOnlyPendingMessages() throws Exception {
+    void processAcksDuplicateMessageWithoutCallingMobile() throws Exception {
         RedisCache redisCache = mock(RedisCache.class);
         MobileApi mobileApi = mock(MobileApi.class);
         Channel channel = mock(Channel.class);
-        OrderPayConsumer consumer = new OrderPayConsumer();
-        ReflectionTestUtils.setField(consumer, "redisCache", redisCache);
-        ReflectionTestUtils.setField(consumer, "mobileApi", mobileApi);
+        MessageConsumerSupport messageConsumerSupport = new MessageConsumerSupport(redisCache);
+        OrderPayConsumer consumer = new OrderPayConsumer(messageConsumerSupport, mobileApi);
         Message duplicateMessage = buildMessage(1L, "msg-1", "duplicate");
-        Message pendingMessage = buildMessage(2L, "msg-2", "pending");
         when(redisCache.getCacheObject(ORDER_CONSUMER_MAP.getKey("msg-1"))).thenReturn("msg-1");
-        when(redisCache.getCacheObject(ORDER_CONSUMER_MAP.getKey("msg-2"))).thenReturn(null);
 
-        consumer.process(List.of(duplicateMessage, pendingMessage), channel);
+        consumer.process(channel, duplicateMessage);
 
         verify(channel).basicAck(1L, false);
-        verify(mobileApi).submitOrders(List.of("pending"));
-        verify(channel).basicAck(2L, false);
-        verify(redisCache).setCacheObject(ORDER_CONSUMER_MAP.getKey("msg-2"),
-                "msg-2", ORDER_CONSUMER_MAP.getExpireSecond());
-        verify(mobileApi, never()).submitOrder("pending");
+        verify(mobileApi, never()).submitOrder("duplicate");
     }
 
     @Test
-    void processBatchNacksPendingMessagesWhenBatchSubmitFailed() throws Exception {
+    void processSubmitsSinglePendingMessageAndMarksConsumed() throws Exception {
         RedisCache redisCache = mock(RedisCache.class);
         MobileApi mobileApi = mock(MobileApi.class);
         Channel channel = mock(Channel.class);
-        OrderPayConsumer consumer = new OrderPayConsumer();
-        ReflectionTestUtils.setField(consumer, "redisCache", redisCache);
-        ReflectionTestUtils.setField(consumer, "mobileApi", mobileApi);
+        MessageConsumerSupport messageConsumerSupport = new MessageConsumerSupport(redisCache);
+        OrderPayConsumer consumer = new OrderPayConsumer(messageConsumerSupport, mobileApi);
+        Message pendingMessage = buildMessage(2L, "msg-2", "pending");
+        when(redisCache.getCacheObject(ORDER_CONSUMER_MAP.getKey("msg-2"))).thenReturn(null);
+
+        consumer.process(channel, pendingMessage);
+
+        verify(mobileApi).submitOrder("pending");
+        verify(channel).basicAck(2L, false);
+        verify(redisCache).setCacheObject(ORDER_CONSUMER_MAP.getKey("msg-2"),
+                "msg-2", ORDER_CONSUMER_MAP.getExpireSecond());
+    }
+
+    @Test
+    void processNacksPendingMessageWhenSingleSubmitFailed() throws Exception {
+        RedisCache redisCache = mock(RedisCache.class);
+        MobileApi mobileApi = mock(MobileApi.class);
+        Channel channel = mock(Channel.class);
+        MessageConsumerSupport messageConsumerSupport = new MessageConsumerSupport(redisCache);
+        OrderPayConsumer consumer = new OrderPayConsumer(messageConsumerSupport, mobileApi);
         Message pendingMessage = buildMessage(3L, "msg-3", "pending");
         when(redisCache.getCacheObject(ORDER_CONSUMER_MAP.getKey("msg-3"))).thenReturn(null);
         org.mockito.Mockito.doThrow(new RuntimeException("callback error"))
-                .when(mobileApi).submitOrders(List.of("pending"));
+                .when(mobileApi).submitOrder("pending");
 
-        consumer.process(List.of(pendingMessage), channel);
+        consumer.process(channel, pendingMessage);
 
         verify(channel).basicNack(3L, false, false);
         verify(channel, never()).basicAck(3L, false);

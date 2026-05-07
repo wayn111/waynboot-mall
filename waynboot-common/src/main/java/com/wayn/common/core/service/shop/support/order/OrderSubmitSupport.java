@@ -1,59 +1,38 @@
 package com.wayn.common.core.service.shop.support.order;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wayn.common.config.WaynConfig;
 import com.wayn.common.core.entity.shop.Cart;
-import com.wayn.common.core.entity.shop.Order;
-import com.wayn.common.core.entity.shop.OrderGoods;
 import com.wayn.common.core.entity.shop.ShopMemberCoupon;
-import com.wayn.common.core.mapper.shop.OrderMapper;
 import com.wayn.common.core.service.shop.IAddressService;
 import com.wayn.common.core.service.shop.ICartService;
-import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.common.core.service.shop.ShopMemberCouponService;
-import com.wayn.common.core.service.shop.support.common.TradeLockSupport;
+import com.wayn.common.core.service.shop.support.order.submit.chain.OrderSubmitChain;
+import com.wayn.common.core.service.shop.support.order.submit.chain.OrderSubmitChainContext;
 import com.wayn.common.model.request.OrderCommitReqVO;
-import com.wayn.common.model.response.BatchOrderSubmitResVO;
 import com.wayn.common.model.response.SubmitOrderResVO;
 import com.wayn.data.redis.manager.RedisCache;
-import com.wayn.message.core.constant.MQConstants;
 import com.wayn.message.core.dto.OrderDTO;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
-import com.wayn.util.util.IdUtil;
 import com.wayn.util.util.OrderSnGenUtil;
 import com.wayn.util.util.bean.MyBeanUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageDeliveryMode;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.wayn.data.redis.constant.RedisKeyEnum.ORDER_SUBMIT_DEDUP_KEY;
-import static com.wayn.data.redis.constant.RedisKeyEnum.ORDER_SUBMIT_LOCK;
 import static com.wayn.data.redis.constant.RedisKeyEnum.ORDER_RESULT_KEY;
 
 /**
@@ -68,17 +47,11 @@ public class OrderSubmitSupport {
     private final RedisCache redisCache;
     private final IAddressService addressService;
     private final ICartService cartService;
-    private final IOrderGoodsService orderGoodsService;
-    private final OrderMapper orderMapper;
-    private final RabbitTemplate rabbitTemplate;
-    private final RabbitTemplate delayRabbitTemplate;
     private final OrderSnGenUtil orderSnGenUtil;
     private final ShopMemberCouponService shopMemberCouponService;
     private final OrderValidationSupport orderValidationSupport;
-    private final OrderStockSupport orderStockSupport;
-    private final OrderAssemblerSupport orderAssemblerSupport;
-    private final TradeLockSupport tradeLockSupport;
-    private final TransactionTemplate transactionTemplate;
+    private final OrderSubmitMessageSupport orderSubmitMessageSupport;
+    private final OrderSubmitChain orderSubmitChain;
 
     /**
      * 异步提交订单。
@@ -93,9 +66,11 @@ public class OrderSubmitSupport {
         MyBeanUtil.copyProperties(orderCommitReqVO, orderDTO);
         orderDTO.setUserId(userId);
 
+        // 先基于当前购物车快照计算应付金额，接口可以立即返回订单号和金额，真正落库交给 MQ 消费端。
         OrderSubmitContext context = buildSubmitContext(userId, orderDTO.getAddressId(), orderDTO.getUserCouponId(),
                 orderDTO.getCartIdArr(), null);
         String orderSn = orderSnGenUtil.generateOrderSn();
+        // 幂等 Key 使用购物车快照生成，拦截用户短时间重复点击，避免同一批商品投递多条下单消息。
         String dedupKey = buildSubmitDedupKey(userId, orderDTO.getAddressId(), orderDTO.getUserCouponId(),
                 context.checkedGoodsList());
         if (!redisCache.setCacheObjectIfAbsent(dedupKey, orderSn, ORDER_SUBMIT_DEDUP_KEY.getExpireSecond())) {
@@ -112,8 +87,9 @@ public class OrderSubmitSupport {
         orderDTO.setOrderSn(orderSn);
         // 入口层只负责生成订单号并投递下单消息，真正落库由异步消费端执行。
         try {
-            sendSubmitMessage(orderDTO);
+            orderSubmitMessageSupport.sendSubmitMessage(orderDTO);
         } catch (RuntimeException e) {
+            // MQ 投递失败时释放短时幂等占位，允许用户重新提交，避免订单号占住但永远不落库。
             redisCache.deleteObject(dedupKey);
             throw e;
         }
@@ -125,234 +101,29 @@ public class OrderSubmitSupport {
     }
 
     /**
-     * 消费端真正执行落单。
-     * 订单号锁包裹事务模板，确保订单落库事务提交完成后才释放锁，避免重复消费在提交窗口内进入。
+     * 消费端执行单笔完整落单。
+     * 在同一个短事务内完成查重、快照构建、库存扣减、订单落库、优惠券占用和购物车清理；
+     * 未支付延迟消息通过事务提交后回调投递，避免订单回滚后产生关单消息。
      *
      * @param orderDTO 下单 DTO
      * @throws UnsupportedEncodingException MQ 消息编码异常
      */
+    @Transactional(rollbackFor = Exception.class)
     public void submit(OrderDTO orderDTO) throws UnsupportedEncodingException {
-        String orderSn = orderDTO.getOrderSn();
-        tradeLockSupport.runWithLock(ORDER_SUBMIT_LOCK.getKey(orderSn), null,
-                () -> new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "订单正在处理中"),
-                () -> transactionTemplate.executeWithoutResult(status -> doSubmit(orderDTO)));
+        orderSubmitChain.execute(OrderSubmitChainContext.single(orderDTO, this::buildSubmitContext));
     }
 
     /**
-     * 批量执行消费端落单。
-     * 同一批消息共用一次事务完成订单主表和订单商品表批量写入，批内仍按订单号加锁、逐单校验库存和购物车。
-     *
-     * @param orderDTOList 下单 DTO 列表
-     * @return 批量下单结果，失败订单会携带具体原因
-     */
-    public BatchOrderSubmitResVO submitBatch(List<OrderDTO> orderDTOList) {
-        if (CollectionUtils.isEmpty(orderDTOList)) {
-            return new BatchOrderSubmitResVO();
-        }
-        List<String> lockKeys = orderDTOList.stream()
-                .filter(orderDTO -> orderDTO != null && orderDTO.getOrderSn() != null)
-                .map(orderDTO -> ORDER_SUBMIT_LOCK.getKey(orderDTO.getOrderSn()))
-                .toList();
-        try {
-            return tradeLockSupport.executeWithLocks(lockKeys, null,
-                    () -> new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "订单正在处理中"),
-                    () -> {
-                        BatchOrderSubmitResVO result = new BatchOrderSubmitResVO();
-                        transactionTemplate.executeWithoutResult(status -> doSubmitBatch(orderDTOList, status, result));
-                        return result;
-                    });
-        } catch (Exception e) {
-            log.error("批量下单整体失败, size={}", orderDTOList.size(), e);
-            return buildBatchFailureResult(orderDTOList, e);
-        }
-    }
-
-    /**
-     * 在批量事务内执行订单落库。
-     * 前置校验或库存扣减的单笔失败会回滚到保存点并继续处理后续订单；订单主表和订单商品表统一批量写入。
-     *
-     * @param orderDTOList 下单 DTO 列表
-     * @param status 当前事务状态
-     * @param result 批量结果
-     */
-    private void doSubmitBatch(List<OrderDTO> orderDTOList, TransactionStatus status,
-                               BatchOrderSubmitResVO result) {
-        List<BatchSubmitItem> pendingItems = new ArrayList<>(orderDTOList.size());
-        java.util.Set<String> batchOrderSnSet = new LinkedHashSet<>();
-        for (OrderDTO orderDTO : orderDTOList) {
-            String orderSn = orderDTO == null ? "" : orderDTO.getOrderSn();
-            Object savepoint = status == null ? null : status.createSavepoint();
-            try {
-                if (orderDTO == null) {
-                    throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "订单消息为空");
-                }
-                if (!batchOrderSnSet.add(orderSn)) {
-                    log.info("批量下单批内重复订单，跳过重复项, orderSn={}", orderSn);
-                    result.getSuccessOrderSnList().add(orderSn);
-                    releaseSavepoint(status, savepoint);
-                    continue;
-                }
-                if (existsOrder(orderSn)) {
-                    log.info("订单已存在，跳过重复落单, orderSn={}, userId={}", orderSn, orderDTO.getUserId());
-                    result.getSuccessOrderSnList().add(orderSn);
-                    releaseSavepoint(status, savepoint);
-                    continue;
-                }
-                OrderSubmitContext context = buildSubmitContext(orderDTO.getUserId(), orderDTO.getAddressId(),
-                        orderDTO.getUserCouponId(), orderDTO.getCartIdArr(), orderSn);
-                // 扣库存属于当前事务的一部分；单笔失败会回滚到保存点，避免失败订单留下部分库存扣减。
-                orderStockSupport.reduceStock(context.checkedGoodsList());
-                pendingItems.add(new BatchSubmitItem(orderDTO, context, orderAssemblerSupport.buildOrder(orderDTO, context)));
-                releaseSavepoint(status, savepoint);
-            } catch (BusinessException e) {
-                rollbackToSavepoint(status, savepoint);
-                log.error("批量下单单笔失败, orderSn={}, message={}", orderSn, e.getMsg(), e);
-                result.getFailedOrderSnMap().put(orderSn, e.getMsg());
-            } catch (Exception e) {
-                rollbackToSavepoint(status, savepoint);
-                log.error("批量下单单笔异常, orderSn={}", orderSn, e);
-                result.getFailedOrderSnMap().put(orderSn, e.getMessage());
-            }
-        }
-        if (pendingItems.isEmpty()) {
-            return;
-        }
-
-        List<Order> orderList = pendingItems.stream().map(BatchSubmitItem::order).toList();
-        if (orderMapper.insertBatch(orderList) != orderList.size()) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-        }
-        ensureBatchOrderIds(orderList);
-
-        List<OrderGoods> orderGoodsList = new ArrayList<>();
-        Map<String, BatchSubmitItem> itemMap = pendingItems.stream()
-                .collect(Collectors.toMap(item -> item.orderDTO().getOrderSn(), Function.identity()));
-        for (Order order : orderList) {
-            BatchSubmitItem item = itemMap.get(order.getOrderSn());
-            orderGoodsList.addAll(orderAssemblerSupport.buildOrderGoods(order.getId(), item.context().checkedGoodsList()));
-        }
-        if (!orderGoodsService.saveBatch(orderGoodsList)) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-        }
-        for (BatchSubmitItem item : pendingItems) {
-            Order order = item.order();
-            clearSubmittedCart(item.orderDTO().getUserId(), item.orderDTO().getCartIdArr());
-            markCouponUsed(item.orderDTO().getUserCouponId(), order.getId());
-            sendUnpaidDelayMessage(order.getOrderSn());
-            result.getSuccessOrderSnList().add(order.getOrderSn());
-        }
-    }
-
-    /**
-     * 构建批量整体失败结果。
-     * 如果批量插入或后置更新失败，当前事务会整体回滚，此时不能保留成功结果，需要让调用方重试整批消息。
-     *
-     * @param orderDTOList 下单 DTO 列表
-     * @param e 失败异常
-     * @return 批量失败结果
-     */
-    private BatchOrderSubmitResVO buildBatchFailureResult(List<OrderDTO> orderDTOList, Exception e) {
-        BatchOrderSubmitResVO result = new BatchOrderSubmitResVO();
-        for (OrderDTO orderDTO : orderDTOList) {
-            String orderSn = orderDTO == null ? "" : orderDTO.getOrderSn();
-            result.getFailedOrderSnMap().put(orderSn, e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * 校验批量插入后订单 ID 已回填。
-     * 订单商品批量插入依赖主表 ID，若驱动或数据库不支持多行 generated keys，需要立即失败并回滚整批事务。
-     *
-     * @param orderList 已插入订单列表
-     */
-    private void ensureBatchOrderIds(List<Order> orderList) {
-        for (Order order : orderList) {
-            if (order.getId() == null) {
-                throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "批量订单ID回填失败");
-            }
-        }
-    }
-
-    /**
-     * 回滚到单笔订单保存点。
-     *
-     * @param status 当前事务状态
-     * @param savepoint 保存点
-     */
-    private void rollbackToSavepoint(TransactionStatus status, Object savepoint) {
-        if (status != null && savepoint != null) {
-            status.rollbackToSavepoint(savepoint);
-        }
-    }
-
-    /**
-     * 释放单笔订单保存点。
-     *
-     * @param status 当前事务状态
-     * @param savepoint 保存点
-     */
-    private void releaseSavepoint(TransactionStatus status, Object savepoint) {
-        if (status != null && savepoint != null) {
-            status.releaseSavepoint(savepoint);
-        }
-    }
-
-    /**
-     * 批量下单待落库项。
-     * 同时持有原始 DTO、计算上下文和订单主表对象，便于主表批量插入后继续组装明细。
+     * 根据下单 DTO 构建下单上下文。
+     * 作为责任链上下文工厂入口，保持地址、购物车、优惠券计算逻辑仍由编排层统一管理。
      *
      * @param orderDTO 下单 DTO
-     * @param context 下单上下文
-     * @param order 订单主表对象
+     * @return 下单上下文
      */
-    private record BatchSubmitItem(OrderDTO orderDTO, OrderSubmitContext context, Order order) {
-    }
-
-    /**
-     * 在订单号锁内真正执行落单。
-     * 先按订单号查重，保证 MQ 重投或回调重试不会重复扣库存、重复生成订单。
-     *
-     * @param orderDTO 下单 DTO
-     */
-    private void doSubmit(OrderDTO orderDTO) {
-        Long userId = orderDTO.getUserId();
-        String orderSn = orderDTO.getOrderSn();
-        if (existsOrder(orderSn)) {
-            log.info("订单已存在，跳过重复落单, orderSn={}, userId={}", orderSn, userId);
-            return;
-        }
-        OrderSubmitContext context = buildSubmitContext(userId, orderDTO.getAddressId(), orderDTO.getUserCouponId(),
-                orderDTO.getCartIdArr(), orderSn);
-        // 先扣减库存，再创建订单，确保库存校验与实际扣减使用同一套入口。
-        orderStockSupport.reduceStock(context.checkedGoodsList());
-
-        var order = orderAssemblerSupport.buildOrder(orderDTO, context);
-        if (orderMapper.insert(order) != 1) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-        }
-
-        var orderGoodsList = orderAssemblerSupport.buildOrderGoods(order.getId(), context.checkedGoodsList());
-        if (!orderGoodsService.saveBatch(orderGoodsList)) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-        }
-
-        clearSubmittedCart(userId, orderDTO.getCartIdArr());
-        markCouponUsed(orderDTO.getUserCouponId(), order.getId());
-        sendUnpaidDelayMessage(order.getOrderSn());
-    }
-
-    /**
-     * 判断订单号是否已经落库。
-     *
-     * @param orderSn 订单号
-     * @return true=订单已存在；false=订单不存在
-     */
-    private boolean existsOrder(String orderSn) {
-        return orderMapper.selectOne(Wrappers.lambdaQuery(Order.class)
-                .select(Order::getId)
-                .eq(Order::getOrderSn, orderSn)
-                .last("limit 1")) != null;
+    private OrderSubmitContext buildSubmitContext(OrderDTO orderDTO) {
+        // 责任链步骤不直接依赖地址/购物车/优惠券服务，统一回调编排层构建交易快照。
+        return buildSubmitContext(orderDTO.getUserId(), orderDTO.getAddressId(), orderDTO.getUserCouponId(),
+                orderDTO.getCartIdArr(), orderDTO.getOrderSn());
     }
 
     /**
@@ -368,14 +139,17 @@ public class OrderSubmitSupport {
     private OrderSubmitContext buildSubmitContext(Long userId, Long addressId, Long userCouponId,
                                                   List<Long> cartIdArr, String orderSn) {
         var address = addressService.getById(addressId);
+        // 地址归属校验必须在金额计算前完成，避免非法地址也触发购物车和优惠券查询。
         orderValidationSupport.validateAddressOwner(address, userId);
 
         List<Cart> checkedGoodsList = resolveCheckedGoods(userId, cartIdArr);
         if (CollectionUtils.isEmpty(checkedGoodsList)) {
+            // 异步下单场景需要把失败原因写入结果缓存，前端轮询时可以拿到明确失败信息。
             cacheSubmitError(orderSn, "购物车为空");
             throw new BusinessException(ReturnCodeEnum.ORDER_ERROR_CART_EMPTY_ERROR);
         }
 
+        // 金额计算基于同一份购物车快照，保证返回给前端的金额和消费端落库金额一致。
         BigDecimal checkedGoodsPrice = calculateCheckedGoodsPrice(checkedGoodsList);
         BigDecimal freightPrice = checkedGoodsPrice.compareTo(WaynConfig.getFreightLimit()) < 0
                 ? WaynConfig.getFreightPrice()
@@ -385,6 +159,7 @@ public class OrderSubmitSupport {
         ShopMemberCoupon memberCoupon = null;
         BigDecimal couponPrice = BigDecimal.ZERO;
         if (userCouponId != null) {
+            // 优惠券校验放在订单总价计算后，确保满减门槛使用含运费前后的统一业务口径。
             memberCoupon = orderValidationSupport.validateCoupon(shopMemberCouponService.getById(userCouponId), userId, orderTotalPrice);
             couponPrice = BigDecimal.valueOf(memberCoupon.getDiscount());
         }
@@ -406,6 +181,7 @@ public class OrderSubmitSupport {
     private String buildSubmitDedupKey(Long userId, Long addressId, Long userCouponId, List<Cart> checkedGoodsList) {
         String goodsFingerprint = checkedGoodsList.stream()
                 .map(cart -> cart.getId() + ":" + cart.getProductId() + ":" + cart.getNumber())
+                // 排序后生成稳定指纹，避免同一批购物车 ID 因顺序不同绕过幂等保护。
                 .sorted()
                 .reduce((left, right) -> left + "|" + right)
                 .orElse("");
@@ -423,6 +199,7 @@ public class OrderSubmitSupport {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(source.getBytes(StandardCharsets.UTF_8));
+            // URL 安全编码避免 Redis Key 出现特殊字符，同时去掉 padding 缩短 Key 长度。
             return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 algorithm not available", e);
@@ -438,15 +215,18 @@ public class OrderSubmitSupport {
      */
     private List<Cart> resolveCheckedGoods(Long userId, List<Long> cartIdArr) {
         if (CollectionUtils.isEmpty(cartIdArr)) {
+            // 兼容历史下单接口：未指定购物车 ID 时默认提交当前用户所有已勾选商品。
             return cartService.list(Wrappers.lambdaQuery(Cart.class)
                     .eq(Cart::getChecked, true)
                     .eq(Cart::getUserId, userId));
         }
+        // 去重后再查询，避免重复 cartId 让数量校验失真，也减少 SQL in 条件长度。
         List<Long> distinctCartIds = new LinkedHashSet<>(cartIdArr).stream().toList();
         List<Cart> checkedGoodsList = cartService.list(Wrappers.lambdaQuery(Cart.class)
                 .eq(Cart::getUserId, userId)
                 .in(Cart::getId, distinctCartIds));
         if (checkedGoodsList.size() != distinctCartIds.size()) {
+            // 查询数量不一致说明存在越权、失效或已删除购物车项，必须中断而不是部分下单。
             throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "部分下单商品不存在或已失效");
         }
         return checkedGoodsList;
@@ -467,97 +247,6 @@ public class OrderSubmitSupport {
     }
 
     /**
-     * 清理已提交购物车。
-     *
-     * @param userId 用户 ID
-     * @param cartIdArr 购物车 ID 列表
-     */
-    private void clearSubmittedCart(Long userId, List<Long> cartIdArr) {
-        if (CollectionUtils.isEmpty(cartIdArr)) {
-            cartService.remove(Wrappers.lambdaQuery(Cart.class)
-                    .eq(Cart::getUserId, userId)
-                    .eq(Cart::getChecked, true));
-            return;
-        }
-        cartService.remove(Wrappers.lambdaQuery(Cart.class)
-                .eq(Cart::getUserId, userId)
-                .in(Cart::getId, cartIdArr));
-    }
-
-    /**
-     * 占用用户优惠券。
-     *
-     * @param userCouponId 用户优惠券 ID
-     * @param orderId 订单 ID
-     */
-    private void markCouponUsed(Long userCouponId, Long orderId) {
-        if (userCouponId == null) {
-            return;
-        }
-        // 通过 useStatus 条件更新占用优惠券，避免重复下单时把同一张券绑定多次。
-        boolean updated = shopMemberCouponService.lambdaUpdate()
-                .set(ShopMemberCoupon::getUseStatus, 1)
-                .set(ShopMemberCoupon::getOrderId, orderId)
-                .set(ShopMemberCoupon::getUpdateTime, new Date())
-                .eq(ShopMemberCoupon::getId, userCouponId)
-                .eq(ShopMemberCoupon::getUseStatus, 0)
-                .update();
-        if (!updated) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "优惠卷不可用");
-        }
-    }
-
-    /**
-     * 投递异步下单消息。
-     *
-     * @param orderDTO 下单 DTO
-     */
-    private void sendSubmitMessage(OrderDTO orderDTO) {
-        Map<String, Object> messageBody = new HashMap<>();
-        messageBody.put("order", orderDTO);
-        messageBody.put("notifyUrl", WaynConfig.getMobileUrl() + "/callback/order/submit");
-        CorrelationData correlationData = new CorrelationData(IdUtil.getUid());
-        try {
-            rabbitTemplate.convertAndSend(MQConstants.ORDER_DIRECT_EXCHANGE, MQConstants.ORDER_DIRECT_ROUTING,
-                    buildMessage(messageBody), correlationData);
-        } catch (RuntimeException e) {
-            log.error("发送异步下单消息失败", e);
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-        }
-    }
-
-    /**
-     * 投递未支付超时关单延迟消息。
-     *
-     * @param orderSn 订单号
-     */
-    private void sendUnpaidDelayMessage(String orderSn) {
-        Map<String, Object> messageBody = new HashMap<>();
-        messageBody.put("orderSn", orderSn);
-        messageBody.put("notifyUrl", WaynConfig.getMobileUrl() + "/callback/order/unpaid");
-        delayRabbitTemplate.convertAndSend(MQConstants.ORDER_DELAY_EXCHANGE, MQConstants.ORDER_DELAY_ROUTING,
-                buildMessage(messageBody), messagePostProcessor -> {
-                    // 延迟关单消息只负责触发，实际取消仍在消费端通过状态条件更新防重。
-                    long delayTime = WaynConfig.getUnpaidOrderCancelDelayTime() * cn.hutool.core.date.DateUnit.MINUTE.getMillis();
-                    messagePostProcessor.getMessageProperties().setDelay(Math.toIntExact(delayTime));
-                    return messagePostProcessor;
-                });
-    }
-
-    /**
-     * 组装 MQ 消息体。
-     *
-     * @param messageBody 消息内容
-     * @return MQ 消息
-     */
-    private Message buildMessage(Map<String, Object> messageBody) {
-        return MessageBuilder.withBody(JSON.toJSONString(messageBody).getBytes(StandardCharsets.UTF_8))
-                .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
-                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
-                .build();
-    }
-
-    /**
      * 缓存下单失败原因。
      *
      * @param orderSn 订单号
@@ -565,6 +254,7 @@ public class OrderSubmitSupport {
      */
     private void cacheSubmitError(String orderSn, String errorMsg) {
         if (orderSn == null) {
+            // 同步预校验阶段还没有订单号，此时只能直接抛异常，不能写入轮询结果缓存。
             return;
         }
         redisCache.setCacheObject(ORDER_RESULT_KEY.getKey(orderSn), errorMsg, ORDER_RESULT_KEY.getExpireSecond());

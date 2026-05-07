@@ -11,7 +11,6 @@ import com.wayn.common.core.service.shop.support.order.OrderSubmitSupport;
 import com.wayn.common.core.service.shop.support.order.OrderValidationSupport;
 import com.wayn.common.core.vo.OrderDetailVO;
 import com.wayn.common.model.request.OrderCommitReqVO;
-import com.wayn.common.model.response.BatchOrderSubmitResVO;
 import com.wayn.common.model.response.OrderListResVO;
 import com.wayn.common.model.response.OrderStatusCountResVO;
 import com.wayn.common.model.response.SubmitOrderResVO;
@@ -21,7 +20,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 /**
  * 移动端订单服务外观层。
@@ -93,17 +91,6 @@ public class MobileOrderServiceImpl extends ServiceImpl<OrderMapper, Order> impl
     @Override
     public void submit(OrderDTO orderDTO) throws UnsupportedEncodingException {
         orderSubmitSupport.submit(orderDTO);
-    }
-
-    /**
-     * 委托批量消费端真正落单。
-     *
-     * @param orderDTOList 下单 DTO 列表
-     * @return 批量下单结果
-     */
-    @Override
-    public BatchOrderSubmitResVO submitBatch(List<OrderDTO> orderDTOList) {
-        return orderSubmitSupport.submitBatch(orderDTOList);
     }
 
     /**

@@ -33,6 +33,8 @@ build/
 .mvn
 mvnw*
 .gradle
+.m2/
 
 jars/
 front/
+.m2

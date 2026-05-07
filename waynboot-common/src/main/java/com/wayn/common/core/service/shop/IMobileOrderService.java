@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.vo.OrderDetailVO;
 import com.wayn.common.model.request.OrderCommitReqVO;
-import com.wayn.common.model.response.BatchOrderSubmitResVO;
 import com.wayn.common.model.response.OrderListResVO;
 import com.wayn.common.model.response.OrderStatusCountResVO;
 import com.wayn.common.model.response.SubmitOrderResVO;
@@ -13,7 +12,6 @@ import com.wayn.message.core.dto.OrderDTO;
 import com.wayn.util.enums.ReturnCodeEnum;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 /**
  * 订单表 服务类
@@ -30,16 +28,6 @@ public interface IMobileOrderService extends IService<Order> {
      * @return R
      */
     void submit(OrderDTO orderDTO) throws UnsupportedEncodingException;
-
-
-    /**
-     * 批量添加订单记录。
-     * 批量入口只负责聚合结果，每个订单仍走单条提交的锁、事务、库存和优惠券处理。
-     *
-     * @param orderDTOList 订单 DTO 列表
-     * @return 批量下单结果
-     */
-    BatchOrderSubmitResVO submitBatch(List<OrderDTO> orderDTOList);
 
 
     /**
