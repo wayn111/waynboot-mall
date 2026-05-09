@@ -3,6 +3,7 @@ package com.wayn.common.core.service.shop.support.admin.order;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
+import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.model.request.ShipRequestVO;
 import com.wayn.util.enums.OrderStatusEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
@@ -23,6 +24,7 @@ import java.util.Date;
 public class AdminOrderShipmentSupport {
 
     private final AdminOrderMapper adminOrderMapper;
+    private final OrderStateTransitionSupport orderStateTransitionSupport;
 
     /**
      * 执行订单发货。
@@ -38,9 +40,8 @@ public class AdminOrderShipmentSupport {
         if (order == null || StringUtils.isBlank(shipChannel) || StringUtils.isBlank(shipSn)) {
             throw new BusinessException(ReturnCodeEnum.PARAMETER_TYPE_ERROR);
         }
-        if (!OrderStatusEnum.STATUS_PAY.getStatus().equals(order.getOrderStatus())) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_SHIP_ERROR);
-        }
+        orderStateTransitionSupport.validateTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_SHIP,
+                ReturnCodeEnum.ORDER_CANNOT_SHIP_ERROR);
         Order update = new Order();
         update.setOrderStatus(OrderStatusEnum.STATUS_SHIP.getStatus());
         update.setShipSn(shipSn);

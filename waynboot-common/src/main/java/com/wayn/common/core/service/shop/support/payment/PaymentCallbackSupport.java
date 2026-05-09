@@ -10,6 +10,7 @@ import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.EpayConfig;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.mapper.shop.OrderMapper;
+import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.util.OrderUtil;
 import com.wayn.common.wapper.epay.util.EpaySignUtil;
 import com.wayn.util.enums.OrderStatusEnum;
@@ -40,6 +41,7 @@ public class PaymentCallbackSupport {
     private final WxPayService wxPayService;
     private final OrderMapper orderMapper;
     private final PaymentPostActionSupport paymentPostActionSupport;
+    private final OrderStateTransitionSupport orderStateTransitionSupport;
 
     /**
      * 处理微信支付回调。
@@ -163,6 +165,10 @@ public class PaymentCallbackSupport {
         if (OrderUtil.hasPayed(order)) {
             log.info("{}：订单已经处理过了，orderSn：{}", channel, orderSn);
             return PaymentProcessResult.success("已处理");
+        }
+        if (!orderStateTransitionSupport.canTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_PAY)) {
+            log.error("{}：订单当前状态不可支付，orderSn={}，status={}", channel, orderSn, order.getOrderStatus());
+            return PaymentProcessResult.fail("订单当前状态不可支付");
         }
 
         // 通过“待支付 -> 已支付”的条件更新实现幂等，避免多个回调并发重复执行成功逻辑。

@@ -8,6 +8,7 @@ import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.entity.shop.OrderGoods;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
+import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.core.service.shop.support.order.OrderStockSupport;
 import com.wayn.common.design.strategy.refund.context.RefundContext;
 import com.wayn.common.design.strategy.refund.strategy.RefundInterface;
@@ -44,6 +45,7 @@ public class AdminOrderRefundSupport {
     private final OrderStockSupport orderStockSupport;
     private final RefundContext refundContext;
     private final PlatformTransactionManager platformTransactionManager;
+    private final OrderStateTransitionSupport orderStateTransitionSupport;
 
     /**
      * 执行管理端订单退款。
@@ -64,9 +66,8 @@ public class AdminOrderRefundSupport {
         if (refundMoney.compareTo(order.getActualPrice()) > 0) {
             throw new BusinessException(ReturnCodeEnum.ORDER_REFUND_MONEY_LARGE);
         }
-        if (!OrderStatusEnum.STATUS_REFUND.getStatus().equals(order.getOrderStatus())) {
-            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
-        }
+        orderStateTransitionSupport.validateTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_REFUND_CONFIRM,
+                ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
         List<OrderGoods> orderGoodsList = orderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", order.getId()));
 
         RefundExecution execution = executeRefund(order, reqVO, refundMoney);

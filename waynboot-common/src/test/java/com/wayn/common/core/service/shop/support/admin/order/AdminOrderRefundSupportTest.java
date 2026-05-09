@@ -8,6 +8,7 @@ import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.entity.shop.OrderGoods;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
+import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.core.service.shop.support.order.OrderStockSupport;
 import com.wayn.common.design.strategy.refund.context.RefundContext;
 import com.wayn.common.design.strategy.refund.strategy.RefundInterface;
@@ -59,7 +60,7 @@ class AdminOrderRefundSupportTest {
     @Test
     void refundMarksOrderAsFailedWhenThirdPartyRefundThrows() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
         AdminOrderRefundSupport support = new AdminOrderRefundSupport(adminOrderMapper, orderGoodsService, orderStockSupport,
-                refundContext, platformTransactionManager);
+                refundContext, platformTransactionManager, new OrderStateTransitionSupport());
         OrderRefundReqVO reqVO = new OrderRefundReqVO();
         reqVO.setOrderSn("order-1");
         reqVO.setRefundMoney(new BigDecimal("20.00"));
@@ -92,7 +93,7 @@ class AdminOrderRefundSupportTest {
     @Test
     void refundThrowsWhenConditionalUpdateAffectsNoRows() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
         AdminOrderRefundSupport support = new AdminOrderRefundSupport(adminOrderMapper, orderGoodsService, orderStockSupport,
-                refundContext, platformTransactionManager);
+                refundContext, platformTransactionManager, new OrderStateTransitionSupport());
         OrderRefundReqVO reqVO = new OrderRefundReqVO();
         reqVO.setOrderSn("order-1");
         reqVO.setRefundMoney(new BigDecimal("20.00"));
@@ -118,7 +119,7 @@ class AdminOrderRefundSupportTest {
     @Test
     void refundRestoresStockWhenThirdPartyRefundSucceeds() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
         AdminOrderRefundSupport support = new AdminOrderRefundSupport(adminOrderMapper, orderGoodsService, orderStockSupport,
-                refundContext, platformTransactionManager);
+                refundContext, platformTransactionManager, new OrderStateTransitionSupport());
         OrderRefundReqVO reqVO = new OrderRefundReqVO();
         reqVO.setOrderSn("order-1");
         reqVO.setRefundMoney(new BigDecimal("20.00"));

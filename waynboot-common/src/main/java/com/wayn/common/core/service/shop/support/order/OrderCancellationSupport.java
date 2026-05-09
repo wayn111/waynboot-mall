@@ -6,7 +6,6 @@ import com.wayn.common.core.entity.shop.ShopMemberCoupon;
 import com.wayn.common.core.mapper.shop.OrderMapper;
 import com.wayn.common.core.service.shop.ShopMemberCouponService;
 import com.wayn.common.core.service.shop.support.common.TradeLockSupport;
-import com.wayn.common.util.OrderUtil;
 import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.util.enums.OrderStatusEnum;
 import lombok.AllArgsConstructor;
@@ -30,6 +29,7 @@ public class OrderCancellationSupport {
     private final OrderStockSupport orderStockSupport;
     private final ShopMemberCouponService shopMemberCouponService;
     private final TradeLockSupport tradeLockSupport;
+    private final OrderStateTransitionSupport orderStateTransitionSupport;
 
     /**
      * 取消订单并执行补偿动作。
@@ -57,7 +57,7 @@ public class OrderCancellationSupport {
     private void doCancel(String orderSn, OrderStatusEnum targetStatus) {
         Order order = orderMapper.selectOne(Wrappers.lambdaQuery(Order.class)
                 .eq(Order::getOrderSn, orderSn));
-        if (order == null || !OrderUtil.isCreateStatus(order)) {
+        if (order == null || !orderStateTransitionSupport.canTransition(order.getOrderStatus(), targetStatus)) {
             return;
         }
 

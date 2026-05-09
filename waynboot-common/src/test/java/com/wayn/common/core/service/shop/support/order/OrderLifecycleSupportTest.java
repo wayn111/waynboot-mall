@@ -38,7 +38,7 @@ class OrderLifecycleSupportTest {
     @Test
     void refundThrowsWhenConditionalUpdateAffectsNoRows() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport);
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
         Order order = buildOrder(1L, "refund-order", OrderStatusEnum.STATUS_PAY);
         when(orderMapper.selectById(1L)).thenReturn(order);
         when(orderMapper.update(any(), any())).thenReturn(0);
@@ -51,7 +51,7 @@ class OrderLifecycleSupportTest {
     @Test
     void confirmThrowsWhenConditionalUpdateAffectsNoRows() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport);
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
         Order order = buildOrder(2L, "confirm-order", OrderStatusEnum.STATUS_SHIP);
         when(orderMapper.selectById(2L)).thenReturn(order);
         when(orderMapper.update(any(), any())).thenReturn(0);
@@ -64,7 +64,7 @@ class OrderLifecycleSupportTest {
     @Test
     void deleteThrowsWhenConditionalDeleteAffectsNoRows() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport);
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
         Order order = buildOrder(3L, "delete-order", OrderStatusEnum.STATUS_CONFIRM);
         when(orderMapper.selectById(3L)).thenReturn(order);
         when(orderMapper.delete(any())).thenReturn(0);
@@ -77,7 +77,7 @@ class OrderLifecycleSupportTest {
     @Test
     void cancelDelegatesToCancellationSupport() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport);
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
         Order order = buildOrder(4L, "cancel-order", OrderStatusEnum.STATUS_CREATE);
         when(orderMapper.selectById(4L)).thenReturn(order);
 

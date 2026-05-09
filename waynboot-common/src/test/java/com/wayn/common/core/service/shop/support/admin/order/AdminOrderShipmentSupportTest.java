@@ -2,6 +2,7 @@ package com.wayn.common.core.service.shop.support.admin.order;
 
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
+import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.model.request.ShipRequestVO;
 import com.wayn.util.enums.OrderStatusEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
@@ -25,7 +26,8 @@ class AdminOrderShipmentSupportTest {
 
     @Test
     void shipThrowsWhenConditionalUpdateAffectsNoRows() {
-        AdminOrderShipmentSupport support = new AdminOrderShipmentSupport(adminOrderMapper);
+        AdminOrderShipmentSupport support = new AdminOrderShipmentSupport(adminOrderMapper,
+                new OrderStateTransitionSupport());
         ShipRequestVO shipRequestVO = new ShipRequestVO();
         shipRequestVO.setOrderId(1L);
         shipRequestVO.setShipChannel("SF");

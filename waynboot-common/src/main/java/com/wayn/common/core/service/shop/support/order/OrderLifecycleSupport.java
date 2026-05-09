@@ -27,6 +27,7 @@ public class OrderLifecycleSupport {
     private final IOrderGoodsService orderGoodsService;
     private final OrderValidationSupport orderValidationSupport;
     private final OrderCancellationSupport orderCancellationSupport;
+    private final OrderStateTransitionSupport orderStateTransitionSupport;
 
     /**
      * 用户发起退款申请。
@@ -36,6 +37,8 @@ public class OrderLifecycleSupport {
     public void refund(Long orderId) {
         Order order = orderValidationSupport.requireOrder(orderMapper.selectById(orderId));
         orderValidationSupport.ensureRefundable(order);
+        orderStateTransitionSupport.validateTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_REFUND,
+                ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
         int updated = orderMapper.update(null, Wrappers.lambdaUpdate(Order.class)
                 .set(Order::getOrderStatus, OrderStatusEnum.STATUS_REFUND.getStatus())
                 .set(Order::getRefundStatus, 1)
@@ -85,6 +88,8 @@ public class OrderLifecycleSupport {
     public void confirm(Long orderId) {
         Order order = orderValidationSupport.requireOrder(orderMapper.selectById(orderId));
         orderValidationSupport.ensureConfirmable(order);
+        orderStateTransitionSupport.validateTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_CONFIRM,
+                ReturnCodeEnum.ORDER_CANNOT_CONFIRM_ERROR);
         int updated = orderMapper.update(null, Wrappers.lambdaUpdate(Order.class)
                 .set(Order::getOrderStatus, OrderStatusEnum.STATUS_CONFIRM.getStatus())
                 .set(Order::getConfirmTime, LocalDateTime.now())

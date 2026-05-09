@@ -6,6 +6,7 @@ import com.wayn.common.core.entity.shop.GoodsProduct;
 import com.wayn.common.core.service.shop.*;
 import com.wayn.common.core.vo.SpecificationVO;
 import com.wayn.common.model.response.GoodsDetailResponseVO;
+import com.wayn.data.redis.manager.RedisCache;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -16,21 +17,40 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
+import static com.wayn.data.redis.constant.RedisKeyEnum.GOODS_DETAIL_CACHE;
+
+/**
+ * 商品详情查询服务。
+ * 面向移动端高频详情读请求，优先读取 Redis 聚合缓存，缓存未命中时并发查询商品、规格、货品和属性后回填缓存。
+ */
 @Slf4j
 @Service
 @AllArgsConstructor
 public class GoodsDetailServiceImpl implements IGoodsDetailService {
 
 
-    private IGoodsService iGoodsService;
-    private IGoodsSpecificationService iGoodsSpecificationService;
-    private IGoodsProductService iGoodsProductService;
-    private IGoodsAttributeService iGoodsAttributeService;
-    private ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
+    private final IGoodsService iGoodsService;
+    private final IGoodsSpecificationService iGoodsSpecificationService;
+    private final IGoodsProductService iGoodsProductService;
+    private final IGoodsAttributeService iGoodsAttributeService;
+    private final ThreadPoolTaskExecutor commonThreadPoolTaskExecutor;
+    private final RedisCache redisCache;
 
-    // @Cacheable(value = "goods_detail_cache_#600", unless = "#result == null")
+    /**
+     * 获取商品详情聚合数据。
+     * 商品详情包含库存列表，因此下单扣减、取消回补和管理端商品编辑后必须主动失效该缓存。
+     *
+     * @param goodsId 商品 ID
+     * @return 商品详情聚合数据
+     */
     @Override
     public GoodsDetailResponseVO getGoodsDetailData(Long goodsId) {
+        String cacheKey = GOODS_DETAIL_CACHE.getKey(goodsId);
+        GoodsDetailResponseVO cached = redisCache.getCacheObject(cacheKey);
+        if (cached != null) {
+            return cached;
+        }
+
         GoodsDetailResponseVO responseVO = new GoodsDetailResponseVO();
         Callable<List<SpecificationVO>> specificationCall = () -> iGoodsSpecificationService.getSpecificationVOList(goodsId);
         Callable<List<GoodsProduct>> productCall = () -> iGoodsProductService.list(new QueryWrapper<GoodsProduct>().eq("goods_id", goodsId));
@@ -47,8 +67,12 @@ public class GoodsDetailServiceImpl implements IGoodsDetailService {
             responseVO.setProductList(productTask.get());
             responseVO.setSpecificationList(specificationTask.get());
             responseVO.setAttributes(attrTask.get());
+            redisCache.setCacheObject(cacheKey, responseVO, GOODS_DETAIL_CACHE.getExpireSecond());
             return responseVO;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error(e.getMessage(), e);
+        } catch (ExecutionException e) {
             log.error(e.getMessage(), e);
         }
         return null;

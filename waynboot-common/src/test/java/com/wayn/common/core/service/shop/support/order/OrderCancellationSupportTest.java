@@ -41,7 +41,7 @@ class OrderCancellationSupportTest {
     @Test
     void cancelSkipsCompensationWhenConditionalUpdateAffectsNoRows() {
         OrderCancellationSupport support = new OrderCancellationSupport(orderMapper, orderStockSupport,
-                shopMemberCouponService, tradeLockSupport);
+                shopMemberCouponService, tradeLockSupport, new OrderStateTransitionSupport());
         Order order = new Order();
         order.setId(1L);
         order.setOrderSn("order-cancel-1");
@@ -64,7 +64,7 @@ class OrderCancellationSupportTest {
     @Test
     void cancelSkipsCompensationWhenOrderIsAlreadyProcessed() {
         OrderCancellationSupport support = new OrderCancellationSupport(orderMapper, orderStockSupport,
-                shopMemberCouponService, tradeLockSupport);
+                shopMemberCouponService, tradeLockSupport, new OrderStateTransitionSupport());
         Order order = new Order();
         order.setId(2L);
         order.setOrderSn("order-cancel-2");

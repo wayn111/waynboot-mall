@@ -7,6 +7,7 @@ import com.wayn.common.core.entity.shop.OrderGoods;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
+import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.wayn.data.redis.constant.RedisKeyEnum.GOODS_DETAIL_CACHE;
+
 /**
  * 订单库存支撑服务。
  * 统一处理下单扣减库存和订单取消/关闭后的库存回补逻辑。
@@ -31,6 +34,7 @@ public class OrderStockSupport {
     private final IGoodsProductService goodsProductService;
     private final IGoodsService goodsService;
     private final IOrderGoodsService orderGoodsService;
+    private final RedisCache redisCache;
 
     /**
      * 按购物车快照扣减库存。
@@ -70,6 +74,7 @@ public class OrderStockSupport {
             if (!goodsProductService.reduceStock(productId, requiredNumber)) {
                 throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
             }
+            evictGoodsDetailCache(checkedGoods.getGoodsId());
         }
     }
 
@@ -145,6 +150,19 @@ public class OrderStockSupport {
             if (!goodsProductService.addStock(orderGoods.getProductId(), orderGoods.getNumber())) {
                 throw new BusinessException("商品货品库存增加失败");
             }
+            evictGoodsDetailCache(orderGoods.getGoodsId());
+        }
+    }
+
+    /**
+     * 删除商品详情缓存。
+     * 商品详情里包含 SKU 库存，库存扣减或回补成功后必须让后续详情请求重新加载最新库存。
+     *
+     * @param goodsId 商品 ID
+     */
+    private void evictGoodsDetailCache(Long goodsId) {
+        if (redisCache != null && goodsId != null) {
+            redisCache.deleteObject(GOODS_DETAIL_CACHE.getKey(goodsId));
         }
     }
 }

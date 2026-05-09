@@ -39,6 +39,9 @@ public abstract class AbstractSingleMessageConsumer {
             // 业务回调是唯一可变步骤，ack 和幂等标记仍由模板控制，避免具体消费者漏写确认逻辑。
             handle(body);
             messageConsumerSupport.ackAndMarkConsumed(channel, message, redisKeyEnum());
+        } catch (MessageConsumedMarkException e) {
+            // 业务已成功且 broker 已 ack，此时不能再 nack 同一 deliveryTag，只能记录告警等待后续监控补偿。
+            log.error("{} 消费幂等标记失败, msgId={}, message={}", consumerName(), msgId, e.getMessage(), e);
         } catch (Exception e) {
             // 当前队列保持非重入队策略，失败消息交给 broker 死信/丢弃配置处理，避免热点失败阻塞队列。
             messageConsumerSupport.nackWithoutRequeue(channel, message);

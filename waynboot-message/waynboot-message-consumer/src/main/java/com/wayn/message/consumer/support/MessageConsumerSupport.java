@@ -91,7 +91,11 @@ public class MessageConsumerSupport {
         String msgId = resolveMessageId(message);
         // 保持历史顺序：先 ack broker，再写 Redis 幂等标记，避免 ack 失败但 Redis 已标记导致消息丢处理。
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-        redisCache.setCacheObject(redisKeyEnum.getKey(msgId), msgId, redisKeyEnum.getExpireSecond());
+        try {
+            redisCache.setCacheObject(redisKeyEnum.getKey(msgId), msgId, redisKeyEnum.getExpireSecond());
+        } catch (RuntimeException e) {
+            throw new MessageConsumedMarkException("消息已 ack，但消费幂等标记写入失败，msgId=" + msgId, e);
+        }
     }
 
     /**

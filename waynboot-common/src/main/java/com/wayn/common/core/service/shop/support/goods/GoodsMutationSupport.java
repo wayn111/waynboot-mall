@@ -15,6 +15,7 @@ import com.wayn.common.core.vo.GoodsProductVO;
 import com.wayn.common.core.vo.GoodsSpecificationVO;
 import com.wayn.common.core.vo.GoodsVO;
 import com.wayn.common.model.request.GoodsSaveRelatedReqVO;
+import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.wayn.data.redis.constant.RedisKeyEnum.GOODS_DETAIL_CACHE;
+
 /**
  * 商品写路径支撑服务。
  * 统一处理商品主表与规格、属性、货品等聚合数据的事务写入，并负责更新时的增删改对账。
@@ -46,6 +49,7 @@ public class GoodsMutationSupport {
     private final IGoodsSpecificationService goodsSpecificationService;
     private final GoodsValidationSupport goodsValidationSupport;
     private final GoodsElasticSyncSupport goodsElasticSyncSupport;
+    private final RedisCache redisCache;
 
     /**
      * Spring 运行时构造器。
@@ -62,13 +66,15 @@ public class GoodsMutationSupport {
                                 IGoodsAttributeService goodsAttributeService,
                                 IGoodsSpecificationService goodsSpecificationService,
                                 GoodsValidationSupport goodsValidationSupport,
-                                GoodsElasticSyncSupport goodsElasticSyncSupport) {
+                                GoodsElasticSyncSupport goodsElasticSyncSupport,
+                                RedisCache redisCache) {
         this.goodsMapper = goodsMapper;
         this.goodsProductService = goodsProductService;
         this.goodsAttributeService = goodsAttributeService;
         this.goodsSpecificationService = goodsSpecificationService;
         this.goodsValidationSupport = goodsValidationSupport;
         this.goodsElasticSyncSupport = goodsElasticSyncSupport;
+        this.redisCache = redisCache;
     }
 
     /**
@@ -86,7 +92,7 @@ public class GoodsMutationSupport {
                          IGoodsSpecificationService goodsSpecificationService,
                          GoodsValidationSupport goodsValidationSupport) {
         this(goodsMapper, goodsProductService, goodsAttributeService, goodsSpecificationService,
-                goodsValidationSupport, null);
+                goodsValidationSupport, null, null);
     }
 
     /**
@@ -132,6 +138,7 @@ public class GoodsMutationSupport {
         saveBatchIfPresent(specifications, goodsSpecificationService::saveBatch);
         saveBatchIfPresent(attributes, goodsAttributeService::saveBatch);
         saveBatchIfPresent(products, goodsProductService::saveBatch);
+        evictGoodsDetailCache(goods.getId());
     }
 
     /**
@@ -150,6 +157,7 @@ public class GoodsMutationSupport {
         if (goodsElasticSyncSupport != null) {
             goodsElasticSyncSupport.deleteGoodsFromEs(goodsId);
         }
+        evictGoodsDetailCache(goodsId);
         return true;
     }
 
@@ -178,6 +186,7 @@ public class GoodsMutationSupport {
         syncSpecifications(goods.getId(), specifications);
         syncAttributes(goods.getId(), attributes);
         syncProducts(goods.getId(), products);
+        evictGoodsDetailCache(goods.getId());
     }
 
     /**
@@ -188,6 +197,19 @@ public class GoodsMutationSupport {
      */
     public void updateVirtualSales(Long goodsId, Integer number) {
         goodsMapper.updateVirtualSales(goodsId, number);
+        evictGoodsDetailCache(goodsId);
+    }
+
+    /**
+     * 清理商品详情缓存。
+     * 商品详情缓存包含货品库存、规格和属性，任何商品聚合写入后都必须删除缓存，避免移动端读到旧库存或旧规格。
+     *
+     * @param goodsId 商品 ID
+     */
+    private void evictGoodsDetailCache(Long goodsId) {
+        if (redisCache != null && goodsId != null) {
+            redisCache.deleteObject(GOODS_DETAIL_CACHE.getKey(goodsId));
+        }
     }
 
     /**

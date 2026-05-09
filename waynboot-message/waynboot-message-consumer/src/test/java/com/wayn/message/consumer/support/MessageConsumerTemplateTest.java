@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 class MessageConsumerTemplateTest {
 
@@ -58,6 +59,29 @@ class MessageConsumerTemplateTest {
         verify(channel).basicAck(2L, false);
         verify(redisCache).setCacheObject(ORDER_CONSUMER_MAP.getKey("order-2"),
                 "order-2", ORDER_CONSUMER_MAP.getExpireSecond());
+        assertEquals(List.of("pending"), handledBodies);
+    }
+
+    /**
+     * 验证业务已处理且 ack 成功后，如果 Redis 幂等标记写入失败，模板不能再对同一投递执行 nack。
+     */
+    @Test
+    void singleTemplateDoesNotNackWhenMarkConsumedFailsAfterAck() throws Exception {
+        RedisCache redisCache = mock(RedisCache.class);
+        Channel channel = mock(Channel.class);
+        MessageConsumerSupport support = new MessageConsumerSupport(redisCache);
+        java.util.ArrayList<String> handledBodies = new java.util.ArrayList<>();
+        TestSingleConsumer consumer = new TestSingleConsumer(support, ORDER_CONSUMER_MAP, handledBodies);
+        Message pendingMessage = buildMessage(3L, "order-3", "pending");
+        when(redisCache.getCacheObject(ORDER_CONSUMER_MAP.getKey("order-3"))).thenReturn(null);
+        doThrow(new RuntimeException("redis down")).when(redisCache)
+                .setCacheObject(ORDER_CONSUMER_MAP.getKey("order-3"),
+                        "order-3", ORDER_CONSUMER_MAP.getExpireSecond());
+
+        consumer.process(channel, pendingMessage);
+
+        verify(channel).basicAck(3L, false);
+        verify(channel, never()).basicNack(3L, false, false);
         assertEquals(List.of("pending"), handledBodies);
     }
 

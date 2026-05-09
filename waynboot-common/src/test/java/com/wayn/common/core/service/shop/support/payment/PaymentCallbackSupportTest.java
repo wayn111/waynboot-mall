@@ -8,6 +8,7 @@ import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.EpayConfig;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.mapper.shop.OrderMapper;
+import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.util.enums.OrderStatusEnum;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ class PaymentCallbackSupportTest {
     @Test
     void wxPayNotifyReturnsSuccessWhenOrderAlreadyProcessed() throws Exception {
         PaymentCallbackSupport support = new PaymentCallbackSupport(new EpayConfig(), new AlipayConfig(),
-                wxPayService, orderMapper, paymentPostActionSupport);
+                wxPayService, orderMapper, paymentPostActionSupport, new OrderStateTransitionSupport());
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
         request.setContent("<xml/>".getBytes(StandardCharsets.UTF_8));
@@ -75,7 +76,7 @@ class PaymentCallbackSupportTest {
     @Test
     void wxPayNotifyReturnsFailWhenAmountMismatch() throws Exception {
         PaymentCallbackSupport support = new PaymentCallbackSupport(new EpayConfig(), new AlipayConfig(),
-                wxPayService, orderMapper, paymentPostActionSupport);
+                wxPayService, orderMapper, paymentPostActionSupport, new OrderStateTransitionSupport());
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
         request.setContent("<xml/>".getBytes(StandardCharsets.UTF_8));
@@ -103,7 +104,7 @@ class PaymentCallbackSupportTest {
     @Test
     void wxPayNotifyReturnsSuccessWhenConditionalUpdateMissesButLatestOrderAlreadyPaid() throws Exception {
         PaymentCallbackSupport support = new PaymentCallbackSupport(new EpayConfig(), new AlipayConfig(),
-                wxPayService, orderMapper, paymentPostActionSupport);
+                wxPayService, orderMapper, paymentPostActionSupport, new OrderStateTransitionSupport());
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
         request.setContent("<xml/>".getBytes(StandardCharsets.UTF_8));
@@ -138,7 +139,7 @@ class PaymentCallbackSupportTest {
     @Test
     void wxPayNotifyReturnsFailWhenConditionalUpdateMissesAndOrderStillUnpaid() throws Exception {
         PaymentCallbackSupport support = new PaymentCallbackSupport(new EpayConfig(), new AlipayConfig(),
-                wxPayService, orderMapper, paymentPostActionSupport);
+                wxPayService, orderMapper, paymentPostActionSupport, new OrderStateTransitionSupport());
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
         request.setContent("<xml/>".getBytes(StandardCharsets.UTF_8));
