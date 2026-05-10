@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `local_message` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+  `message_key` varchar(128) NOT NULL COMMENT '业务唯一消息键',
+  `topic` varchar(64) NOT NULL COMMENT '消息主题',
+  `biz_type` varchar(32) NOT NULL COMMENT '业务类型',
+  `biz_id` varchar(64) NOT NULL COMMENT '业务 ID',
+  `exchange_name` varchar(128) DEFAULT NULL COMMENT 'RabbitMQ 交换机，空值表示本地处理器消息',
+  `routing_key` varchar(128) DEFAULT NULL COMMENT 'RabbitMQ 路由键，空值表示本地处理器消息',
+  `payload` text NOT NULL COMMENT 'JSON 消息体',
+  `delay_millis` int NOT NULL DEFAULT 0 COMMENT '延迟投递毫秒数',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态：0 待投递，1 已投递，2 失败',
+  `retry_count` int NOT NULL DEFAULT 0 COMMENT '重试次数',
+  `next_retry_time` datetime NOT NULL COMMENT '下一次可重试时间',
+  `last_error` varchar(1000) DEFAULT NULL COMMENT '最近一次错误信息',
+  `sent_time` datetime DEFAULT NULL COMMENT '成功投递或处理时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_local_message_key` (`message_key`),
+  KEY `idx_local_message_status_retry` (`status`, `next_retry_time`),
+  KEY `idx_local_message_biz` (`biz_type`, `biz_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='本地消息表';

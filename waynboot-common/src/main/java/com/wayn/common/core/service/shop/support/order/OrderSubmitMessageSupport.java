@@ -2,24 +2,15 @@ package com.wayn.common.core.service.shop.support.order;
 
 import com.alibaba.fastjson.JSON;
 import com.wayn.common.config.WaynConfig;
+import com.wayn.common.core.service.message.LocalMessageCreateCommand;
+import com.wayn.common.core.service.message.LocalMessageService;
+import com.wayn.common.core.service.message.LocalMessageTopics;
 import com.wayn.message.core.constant.MQConstants;
 import com.wayn.message.core.dto.OrderDTO;
-import com.wayn.util.enums.ReturnCodeEnum;
-import com.wayn.util.exception.BusinessException;
-import com.wayn.util.util.IdUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageDeliveryMode;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,11 +23,14 @@ import java.util.Map;
 @AllArgsConstructor
 public class OrderSubmitMessageSupport {
 
-    private final RabbitTemplate rabbitTemplate;
-    private final RabbitTemplate delayRabbitTemplate;
+    private static final String ORDER_SUBMIT_KEY_PREFIX = "ORDER_SUBMIT:";
+    private static final String ORDER_UNPAID_DELAY_KEY_PREFIX = "ORDER_UNPAID_DELAY:";
+
+    private final LocalMessageService localMessageService;
 
     /**
-     * 投递异步下单消息。
+     * 保存异步下单本地消息。
+     * 入口线程不直接投递 RabbitMQ，先落本地消息表，后续由 relay 统一投递，避免 MQ 短暂不可用导致下单请求丢失。
      *
      * @param orderDTO 下单 DTO
      */
@@ -44,80 +38,47 @@ public class OrderSubmitMessageSupport {
         Map<String, Object> messageBody = new HashMap<>();
         messageBody.put("order", orderDTO);
         messageBody.put("notifyUrl", WaynConfig.getMobileUrl() + "/callback/order/submit");
-        CorrelationData correlationData = new CorrelationData(IdUtil.getUid());
-        try {
-            rabbitTemplate.convertAndSend(MQConstants.ORDER_DIRECT_EXCHANGE, MQConstants.ORDER_DIRECT_ROUTING,
-                    buildMessage(messageBody), correlationData);
-        } catch (RuntimeException e) {
-            log.error("发送异步下单消息失败", e);
-            throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR);
-        }
+        localMessageService.saveMessage(LocalMessageCreateCommand.builder()
+                .messageKey(ORDER_SUBMIT_KEY_PREFIX + orderDTO.getOrderSn())
+                .topic(LocalMessageTopics.ORDER_SUBMIT)
+                .bizType(LocalMessageTopics.BIZ_TYPE_ORDER)
+                .bizId(orderDTO.getOrderSn())
+                .exchangeName(MQConstants.ORDER_DIRECT_EXCHANGE)
+                .routingKey(MQConstants.ORDER_DIRECT_ROUTING)
+                .payload(buildPayload(messageBody))
+                .build());
     }
 
     /**
-     * 在当前事务提交后投递未支付超时关单延迟消息。
-     * 如果当前没有事务同步上下文，则立即发送，便于单元测试和非事务调用路径复用。
+     * 保存未支付超时关单延迟本地消息。
+     * 该方法在订单落库事务内调用，订单和延迟消息共同提交；事务回滚时不会产生孤儿关单消息。
      *
      * @param orderSn 订单号
      */
-    public void sendUnpaidDelayMessageAfterCommit(String orderSn) {
-        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            sendUnpaidDelayMessageSafely(orderSn);
-            return;
-        }
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            /**
-             * 事务提交后发送未支付延迟关单消息。
-             */
-            @Override
-            public void afterCommit() {
-                sendUnpaidDelayMessageSafely(orderSn);
-            }
-        });
-    }
-
-    /**
-     * 安全投递未支付延迟消息。
-     * 该消息属于事务后副作用，发送失败只记录日志，避免订单主事务提交后因为 MQ 短暂异常导致消费端误判落单失败。
-     *
-     * @param orderSn 订单号
-     */
-    private void sendUnpaidDelayMessageSafely(String orderSn) {
-        try {
-            sendUnpaidDelayMessage(orderSn);
-        } catch (RuntimeException e) {
-            log.error("发送未支付关单延迟消息失败, orderSn={}", orderSn, e);
-        }
-    }
-
-    /**
-     * 投递未支付超时关单延迟消息。
-     *
-     * @param orderSn 订单号
-     */
-    private void sendUnpaidDelayMessage(String orderSn) {
+    public void saveUnpaidDelayMessage(String orderSn) {
         Map<String, Object> messageBody = new HashMap<>();
         messageBody.put("orderSn", orderSn);
         messageBody.put("notifyUrl", WaynConfig.getMobileUrl() + "/callback/order/unpaid");
-        delayRabbitTemplate.convertAndSend(MQConstants.ORDER_DELAY_EXCHANGE, MQConstants.ORDER_DELAY_ROUTING,
-                buildMessage(messageBody), messagePostProcessor -> {
-                    // 延迟关单消息只负责触发，实际取消仍在消费端通过状态条件更新防重。
-                    long delayTime = WaynConfig.getUnpaidOrderCancelDelayTime() * cn.hutool.core.date.DateUnit.MINUTE.getMillis();
-                    messagePostProcessor.getMessageProperties().setDelay(Math.toIntExact(delayTime));
-                    return messagePostProcessor;
-                });
+        long delayTime = WaynConfig.getUnpaidOrderCancelDelayTime() * cn.hutool.core.date.DateUnit.MINUTE.getMillis();
+        localMessageService.saveMessage(LocalMessageCreateCommand.builder()
+                .messageKey(ORDER_UNPAID_DELAY_KEY_PREFIX + orderSn)
+                .topic(LocalMessageTopics.ORDER_UNPAID_DELAY)
+                .bizType(LocalMessageTopics.BIZ_TYPE_ORDER)
+                .bizId(orderSn)
+                .exchangeName(MQConstants.ORDER_DELAY_EXCHANGE)
+                .routingKey(MQConstants.ORDER_DELAY_ROUTING)
+                .payload(buildPayload(messageBody))
+                .delayMillis(Math.toIntExact(delayTime))
+                .build());
     }
 
     /**
-     * 组装 MQ 消息体。
+     * 组装 JSON 消息体。
      *
      * @param messageBody 消息内容
-     * @return MQ 消息
+     * @return JSON 消息体
      */
-    private Message buildMessage(Map<String, Object> messageBody) {
-        return MessageBuilder.withBody(JSON.toJSONString(messageBody).getBytes(StandardCharsets.UTF_8))
-                .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
-                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
-                .build();
+    private String buildPayload(Map<String, Object> messageBody) {
+        return JSON.toJSONString(messageBody);
     }
 }

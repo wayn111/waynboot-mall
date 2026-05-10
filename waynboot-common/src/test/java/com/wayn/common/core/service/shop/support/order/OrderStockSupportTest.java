@@ -2,10 +2,13 @@ package com.wayn.common.core.service.shop.support.order;
 
 import com.wayn.common.core.entity.shop.Cart;
 import com.wayn.common.core.entity.shop.GoodsProduct;
+import com.wayn.common.core.entity.shop.OrderGoods;
+import com.wayn.common.core.service.shop.InventoryFlowService;
 import com.wayn.common.core.service.shop.IGoodsProductService;
 import com.wayn.common.core.service.shop.IGoodsService;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
 import com.wayn.data.redis.manager.RedisCache;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,27 +32,83 @@ class OrderStockSupportTest {
     private IOrderGoodsService orderGoodsService;
     @Mock
     private RedisCache redisCache;
+    @Mock
+    private InventoryFlowService inventoryFlowService;
 
     @Test
-    void reduceStockAggregatesSameProductBeforeDeducting() {
+    void freezeStockAggregatesSameProductBeforeDeducting() {
         OrderStockSupport support = new OrderStockSupport(goodsProductService, goodsService, orderGoodsService,
-                redisCache);
+                inventoryFlowService, redisCache);
         Cart firstCart = buildCart(10L, 100L, 2);
         Cart secondCart = buildCart(10L, 100L, 3);
         GoodsProduct product = new GoodsProduct();
         product.setId(100L);
         product.setNumber(10);
+        product.setLockedStock(0);
         product.setSpecifications(new String[]{"红色", "L"});
 
         when(goodsProductService.selectProductByIds(List.of(100L))).thenReturn(List.of(product));
-        when(goodsProductService.reduceStock(100L, 5)).thenReturn(true);
+        when(goodsProductService.freezeStock(100L, 5)).thenReturn(true);
+        when(inventoryFlowService.saveFlow(org.mockito.ArgumentMatchers.any())).thenReturn(true);
 
-        support.reduceStock(List.of(firstCart, secondCart));
+        support.freezeStock("order-1001", List.of(firstCart, secondCart));
 
         verify(goodsProductService).selectProductByIds(List.of(100L));
-        verify(goodsProductService).reduceStock(100L, 5);
-        verify(goodsProductService, never()).reduceStock(100L, 2);
-        verify(goodsProductService, never()).reduceStock(100L, 3);
+        verify(goodsProductService).freezeStock(100L, 5);
+        verify(goodsProductService, never()).freezeStock(100L, 2);
+        verify(goodsProductService, never()).freezeStock(100L, 3);
+        verify(inventoryFlowService).saveFlow(org.mockito.ArgumentMatchers.any());
+        verify(redisCache).deleteObject(GOODS_DETAIL_CACHE.getKey(10L));
+    }
+
+    @Test
+    void confirmFrozenStockByOrderIdUsesFlowIdempotencyBeforeConfirming() {
+        OrderStockSupport support = new OrderStockSupport(goodsProductService, goodsService, orderGoodsService,
+                inventoryFlowService, redisCache);
+        OrderGoods orderGoods = buildOrderGoods(1L, 10L, 100L, 3);
+
+        when(orderGoodsService.list(org.mockito.ArgumentMatchers.<Wrapper<OrderGoods>>any()))
+                .thenReturn(List.of(orderGoods));
+        when(inventoryFlowService.saveFlow(org.mockito.ArgumentMatchers.any())).thenReturn(true);
+        when(goodsProductService.confirmFrozenStock(100L, 3)).thenReturn(true);
+
+        support.confirmFrozenStockByOrderId(1L);
+
+        verify(inventoryFlowService).saveFlow(org.mockito.ArgumentMatchers.any());
+        verify(goodsProductService).confirmFrozenStock(100L, 3);
+        verify(redisCache).deleteObject(GOODS_DETAIL_CACHE.getKey(10L));
+    }
+
+    @Test
+    void confirmFrozenStockByOrderIdSkipsConfirmWhenFlowAlreadyExists() {
+        OrderStockSupport support = new OrderStockSupport(goodsProductService, goodsService, orderGoodsService,
+                inventoryFlowService, redisCache);
+        OrderGoods orderGoods = buildOrderGoods(1L, 10L, 100L, 3);
+
+        when(orderGoodsService.list(org.mockito.ArgumentMatchers.<Wrapper<OrderGoods>>any()))
+                .thenReturn(List.of(orderGoods));
+        when(inventoryFlowService.saveFlow(org.mockito.ArgumentMatchers.any())).thenReturn(false);
+
+        support.confirmFrozenStockByOrderId(1L);
+
+        verify(goodsProductService, never()).confirmFrozenStock(100L, 3);
+    }
+
+    @Test
+    void releaseFrozenStockByOrderIdReturnsLockedStockToAvailable() {
+        OrderStockSupport support = new OrderStockSupport(goodsProductService, goodsService, orderGoodsService,
+                inventoryFlowService, redisCache);
+        OrderGoods orderGoods = buildOrderGoods(1L, 10L, 100L, 3);
+
+        when(orderGoodsService.list(org.mockito.ArgumentMatchers.<Wrapper<OrderGoods>>any()))
+                .thenReturn(List.of(orderGoods));
+        when(inventoryFlowService.saveFlow(org.mockito.ArgumentMatchers.any())).thenReturn(true);
+        when(goodsProductService.releaseFrozenStock(100L, 3)).thenReturn(true);
+
+        support.releaseFrozenStockByOrderId(1L);
+
+        verify(inventoryFlowService).saveFlow(org.mockito.ArgumentMatchers.any());
+        verify(goodsProductService).releaseFrozenStock(100L, 3);
         verify(redisCache).deleteObject(GOODS_DETAIL_CACHE.getKey(10L));
     }
 
@@ -59,5 +118,14 @@ class OrderStockSupportTest {
         cart.setProductId(productId);
         cart.setNumber(number);
         return cart;
+    }
+
+    private OrderGoods buildOrderGoods(Long orderId, Long goodsId, Long productId, Integer number) {
+        OrderGoods orderGoods = new OrderGoods();
+        orderGoods.setOrderId(orderId);
+        orderGoods.setGoodsId(goodsId);
+        orderGoods.setProductId(productId);
+        orderGoods.setNumber(number);
+        return orderGoods;
     }
 }

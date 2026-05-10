@@ -18,7 +18,7 @@ import java.util.Date;
 
 /**
  * 订单取消补偿支撑服务。
- * 负责在同一个事务内完成订单状态关闭、库存回补和优惠券回退，并通过分布式锁避免重复取消。
+ * 负责在同一个事务内完成订单状态关闭、冻结库存释放和优惠券回退，并通过分布式锁避免重复取消。
  */
 @Slf4j
 @Service
@@ -72,8 +72,8 @@ public class OrderCancellationSupport {
             return;
         }
 
-        // 只有状态更新成功后才执行补偿动作，确保回库和回券不会被重复触发。
-        orderStockSupport.restoreStockByOrderId(order.getId());
+        // 只有状态更新成功后才释放冻结库存，避免支付成功和超时关闭并发时重复回补可售库存。
+        orderStockSupport.releaseFrozenStockByOrderId(order.getId());
         shopMemberCouponService.lambdaUpdate()
                 .set(ShopMemberCoupon::getUseStatus, 0)
                 .set(ShopMemberCoupon::getUpdateTime, new Date())

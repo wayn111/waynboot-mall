@@ -16,10 +16,12 @@ import com.wayn.common.wapper.epay.util.EpaySignUtil;
 import com.wayn.util.enums.OrderStatusEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,7 +35,6 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
 public class PaymentCallbackSupport {
 
     private final EpayConfig epayConfig;
@@ -42,6 +43,68 @@ public class PaymentCallbackSupport {
     private final OrderMapper orderMapper;
     private final PaymentPostActionSupport paymentPostActionSupport;
     private final OrderStateTransitionSupport orderStateTransitionSupport;
+    private final TransactionTemplate transactionTemplate;
+
+    /**
+     * Spring 运行时构造器。
+     *
+     * @param epayConfig 易支付配置
+     * @param alipayConfig 支付宝配置
+     * @param wxPayService 微信支付服务
+     * @param orderMapper 订单 Mapper
+     * @param paymentPostActionSupport 支付后置动作支撑服务
+     * @param orderStateTransitionSupport 订单状态机
+     * @param platformTransactionManager 事务管理器
+     */
+    @Autowired
+    public PaymentCallbackSupport(EpayConfig epayConfig, AlipayConfig alipayConfig, WxPayService wxPayService,
+                                  OrderMapper orderMapper, PaymentPostActionSupport paymentPostActionSupport,
+                                  OrderStateTransitionSupport orderStateTransitionSupport,
+                                  PlatformTransactionManager platformTransactionManager) {
+        this(epayConfig, alipayConfig, wxPayService, orderMapper, paymentPostActionSupport,
+                orderStateTransitionSupport, new TransactionTemplate(platformTransactionManager));
+    }
+
+    /**
+     * 单元测试构造器。
+     *
+     * @param epayConfig 易支付配置
+     * @param alipayConfig 支付宝配置
+     * @param wxPayService 微信支付服务
+     * @param orderMapper 订单 Mapper
+     * @param paymentPostActionSupport 支付后置动作支撑服务
+     * @param orderStateTransitionSupport 订单状态机
+     */
+    public PaymentCallbackSupport(EpayConfig epayConfig, AlipayConfig alipayConfig, WxPayService wxPayService,
+                                  OrderMapper orderMapper, PaymentPostActionSupport paymentPostActionSupport,
+                                  OrderStateTransitionSupport orderStateTransitionSupport) {
+        this(epayConfig, alipayConfig, wxPayService, orderMapper, paymentPostActionSupport,
+                orderStateTransitionSupport, (TransactionTemplate) null);
+    }
+
+    /**
+     * 内部统一构造器。
+     *
+     * @param epayConfig 易支付配置
+     * @param alipayConfig 支付宝配置
+     * @param wxPayService 微信支付服务
+     * @param orderMapper 订单 Mapper
+     * @param paymentPostActionSupport 支付后置动作支撑服务
+     * @param orderStateTransitionSupport 订单状态机
+     * @param transactionTemplate 事务模板，单元测试可为空
+     */
+    private PaymentCallbackSupport(EpayConfig epayConfig, AlipayConfig alipayConfig, WxPayService wxPayService,
+                                   OrderMapper orderMapper, PaymentPostActionSupport paymentPostActionSupport,
+                                   OrderStateTransitionSupport orderStateTransitionSupport,
+                                   TransactionTemplate transactionTemplate) {
+        this.epayConfig = epayConfig;
+        this.alipayConfig = alipayConfig;
+        this.wxPayService = wxPayService;
+        this.orderMapper = orderMapper;
+        this.paymentPostActionSupport = paymentPostActionSupport;
+        this.orderStateTransitionSupport = orderStateTransitionSupport;
+        this.transactionTemplate = transactionTemplate;
+    }
 
     /**
      * 处理微信支付回调。
@@ -171,6 +234,34 @@ public class PaymentCallbackSupport {
             return PaymentProcessResult.fail("订单当前状态不可支付");
         }
 
+        return executePaidTransaction(order, payId, channel);
+    }
+
+    /**
+     * 执行支付成功事务。
+     * 订单状态更新和支付后置本地消息写入必须同事务提交，避免订单已支付但后置副作用消息丢失。
+     *
+     * @param order 订单
+     * @param payId 第三方支付流水号
+     * @param channel 支付渠道
+     * @return 支付处理结果
+     */
+    private PaymentProcessResult executePaidTransaction(Order order, String payId, String channel) {
+        if (transactionTemplate == null) {
+            return doExecutePaidTransaction(order, payId, channel);
+        }
+        return transactionTemplate.execute(status -> doExecutePaidTransaction(order, payId, channel));
+    }
+
+    /**
+     * 执行支付成功状态更新和后置消息写入。
+     *
+     * @param order 订单
+     * @param payId 第三方支付流水号
+     * @param channel 支付渠道
+     * @return 支付处理结果
+     */
+    private PaymentProcessResult doExecutePaidTransaction(Order order, String payId, String channel) {
         // 通过“待支付 -> 已支付”的条件更新实现幂等，避免多个回调并发重复执行成功逻辑。
         int updated = orderMapper.update(null, Wrappers.lambdaUpdate(Order.class)
                 .set(Order::getPayId, payId)
@@ -183,10 +274,10 @@ public class PaymentCallbackSupport {
             // 条件更新失败后再次查询最新状态，用于区分“被其他线程成功处理”与“真实更新失败”。
             Order latestOrder = orderMapper.selectById(order.getId());
             if (latestOrder != null && OrderUtil.hasPayed(latestOrder)) {
-                log.info("{}：订单已经被其他请求处理，orderSn：{}", channel, orderSn);
+                log.info("{}：订单已经被其他请求处理，orderSn：{}", channel, order.getOrderSn());
                 return PaymentProcessResult.success("已处理");
             }
-            log.error("{}：更新订单状态失败，orderSn：{}", channel, orderSn);
+            log.error("{}：更新订单状态失败，orderSn：{}", channel, order.getOrderSn());
             return PaymentProcessResult.fail("更新订单状态失败");
         }
 

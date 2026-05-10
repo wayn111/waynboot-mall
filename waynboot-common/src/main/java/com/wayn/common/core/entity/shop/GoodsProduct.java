@@ -53,10 +53,17 @@ public class GoodsProduct extends ShopBaseEntity implements Serializable {
     private Boolean defaultSelected;
 
     /**
-     * 商品货品数量
+     * 商品货品可售库存数量
      */
     @Min(value = 0, message = "商品货品数量不能小于0")
     private Integer number;
+
+    /**
+     * 商品货品冻结库存数量。
+     * 下单成功但未支付时占用该字段，支付确认后扣减冻结库存，取消订单时释放回可售库存。
+     */
+    @Min(value = 0, message = "冻结库存数量不能小于0")
+    private Integer lockedStock;
 
     /**
      * 商品货品图片

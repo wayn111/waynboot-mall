@@ -57,7 +57,7 @@ class OrderCancellationSupportTest {
 
         support.cancel("order-cancel-1", OrderStatusEnum.STATUS_CANCEL);
 
-        verify(orderStockSupport, never()).restoreStockByOrderId(anyLong());
+        verify(orderStockSupport, never()).releaseFrozenStockByOrderId(anyLong());
         verify(shopMemberCouponService, never()).lambdaUpdate();
     }
 
@@ -80,7 +80,7 @@ class OrderCancellationSupportTest {
         support.cancel("order-cancel-2", OrderStatusEnum.STATUS_AUTO_CANCEL);
 
         verify(orderMapper, never()).update(any(), any());
-        verify(orderStockSupport, never()).restoreStockByOrderId(anyLong());
+        verify(orderStockSupport, never()).releaseFrozenStockByOrderId(anyLong());
         verify(shopMemberCouponService, never()).lambdaUpdate();
     }
 }

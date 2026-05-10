@@ -42,7 +42,7 @@ public class OrderSubmitSingleDelayMessageStep implements OrderSubmitStep {
      */
     @Override
     public void execute(OrderSubmitChainContext context) {
-        // sendUnpaidDelayMessageAfterCommit 内部会挂载事务同步，保证订单回滚时不会产生关单消息。
-        orderSubmitMessageSupport.sendUnpaidDelayMessageAfterCommit(context.getOrder().getOrderSn());
+        // 本地消息写入与订单落库处于同一事务，订单回滚时延迟关单消息也会一起回滚。
+        orderSubmitMessageSupport.saveUnpaidDelayMessage(context.getOrder().getOrderSn());
     }
 }

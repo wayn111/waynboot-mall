@@ -10,6 +10,7 @@
                 typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
         <result column="price" property="price"/>
         <result column="number" property="number"/>
+        <result column="locked_stock" property="lockedStock"/>
         <result column="default_selected" property="defaultSelected"/>
         <result column="url" property="url"/>
         <result column="create_time" property="createTime"/>
@@ -20,7 +21,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         select id,
-        goods_id, specifications, price, number, default_selected, url, create_time, update_time, del_flag
+        goods_id, specifications, price, number, locked_stock, default_selected, url, create_time, update_time, del_flag
         from shop_goods_product
     </sql>
 
@@ -34,6 +35,29 @@
         update shop_goods_product
         set number = number - #{number}, update_time = now()
         where id = #{productId} and number >= #{number}
+    </update>
+
+    <update id="freezeStock">
+        update shop_goods_product
+        set number = number - #{number},
+            locked_stock = locked_stock + #{number},
+            update_time = now()
+        where id = #{productId} and number >= #{number}
+    </update>
+
+    <update id="releaseFrozenStock">
+        update shop_goods_product
+        set number = number + #{number},
+            locked_stock = locked_stock - #{number},
+            update_time = now()
+        where id = #{productId} and locked_stock >= #{number}
+    </update>
+
+    <update id="confirmFrozenStock">
+        update shop_goods_product
+        set locked_stock = locked_stock - #{number},
+            update_time = now()
+        where id = #{productId} and locked_stock >= #{number}
     </update>
 
 </mapper>

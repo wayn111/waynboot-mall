@@ -165,4 +165,33 @@ class PaymentCallbackSupportTest {
         verify(orderMapper).update(isNull(), any());
         verify(paymentPostActionSupport, never()).handleOrderPaid(any());
     }
+
+    @Test
+    void wxPayNotifyReturnsSuccessAndRecordsPostActionWhenOrderUpdated() throws Exception {
+        PaymentCallbackSupport support = new PaymentCallbackSupport(new EpayConfig(), new AlipayConfig(),
+                wxPayService, orderMapper, paymentPostActionSupport, new OrderStateTransitionSupport());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        request.setContent("<xml/>".getBytes(StandardCharsets.UTF_8));
+
+        WxPayOrderNotifyResult result = mock(WxPayOrderNotifyResult.class);
+        when(wxPayService.parseOrderNotifyResult(anyString())).thenReturn(result);
+        when(result.getOutTradeNo()).thenReturn("order-5");
+        when(result.getTransactionId()).thenReturn("pay-5");
+        when(result.getTotalFee()).thenReturn(100);
+
+        Order order = new Order();
+        order.setId(5L);
+        order.setOrderSn("order-5");
+        order.setOrderStatus(OrderStatusEnum.STATUS_CREATE.getStatus());
+        order.setActualPrice(new BigDecimal("1.00"));
+        when(orderMapper.selectOne(any())).thenReturn(order);
+        when(orderMapper.update(isNull(), any())).thenReturn(1);
+
+        String response = support.wxPayNotify(request, new MockHttpServletResponse());
+
+        assertTrue(response.contains("SUCCESS"));
+        verify(orderMapper).update(isNull(), any());
+        verify(paymentPostActionSupport).handleOrderPaid(5L);
+    }
 }
