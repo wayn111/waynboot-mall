@@ -28,7 +28,7 @@
     <update id="addStock">
         update shop_goods_product
         set number = number + #{number}, update_time = now()
-        where id = #{productId}
+        where id = #{productId} and number >= 0
     </update>
 
     <update id="reduceStock">

@@ -5,6 +5,7 @@ import com.wayn.common.core.service.shop.support.common.MybatisPlusTableInfoTest
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.mapper.shop.OrderMapper;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
+import com.wayn.common.core.service.shop.OrderStatusLogService;
 import com.wayn.util.enums.OrderStatusEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
@@ -34,11 +35,14 @@ class OrderLifecycleSupportTest {
     private IOrderGoodsService orderGoodsService;
     @Mock
     private OrderCancellationSupport orderCancellationSupport;
+    @Mock
+    private OrderStatusLogService orderStatusLogService;
 
     @Test
     void refundThrowsWhenConditionalUpdateAffectsNoRows() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport(),
+                orderStatusLogService);
         Order order = buildOrder(1L, "refund-order", OrderStatusEnum.STATUS_PAY);
         when(orderMapper.selectById(1L)).thenReturn(order);
         when(orderMapper.update(any(), any())).thenReturn(0);
@@ -51,7 +55,8 @@ class OrderLifecycleSupportTest {
     @Test
     void confirmThrowsWhenConditionalUpdateAffectsNoRows() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport(),
+                orderStatusLogService);
         Order order = buildOrder(2L, "confirm-order", OrderStatusEnum.STATUS_SHIP);
         when(orderMapper.selectById(2L)).thenReturn(order);
         when(orderMapper.update(any(), any())).thenReturn(0);
@@ -64,7 +69,8 @@ class OrderLifecycleSupportTest {
     @Test
     void deleteThrowsWhenConditionalDeleteAffectsNoRows() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport(),
+                orderStatusLogService);
         Order order = buildOrder(3L, "delete-order", OrderStatusEnum.STATUS_CONFIRM);
         when(orderMapper.selectById(3L)).thenReturn(order);
         when(orderMapper.delete(any())).thenReturn(0);
@@ -77,13 +83,42 @@ class OrderLifecycleSupportTest {
     @Test
     void cancelDelegatesToCancellationSupport() {
         OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
-                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport());
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport(),
+                orderStatusLogService);
         Order order = buildOrder(4L, "cancel-order", OrderStatusEnum.STATUS_CREATE);
         when(orderMapper.selectById(4L)).thenReturn(order);
 
         support.cancel(4L);
 
         verify(orderCancellationSupport).cancel("cancel-order", OrderStatusEnum.STATUS_CANCEL);
+    }
+
+    @Test
+    void refundRecordsStatusLogWhenConditionalUpdateSucceeds() {
+        OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport(),
+                orderStatusLogService);
+        Order order = buildOrder(5L, "refund-success-order", OrderStatusEnum.STATUS_PAY);
+        when(orderMapper.selectById(5L)).thenReturn(order);
+        when(orderMapper.update(any(), any())).thenReturn(1);
+
+        support.refund(5L);
+
+        verify(orderStatusLogService).recordSuccess(any());
+    }
+
+    @Test
+    void confirmRecordsStatusLogWhenConditionalUpdateSucceeds() {
+        OrderLifecycleSupport support = new OrderLifecycleSupport(orderMapper, orderGoodsService,
+                new OrderValidationSupport(), orderCancellationSupport, new OrderStateTransitionSupport(),
+                orderStatusLogService);
+        Order order = buildOrder(6L, "confirm-success-order", OrderStatusEnum.STATUS_SHIP);
+        when(orderMapper.selectById(6L)).thenReturn(order);
+        when(orderMapper.update(any(), any())).thenReturn(1);
+
+        support.confirm(6L);
+
+        verify(orderStatusLogService).recordSuccess(any());
     }
 
     private Order buildOrder(Long id, String orderSn, OrderStatusEnum statusEnum) {

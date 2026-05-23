@@ -91,6 +91,7 @@ public class OrderSubmitSupport {
         } catch (RuntimeException e) {
             // MQ 投递失败时释放短时幂等占位，允许用户重新提交，避免订单号占住但永远不落库。
             redisCache.deleteObject(dedupKey);
+            redisCache.setCacheObject(ORDER_RESULT_KEY.getKey(orderSn), "下单失败，请重试", ORDER_RESULT_KEY.getExpireSecond());
             throw e;
         }
 

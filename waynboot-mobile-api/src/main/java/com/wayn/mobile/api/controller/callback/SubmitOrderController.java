@@ -34,12 +34,11 @@ public class SubmitOrderController {
     @PostMapping("submit")
     public R submit(String order) {
         OrderDTO orderDTO = JSON.parseObject(order, OrderDTO.class);
-        log.info("回调下单开始, orderSn={}, userId={}", orderDTO.getOrderSn(), orderDTO.getUserId());
         try {
             iMobileOrderService.submit(orderDTO);
             redisCache.setCacheObject(RedisKeyEnum.ORDER_RESULT_KEY.getKey(orderDTO.getOrderSn()),
                     "success", RedisKeyEnum.ORDER_RESULT_KEY.getExpireSecond());
-            log.info("回调下单完成, orderSn={}, result=success", orderDTO.getOrderSn());
+            log.info("回调下单完成, orderSn={}, userId={}, result=success", orderDTO.getOrderSn(), orderDTO.getUserId());
             return R.success();
         } catch (Exception e) {
             String errorMsg = "error";
@@ -48,7 +47,7 @@ public class SubmitOrderController {
             }
             redisCache.setCacheObject(RedisKeyEnum.ORDER_RESULT_KEY.getKey(orderDTO.getOrderSn()),
                     errorMsg, RedisKeyEnum.ORDER_RESULT_KEY.getExpireSecond());
-            log.error("回调下单失败, orderSn={}, message={}", orderDTO.getOrderSn(), errorMsg, e);
+            log.error("回调下单失败, orderSn={}, userId={}, message={}", orderDTO.getOrderSn(), orderDTO.getUserId(), errorMsg, e);
             return R.error();
         }
     }

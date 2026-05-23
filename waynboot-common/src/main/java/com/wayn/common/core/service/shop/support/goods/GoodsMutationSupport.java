@@ -311,6 +311,14 @@ public class GoodsMutationSupport {
         if (stockDelta == 0) {
             return;
         }
+        if (stockDelta < 0) {
+            int lockedStock = existing.getLockedStock() == null ? 0 : existing.getLockedStock();
+            int afterReduce = existing.getNumber() + stockDelta; // stockDelta < 0
+            if (afterReduce < lockedStock) {
+                throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR,
+                        "库存不足，当前冻结库存 " + lockedStock + "，无法减少至 " + afterReduce);
+            }
+        }
         boolean adjusted = stockDelta > 0
                 ? goodsProductService.addStock(incoming.getId(), stockDelta)
                 : goodsProductService.reduceStock(incoming.getId(), Math.abs(stockDelta));

@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `shop_order_status_log` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `order_id` bigint DEFAULT NULL COMMENT '订单ID',
+  `order_sn` varchar(64) NOT NULL COMMENT '订单号',
+  `source_status` smallint DEFAULT NULL COMMENT '来源状态',
+  `target_status` smallint NOT NULL COMMENT '目标状态',
+  `change_type` varchar(32) NOT NULL COMMENT '状态变更类型',
+  `operator_type` varchar(32) NOT NULL COMMENT '操作者类型',
+  `operator_id` varchar(64) DEFAULT NULL COMMENT '操作者ID或渠道标识',
+  `success` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否成功',
+  `fail_reason` varchar(512) DEFAULT NULL COMMENT '失败原因',
+  `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_order_status_log_order_sn` (`order_sn`),
+  KEY `idx_order_status_log_order_id` (`order_id`),
+  KEY `idx_order_status_log_type_time` (`change_type`, `create_time`),
+  KEY `idx_order_status_log_success_time` (`success`, `create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单状态流转日志表';

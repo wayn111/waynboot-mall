@@ -2,6 +2,7 @@ package com.wayn.mobile.api.controller.trade;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.common.core.entity.shop.Cart;
@@ -117,7 +118,9 @@ public class CartController extends BaseController {
     public R<Boolean> delete(@PathVariable Long cartId) {
         Long userId = MobileSecurityUtils.getUserId();
         log.info("删除购物车开始, userId={}, cartId={}", userId, cartId);
-        Boolean removed = iCartService.removeById(cartId);
+        Boolean removed = iCartService.remove(Wrappers.lambdaQuery(Cart.class)
+                .eq(Cart::getId, cartId)
+                .eq(Cart::getUserId, userId));
         log.info("删除购物车完成, userId={}, cartId={}, result={}", userId, cartId, removed);
         return R.result(removed);
     }

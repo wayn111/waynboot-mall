@@ -58,36 +58,67 @@ public class OrderQuerySupport {
         query.setUserId(userId);
         IPage<Order> orderPage = orderMapper.selectOrderListPage(page, query, orderStatusList);
         List<Order> orders = orderPage.getRecords();
-        List<Long> orderIds = orders.stream().map(Order::getId).toList();
-        Map<Long, List<OrderGoods>> orderGoodsMap;
-        if (CollectionUtils.isEmpty(orderIds)) {
-            orderGoodsMap = Collections.emptyMap();
-        } else {
-            // 先批量拉取订单商品，再按订单分组，避免列表查询产生 N+1。
-            orderGoodsMap = orderGoodsService.list(Wrappers.lambdaQuery(OrderGoods.class)
-                            .in(OrderGoods::getOrderId, orderIds))
-                    .stream()
-                    .collect(Collectors.groupingBy(OrderGoods::getOrderId));
-        }
-
-        List<OrderListDataResVO> dataList = new ArrayList<>(orders.size());
-        for (Order order : orders) {
-            OrderListDataResVO data = new OrderListDataResVO();
-            data.setId(order.getId());
-            data.setOrderSn(order.getOrderSn());
-            data.setActualPrice(order.getActualPrice());
-            data.setHandleOption(OrderUtil.build(order));
-            data.setOrderStatusText(OrderUtil.orderStatusText(order));
-            List<OrderGoods> orderGoodsList = orderGoodsMap.getOrDefault(order.getId(), Collections.emptyList());
-            data.setGoodsList(BeanUtil.copyToList(orderGoodsList, OrderGoodsVO.class));
-            dataList.add(data);
-        }
+        Map<Long, List<OrderGoods>> orderGoodsMap = listOrderGoodsMap(orders);
+        List<OrderListDataResVO> dataList = buildOrderListData(orders, orderGoodsMap);
 
         OrderListResVO resVO = new OrderListResVO();
         resVO.setData(dataList);
         resVO.setPage(orderPage.getCurrent());
         resVO.setPages(orderPage.getPages());
         return resVO;
+    }
+
+    /**
+     * 批量查询订单商品并按订单 ID 分组。
+     * 列表页先拿订单主表分页，再一次性拉取商品快照，避免每个订单单独查询造成 N+1。
+     *
+     * @param orders 当前页订单列表
+     * @return orderId 到订单商品列表的映射
+     */
+    private Map<Long, List<OrderGoods>> listOrderGoodsMap(List<Order> orders) {
+        List<Long> orderIds = orders.stream().map(Order::getId).toList();
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return Collections.emptyMap();
+        }
+        return orderGoodsService.list(Wrappers.lambdaQuery(OrderGoods.class)
+                        .in(OrderGoods::getOrderId, orderIds))
+                .stream()
+                .collect(Collectors.groupingBy(OrderGoods::getOrderId));
+    }
+
+    /**
+     * 构建订单列表返回数据。
+     * 该方法只做订单主表和订单商品快照的 VO 组装，不触发数据库访问。
+     *
+     * @param orders 当前页订单列表
+     * @param orderGoodsMap orderId 到订单商品列表的映射
+     * @return 订单列表 VO
+     */
+    private List<OrderListDataResVO> buildOrderListData(List<Order> orders, Map<Long, List<OrderGoods>> orderGoodsMap) {
+        List<OrderListDataResVO> dataList = new ArrayList<>(orders.size());
+        for (Order order : orders) {
+            dataList.add(buildOrderListDataItem(order,
+                    orderGoodsMap.getOrDefault(order.getId(), Collections.emptyList())));
+        }
+        return dataList;
+    }
+
+    /**
+     * 构建单个订单列表项。
+     *
+     * @param order 订单主表
+     * @param orderGoodsList 订单商品快照
+     * @return 订单列表项
+     */
+    private OrderListDataResVO buildOrderListDataItem(Order order, List<OrderGoods> orderGoodsList) {
+        OrderListDataResVO data = new OrderListDataResVO();
+        data.setId(order.getId());
+        data.setOrderSn(order.getOrderSn());
+        data.setActualPrice(order.getActualPrice());
+        data.setHandleOption(OrderUtil.build(order));
+        data.setOrderStatusText(OrderUtil.orderStatusText(order));
+        data.setGoodsList(BeanUtil.copyToList(orderGoodsList, OrderGoodsVO.class));
+        return data;
     }
 
     /**

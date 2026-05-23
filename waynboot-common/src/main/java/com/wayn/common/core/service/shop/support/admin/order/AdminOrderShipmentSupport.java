@@ -2,7 +2,10 @@ package com.wayn.common.core.service.shop.support.admin.order;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wayn.common.core.entity.shop.Order;
+import com.wayn.common.core.enums.OrderStatusChangeTypeEnum;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
+import com.wayn.common.core.service.shop.OrderStatusChangeCommand;
+import com.wayn.common.core.service.shop.OrderStatusLogService;
 import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.model.request.ShipRequestVO;
 import com.wayn.util.enums.OrderStatusEnum;
@@ -25,6 +28,7 @@ public class AdminOrderShipmentSupport {
 
     private final AdminOrderMapper adminOrderMapper;
     private final OrderStateTransitionSupport orderStateTransitionSupport;
+    private final OrderStatusLogService orderStatusLogService;
 
     /**
      * 执行订单发货。
@@ -48,11 +52,33 @@ public class AdminOrderShipmentSupport {
         update.setShipChannel(shipChannel);
         update.setShipTime(LocalDateTime.now());
         update.setUpdateTime(new Date());
-        int updated = adminOrderMapper.update(update, Wrappers.lambdaUpdate(Order.class)
-                .eq(Order::getId, orderId)
-                .eq(Order::getOrderStatus, OrderStatusEnum.STATUS_PAY.getStatus()));
+        var updateWrapper = Wrappers.lambdaUpdate(Order.class)
+                .eq(Order::getId, orderId);
+        orderStateTransitionSupport.applyExpectedStatus(updateWrapper, OrderStatusEnum.STATUS_PAY);
+        int updated = adminOrderMapper.update(update, updateWrapper);
         if (updated == 0) {
+            orderStatusLogService.recordFailure(buildShipStatusLogCommand(order), "订单状态条件更新失败");
             throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_SHIP_ERROR);
         }
+        orderStatusLogService.recordSuccess(buildShipStatusLogCommand(order));
+    }
+
+    /**
+     * 构建发货状态日志命令。
+     *
+     * @param order 订单
+     * @return 状态日志命令
+     */
+    private OrderStatusChangeCommand buildShipStatusLogCommand(Order order) {
+        return OrderStatusChangeCommand.builder()
+                .orderId(order.getId())
+                .orderSn(order.getOrderSn())
+                .sourceStatus(orderStateTransitionSupport.resolve(order.getOrderStatus()))
+                .targetStatus(OrderStatusEnum.STATUS_SHIP)
+                .changeType(OrderStatusChangeTypeEnum.ADMIN_SHIP)
+                .operatorType("ADMIN")
+                .operatorId("admin")
+                .remark("管理端订单发货")
+                .build();
     }
 }

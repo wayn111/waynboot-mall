@@ -71,10 +71,9 @@ public class GoodsDetailServiceImpl implements IGoodsDetailService {
             return responseVO;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.error(e.getMessage(), e);
+            throw new RuntimeException("商品详情查询被中断", e);
         } catch (ExecutionException e) {
-            log.error(e.getMessage(), e);
+            throw new RuntimeException("商品详情查询失败", e);
         }
-        return null;
     }
 }

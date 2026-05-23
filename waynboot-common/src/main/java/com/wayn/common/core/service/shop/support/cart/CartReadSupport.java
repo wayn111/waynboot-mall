@@ -110,7 +110,6 @@ public class CartReadSupport {
      * @return 结算汇总
      */
     public CheckedGoodsResVO getCheckedGoods(Long userId) {
-        Date nowTime = new Date();
         List<Cart> checkedCartList = cartMapper.selectList(Wrappers.lambdaQuery(Cart.class)
                 .eq(Cart::getUserId, userId)
                 .eq(Cart::getChecked, true));
@@ -122,43 +121,112 @@ public class CartReadSupport {
         Map<Long, GoodsProduct> productMap = goodsProductService.selectProductByIds(productIdList).stream()
                 .collect(Collectors.toMap(GoodsProduct::getId, product -> product));
 
+        CheckedGoodsAggregation aggregation = aggregateCheckedGoods(checkedCartList, productMap);
+
+        syncUncheckedCartItems(aggregation.uncheckedCartIds());
+        if (aggregation.checkedItems().isEmpty()) {
+            return buildCheckedGoodsResVO(List.of(), List.of(), BigDecimal.ZERO, BigDecimal.ZERO);
+        }
+        BigDecimal freightPrice = calculateFreightPrice(aggregation.goodsAmount());
+        BigDecimal orderTotalAmount = aggregation.goodsAmount().add(freightPrice).max(BigDecimal.ZERO);
+        List<MemberCouponResVO> couponList = selectAvailableCoupons(userId, orderTotalAmount);
+        return buildCheckedGoodsResVO(aggregation.checkedItems(), couponList, freightPrice, orderTotalAmount);
+    }
+
+    /**
+     * 聚合有效勾选商品并收集需要取消勾选的购物车项。
+     * 这里不直接写库，避免“过滤有效商品”和“同步购物车状态”两个副作用混在同一段循环中。
+     *
+     * @param checkedCartList 已勾选购物车项
+     * @param productMap 货品映射
+     * @return 有效商品、失效购物车 ID 和商品金额汇总
+     */
+    private CheckedGoodsAggregation aggregateCheckedGoods(List<Cart> checkedCartList,
+                                                          Map<Long, GoodsProduct> productMap) {
         List<Long> uncheckedCartIds = new ArrayList<>();
         List<CartCheckedItemResVO> checkedItems = new ArrayList<>();
         BigDecimal goodsAmount = BigDecimal.ZERO;
         for (Cart cart : checkedCartList) {
             GoodsProduct product = productMap.get(cart.getProductId());
-            if (product == null || product.getNumber() < cart.getNumber()) {
+            if (!isValidCheckedCart(cart, product)) {
                 uncheckedCartIds.add(cart.getId());
                 continue;
             }
-            CartCheckedItemResVO itemResVO = new CartCheckedItemResVO();
-            BeanUtil.copyProperties(cart, itemResVO);
-            itemResVO.setMaxNum(product.getNumber());
-            checkedItems.add(itemResVO);
+            checkedItems.add(buildCheckedItem(cart, product));
             goodsAmount = goodsAmount.add(cart.getPrice().multiply(BigDecimal.valueOf(cart.getNumber())));
         }
+        return new CheckedGoodsAggregation(checkedItems, uncheckedCartIds, goodsAmount);
+    }
 
-        syncUncheckedCartItems(uncheckedCartIds);
-        if (checkedItems.isEmpty()) {
-            return buildCheckedGoodsResVO(List.of(), List.of(), BigDecimal.ZERO, BigDecimal.ZERO);
-        }
-        BigDecimal freightPrice = goodsAmount.compareTo(WaynConfig.getFreightLimit()) < 0
+    /**
+     * 判断勾选购物车项是否仍可参与结算。
+     *
+     * @param cart 购物车项
+     * @param product 货品信息
+     * @return true 表示货品存在且库存覆盖购物车数量
+     */
+    private boolean isValidCheckedCart(Cart cart, GoodsProduct product) {
+        return product != null && product.getNumber() >= cart.getNumber();
+    }
+
+    /**
+     * 构建结算商品项。
+     *
+     * @param cart 购物车项
+     * @param product 货品信息
+     * @return 结算商品 VO
+     */
+    private CartCheckedItemResVO buildCheckedItem(Cart cart, GoodsProduct product) {
+        CartCheckedItemResVO itemResVO = new CartCheckedItemResVO();
+        BeanUtil.copyProperties(cart, itemResVO);
+        itemResVO.setMaxNum(product.getNumber());
+        return itemResVO;
+    }
+
+    /**
+     * 计算运费。
+     *
+     * @param goodsAmount 商品金额
+     * @return 运费金额
+     */
+    private BigDecimal calculateFreightPrice(BigDecimal goodsAmount) {
+        return goodsAmount.compareTo(WaynConfig.getFreightLimit()) < 0
                 ? WaynConfig.getFreightPrice()
                 : BigDecimal.ZERO;
-        BigDecimal orderTotalAmount = goodsAmount.add(freightPrice).max(BigDecimal.ZERO);
+    }
 
-        List<MemberCouponResVO> couponList = shopMemberCouponService.lambdaQuery()
+    /**
+     * 查询当前订单金额可用的优惠券。
+     *
+     * @param userId 用户 ID
+     * @param orderTotalAmount 订单总金额
+     * @return 可用优惠券列表
+     */
+    private List<MemberCouponResVO> selectAvailableCoupons(Long userId, BigDecimal orderTotalAmount) {
+        Date nowTime = new Date();
+        return shopMemberCouponService.lambdaQuery()
                 .eq(ShopMemberCoupon::getUserId, userId)
                 .list()
                 .stream()
-                .filter(item -> item.getUseStatus() == 0
-                        && item.getExpireTime() != null
-                        && DateUtil.compare(item.getExpireTime(), nowTime) > 0
-                        && (item.getMin() == null || orderTotalAmount.compareTo(BigDecimal.valueOf(item.getMin())) >= 0))
+                .filter(item -> isAvailableCoupon(item, orderTotalAmount, nowTime))
                 .sorted(Comparator.comparingInt(ShopMemberCoupon::getDiscount).reversed())
                 .map(item -> BeanUtil.copyProperties(item, MemberCouponResVO.class))
                 .toList();
-        return buildCheckedGoodsResVO(checkedItems, couponList, freightPrice, orderTotalAmount);
+    }
+
+    /**
+     * 判断优惠券是否可用于当前订单金额。
+     *
+     * @param coupon 用户优惠券
+     * @param orderTotalAmount 订单总金额
+     * @param nowTime 当前时间
+     * @return true 表示优惠券未使用、未过期且满足门槛
+     */
+    private boolean isAvailableCoupon(ShopMemberCoupon coupon, BigDecimal orderTotalAmount, Date nowTime) {
+        return coupon.getUseStatus() == 0
+                && coupon.getExpireTime() != null
+                && DateUtil.compare(coupon.getExpireTime(), nowTime) > 0
+                && (coupon.getMin() == null || orderTotalAmount.compareTo(BigDecimal.valueOf(coupon.getMin())) >= 0);
     }
 
     /**
@@ -195,5 +263,17 @@ public class CartReadSupport {
         resVO.setGoodsAmount(orderTotalAmount.subtract(freightPrice));
         resVO.setOrderTotalAmount(orderTotalAmount);
         return resVO;
+    }
+
+    /**
+     * 已勾选商品聚合结果。
+     *
+     * @param checkedItems 可参与结算的商品项
+     * @param uncheckedCartIds 需要取消勾选的购物车 ID
+     * @param goodsAmount 商品总金额
+     */
+    private record CheckedGoodsAggregation(List<CartCheckedItemResVO> checkedItems,
+                                           List<Long> uncheckedCartIds,
+                                           BigDecimal goodsAmount) {
     }
 }

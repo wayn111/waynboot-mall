@@ -5,14 +5,17 @@ import jakarta.annotation.PostConstruct;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * WebSocket 端点。
+ * 注意：实例由 WebSocket 容器在每次连接建立时创建，不受 Spring 生命周期管理，
+ * 因此禁止使用 @Autowired 注入字段。如需访问 Spring Bean，请通过静态 ApplicationContext 持有者获取。
+ */
 @ServerEndpoint(value = "/ws/asset")
-@Component
 @Slf4j
 public class WebSocketServer {
 

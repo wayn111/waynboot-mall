@@ -15,7 +15,9 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,5 +68,27 @@ class PaymentPostActionSupportTest {
 
         verify(orderStockSupport).confirmFrozenStockByOrderId(1L);
         verify(goodsService).updateVirtualSales(10L, 3);
+    }
+
+    /**
+     * 验证本地消息 payload 缺少订单 ID 时会失败，交由本地消息 relay 记录失败并重试。
+     */
+    @Test
+    void localMessageHandlerRejectsPayloadWithoutOrderId() {
+        IOrderGoodsService orderGoodsService = mock(IOrderGoodsService.class);
+        IGoodsService goodsService = mock(IGoodsService.class);
+        LocalMessageService localMessageService = mock(LocalMessageService.class);
+        OrderStockSupport orderStockSupport = mock(OrderStockSupport.class);
+        PaymentPostActionSupport support = new PaymentPostActionSupport(orderGoodsService, goodsService,
+                localMessageService, orderStockSupport);
+        LocalMessage message = new LocalMessage();
+        message.setTopic(LocalMessageTopics.ORDER_PAID_POST_ACTION);
+        message.setPayload("{}");
+
+        assertThrows(IllegalArgumentException.class, () -> support.handle(message));
+
+        verify(orderStockSupport, never()).confirmFrozenStockByOrderId(org.mockito.ArgumentMatchers.anyLong());
+        verify(goodsService, never()).updateVirtualSales(org.mockito.ArgumentMatchers.anyLong(),
+                org.mockito.ArgumentMatchers.anyInt());
     }
 }

@@ -32,9 +32,7 @@ public class CategoryController extends BaseController {
      */
     @GetMapping("index")
     public R<CategoryIndexResponseVO> index() {
-        log.info("查询分类首页开始");
         CategoryIndexResponseVO resVO = iCategoryService.index();
-        log.info("查询分类首页完成");
         return R.success(resVO);
     }
 

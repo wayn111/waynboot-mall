@@ -55,10 +55,7 @@ public class OrderController extends BaseController {
     @GetMapping("list")
     public R<IPage<OrderManagerResVO>> list(OrderManagerReqVO order) {
         Page<Order> page = getPage();
-        log.info("查询订单列表开始, pageNum={}, pageSize={}, orderSn={}, orderStatus={}",
-                page.getCurrent(), page.getSize(), order.getOrderSn(), order.getOrderStatus());
         IPage<OrderManagerResVO> orderPage = iOrderService.listPage(page, order);
-        log.info("查询订单列表完成, count={}", orderPage.getRecords().size());
         return R.success(orderPage);
     }
 
@@ -71,9 +68,7 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:info')")
     @GetMapping("{orderId}")
     public R<OrderDetailResVO> info(@PathVariable Long orderId) {
-        log.info("查询订单详情开始, orderId={}", orderId);
         OrderDetailResVO resVO = iOrderService.detail(orderId);
-        log.info("查询订单详情完成, orderId={}", orderId);
         return R.success(resVO);
     }
 
@@ -86,7 +81,6 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:delete')")
     @DeleteMapping("{orderId}")
     public R<Boolean> deleteOrder(@PathVariable Long orderId) {
-        log.info("删除订单开始, orderId={}", orderId);
         Boolean removed = iOrderService.removeById(orderId);
         log.info("删除订单完成, orderId={}, result={}", orderId, removed);
         return R.result(removed);
@@ -104,9 +98,8 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:refund')")
     @PostMapping("refund")
     public R<Boolean> refund(@RequestBody @Validated OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException {
-        log.info("订单退款开始, orderSn={}, refundMoney={}", reqVO.getOrderSn(), reqVO.getRefundMoney());
         iOrderService.refund(reqVO);
-        log.info("订单退款完成, orderSn={}", reqVO.getOrderSn());
+        log.info("订单退款完成, orderSn={}, refundMoney={}", reqVO.getOrderSn(), reqVO.getRefundMoney());
         return R.success();
     }
 
@@ -115,6 +108,7 @@ public class OrderController extends BaseController {
      *
      * @return
      */
+    @PreAuthorize("@ss.hasPermi('shop:order:ship')")
     @PostMapping("listChannel")
     public R<List<ExpressVendorResVO>> channel() {
         List<ExpressVendorResVO> vendors = expressProperties.getVendors().stream()
@@ -125,7 +119,6 @@ public class OrderController extends BaseController {
                     return resVO;
                 })
                 .toList();
-        log.info("查询发货渠道完成, count={}", vendors.size());
         return R.success(vendors);
     }
 
@@ -139,9 +132,8 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('shop:order:ship')")
     @PostMapping("ship")
     public R<Boolean> ship(@RequestBody ShipRequestVO shipVO) throws UnsupportedEncodingException {
-        log.info("订单发货开始, orderId={}, shipChannel={}", shipVO.getOrderId(), shipVO.getShipChannel());
         iOrderService.ship(shipVO);
-        log.info("订单发货完成, orderId={}", shipVO.getOrderId());
+        log.info("订单发货完成, orderId={}, shipChannel={}", shipVO.getOrderId(), shipVO.getShipChannel());
         return R.success();
     }
 

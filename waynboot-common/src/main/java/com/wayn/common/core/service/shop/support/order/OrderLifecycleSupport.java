@@ -1,10 +1,14 @@
 package com.wayn.common.core.service.shop.support.order;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.entity.shop.OrderGoods;
+import com.wayn.common.core.enums.OrderStatusChangeTypeEnum;
 import com.wayn.common.core.mapper.shop.OrderMapper;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
+import com.wayn.common.core.service.shop.OrderStatusChangeCommand;
+import com.wayn.common.core.service.shop.OrderStatusLogService;
 import com.wayn.util.enums.OrderStatusEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
@@ -14,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.function.Consumer;
 
 /**
  * 订单生命周期支撑服务。
@@ -28,6 +33,7 @@ public class OrderLifecycleSupport {
     private final OrderValidationSupport orderValidationSupport;
     private final OrderCancellationSupport orderCancellationSupport;
     private final OrderStateTransitionSupport orderStateTransitionSupport;
+    private final OrderStatusLogService orderStatusLogService;
 
     /**
      * 用户发起退款申请。
@@ -39,15 +45,8 @@ public class OrderLifecycleSupport {
         orderValidationSupport.ensureRefundable(order);
         orderStateTransitionSupport.validateTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_REFUND,
                 ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
-        int updated = orderMapper.update(null, Wrappers.lambdaUpdate(Order.class)
-                .set(Order::getOrderStatus, OrderStatusEnum.STATUS_REFUND.getStatus())
-                .set(Order::getRefundStatus, 1)
-                .set(Order::getUpdateTime, new Date())
-                .eq(Order::getId, orderId)
-                .eq(Order::getOrderStatus, order.getOrderStatus()));
-        if (updated == 0) {
-            throw new BusinessException(ReturnCodeEnum.ERROR);
-        }
+        executeStatusTransition(order, OrderStatusEnum.STATUS_REFUND, OrderStatusChangeTypeEnum.USER_REFUND,
+                "USER", "用户申请退款", wrapper -> wrapper.set(Order::getRefundStatus, 1));
     }
 
     /**
@@ -70,9 +69,11 @@ public class OrderLifecycleSupport {
     public void delete(Long orderId) {
         Order order = orderValidationSupport.requireOrder(orderMapper.selectById(orderId));
         orderValidationSupport.ensureDeletable(order);
-        int deleted = orderMapper.delete(Wrappers.lambdaQuery(Order.class)
-                .eq(Order::getId, orderId)
-                .eq(Order::getOrderStatus, order.getOrderStatus()));
+        OrderStatusEnum sourceStatus = orderStateTransitionSupport.resolve(order.getOrderStatus());
+        var deleteWrapper = Wrappers.lambdaUpdate(Order.class)
+                .eq(Order::getId, orderId);
+        orderStateTransitionSupport.applyExpectedStatus(deleteWrapper, sourceStatus);
+        int deleted = orderMapper.delete(deleteWrapper);
         if (deleted == 0) {
             throw new BusinessException(ReturnCodeEnum.ERROR);
         }
@@ -90,14 +91,62 @@ public class OrderLifecycleSupport {
         orderValidationSupport.ensureConfirmable(order);
         orderStateTransitionSupport.validateTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_CONFIRM,
                 ReturnCodeEnum.ORDER_CANNOT_CONFIRM_ERROR);
-        int updated = orderMapper.update(null, Wrappers.lambdaUpdate(Order.class)
-                .set(Order::getOrderStatus, OrderStatusEnum.STATUS_CONFIRM.getStatus())
-                .set(Order::getConfirmTime, LocalDateTime.now())
+        executeStatusTransition(order, OrderStatusEnum.STATUS_CONFIRM, OrderStatusChangeTypeEnum.USER_CONFIRM,
+                "USER", "用户确认收货", wrapper -> wrapper.set(Order::getConfirmTime, LocalDateTime.now()));
+    }
+
+    /**
+     * 执行订单状态条件更新并记录状态日志。
+     * 所有生命周期动作都必须带当前状态条件，避免退款、确认收货、发货等并发入口覆盖彼此结果。
+     *
+     * @param order 订单
+     * @param targetStatus 目标状态
+     * @param changeType 状态变更类型
+     * @param operatorType 操作者类型
+     * @param remark 备注
+     * @param updateCustomizer 动作特有字段更新
+     */
+    private void executeStatusTransition(Order order, OrderStatusEnum targetStatus,
+                                         OrderStatusChangeTypeEnum changeType, String operatorType, String remark,
+                                         Consumer<LambdaUpdateWrapper<Order>> updateCustomizer) {
+        OrderStatusEnum sourceStatus = orderStateTransitionSupport.resolve(order.getOrderStatus());
+        var updateWrapper = Wrappers.lambdaUpdate(Order.class)
+                .set(Order::getOrderStatus, targetStatus.getStatus())
                 .set(Order::getUpdateTime, new Date())
-                .eq(Order::getId, orderId)
-                .eq(Order::getOrderStatus, order.getOrderStatus()));
+                .eq(Order::getId, order.getId());
+        updateCustomizer.accept(updateWrapper);
+        orderStateTransitionSupport.applyExpectedStatus(updateWrapper, sourceStatus);
+        OrderStatusChangeCommand command = buildStatusLogCommand(order, targetStatus, changeType, operatorType, remark);
+        int updated = orderMapper.update(null, updateWrapper);
         if (updated == 0) {
+            orderStatusLogService.recordFailure(command, "订单状态条件更新失败");
             throw new BusinessException(ReturnCodeEnum.ERROR);
         }
+        orderStatusLogService.recordSuccess(command);
+    }
+
+    /**
+     * 构建订单生命周期状态日志命令。
+     *
+     * @param order 订单
+     * @param targetStatus 目标状态
+     * @param changeType 状态变更类型
+     * @param operatorType 操作者类型
+     * @param remark 备注
+     * @return 状态日志命令
+     */
+    private OrderStatusChangeCommand buildStatusLogCommand(Order order, OrderStatusEnum targetStatus,
+                                                           OrderStatusChangeTypeEnum changeType,
+                                                           String operatorType, String remark) {
+        return OrderStatusChangeCommand.builder()
+                .orderId(order.getId())
+                .orderSn(order.getOrderSn())
+                .sourceStatus(orderStateTransitionSupport.resolve(order.getOrderStatus()))
+                .targetStatus(targetStatus)
+                .changeType(changeType)
+                .operatorType(operatorType)
+                .operatorId(String.valueOf(order.getUserId()))
+                .remark(remark)
+                .build();
     }
 }

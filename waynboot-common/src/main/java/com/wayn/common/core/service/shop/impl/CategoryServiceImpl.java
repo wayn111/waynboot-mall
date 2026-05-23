@@ -14,6 +14,7 @@ import com.wayn.common.model.response.CategoryIndexResponseVO;
 import com.wayn.util.util.spring.SpringContextUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -60,48 +61,28 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Cacheable(value = "category_index_cache#300", unless = "#result == null")
     @Override
     public CategoryIndexResponseVO index() {
-        CategoryIndexResponseVO responseVO = new CategoryIndexResponseVO();
         List<VanTreeSelectVO> categoryList = this.selectL1Category();
-        Callable<Category> currentCategoryCallable = () -> this.getById(categoryList.get(0).getId());
-        Callable<List<VanTreeSelectVO>> subCategoryListCallable = () -> this.selectCategoryByPid(categoryList.get(0).getId());
-        FutureTask<Category> currentCategoryTask = new FutureTask<>(currentCategoryCallable);
-        FutureTask<List<VanTreeSelectVO>> subCategoryListTask = new FutureTask<>(subCategoryListCallable);
-        commonThreadPoolTaskExecutor.submit(currentCategoryTask);
-        commonThreadPoolTaskExecutor.submit(subCategoryListTask);
-
-        try {
-            Category category = currentCategoryTask.get();
-            List<VanTreeSelectVO> vanTreeSelectVOS = subCategoryListTask.get();
-            responseVO.setCategoryList(categoryList);
-            responseVO.setCurrentCategory(category);
-            responseVO.setSubCategoryList(vanTreeSelectVOS);
-            return responseVO;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        if (CollectionUtils.isEmpty(categoryList)) {
+            log.warn("一级分类为空，无法构建分类首页数据");
+            return null;
         }
-        return null;
+        CategoryContent categoryContent = loadCategoryContent(categoryList.get(0).getId());
+        CategoryIndexResponseVO responseVO = buildCategoryIndexResponse(categoryContent);
+        if (responseVO == null) {
+            return null;
+        }
+        responseVO.setCategoryList(categoryList);
+        return responseVO;
     }
 
     @Cacheable(value = "category_content_cache#300", unless = "#result == null")
     @Override
     public CategoryIndexResponseVO content(Long id) {
-        CategoryIndexResponseVO responseVO = new CategoryIndexResponseVO();
-        Callable<Category> currentCategoryCallable = () -> this.getById(id);
-        Callable<List<VanTreeSelectVO>> subCategoryListCallable = () -> this.selectCategoryByPid(id);
-        FutureTask<Category> currentCategoryTask = new FutureTask<>(currentCategoryCallable);
-        FutureTask<List<VanTreeSelectVO>> subCategoryListTask = new FutureTask<>(subCategoryListCallable);
-        commonThreadPoolTaskExecutor.submit(currentCategoryTask);
-        commonThreadPoolTaskExecutor.submit(subCategoryListTask);
-        try {
-            Category category = currentCategoryTask.get();
-            List<VanTreeSelectVO> vanTreeSelectVOS = subCategoryListTask.get();
-            responseVO.setCurrentCategory(category);
-            responseVO.setSubCategoryList(vanTreeSelectVOS);
-            return responseVO;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        if (id == null) {
+            // 空 ID 属于无效前端请求，直接返回空结构，避免进入异步查询后被宽泛异常吞掉根因。
+            return new CategoryIndexResponseVO();
         }
-        return null;
+        return buildCategoryIndexResponse(loadCategoryContent(id));
     }
 
     @Cacheable(value = "category_first_cache#300", unless = "#result == null")
@@ -131,5 +112,62 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         responseVO.setCategory(category);
         responseVO.setGoods(goods);
         return responseVO;
+    }
+
+    /**
+     * 并行加载当前分类和子分类列表。
+     * 分类首页和分类内容页都需要同一组数据，统一收口异步编排，避免两个接口分别维护 FutureTask 模板。
+     *
+     * @param categoryId 当前分类 ID
+     * @return 分类内容数据；加载失败时返回 null，保持失败结果不缓存的接口语义
+     */
+    private CategoryContent loadCategoryContent(Long categoryId) {
+        Future<Category> currentCategoryTask = submitAsync(() -> this.getById(categoryId));
+        Future<List<VanTreeSelectVO>> subCategoryListTask = submitAsync(() -> this.selectCategoryByPid(categoryId));
+        try {
+            return new CategoryContent(currentCategoryTask.get(), subCategoryListTask.get());
+        } catch (Exception e) {
+            log.error("加载分类内容失败, categoryId={}", categoryId, e);
+            return null;
+        }
+    }
+
+    /**
+     * 构建分类首页/内容页响应。
+     * 响应组装统一收口，避免 index 与 content 对正常内容的字段映射口径分叉。
+     *
+     * @param categoryContent 分类内容聚合结果
+     * @return 分类响应
+     */
+    private CategoryIndexResponseVO buildCategoryIndexResponse(CategoryContent categoryContent) {
+        if (categoryContent == null) {
+            // 真实查询失败时继续返回 null，配合 @Cacheable unless 避免把异常瞬间的空数据缓存给后续请求。
+            return null;
+        }
+        CategoryIndexResponseVO responseVO = new CategoryIndexResponseVO();
+        responseVO.setCurrentCategory(categoryContent.currentCategory());
+        responseVO.setSubCategoryList(categoryContent.subCategoryList());
+        return responseVO;
+    }
+
+    /**
+     * 提交异步分类查询任务。
+     *
+     * @param callable 分类查询逻辑
+     * @param <T> 查询结果类型
+     * @return 已提交的异步任务
+     */
+    private <T> Future<T> submitAsync(Callable<T> callable) {
+        return commonThreadPoolTaskExecutor.submit(callable);
+    }
+
+    /**
+     * 分类内容聚合结果。
+     * 用 record 承载两个异步任务的返回值，避免用临时变量在多个接口中重复拼装。
+     *
+     * @param currentCategory 当前分类
+     * @param subCategoryList 子分类列表
+     */
+    private record CategoryContent(Category currentCategory, List<VanTreeSelectVO> subCategoryList) {
     }
 }

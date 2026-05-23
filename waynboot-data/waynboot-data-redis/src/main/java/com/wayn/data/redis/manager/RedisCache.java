@@ -38,6 +38,66 @@ public class RedisCache {
     }
 
     /**
+     * 构建 Redis 库存预占脚本。
+     * availableKey 保存热点 SKU 可售库存快照，reservedKey 保存当前正在进入 MySQL 条件冻结的并发预占量，orderKey 防止同一订单重复预占。
+     *
+     * @return Redis Lua 脚本
+     */
+    public static String buildLuaReserveStockScript() {
+        return """
+                local availableKey = KEYS[1]
+                local reservedKey = KEYS[2]
+                local orderKey = KEYS[3]
+                local requestNumber = tonumber(ARGV[1])
+                local ttlSeconds = tonumber(ARGV[2])
+                if requestNumber == nil or requestNumber <= 0 then
+                    return -3
+                end
+                local available = redis.call('get', availableKey)
+                if not available then
+                    return -2
+                end
+                if redis.call('exists', orderKey) == 1 then
+                    return 1
+                end
+                local reserved = redis.call('get', reservedKey)
+                if not reserved then
+                    reserved = 0
+                end
+                if tonumber(available) - tonumber(reserved) < requestNumber then
+                    return -1
+                end
+                redis.call('incrby', reservedKey, requestNumber)
+                redis.call('set', orderKey, requestNumber, 'EX', ttlSeconds)
+                redis.call('expire', reservedKey, ttlSeconds)
+                return 1
+                """;
+    }
+
+    /**
+     * 构建 Redis 库存预占释放脚本。
+     * 下单线程进入 MySQL 条件冻结后，无论成功还是失败都释放 in-flight 预占，避免 Redis 并发闸门长期占用。
+     *
+     * @return Redis Lua 脚本
+     */
+    public static String buildLuaReleaseReservedStockScript() {
+        return """
+                local reservedKey = KEYS[1]
+                local orderKey = KEYS[2]
+                local reservedNumber = redis.call('get', orderKey)
+                if not reservedNumber then
+                    return 0
+                end
+                local afterRelease = redis.call('decrby', reservedKey, tonumber(reservedNumber))
+                if afterRelease < 0 then
+                    redis.call('set', reservedKey, 0)
+                end
+                redis.call('del', orderKey)
+                return 1
+                """;
+    }
+
+    /**
      * 缓存基本的对象，Integer、String、实体类等
      *
      * @param key   缓存的键值
@@ -333,6 +393,35 @@ public class RedisCache {
     public Long luaIncrKey(String key, Integer orderSnIncrLimit) {
         RedisScript<Long> redisScript = new DefaultRedisScript<>(buildLuaIncrKeyScript(), Long.class);
         return (Long) redisTemplate.execute(redisScript, Collections.singletonList(key), orderSnIncrLimit);
+    }
+
+    /**
+     * 使用 Lua 原子预占热点 SKU 库存并发闸门。
+     *
+     * @param availableKey Redis 可售库存快照 Key
+     * @param reservedKey SKU 维度正在进入 MySQL 冻结链路的预占量 Key
+     * @param orderKey 订单 SKU 维度预占幂等 Key
+     * @param number 预占数量
+     * @param ttlSeconds 预占过期秒数
+     * @return 1=预占成功，-1=Redis 快照库存不足，-2=未初始化可售库存，-3=参数非法
+     */
+    public Long luaReserveStock(String availableKey, String reservedKey, String orderKey, Integer number,
+                                Integer ttlSeconds) {
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(buildLuaReserveStockScript(), Long.class);
+        return (Long) redisTemplate.execute(redisScript, List.of(availableKey, reservedKey, orderKey), number, ttlSeconds);
+    }
+
+    /**
+     * 使用 Lua 原子释放热点 SKU 库存预占。
+     *
+     * @param reservedKey SKU 维度预占量 Key
+     * @param orderKey 订单 SKU 维度预占幂等 Key
+     * @param number 释放数量，脚本优先使用 orderKey 内保存的数量
+     * @return 1=释放成功，0=预占不存在
+     */
+    public Long luaReleaseReservedStock(String reservedKey, String orderKey) {
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(buildLuaReleaseReservedStockScript(), Long.class);
+        return (Long) redisTemplate.execute(redisScript, List.of(reservedKey, orderKey));
     }
 
     /**

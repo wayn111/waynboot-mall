@@ -6,8 +6,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.entity.shop.OrderGoods;
+import com.wayn.common.core.enums.OrderStatusChangeTypeEnum;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
+import com.wayn.common.core.service.shop.OrderStatusChangeCommand;
+import com.wayn.common.core.service.shop.OrderStatusLogService;
 import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.core.service.shop.support.order.OrderStockSupport;
 import com.wayn.common.design.strategy.refund.context.RefundContext;
@@ -46,6 +49,7 @@ public class AdminOrderRefundSupport {
     private final RefundContext refundContext;
     private final PlatformTransactionManager platformTransactionManager;
     private final OrderStateTransitionSupport orderStateTransitionSupport;
+    private final OrderStatusLogService orderStatusLogService;
 
     /**
      * 执行管理端订单退款。
@@ -59,6 +63,29 @@ public class AdminOrderRefundSupport {
     public void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException {
         String orderSn = reqVO.getOrderSn();
         BigDecimal refundMoney = reqVO.getRefundMoney();
+        Order order = validateRefundableOrder(orderSn, refundMoney);
+        List<OrderGoods> orderGoodsList = listOrderGoods(order.getId());
+        RefundExecution execution = executeRefund(order, reqVO, refundMoney);
+
+        TransactionStatus transaction = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
+        try {
+            persistRefundResult(order, orderGoodsList, execution);
+            platformTransactionManager.commit(transaction);
+        } catch (Exception e) {
+            platformTransactionManager.rollback(transaction);
+            throw e;
+        }
+    }
+
+    /**
+     * 校验订单是否允许管理端退款。
+     * 这里集中处理订单存在性、退款金额和状态机约束，后续流程只关注退款执行和结果落库。
+     *
+     * @param orderSn 订单号
+     * @param refundMoney 退款金额
+     * @return 可退款订单
+     */
+    private Order validateRefundableOrder(String orderSn, BigDecimal refundMoney) {
         Order order = getByOrderSn(orderSn);
         if (order == null) {
             throw new BusinessException(ReturnCodeEnum.ORDER_NOT_FOUND);
@@ -68,30 +95,18 @@ public class AdminOrderRefundSupport {
         }
         orderStateTransitionSupport.validateTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_REFUND_CONFIRM,
                 ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
-        List<OrderGoods> orderGoodsList = orderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", order.getId()));
+        return order;
+    }
 
-        RefundExecution execution = executeRefund(order, reqVO, refundMoney);
-        TransactionStatus transaction = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
-        try {
-            Order update = buildRefundUpdate(order, execution);
-            int updated = adminOrderMapper.update(update, Wrappers.lambdaUpdate(Order.class)
-                    .eq(Order::getId, order.getId())
-                    .eq(Order::getOrderStatus, OrderStatusEnum.STATUS_REFUND.getStatus()));
-            if (updated == 0) {
-                throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
-            }
-            // 只有三方退款确认成功时才回补库存，避免退款失败时把库存错误加回。
-            if (execution.success()) {
-                orderStockSupport.restoreStock(orderGoodsList);
-            }
-            platformTransactionManager.commit(transaction);
-        } catch (RuntimeException e) {
-            platformTransactionManager.rollback(transaction);
-            throw e;
-        } catch (Error e) {
-            platformTransactionManager.rollback(transaction);
-            throw e;
-        }
+    /**
+     * 查询订单明细。
+     * 退款成功后需要按订单明细回补库存，查询和事务内回补拆开，避免主流程混入 MyBatis 查询细节。
+     *
+     * @param orderId 订单 ID
+     * @return 订单商品明细
+     */
+    private List<OrderGoods> listOrderGoods(Long orderId) {
+        return orderGoodsService.list(new QueryWrapper<OrderGoods>().eq("order_id", orderId));
     }
 
     /**
@@ -123,6 +138,43 @@ public class AdminOrderRefundSupport {
     }
 
     /**
+     * 在本地事务内持久化退款结果并处理库存回补。
+     * 条件更新要求订单仍处于待退款确认前置状态，避免并发退款或状态漂移覆盖最终状态。
+     *
+     * @param order 原订单
+     * @param orderGoodsList 订单商品明细
+     * @param execution 退款执行结果
+     */
+    private void persistRefundResult(Order order, List<OrderGoods> orderGoodsList, RefundExecution execution) {
+        Order update = buildRefundUpdate(order, execution);
+        var updateWrapper = Wrappers.lambdaUpdate(Order.class)
+                .eq(Order::getId, order.getId());
+        orderStateTransitionSupport.applyExpectedStatus(updateWrapper, OrderStatusEnum.STATUS_REFUND);
+        int updated = adminOrderMapper.update(update, updateWrapper);
+        if (updated == 0) {
+            orderStatusLogService.recordFailure(buildRefundStatusLogCommand(order, execution),
+                    "订单状态条件更新失败");
+            throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_REFUND_ERROR);
+        }
+        recordRefundStatusLog(order, execution);
+        restoreStockWhenRefundSucceeded(orderGoodsList, execution);
+    }
+
+    /**
+     * 退款成功后回补库存。
+     * 只有三方退款确认成功时才回补库存，避免退款失败时把库存错误加回。
+     *
+     * @param orderGoodsList 订单商品明细
+     * @param execution 退款执行结果
+     */
+    private void restoreStockWhenRefundSucceeded(List<OrderGoods> orderGoodsList, RefundExecution execution) {
+        if (!execution.success()) {
+            return;
+        }
+        orderStockSupport.restoreStock(orderGoodsList);
+    }
+
+    /**
      * 构建订单退款更新对象。
      *
      * @param order 原订单
@@ -141,6 +193,41 @@ public class AdminOrderRefundSupport {
         update.setRefundTime(now);
         update.setUpdateTime(new Date());
         return update;
+    }
+
+    /**
+     * 记录管理端退款状态日志。
+     *
+     * @param order 原订单
+     * @param execution 退款执行结果
+     */
+    private void recordRefundStatusLog(Order order, RefundExecution execution) {
+        OrderStatusChangeCommand command = buildRefundStatusLogCommand(order, execution);
+        if (execution.success()) {
+            orderStatusLogService.recordSuccess(command);
+            return;
+        }
+        orderStatusLogService.recordFailure(command, execution.refundContent());
+    }
+
+    /**
+     * 构建管理端退款状态日志命令。
+     *
+     * @param order 原订单
+     * @param execution 退款执行结果
+     * @return 状态日志命令
+     */
+    private OrderStatusChangeCommand buildRefundStatusLogCommand(Order order, RefundExecution execution) {
+        return OrderStatusChangeCommand.builder()
+                .orderId(order.getId())
+                .orderSn(order.getOrderSn())
+                .sourceStatus(orderStateTransitionSupport.resolve(order.getOrderStatus()))
+                .targetStatus(orderStateTransitionSupport.resolve(execution.orderStatus()))
+                .changeType(OrderStatusChangeTypeEnum.ADMIN_REFUND)
+                .operatorType("ADMIN")
+                .operatorId("admin")
+                .remark("管理端确认退款")
+                .build();
     }
 
     /**

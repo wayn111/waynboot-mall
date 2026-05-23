@@ -93,28 +93,6 @@ public class OrderStockSupport {
     }
 
     /**
-     * 兼容旧调用的库存扣减入口。
-     * 旧语义已收敛为冻结库存；没有订单号时使用一次性业务 ID，不提供跨请求幂等保障。
-     *
-     * @param checkedGoodsList 已勾选购物车商品
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void reduceStock(List<Cart> checkedGoodsList) {
-        freezeStock(null, checkedGoodsList);
-    }
-
-    /**
-     * 按订单商品快照冻结库存。
-     * 资源确认事件只持有订单 ID 时，从订单商品表读取下单时固化的 SKU 和数量，避免被后续购物车变化影响。
-     *
-     * @param orderId 订单 ID
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void reduceStockByOrderId(Long orderId) {
-        freezeStock(String.valueOf(orderId), convertOrderGoodsToCartSnapshot(listOrderGoods(orderId)));
-    }
-
-    /**
      * 支付成功后确认冻结库存。
      * 该方法由支付后置本地消息调用，先写幂等流水再扣减 locked_stock；本地消息重试时重复流水会跳过库存变更。
      *
@@ -138,17 +116,6 @@ public class OrderStockSupport {
         List<OrderGoods> orderGoodsList = listOrderGoods(orderId);
         processOrderGoodsStockChange(String.valueOf(orderId), orderGoodsList, InventoryChangeTypeEnum.RELEASE,
                 RELEASE_FLOW_KEY_PREFIX, goodsProductService::releaseFrozenStock, "商品货品冻结库存释放失败");
-    }
-
-    /**
-     * 兼容旧调用的按订单 ID 回补库存入口。
-     * 未支付订单关闭场景应优先调用 releaseFrozenStockByOrderId，避免把冻结库存错误当成已售库存回补。
-     *
-     * @param orderId 订单 ID
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void restoreStockByOrderId(Long orderId) {
-        releaseFrozenStockByOrderId(orderId);
     }
 
     /**
@@ -270,24 +237,6 @@ public class OrderStockSupport {
             throw new BusinessException(ReturnCodeEnum.ORDER_SUBMIT_ERROR, "订单商品快照为空");
         }
         return orderGoodsList;
-    }
-
-    /**
-     * 将订单商品快照转换为库存冻结所需的购物车快照结构。
-     *
-     * @param orderGoodsList 订单商品快照
-     * @return 库存冻结快照
-     */
-    private List<Cart> convertOrderGoodsToCartSnapshot(List<OrderGoods> orderGoodsList) {
-        return orderGoodsList.stream()
-                .map(orderGoods -> {
-                    Cart cart = new Cart();
-                    cart.setGoodsId(orderGoods.getGoodsId());
-                    cart.setProductId(orderGoods.getProductId());
-                    cart.setNumber(orderGoods.getNumber());
-                    return cart;
-                })
-                .toList();
     }
 
     /**

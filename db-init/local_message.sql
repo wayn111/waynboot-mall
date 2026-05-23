@@ -20,3 +20,24 @@ CREATE TABLE IF NOT EXISTS `local_message` (
   KEY `idx_local_message_status_retry` (`status`, `next_retry_time`),
   KEY `idx_local_message_biz` (`biz_type`, `biz_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='本地消息表';
+
+CREATE TABLE IF NOT EXISTS `local_message_compensation_log` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+  `message_id` bigint NOT NULL COMMENT '本地消息 ID',
+  `message_key` varchar(128) NOT NULL COMMENT '业务唯一消息键',
+  `topic` varchar(64) NOT NULL COMMENT '消息主题',
+  `biz_type` varchar(32) NOT NULL COMMENT '业务类型',
+  `biz_id` varchar(64) NOT NULL COMMENT '业务 ID',
+  `action_type` varchar(32) NOT NULL COMMENT '动作类型：FAILURE、DEAD_LETTER、MANUAL_RETRY',
+  `failure_reason` varchar(64) DEFAULT NULL COMMENT '失败原因分类',
+  `retry_count` int NOT NULL DEFAULT 0 COMMENT '当前重试次数',
+  `dead_letter` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否进入死信',
+  `operator` varchar(64) NOT NULL DEFAULT 'system' COMMENT '操作者',
+  `remark` varchar(1000) DEFAULT NULL COMMENT '日志备注',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_local_message_comp_log_message` (`message_id`),
+  KEY `idx_local_message_comp_log_reason` (`failure_reason`, `dead_letter`),
+  KEY `idx_local_message_comp_log_biz` (`biz_type`, `biz_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='本地消息补偿日志表';

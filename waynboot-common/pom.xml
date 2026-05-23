@@ -76,6 +76,13 @@
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
         </dependency>
+
+        <!-- 邮件 -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-util</artifactId>

@@ -30,7 +30,6 @@ public class UnpaidOrderController {
      */
     @PostMapping("unpaid")
     public R unpaid(String orderSn) {
-        log.info("未支付订单取消回调开始, orderSn={}", orderSn);
         orderUnpaidService.unpaid(orderSn, OrderStatusEnum.STATUS_AUTO_CANCEL);
         log.info("未支付订单取消回调完成, orderSn={}", orderSn);
         return R.success();

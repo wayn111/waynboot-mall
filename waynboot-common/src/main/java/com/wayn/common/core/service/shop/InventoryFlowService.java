@@ -4,6 +4,7 @@ import com.wayn.common.core.entity.shop.InventoryFlow;
 import com.wayn.common.core.mapper.shop.InventoryFlowMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,10 @@ public class InventoryFlowService {
      * @return true=本次新写入流水；false=流水已存在
      */
     public boolean saveFlow(InventoryFlowCreateCommand command) {
+        if (!isValidCommand(command)) {
+            log.warn("库存流水命令非法, command={}", command);
+            return false;
+        }
         InventoryFlow flow = buildFlow(command);
         try {
             inventoryFlowMapper.insert(flow);
@@ -37,6 +42,17 @@ public class InventoryFlowService {
             log.info("库存流水已存在, flowKey={}", command.flowKey());
             return false;
         }
+    }
+
+    /**
+     * 校验库存流水创建命令。
+     * flowKey 是库存副作用的幂等键，缺失时不能写流水；否则本地消息重试、支付确认和超时释放都无法判断是否重复执行。
+     *
+     * @param command 库存流水创建命令
+     * @return true=命令可进入落库流程
+     */
+    private boolean isValidCommand(InventoryFlowCreateCommand command) {
+        return command != null && StringUtils.isNotBlank(command.flowKey());
     }
 
     /**

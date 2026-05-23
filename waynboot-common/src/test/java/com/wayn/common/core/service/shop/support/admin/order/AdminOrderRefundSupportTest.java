@@ -1,13 +1,13 @@
 package com.wayn.common.core.service.shop.support.admin.order;
 
-import com.wayn.common.core.service.shop.support.common.MybatisPlusTableInfoTestHelper;
-
 import com.alipay.api.AlipayApiException;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.common.core.entity.shop.Order;
 import com.wayn.common.core.entity.shop.OrderGoods;
 import com.wayn.common.core.mapper.shop.AdminOrderMapper;
 import com.wayn.common.core.service.shop.IOrderGoodsService;
+import com.wayn.common.core.service.shop.OrderStatusLogService;
+import com.wayn.common.core.service.shop.support.common.MybatisPlusTableInfoTestHelper;
 import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.core.service.shop.support.order.OrderStockSupport;
 import com.wayn.common.design.strategy.refund.context.RefundContext;
@@ -56,15 +56,13 @@ class AdminOrderRefundSupportTest {
     private RefundContext refundContext;
     @Mock
     private PlatformTransactionManager platformTransactionManager;
+    @Mock
+    private OrderStatusLogService orderStatusLogService;
 
     @Test
     void refundMarksOrderAsFailedWhenThirdPartyRefundThrows() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
-        AdminOrderRefundSupport support = new AdminOrderRefundSupport(adminOrderMapper, orderGoodsService, orderStockSupport,
-                refundContext, platformTransactionManager, new OrderStateTransitionSupport());
-        OrderRefundReqVO reqVO = new OrderRefundReqVO();
-        reqVO.setOrderSn("order-1");
-        reqVO.setRefundMoney(new BigDecimal("20.00"));
-        reqVO.setRefundReason("用户申请");
+        AdminOrderRefundSupport support = buildSupport();
+        OrderRefundReqVO reqVO = buildRefundRequest();
         Order order = buildRefundOrder();
         RefundInterface refundInterface = mock(RefundInterface.class);
         TransactionStatus transactionStatus = mock(TransactionStatus.class);
@@ -92,12 +90,8 @@ class AdminOrderRefundSupportTest {
 
     @Test
     void refundThrowsWhenConditionalUpdateAffectsNoRows() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
-        AdminOrderRefundSupport support = new AdminOrderRefundSupport(adminOrderMapper, orderGoodsService, orderStockSupport,
-                refundContext, platformTransactionManager, new OrderStateTransitionSupport());
-        OrderRefundReqVO reqVO = new OrderRefundReqVO();
-        reqVO.setOrderSn("order-1");
-        reqVO.setRefundMoney(new BigDecimal("20.00"));
-        reqVO.setRefundReason("用户申请");
+        AdminOrderRefundSupport support = buildSupport();
+        OrderRefundReqVO reqVO = buildRefundRequest();
         Order order = buildRefundOrder();
         RefundInterface refundInterface = mock(RefundInterface.class);
         TransactionStatus transactionStatus = mock(TransactionStatus.class);
@@ -118,12 +112,8 @@ class AdminOrderRefundSupportTest {
 
     @Test
     void refundRestoresStockWhenThirdPartyRefundSucceeds() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
-        AdminOrderRefundSupport support = new AdminOrderRefundSupport(adminOrderMapper, orderGoodsService, orderStockSupport,
-                refundContext, platformTransactionManager, new OrderStateTransitionSupport());
-        OrderRefundReqVO reqVO = new OrderRefundReqVO();
-        reqVO.setOrderSn("order-1");
-        reqVO.setRefundMoney(new BigDecimal("20.00"));
-        reqVO.setRefundReason("用户申请");
+        AdminOrderRefundSupport support = buildSupport();
+        OrderRefundReqVO reqVO = buildRefundRequest();
         Order order = buildRefundOrder();
         RefundInterface refundInterface = mock(RefundInterface.class);
         TransactionStatus transactionStatus = mock(TransactionStatus.class);
@@ -139,7 +129,21 @@ class AdminOrderRefundSupportTest {
         support.refund(reqVO);
 
         verify(orderStockSupport).restoreStock(orderGoodsList);
+        verify(orderStatusLogService).recordSuccess(any());
         verify(platformTransactionManager).commit(transactionStatus);
+    }
+
+    private AdminOrderRefundSupport buildSupport() {
+        return new AdminOrderRefundSupport(adminOrderMapper, orderGoodsService, orderStockSupport,
+                refundContext, platformTransactionManager, new OrderStateTransitionSupport(), orderStatusLogService);
+    }
+
+    private OrderRefundReqVO buildRefundRequest() {
+        OrderRefundReqVO reqVO = new OrderRefundReqVO();
+        reqVO.setOrderSn("order-1");
+        reqVO.setRefundMoney(new BigDecimal("20.00"));
+        reqVO.setRefundReason("用户申请");
+        return reqVO;
     }
 
     private Order buildRefundOrder() {

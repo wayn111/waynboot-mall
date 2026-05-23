@@ -1,243 +1,332 @@
-
-
-Here's the English translation of the README file:
-
----
-
 # waynboot-mall
 
-| Branch Name                                                                           | Spring Boot Version | JDK Version |
-|---------------------------------------------------------------------------------------|---------------------|-------------|
-| [master](https://github.com/wayn111/waynboot-mall)                                    | 3.1.4               | 17          |
-| [springboot-2.7](https://github.com/wayn111/waynboot-mall/tree/springboot-2.7)        | 2.7                 | 1.8         |
-
----
-
-- [Introduction](#introduction)
-- [System Architecture](#system-architecture)
-- [Feature Design](#feature-design)
-- [System Design](#system-design)
-- [API Documentation](#api-documentation)
-- [Technology Stack](#technology-stack)
-- [Directory Structure](#directory-structure)
-- [Todo](#todo)
-- [Local Development](#local-development)
-- [Online Demo](#online-demo)
-- [Demo GIFs](#demo-gifs)
-- [Acknowledgements](#acknowledgements)
-
----
-
-## Introduction
-
-🔥 waynboot-mall is a fully open-source H5 e-commerce platform comprising **three components: admin backend, H5 storefront, and backend APIs**. It implements complete e-commerce features including homepage display, product categories, product details, SKU details, product search, cart management, order checkout, payment integration (Alipay/WeChat Pay/EasyPay), order tracking, and product reviews. 🔥
-
-All source code is open-source with no hidden tricks. Built with Spring Boot 3.1, Mybatis Plus, Spring Security, and Vue2, it integrates common middleware like MySQL, Redis, RabbitMQ, ElasticSearch, and Nginx, refined through years of practical experience.
-
-For beginners, waynboot-mall is easy to deploy locally - just follow the local development guide in this README.
-
-We also provide docker-compose scripts for one-click server deployment, enabling full service startup within minutes.
-
-- Backend API: https://github.com/wayn111/waynboot-mall
-- H5 Frontend: https://github.com/wayn111/waynboot-mobile
-- Admin Frontend: https://github.com/wayn111/waynboot-admin
-
-> For any issues, please submit an Issue or contact via WeChat. Contributions are welcome - don't forget to star! 💘
-
----
-
-## System Architecture
-
-![System Architecture](images/系统架构.png)
-
----
-
-## Feature Design
-
-![Feature Design](images/功能设计.png)
-
----
-
-## System Design
-
-![System Design](images/系统设计.png)
-
-Follow my WeChat Official Account **"Programmer Wayn"** for technical insights and open-source projects. Reply with keywords:
-
-- **加群 (Join Group)**: Join discussion groups
-- **演示账号 (Demo Account)**: Get admin demo credentials
-- **开源项目 (Open Source)**: Access three open-source projects (PC/H5 stores, admin system)
-- **wayn商城资料 (Resources)**: Get project resources & image packages
-- **加微信 (WeChat)**: Contact me directly
-
-<img src="images/wx-mp-code.png" width="200" alt="Scan to follow official account"/>
-
----
-
-## API Documentation
-
-Documentation hosted on Apifox:  
-https://apifox.com/apidoc/shared-f48b11f5-6137-4722-9c70-b9c5c3e5b09b
-
-![apifox-前台接口.png](images%2Fapifox-%E5%89%8D%E5%8F%B0%E6%8E%A5%E5%8F%A3.png)
-
----
+`waynboot-mall` is a Maven multi-module e-commerce backend based on Spring Boot 3 and Java 17. It covers the mobile storefront API, admin API, message consumers, scheduled jobs, Redis, Elasticsearch, and monitoring capabilities. The current architecture focuses on goods, orders, inventory, payments, MQ, local message compensation, and reconciliation governance, with the goal of keeping the trade flow maintainable, scalable, and reliable under high concurrency.
 
 ## Technology Stack
 
-| #  | Component               | Technology                      | Official Site                                                                 |
-|----|-------------------------|---------------------------------|-------------------------------------------------------------------------------|
-| 1  | Base Framework          | Spring Boot                    | https://spring.io/projects/spring-boot                                       |
-| 2  | ORM Framework           | MyBatis-Plus                   | https://baomidou.com                                                         |
-| 3  | Utility Library         | Hutool                         | https://hutool.cn                                                            |
-| 4  | API Gateway             | OpenResty                      | https://openresty.org/cn/                                                    |
-| 5  | Access Control          | Spring Security                | https://spring.io/projects/spring-security                                   |
-| 6  | Logging                 | Logback                        | https://logback.qos.ch/                                                      |
-| 7  | CAPTCHA                 | EasyCaptcha                    | https://github.com/ele-admin/EasyCaptcha                                     |
-| 8  | Connection Pool         | HikariCP                       | https://github.com/brettwooldridge/HikariCP                                  |
-| 9  | Redis Client            | Lettuce                        | https://lettuce.io                                                           |
-| 10 | Elasticsearch Client    | HLRC                           | https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current.html  |
-| 11 | Message Queue           | RabbitMQ                       | https://www.rabbitmq.com                                                     |
-| 12 | Scheduled Tasks         | XXL-JOB                        | https://www.xuxueli.com/xxl-job                                              |
-| 13 | Monitoring              | Spring Boot Admin              | https://docs.spring-boot-admin.com                                           |
+| Category | Technologies |
+| --- | --- |
+| Base Framework | Spring Boot 3.1.4, Java 17 |
+| Web and Security | Spring MVC, Spring Security, JWT |
+| Data Access | MyBatis-Plus, MySQL, Druid |
+| Cache | Redis, Lettuce, Lua scripts |
+| Search | Elasticsearch 7 |
+| Messaging | RabbitMQ, delayed messages, local message table |
+| Scheduled Jobs | Spring Scheduled |
+| Monitoring | Spring Boot Admin, Actuator, Micrometer, Prometheus |
+| Payment | WeChat Pay, Alipay, EPay |
+| Testing | JUnit 5, Mockito, Spring Boot Test |
 
----
+## Module Structure
 
-## Todo
+```text
+waynboot-mall
+├── waynboot-admin-api              Admin management APIs
+├── waynboot-mobile-api             H5 / mobile storefront APIs
+├── waynboot-common                 Core business, entities, mappers, services, VOs, domain supports
+├── waynboot-data
+│   ├── waynboot-data-redis         Redis access and cache utilities
+│   └── waynboot-data-elastic       Elasticsearch access capabilities
+├── waynboot-message
+│   ├── waynboot-message-core       RabbitMQ queues, exchanges, and binding configuration
+│   └── waynboot-message-consumer   MQ consumers
+├── waynboot-monitor                Monitoring module
+├── waynboot-util                   Common utilities, exceptions, enums, constants
+├── db-init                         Database initialization and incremental governance SQL
+├── redis / rabbitmq / es / nginx   Middleware configuration
+└── docker-compose*.yml             Local or server orchestration scripts
+```
 
-- [x] Order Details Page
-- [x] Payment Integration
-- [ ] News Feed
-- [ ] Customer Service
+## Architecture Layers
 
----
+The project is organized around the entry layer, orchestration layer, domain capability layer, asynchronous consistency layer, and governance layer.
+
+```text
+Controller entry layer
+  -> Parameter validation, authorization, logging, and VO response wrapping
+
+Service / Support orchestration layer
+  -> Order submission chain, payment callback, order state transition, compensation entry points
+
+Domain capability layer
+  -> Goods, cart, order, inventory, coupon, payment flow, order status log
+
+Asynchronous consistency layer
+  -> Local message table, MQ relay, consumer template, compensation retry
+
+Governance layer
+  -> Redis traffic shaping, inventory reconciliation, payment reconciliation, compensation admin APIs, table shard routing, Spring Scheduled jobs
+```
+
+Entry modules do not own core business logic. `waynboot-admin-api` and `waynboot-mobile-api` mainly adapt HTTP requests and responses, while trade logic is centralized in services, support classes, assemblers, and helpers under `waynboot-common`.
+
+## Core Capabilities
+
+### Goods and Cart
+
+- Admin APIs manage goods, SKUs, specifications, attributes, categories, and inventory data.
+- Mobile goods detail APIs support aggregate queries and Redis caching.
+- Goods detail cache is invalidated after goods writes, inventory changes, or virtual sales updates to avoid stale stock on detail pages.
+- Cart aggregation combines goods, SKUs, coupons, and price information, and API responses use explicit VOs instead of exposing database entities.
+
+### Order Flow
+
+The order flow is split by responsibility chain and domain support services. The core steps are:
+
+```text
+User submits order
+-> Validate request and cart data
+-> Redis Lua stock pre-deduction
+-> MySQL conditional stock freeze
+-> Insert order and order goods records
+-> Insert local message records
+-> MQ / local processors execute asynchronous post actions
+```
+
+Order state transitions are managed by `OrderStateTransitionSupport`. Payment, cancel, delivery, refund, and confirm-receipt entries must validate state transition rules and use database conditional updates on the current state to avoid concurrent overwrites.
+
+### Inventory Consistency
+
+The inventory model mainly uses available stock and locked stock:
+
+```text
+number       Available stock
+lockedStock  Locked stock
+```
+
+Inventory change rules:
+
+```text
+Order freeze:       number - n, lockedStock + n
+Payment confirm:    lockedStock - n
+Timeout cancel:     number + n, lockedStock - n
+Refund compensation:number + n
+```
+
+Design principles:
+
+- Redis Lua is only an entry traffic-shaping and hot-SKU concurrency gate.
+- MySQL conditional updates provide final consistency and prevent overselling.
+- Inventory flow records use a unique `flowKey` to keep inventory side effects idempotent during local message retries.
+- `InventoryReconciliationService` can derive locked stock from inventory flows and identify or repair `lockedStock` differences.
+- Hot SKUs can reduce single-key contention through Redis stock snapshots and bucketed keys.
+
+### Payment and Reconciliation
+
+Payment callbacks support WeChat Pay, Alipay, and EPay. Callback handling follows these rules:
+
+- Business handling starts only after signature verification succeeds.
+- Order status updates must include current-state conditions.
+- Third-party payment flows are uniquely constrained by `shop_payment_flow.flow_key`.
+- Repeated callbacks return idempotent success.
+- Post-payment actions, such as stock confirmation and virtual sales update, are processed asynchronously through local messages.
+
+Payment reconciliation covers:
+
+- Payment flow vs order status / order amount.
+- Channel bill vs internal payment flow.
+- Refund flow vs order refund amount.
+- Spring Scheduled jobs provide the daily reconciliation entry point.
+
+### Local Message and Compensation
+
+The local message table solves the problem where the business transaction commits successfully but MQ delivery fails.
+
+```text
+Write business data + local_message in the same business transaction
+-> Relay scans INIT messages
+-> Deliver to RabbitMQ or execute local processors
+-> Mark SENT on success
+-> Retry failures with exponential backoff
+-> Mark FAILED after max retries
+-> Manually retry through admin APIs or compensate through scheduled jobs
+```
+
+Compensation governance capabilities:
+
+- `LocalMessageService` manages message creation, query, success marking, and failed retry.
+- `LocalMessageFailureClassifier` classifies failure reasons.
+- `LocalMessageCompensationLogService` records failure, dead-letter, and manual retry logs.
+- `TradeOpsController` provides failed message query, metrics, and manual retry APIs.
+
+### Sharding and Query Governance
+
+The project has established monthly shard naming rules for trade tables. These rules can later be connected to ShardingSphere or a dynamic table-name router.
+
+```text
+shop_order_yyyyMM
+shop_order_goods_yyyyMM
+shop_payment_flow_yyyyMM
+local_message_yyyyMM
+```
+
+Recommended indexes:
+
+```sql
+-- Order table
+UNIQUE KEY uk_order_sn(order_sn);
+KEY idx_user_create_time(user_id, create_time);
+KEY idx_status_create_time(order_status, create_time);
+
+-- Order goods table
+KEY idx_order_goods_order_id(order_id);
+KEY idx_order_goods_product_id(product_id);
+
+-- Payment flow table
+UNIQUE KEY uk_payment_flow_key(flow_key);
+KEY idx_payment_flow_order_sn(order_sn);
+KEY idx_payment_flow_pay_id(pay_channel, pay_id);
+
+-- Local message table
+UNIQUE KEY uk_local_message_key(message_key);
+KEY idx_local_message_status_retry(status, next_retry_time);
+KEY idx_local_message_biz(biz_type, biz_id);
+```
+
+## Operations and Governance APIs
+
+Admin trade governance APIs are exposed under the `ops/trade` path in `waynboot-admin-api`:
+
+```text
+GET  /ops/trade/local-message/failed?limit=50
+GET  /ops/trade/local-message/metric
+POST /ops/trade/local-message/{messageId}/retry?operator=admin
+POST /ops/trade/stock/snapshot/refresh
+POST /ops/trade/inventory/reconcile
+POST /ops/trade/payment/reconcile
+```
+
+These APIs are mainly used for final consistency troubleshooting, inventory reconciliation, Redis stock snapshot refresh, and daily payment reconciliation.
+
+## Scheduled Jobs
+
+Scheduled jobs are implemented with Spring `@Scheduled` and run inside the `waynboot-admin-api` process so they share the same dependencies as `TradeOpsController`. The implementation lives in `com.wayn.admin.api.schedule.TradeGovernanceScheduledTask`:
+
+```text
+refreshStockSnapshot         Refresh Redis stock snapshots, supports hot-SKU buckets (every 5 minutes by default)
+reconcileInventory           Reconcile inventory flows, optionally repairs lockedStock (hourly by default)
+reconcilePaymentDaily        Run daily payment reconciliation (02:00 every day by default)
+```
+
+Cron expressions, batch limits, and the auto-repair switch can be tuned via `wayn.schedule.trade.*` in `application.yml`:
+
+```yaml
+wayn:
+  schedule:
+    trade:
+      stock-snapshot:
+        cron: 0 */5 * * * *
+        limit: 500
+        bucket-count: 1
+      inventory-reconcile:
+        cron: 0 0 * * * *
+        limit: 500
+        repair: true
+      payment-reconcile:
+        cron: 0 0 2 * * *
+```
+
+## Database Scripts
+
+Core scripts are located in `db-init`:
+
+```text
+wayn_shop_*.sql                  Base mall schema and initialization data
+inventory_stock.sql              Locked stock fields and inventory flow table
+local_message.sql                Local message table and compensation log table
+order_status_log.sql             Order status log table
+payment_flow.sql                 Payment flow, channel bill, and refund flow tables
+trade_sharding_governance.sql    Table sharding naming rules and index governance suggestions
+```
+
+SQL files are retained as database evolution entry points. Before applying them, confirm the execution order and idempotency against the target environment.
 
 ## Local Development
 
-Image package (>100MB) available via WeChat Official Account "Programmer Wayn" (reply "wayn商城图片").
+### Requirements
 
-### 1. Clone Repository
-```bash
-git clone git@github.com:wayn111/waynboot-mall.git
-```
-
-### 2. Import Dependencies
-Open project in IDEA and import Maven dependencies.
-
-### 3. Install Dependencies
 - JDK 17
-- MySQL 8.0+
-- Redis 3.0+
-- RabbitMQ 3.0+ (with delayed message plugin)
-- Elasticsearch 7.0+ (with analysis plugins)
+- Maven 3.8+
+- MySQL 8+
+- Redis 6+
+- RabbitMQ 3+
+- Elasticsearch 7
 
-### 4. Initialize Database
-Create `wayn_shop` database and import SQL files from project root.
+### Build and Test
 
-### 5. Deploy Images
-Extract image package to `D:/waynshop/webp`
-
-![Image Deployment](images/图片部署.png)
-
-### 6. Configure Connections
-Modify settings in `application-dev.yml` and `application.yml`
-
-### 7. Start Services
-- **Admin API**: Run `AdminApplication` in `waynboot-admin-api`
-- **H5 API**: Run `MobileApplication` in `waynboot-mobile-api`
-- **Message Consumer**: Run `MessageApplication` in `waynboot-message-consumer`
-
-### 8. Start Frontends
-Follow READMEs for:
-- H5 Frontend: https://github.com/wayn111/waynboot-mobile
-- Admin Frontend: https://github.com/wayn111/waynboot-admin
-
----
-
-## Online Demo
-
-**Storefront**:  
-Register using email + mobile, login with mobile + password  
-Get demo credentials via WeChat Official Account (reply "演示账号")
-
----
-
-## Server Deployment
-
-For deployment assistance, contact via WeChat (search official account and reply "加微信").
-
----
-
-## Consultation Policy
-
-While I'm happy to help beginners, please respect time constraints. Extensive consultations may require compensation. 😜
-
----
-
-## Demo GIFs
-
-### Storefront Demo
-![mall.gif](images/mall.gif)
-
-### Admin Demo
-![admin.gif](images/admin.gif)
-
----
-
-## Directory Structure
-
-```
-|-- db-init                           // Database initialization scripts
-|-- waynboot-monitor                  // Monitoring module
-|-- waynboot-util                     // Utilities
-|   |-- constant                      // Constants
-|   |-- converter                     // Converters  
-|   |-- enums                         // Enumerations
-|   |-- exception                     // Exceptions
-|   |-- util                          // Helper classes
-|-- waynboot-admin-api                // Admin API
-|   |-- controller                    // Admin controllers
-|   |-- framework                     // Admin configurations
-|-- waynboot-common                   // Common module
-|   |-- annotation                    // Annotations      
-|   |-- base                          // Base classes
-|   |-- core                          // Core entities/DAOs/services/VOs
-|   |-- config                        // Configurations
-|   |-- design                        // Design patterns
-|   |-- dto                           // DTOs
-|   |-- request                       // Request objects
-|   |-- response                      // Response objects  
-|   |-- task                          // Task configs   
-|   |-- util                          // Utilities  
-|   |-- wrapper                       // Payment wrappers
-|-- waynboot-data                     // Data access
-|   |-- waynboot-data-redis           // Redis config
-|   |-- waynboot-data-elastic         // ES config
-|-- waynboot-message                  // Messaging
-|   |-- waynboot-message-core         // MQ config
-|   |-- waynboot-message-consumer     // Message consumers
-|-- waynboot-mobile-api               // H5 API
-|   |-- controller                    // H5 controllers
-|   |-- framework                     // H5 configs
-|-- pom.xml                           // Parent POM
+```bash
+mvn clean package
+mvn test
 ```
 
----
+To use a local Maven repository directory:
 
-## Acknowledgements
+```bash
+mvn "-Dmaven.repo.local=.m2/repository" test
+```
 
-- [panda-mall](https://github.com/Ewall1106/vue-h5-template)
-- [litemall](https://github.com/linlinjava/litemall)
-- [vant-ui](https://github.com/youzan/vant)
+### Start Services
 
----
+```bash
+mvn -pl waynboot-admin-api spring-boot:run
+mvn -pl waynboot-mobile-api spring-boot:run
+mvn -pl waynboot-message/waynboot-message-consumer spring-boot:run
+mvn -pl waynboot-monitor spring-boot:run
+```
 
-## Support
+You can also start each module's `*Application` class from the IDE.
 
-If this project helps you, consider buying me a coffee ☕
+### Middleware
 
-<img src="./images/捐助.jpg" width="260" alt="Support the project">
+The repository provides Docker Compose orchestration files:
 
---- 
+```bash
+docker-compose up -d
+```
 
-Let me know if you need any adjustments to the translation!
+If MySQL, Redis, RabbitMQ, and Elasticsearch need to be started together, choose `docker-compose-es7-rabbitmq-redis-mysql.yml` according to the local environment.
+
+## Development Rules
+
+- Use UTF-8 for all source code, XML, and Markdown files.
+- Controllers only handle validation, authorization, logging, and VO response wrapping. They should not contain core business logic.
+- API responses should use explicit `VO` / `ResVO` classes instead of raw `Map<String, Object>` for complex structures.
+- Trade, inventory, payment, compensation, and idempotency logic must include class comments, method comments, and key branch comments.
+- Pure unit tests that directly use MyBatis-Plus Lambda Wrappers must initialize the entity `TableInfo` cache first.
+- Do not commit local configuration files such as `application*.yml`, `application*.yaml`, or `application*.properties` by default.
+
+## Recommended Code Entry Points
+
+```text
+OrderStockSupport                 Stock freeze, confirm, release, and refund compensation
+RedisStockPreDeductSupport         Redis Lua stock pre-deduction
+RedisStockSnapshotSupport          Redis stock snapshot warm-up and buckets
+OrderStateTransitionSupport        Order state machine
+PaymentCallbackSupport             Unified payment callback handling
+PaymentReconciliationService       Payment, channel bill, and refund reconciliation
+LocalMessageService                Local message state transition
+LocalMessageRelaySupport           Local message delivery and local processor dispatching
+TradeOpsController                 Admin trade governance APIs
+TradeGovernanceScheduledTask       Trade governance Spring Scheduled tasks
+TradeTableShardRouter              Trade table shard naming rules
+```
+
+## Roadmap
+
+- Import real channel bill files and complete the daily payment reconciliation loop.
+- Add reconciliation difference tables and a difference handling state machine.
+- Connect `TradeTableShardRouter` to ShardingSphere or a dynamic table-name interceptor.
+- Add inventory bucket tables to further reduce MySQL row-lock contention for hot SKUs.
+- Add Prometheus metrics for local message failures, dead letters, MQ backlog, payment differences, inventory differences, and Redis snapshot misses.
+- Establish load-test baselines for goods detail, order submission, payment callback, and local message relay flows.
+
+## Frontend Projects
+
+- H5 storefront: `waynboot-mobile`
+- Admin frontend: `waynboot-admin`
+
+This backend project only provides APIs and governance capabilities. See the corresponding frontend repositories for frontend startup and deployment instructions.
+
+## License
+
+This project follows the `LICENSE` file in the repository.

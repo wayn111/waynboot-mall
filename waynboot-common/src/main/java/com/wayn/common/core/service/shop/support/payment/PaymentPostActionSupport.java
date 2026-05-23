@@ -15,9 +15,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 支付成功后的后置动作支撑服务。
@@ -29,6 +29,7 @@ import java.util.Map;
 public class PaymentPostActionSupport implements LocalMessageHandler {
 
     private static final String ORDER_PAID_POST_ACTION_KEY_PREFIX = "ORDER_PAID_POST_ACTION:";
+    private static final String ORDER_ID_PAYLOAD_FIELD = "orderId";
 
     private final IOrderGoodsService orderGoodsService;
     private final IGoodsService goodsService;
@@ -42,14 +43,14 @@ public class PaymentPostActionSupport implements LocalMessageHandler {
      * @param orderId 订单 ID
      */
     public void handleOrderPaid(Long orderId) {
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("orderId", orderId);
+        validateOrderId(orderId);
+        OrderPaidPostActionPayload payload = new OrderPaidPostActionPayload(orderId);
         localMessageService.saveMessage(LocalMessageCreateCommand.builder()
                 .messageKey(ORDER_PAID_POST_ACTION_KEY_PREFIX + orderId)
                 .topic(LocalMessageTopics.ORDER_PAID_POST_ACTION)
                 .bizType(LocalMessageTopics.BIZ_TYPE_ORDER)
                 .bizId(String.valueOf(orderId))
-                .payload(JSON.toJSONString(payload))
+                .payload(payload.toJson())
                 .build());
     }
 
@@ -72,13 +73,27 @@ public class PaymentPostActionSupport implements LocalMessageHandler {
      */
     @Override
     public void handle(LocalMessage message) {
-        Long orderId = JSON.parseObject(message.getPayload()).getLong("orderId");
+        Long orderId = OrderPaidPostActionPayload.fromJson(message.getPayload()).orderId();
+        validateOrderId(orderId);
         orderStockSupport.confirmFrozenStockByOrderId(orderId);
         updateVirtualSales(orderId);
     }
 
     /**
-     * 更新订单商品对应的虚拟销量。
+     * 校验支付后置动作消息中的订单 ID。
+     * 本地消息 payload 异常时直接抛错，由 relay 记录失败并进入重试/补偿链路，避免吞掉非法消息。
+     *
+     * @param orderId 订单 ID
+     */
+    private void validateOrderId(Long orderId) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("支付后置动作缺少订单 ID");
+        }
+    }
+
+    /**
+     * 更新订单关联商品的虚拟销量。
+     * 虚拟销量只是展示型数据，失败时记录日志并等待后续治理，不影响库存确认的幂等结果。
      *
      * @param orderId 订单 ID
      */
@@ -90,8 +105,35 @@ public class PaymentPostActionSupport implements LocalMessageHandler {
                 goodsService.updateVirtualSales(orderGoods.getGoodsId(), orderGoods.getNumber());
             }
         } catch (Exception e) {
-            log.error("订单支付后置动作执行失败，orderId={}", orderId, e);
-            throw new IllegalStateException("订单支付后置动作执行失败", e);
+            log.error("虚拟销量更新失败，orderId={}，不影响库存确认结果", orderId, e);
+        }
+    }
+
+    /**
+     * 支付成功后置动作 payload。
+     * 用内部 record 固定消息字段，避免创建和解析两侧直接散落 Map / JSON 字符串字段名。
+     *
+     * @param orderId 订单 ID
+     */
+    private record OrderPaidPostActionPayload(Long orderId) {
+
+        /**
+         * 反序列化本地消息 payload。
+         *
+         * @param payload JSON 消息体
+         * @return 支付后置动作 payload
+         */
+        private static OrderPaidPostActionPayload fromJson(String payload) {
+            return new OrderPaidPostActionPayload(JSON.parseObject(payload).getLong(ORDER_ID_PAYLOAD_FIELD));
+        }
+
+        /**
+         * 序列化为本地消息 payload。
+         *
+         * @return JSON 消息体
+         */
+        private String toJson() {
+            return JSON.toJSONString(Map.of(ORDER_ID_PAYLOAD_FIELD, Objects.requireNonNull(orderId, "orderId")));
         }
     }
 }

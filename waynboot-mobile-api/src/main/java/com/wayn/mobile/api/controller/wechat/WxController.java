@@ -45,9 +45,7 @@ public class WxController {
      */
     @GetMapping("jsSdkInit")
     public R<JsSdkInitResVO> jsSdkInit(String url) throws NoSuchAlgorithmException {
-        log.info("初始化微信 JSSDK 开始, hasUrl={}", StringUtils.isNotBlank(url));
         JsSdkInitResVO resVO = getJsSdkSign(url);
-        log.info("初始化微信 JSSDK 完成, hasUrl={}", StringUtils.isNotBlank(url));
         return R.success(resVO);
     }
 

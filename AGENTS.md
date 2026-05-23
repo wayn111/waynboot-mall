@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## 项目结构与模块划分
-本仓库是基于 Spring Boot 3、Java 17 的 Maven 多模块商城后端。业务核心集中在 `waynboot-common`，其中包含 `core`、`dto`、`request`、`response`、`config`、`design` 等共享代码。`waynboot-admin-api` 提供后台管理接口，`waynboot-mobile-api` 提供 H5/移动端接口，`waynboot-message` 负责 RabbitMQ 相关能力，`waynboot-data` 封装 Redis / Elasticsearch，`waynboot-job` 负责 XXL-Job，`waynboot-monitor` 负责监控，`waynboot-util` 放通用工具。部署和中间件脚本在 `db-init`、`mysql`、`redis`、`rabbitmq`、`es`、`nginx`、`docker-compose*.yml`。
+本仓库是基于 Spring Boot 3、Java 17 的 Maven 多模块商城后端。业务核心集中在 `waynboot-common`，其中包含 `core`、`dto`、`request`、`response`、`config`、`design` 等共享代码。`waynboot-admin-api` 提供后台管理接口（同时承载 Spring `@Scheduled` 治理定时任务），`waynboot-mobile-api` 提供 H5/移动端接口，`waynboot-message` 负责 RabbitMQ 相关能力，`waynboot-data` 封装 Redis / Elasticsearch，`waynboot-monitor` 负责监控，`waynboot-util` 放通用工具。部署和中间件脚本在 `db-init`、`mysql`、`redis`、`rabbitmq`、`es`、`nginx`、`docker-compose*.yml`。
 
 ## 构建、测试与本地运行
 在仓库根目录执行：
@@ -42,8 +42,8 @@ Controller 层新增或调整接口时，默认补充关键业务日志，至少
 
 涉及 `application*.yml`、数据库、中间件配置的改动，PR 中必须写明影响范围、依赖服务和验证方式，禁止提交真实密钥、账号和本机路径。除非用户明确要求，否则不要提交 `application.yml`、`application-dev.yml` 等本地环境配置文件。
 
-对于商品域、订单域这类阶段性重构，除了代码和测试，还应同步补充面向维护者的说明文档，文档内容至少覆盖背景、范围、核心逻辑调整、并发与一致性变化、验证方式、非目标和后续计划。现有阶段文档可延续维护，例如 `GOODS_ORDER_PHASE1_REFACTOR.md`。
+对于商品域、订单域这类阶段性重构，除了代码和测试，还应同步补充面向维护者的说明文档，文档内容至少覆盖背景、范围、核心逻辑调整、并发与一致性变化、验证方式、非目标和后续计划。文档统一放在仓库根目录或 `docs/` 下，命名遵循 `<域>_<阶段>_<主题>.md`。
 
-交易链路优化必须从完整链路评估，不要只做单点代码改动。涉及下单、库存、支付、订单状态机、MQ、本地消息、分账、对账、分表和高可用时，先参考并维护 `ECOMMERCE_TRADE_SYSTEM_METHODOLOGY.md`。新增能力需要明确它处于同步主链路还是异步补偿链路，并说明幂等键、事务边界、失败补偿方式和监控指标。
+交易链路优化必须从完整链路评估，不要只做单点代码改动。涉及下单、库存、支付、订单状态机、MQ、本地消息、对账、分表和高可用时，需要先梳理"同步主链路 + 异步补偿链路"两段，并说明幂等键、事务边界、失败补偿方式和监控指标。当前项目只保留支付流水、渠道账单、退款流水和对账能力，禁止新增 `shop_payment_profit_sharing_flow` 或其他资金拆分流水表及相关实现。
 
 库存相关改造默认遵循“Redis 削峰、MySQL 兜底”的原则。Redis Lua 预扣只能降低入口流量和热点压力，不能替代 MySQL 条件更新、冻结库存和库存流水。支付成功、超时取消、退款回补等库存动作必须能通过库存流水追踪和幂等处理。

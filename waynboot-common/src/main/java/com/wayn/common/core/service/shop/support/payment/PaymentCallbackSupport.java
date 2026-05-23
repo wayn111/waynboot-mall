@@ -9,7 +9,14 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.wayn.common.config.AlipayConfig;
 import com.wayn.common.config.EpayConfig;
 import com.wayn.common.core.entity.shop.Order;
+import com.wayn.common.core.enums.OrderStatusChangeTypeEnum;
+import com.wayn.common.core.enums.PaymentFlowSaveResult;
+import com.wayn.common.core.enums.PaymentNotifyChannelEnum;
 import com.wayn.common.core.mapper.shop.OrderMapper;
+import com.wayn.common.core.service.shop.OrderStatusChangeCommand;
+import com.wayn.common.core.service.shop.OrderStatusLogService;
+import com.wayn.common.core.service.shop.PaymentFlowCreateCommand;
+import com.wayn.common.core.service.shop.PaymentFlowService;
 import com.wayn.common.core.service.shop.support.order.OrderStateTransitionSupport;
 import com.wayn.common.util.OrderUtil;
 import com.wayn.common.wapper.epay.util.EpaySignUtil;
@@ -18,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -43,6 +51,8 @@ public class PaymentCallbackSupport {
     private final OrderMapper orderMapper;
     private final PaymentPostActionSupport paymentPostActionSupport;
     private final OrderStateTransitionSupport orderStateTransitionSupport;
+    private final PaymentFlowService paymentFlowService;
+    private final OrderStatusLogService orderStatusLogService;
     private final TransactionTemplate transactionTemplate;
 
     /**
@@ -54,15 +64,20 @@ public class PaymentCallbackSupport {
      * @param orderMapper 订单 Mapper
      * @param paymentPostActionSupport 支付后置动作支撑服务
      * @param orderStateTransitionSupport 订单状态机
+     * @param paymentFlowService 支付流水服务
+     * @param orderStatusLogService 订单状态日志服务
      * @param platformTransactionManager 事务管理器
      */
     @Autowired
     public PaymentCallbackSupport(EpayConfig epayConfig, AlipayConfig alipayConfig, WxPayService wxPayService,
                                   OrderMapper orderMapper, PaymentPostActionSupport paymentPostActionSupport,
                                   OrderStateTransitionSupport orderStateTransitionSupport,
+                                  PaymentFlowService paymentFlowService,
+                                  OrderStatusLogService orderStatusLogService,
                                   PlatformTransactionManager platformTransactionManager) {
         this(epayConfig, alipayConfig, wxPayService, orderMapper, paymentPostActionSupport,
-                orderStateTransitionSupport, new TransactionTemplate(platformTransactionManager));
+                orderStateTransitionSupport, paymentFlowService, orderStatusLogService,
+                new TransactionTemplate(platformTransactionManager));
     }
 
     /**
@@ -74,12 +89,16 @@ public class PaymentCallbackSupport {
      * @param orderMapper 订单 Mapper
      * @param paymentPostActionSupport 支付后置动作支撑服务
      * @param orderStateTransitionSupport 订单状态机
+     * @param paymentFlowService 支付流水服务
+     * @param orderStatusLogService 订单状态日志服务
      */
     public PaymentCallbackSupport(EpayConfig epayConfig, AlipayConfig alipayConfig, WxPayService wxPayService,
                                   OrderMapper orderMapper, PaymentPostActionSupport paymentPostActionSupport,
-                                  OrderStateTransitionSupport orderStateTransitionSupport) {
+                                  OrderStateTransitionSupport orderStateTransitionSupport,
+                                  PaymentFlowService paymentFlowService,
+                                  OrderStatusLogService orderStatusLogService) {
         this(epayConfig, alipayConfig, wxPayService, orderMapper, paymentPostActionSupport,
-                orderStateTransitionSupport, (TransactionTemplate) null);
+                orderStateTransitionSupport, paymentFlowService, orderStatusLogService, (TransactionTemplate) null);
     }
 
     /**
@@ -91,11 +110,15 @@ public class PaymentCallbackSupport {
      * @param orderMapper 订单 Mapper
      * @param paymentPostActionSupport 支付后置动作支撑服务
      * @param orderStateTransitionSupport 订单状态机
+     * @param paymentFlowService 支付流水服务
+     * @param orderStatusLogService 订单状态日志服务
      * @param transactionTemplate 事务模板，单元测试可为空
      */
     private PaymentCallbackSupport(EpayConfig epayConfig, AlipayConfig alipayConfig, WxPayService wxPayService,
                                    OrderMapper orderMapper, PaymentPostActionSupport paymentPostActionSupport,
                                    OrderStateTransitionSupport orderStateTransitionSupport,
+                                   PaymentFlowService paymentFlowService,
+                                   OrderStatusLogService orderStatusLogService,
                                    TransactionTemplate transactionTemplate) {
         this.epayConfig = epayConfig;
         this.alipayConfig = alipayConfig;
@@ -103,6 +126,8 @@ public class PaymentCallbackSupport {
         this.orderMapper = orderMapper;
         this.paymentPostActionSupport = paymentPostActionSupport;
         this.orderStateTransitionSupport = orderStateTransitionSupport;
+        this.paymentFlowService = paymentFlowService;
+        this.orderStatusLogService = orderStatusLogService;
         this.transactionTemplate = transactionTemplate;
     }
 
@@ -122,7 +147,7 @@ public class PaymentCallbackSupport {
                     result.getTransactionId(),
                     BaseWxPayResult.fenToYuan(result.getTotalFee()),
                     true,
-                    "微信支付回调");
+                    PaymentNotifyChannelEnum.WECHAT);
             if (processResult.success()) {
                 return WxPayNotifyResponse.success(processResult.message());
             }
@@ -142,9 +167,7 @@ public class PaymentCallbackSupport {
      */
     public String aliPayNotify(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Map<String, String[]> parameterMap = request.getParameterMap();
-            Map<String, String> paramsMap = new HashMap<>();
-            parameterMap.forEach((key, value) -> paramsMap.put(key, value[0]));
+            Map<String, String> paramsMap = buildStringParameterMap(request);
             boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, alipayConfig.getAlipayPublicKey(),
                     alipayConfig.getCharset(), alipayConfig.getSigntype());
             if (!signVerified) {
@@ -154,9 +177,9 @@ public class PaymentCallbackSupport {
 
             PaymentProcessResult processResult = markOrderPaid(request.getParameter("out_trade_no"),
                     request.getParameter("trade_no"),
-                    null,
-                    false,
-                    "支付宝支付回调");
+                    request.getParameter("total_amount"),
+                    true,
+                    PaymentNotifyChannelEnum.ALIPAY);
             log.info("处理支付宝支付回调完成, orderSn={}, tradeNo={}, success={}",
                     request.getParameter("out_trade_no"),
                     request.getParameter("trade_no"),
@@ -178,20 +201,18 @@ public class PaymentCallbackSupport {
     public String epayPayNotify(HttpServletRequest request, HttpServletResponse response) {
         try {
             String epaySign = request.getParameter("sign");
-            Map<String, String[]> parameterMap = request.getParameterMap();
-            Map<String, Object> paramsMap = new HashMap<>();
-            parameterMap.forEach((key, value) -> paramsMap.put(key, value[0]));
+            Map<String, Object> paramsMap = buildObjectParameterMap(request);
             String sign = EpaySignUtil.sign(paramsMap, epayConfig.getKey());
-            if (!epaySign.equals(sign)) {
+            if (!StringUtils.equals(epaySign, sign)) {
                 log.error("epayPayNotify epaySign not equals sign.");
                 return "error";
             }
 
             PaymentProcessResult processResult = markOrderPaid(request.getParameter("out_trade_no"),
                     request.getParameter("trade_no"),
-                    null,
-                    false,
-                    "易支付回调");
+                    request.getParameter("money"),
+                    true,
+                    PaymentNotifyChannelEnum.EPAY);
             log.info("处理易支付回调完成, orderSn={}, tradeNo={}, success={}",
                     request.getParameter("out_trade_no"),
                     request.getParameter("trade_no"),
@@ -204,37 +225,103 @@ public class PaymentCallbackSupport {
     }
 
     /**
+     * 构建字符串参数 Map。
+     * 支付宝 SDK 验签要求 Map 值为字符串，统一在这里取每个参数的第一个值，避免回调方法里重复拼装。
+     *
+     * @param request HTTP 请求
+     * @return 字符串参数 Map
+     */
+    private Map<String, String> buildStringParameterMap(HttpServletRequest request) {
+        Map<String, String> paramsMap = new HashMap<>();
+        request.getParameterMap().forEach((key, value) -> paramsMap.put(key, firstParameterValue(value)));
+        return paramsMap;
+    }
+
+    /**
+     * 构建对象参数 Map。
+     * 易支付签名工具使用 Object 值类型，保留独立方法能让渠道差异集中在参数适配层。
+     *
+     * @param request HTTP 请求
+     * @return 对象参数 Map
+     */
+    private Map<String, Object> buildObjectParameterMap(HttpServletRequest request) {
+        Map<String, Object> paramsMap = new HashMap<>();
+        request.getParameterMap().forEach((key, value) -> paramsMap.put(key, firstParameterValue(value)));
+        return paramsMap;
+    }
+
+    /**
+     * 读取请求参数第一个值。
+     *
+     * @param values 参数值数组
+     * @return 第一个参数值，空数组时返回空字符串
+     */
+    private String firstParameterValue(String[] values) {
+        if (values == null || values.length == 0) {
+            return "";
+        }
+        return values[0];
+    }
+
+    /**
      * 统一执行支付成功落单逻辑。
      *
      * @param orderSn 订单号
      * @param payId 第三方支付流水号
      * @param totalFee 支付金额
      * @param validateAmount 是否校验金额
-     * @param channel 渠道名称
+     * @param channel 支付渠道
      * @return 支付处理结果
      */
     private PaymentProcessResult markOrderPaid(String orderSn, String payId, String totalFee,
-                                               boolean validateAmount, String channel) {
-        Order order = orderMapper.selectOne(Wrappers.lambdaQuery(Order.class)
-                .eq(Order::getOrderSn, orderSn));
+                                               boolean validateAmount, PaymentNotifyChannelEnum channel) {
+        if (StringUtils.isBlank(payId)) {
+            log.error("{}：支付流水号为空，orderSn={}", channel.getDescription(), orderSn);
+            return PaymentProcessResult.fail("支付流水号为空");
+        }
+        Order order = findOrderByOrderSn(orderSn);
         if (order == null) {
-            log.error("{}：订单不存在，orderSn：{}", channel, orderSn);
+            log.error("{}：订单不存在，orderSn：{}", channel.getDescription(), orderSn);
             return PaymentProcessResult.fail("订单不存在");
         }
-        if (validateAmount && new BigDecimal(totalFee).compareTo(order.getActualPrice()) != 0) {
-            log.error("{}：支付金额不符合，orderSn：{}，totalFee：{}", channel, order.getOrderSn(), totalFee);
+        if (validateAmount && isPaymentAmountMismatch(totalFee, order.getActualPrice())) {
+            log.error("{}：支付金额不符合，orderSn：{}，totalFee：{}", channel.getDescription(), order.getOrderSn(), totalFee);
             return PaymentProcessResult.fail("支付金额不符合");
         }
         if (OrderUtil.hasPayed(order)) {
-            log.info("{}：订单已经处理过了，orderSn：{}", channel, orderSn);
+            log.info("{}：订单已经处理过了，orderSn：{}", channel.getDescription(), orderSn);
             return PaymentProcessResult.success("已处理");
         }
         if (!orderStateTransitionSupport.canTransition(order.getOrderStatus(), OrderStatusEnum.STATUS_PAY)) {
-            log.error("{}：订单当前状态不可支付，orderSn={}，status={}", channel, orderSn, order.getOrderStatus());
+            log.error("{}：订单当前状态不可支付，orderSn={}，status={}",
+                    channel.getDescription(), orderSn, order.getOrderStatus());
             return PaymentProcessResult.fail("订单当前状态不可支付");
         }
 
         return executePaidTransaction(order, payId, channel);
+    }
+
+    /**
+     * 按订单号查询订单。
+     *
+     * @param orderSn 订单号
+     * @return 订单，不存在时返回 null
+     */
+    private Order findOrderByOrderSn(String orderSn) {
+        return orderMapper.selectOne(Wrappers.lambdaQuery(Order.class)
+                .eq(Order::getOrderSn, orderSn));
+    }
+
+    /**
+     * 判断渠道回调金额和订单应付金额是否不一致。
+     * 这里保留 BigDecimal 的严格解析语义，非法金额会继续抛出异常并由渠道回调入口统一返回失败。
+     *
+     * @param totalFee 渠道回调金额
+     * @param actualPrice 订单实付金额
+     * @return true=金额不一致
+     */
+    private boolean isPaymentAmountMismatch(String totalFee, BigDecimal actualPrice) {
+        return new BigDecimal(totalFee).compareTo(actualPrice) != 0;
     }
 
     /**
@@ -246,7 +333,7 @@ public class PaymentCallbackSupport {
      * @param channel 支付渠道
      * @return 支付处理结果
      */
-    private PaymentProcessResult executePaidTransaction(Order order, String payId, String channel) {
+    private PaymentProcessResult executePaidTransaction(Order order, String payId, PaymentNotifyChannelEnum channel) {
         if (transactionTemplate == null) {
             return doExecutePaidTransaction(order, payId, channel);
         }
@@ -261,28 +348,108 @@ public class PaymentCallbackSupport {
      * @param channel 支付渠道
      * @return 支付处理结果
      */
-    private PaymentProcessResult doExecutePaidTransaction(Order order, String payId, String channel) {
-        // 通过“待支付 -> 已支付”的条件更新实现幂等，避免多个回调并发重复执行成功逻辑。
-        int updated = orderMapper.update(null, Wrappers.lambdaUpdate(Order.class)
+    private PaymentProcessResult doExecutePaidTransaction(Order order, String payId, PaymentNotifyChannelEnum channel) {
+        int updated = updateOrderToPaid(order, payId);
+        if (updated == 0) {
+            return handlePaidUpdateMiss(order, channel);
+        }
+
+        savePaymentFlowOrThrow(order, payId, channel);
+        orderStatusLogService.recordSuccess(buildPaidStatusLogCommand(order, channel));
+        paymentPostActionSupport.handleOrderPaid(order.getId());
+        return PaymentProcessResult.success("处理成功");
+    }
+
+    /**
+     * 将订单从待支付更新为已支付。
+     * 通过状态机补充期望状态条件，避免支付回调、超时取消、重复通知并发时互相覆盖。
+     *
+     * @param order 订单
+     * @param payId 第三方支付流水号
+     * @return 影响行数
+     */
+    private int updateOrderToPaid(Order order, String payId) {
+        var updateWrapper = Wrappers.lambdaUpdate(Order.class)
                 .set(Order::getPayId, payId)
                 .set(Order::getPayTime, LocalDateTime.now())
                 .set(Order::getOrderStatus, OrderStatusEnum.STATUS_PAY.getStatus())
                 .set(Order::getUpdateTime, new Date())
-                .eq(Order::getId, order.getId())
-                .eq(Order::getOrderStatus, OrderStatusEnum.STATUS_CREATE.getStatus()));
-        if (updated == 0) {
-            // 条件更新失败后再次查询最新状态，用于区分“被其他线程成功处理”与“真实更新失败”。
-            Order latestOrder = orderMapper.selectById(order.getId());
-            if (latestOrder != null && OrderUtil.hasPayed(latestOrder)) {
-                log.info("{}：订单已经被其他请求处理，orderSn：{}", channel, order.getOrderSn());
-                return PaymentProcessResult.success("已处理");
-            }
-            log.error("{}：更新订单状态失败，orderSn：{}", channel, order.getOrderSn());
-            return PaymentProcessResult.fail("更新订单状态失败");
-        }
+                .eq(Order::getId, order.getId());
+        orderStateTransitionSupport.applyExpectedStatus(updateWrapper, OrderStatusEnum.STATUS_CREATE);
+        return orderMapper.update(null, updateWrapper);
+    }
 
-        paymentPostActionSupport.handleOrderPaid(order.getId());
-        return PaymentProcessResult.success("处理成功");
+    /**
+     * 处理支付状态条件更新未命中的场景。
+     * 未命中不一定是失败，可能是另一个并发回调已经把订单推进到已支付。
+     *
+     * @param order 原始订单
+     * @param channel 支付渠道
+     * @return 支付处理结果
+     */
+    private PaymentProcessResult handlePaidUpdateMiss(Order order, PaymentNotifyChannelEnum channel) {
+        Order latestOrder = orderMapper.selectById(order.getId());
+        if (latestOrder != null && OrderUtil.hasPayed(latestOrder)) {
+            log.info("{}：订单已经被其他请求处理，orderSn：{}", channel.getDescription(), order.getOrderSn());
+            return PaymentProcessResult.success("已处理");
+        }
+        log.error("{}：更新订单状态失败，orderSn：{}", channel.getDescription(), order.getOrderSn());
+        return PaymentProcessResult.fail("更新订单状态失败");
+    }
+
+    /**
+     * 保存内部支付流水。
+     * 支付流水冲突说明同一渠道流水试图绑定不同订单，必须抛异常让事务回滚订单状态更新。
+     *
+     * @param order 订单
+     * @param payId 第三方支付流水号
+     * @param channel 支付渠道
+     */
+    private void savePaymentFlowOrThrow(Order order, String payId, PaymentNotifyChannelEnum channel) {
+        PaymentFlowSaveResult saveResult = paymentFlowService.savePaidFlow(buildPaymentFlowCommand(order, payId, channel));
+        if (saveResult == PaymentFlowSaveResult.DUPLICATE_CONFLICT) {
+            throw new IllegalStateException("支付流水冲突");
+        }
+    }
+
+    /**
+     * 构建支付流水创建命令。
+     *
+     * @param order 订单
+     * @param payId 第三方支付流水号
+     * @param channel 支付渠道
+     * @return 支付流水创建命令
+     */
+    private PaymentFlowCreateCommand buildPaymentFlowCommand(Order order, String payId,
+                                                             PaymentNotifyChannelEnum channel) {
+        return PaymentFlowCreateCommand.builder()
+                .flowKey(channel.getCode() + ":" + payId)
+                .orderId(order.getId())
+                .orderSn(order.getOrderSn())
+                .payId(payId)
+                .payChannel(channel.getCode())
+                .payAmount(order.getActualPrice())
+                .build();
+    }
+
+    /**
+     * 构建支付成功状态日志命令。
+     *
+     * @param order 订单
+     * @param channel 支付渠道
+     * @return 状态日志命令
+     */
+    private OrderStatusChangeCommand buildPaidStatusLogCommand(Order order, PaymentNotifyChannelEnum channel) {
+        return OrderStatusChangeCommand.builder()
+                .orderId(order.getId())
+                .orderSn(order.getOrderSn())
+                .sourceStatus(OrderStatusEnum.STATUS_CREATE)
+                .targetStatus(OrderStatusEnum.STATUS_PAY)
+                .changeType(OrderStatusChangeTypeEnum.PAY_CALLBACK)
+                .operatorType("SYSTEM")
+                .operatorId(channel.getCode())
+                .remark(channel.getDescription() + "支付回调")
+                .build();
     }
 
     /**

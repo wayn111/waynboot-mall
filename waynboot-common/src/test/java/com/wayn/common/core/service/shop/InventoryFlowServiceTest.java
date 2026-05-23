@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,5 +72,43 @@ class InventoryFlowServiceTest {
                 .build());
 
         assertFalse(saved);
+    }
+
+    /**
+     * 空库存流水命令不能进入落库流程。
+     * 库存流水用于幂等和对账，缺少命令上下文时应直接返回未保存，避免 NPE 或写入半截流水。
+     */
+    @Test
+    void saveFlowReturnsFalseWhenCommandIsNull() {
+        InventoryFlowMapper mapper = mock(InventoryFlowMapper.class);
+        InventoryFlowService service = new InventoryFlowService(mapper);
+
+        boolean saved = service.saveFlow(null);
+
+        assertFalse(saved);
+        verify(mapper, never()).insert(any(InventoryFlow.class));
+    }
+
+    /**
+     * flowKey 为空白时不能保存库存流水。
+     * flowKey 是库存副作用幂等键，缺失后无法区分正常变更和本地消息重复补偿。
+     */
+    @Test
+    void saveFlowReturnsFalseWhenFlowKeyIsBlank() {
+        InventoryFlowMapper mapper = mock(InventoryFlowMapper.class);
+        InventoryFlowService service = new InventoryFlowService(mapper);
+
+        boolean saved = service.saveFlow(InventoryFlowCreateCommand.builder()
+                .flowKey(" ")
+                .bizType("ORDER")
+                .bizId("1")
+                .changeType("CONFIRM")
+                .goodsId(10L)
+                .productId(2001L)
+                .changeNumber(3)
+                .build());
+
+        assertFalse(saved);
+        verify(mapper, never()).insert(any(InventoryFlow.class));
     }
 }

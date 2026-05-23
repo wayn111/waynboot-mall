@@ -1,18 +1,21 @@
 package com.wayn.common.core.service.shop.support.order.submit.chain;
 
 import com.wayn.common.core.service.shop.support.order.OrderStockSupport;
+import com.wayn.common.core.service.shop.support.order.RedisStockPreDeductSupport;
+import com.wayn.common.core.service.shop.support.order.RedisStockReservation;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * 下单库存冻结步骤。
- * 在订单对象组装和落库前执行 MySQL 条件冻结，失败时依赖外层单笔事务回滚本次订单副作用。
+ * 先通过 Redis Lua 预占削峰，再执行 MySQL 条件冻结；Redis 只是并发闸门，最终一致性仍以 MySQL 和库存流水为准。
  */
 @Component
 @AllArgsConstructor
 public class OrderSubmitStockReduceStep implements OrderSubmitStep {
 
     private final OrderStockSupport orderStockSupport;
+    private final RedisStockPreDeductSupport redisStockPreDeductSupport;
 
     /**
      * 返回库存冻结步骤顺序。
@@ -32,6 +35,14 @@ public class OrderSubmitStockReduceStep implements OrderSubmitStep {
     @Override
     public void execute(OrderSubmitChainContext context) {
         // 只使用上下文里的购物车快照冻结库存，避免后续购物车变化影响当前订单的库存口径。
-        orderStockSupport.freezeStock(context.getOrderDTO().getOrderSn(), context.getSubmitContext().checkedGoodsList());
+        RedisStockReservation reservation = redisStockPreDeductSupport.preDeduct(context.getOrderDTO().getOrderSn(),
+                context.getSubmitContext().checkedGoodsList());
+        try {
+            orderStockSupport.freezeStock(context.getOrderDTO().getOrderSn(),
+                    context.getSubmitContext().checkedGoodsList());
+        } finally {
+            // Redis 预占只保护进入 MySQL 条件冻结前的并发窗口，库存真实扣减成功与否由 MySQL 结果决定。
+            reservation.release();
+        }
     }
 }
