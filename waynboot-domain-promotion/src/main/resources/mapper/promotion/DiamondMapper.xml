@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.domain.api.promotion.mapper.DiamondMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wayn.domain.api.promotion.entity.Diamond">
+        <result column="id"             property="id" />
+        <result column="name"           property="name" />
+        <result column="sort"           property="sort" />
+        <result column="jump_type"      property="jumpType" />
+        <result column="value_id"       property="valueId" />
+        <result column="value_url"      property="valueUrl" />
+        <result column="icon_url"       property="iconUrl" />
+        <result column="pic_url"        property="picUrl" />
+        <result column="status"         property="status" />
+        <result column="del_flag"       property="delFlag" />
+        <result column="create_time"    property="createTime" />
+        <result column="update_time"    property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="selectDiamondVo">
+        select id,
+        name, sort, jump_type, value_id, value_url, icon_url, pic_url, status, del_flag, create_time, update_time from shop_diamond
+    </sql>
+    <select id="selectDiamondListPage" resultMap="BaseResultMap">
+        <include refid="selectDiamondVo"/>
+        <where>
+            del_flag = 0
+            <if test="diamond.name != null and diamond.name != ''">
+                AND name like concat('%', #{diamond.name}, '%')
+            </if>
+            <if test="diamond.startTime != null and diamond.startTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{diamond.startTime},'%Y-%m-%d')
+            </if>
+            <if test="diamond.endTime != null and diamond.endTime != ''">
+                and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{diamond.endTime},'%Y-%m-%d')
+            </if>
+            order by sort asc, id desc
+        </where>
+    </select>
+
+</mapper>

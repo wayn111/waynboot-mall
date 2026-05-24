@@ -1,6 +1,6 @@
 package com.wayn.admin.framework.config;
 
-import com.wayn.common.config.WaynConfig;
+import com.wayn.domain.api.common.WaynConfig;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

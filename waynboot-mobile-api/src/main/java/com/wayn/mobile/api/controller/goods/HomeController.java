@@ -2,10 +2,10 @@ package com.wayn.mobile.api.controller.goods;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.service.shop.IHomeService;
-import com.wayn.common.model.response.HomeIndexResponseVO;
-import com.wayn.common.model.response.MallConfigResponseVO;
+import com.wayn.domain.api.goods.entity.Goods;
+import com.wayn.domain.api.trade.service.IHomeService;
+import com.wayn.domain.api.trade.response.HomeIndexResponseVO;
+import com.wayn.domain.api.trade.response.MallConfigResponseVO;
 import com.wayn.common.model.response.RecommonGoodsItemResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;

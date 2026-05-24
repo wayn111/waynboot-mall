@@ -3,8 +3,8 @@ package com.wayn.mobile.api.controller.goods;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.entity.shop.SearchHistory;
-import com.wayn.common.core.service.shop.ISearchHistoryService;
+import com.wayn.domain.api.goods.entity.SearchHistory;
+import com.wayn.domain.api.goods.service.ISearchHistoryService;
 import com.wayn.common.model.request.SearchHistorySaveReqVO;
 import com.wayn.common.model.response.SearchHistoryResVO;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;

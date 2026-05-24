@@ -1,8 +1,8 @@
 package com.wayn.test;
 
-import com.wayn.common.core.service.shop.IPayService;
-import com.wayn.common.design.strategy.pay.PayTypeEnum;
-import com.wayn.common.model.request.OrderPayReqVO;
+import com.wayn.domain.api.trade.service.IPayService;
+import com.wayn.domain.api.trade.enums.PayTypeEnum;
+import com.wayn.domain.api.trade.request.OrderPayReqVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

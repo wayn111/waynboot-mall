@@ -1,6 +1,6 @@
 package com.wayn.mobile.framework.config;
 
-import com.wayn.common.config.WaynConfig;
+import com.wayn.domain.api.common.WaynConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

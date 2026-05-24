@@ -2,9 +2,9 @@ package com.wayn.mobile.api.controller.trade;
 
 
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.service.shop.IPayService;
-import com.wayn.common.model.request.OrderPayReqVO;
-import com.wayn.common.model.response.OrderPayResVO;
+import com.wayn.domain.api.trade.service.IPayService;
+import com.wayn.domain.api.trade.request.OrderPayReqVO;
+import com.wayn.domain.api.trade.response.OrderPayResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -12,6 +12,13 @@
         <module>waynboot-message</module>
         <module>waynboot-monitor</module>
         <module>waynboot-util</module>
+        <module>waynboot-payment-channel</module>
+        <module>waynboot-domain-api</module>
+        <module>waynboot-domain-cart</module>
+        <module>waynboot-domain-promotion</module>
+        <module>waynboot-domain-inventory</module>
+        <module>waynboot-domain-goods</module>
+        <module>waynboot-domain-trade</module>
     </modules>
 
     <groupId>com.wayn</groupId>
@@ -267,6 +274,41 @@
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-util</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-payment-channel</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-domain-api</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-domain-cart</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-domain-promotion</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-domain-inventory</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-domain-goods</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wayn</groupId>
+                <artifactId>waynboot-domain-trade</artifactId>
                 <version>${version}</version>
             </dependency>
         </dependencies>

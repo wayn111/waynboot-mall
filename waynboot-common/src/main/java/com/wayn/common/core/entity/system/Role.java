@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.wayn.common.base.entity.BaseEntity;
+import com.wayn.util.entity.BaseEntity;
 import com.wayn.util.constant.SysConstants;
 import com.wayn.util.converter.StatusConverter;
 import jakarta.validation.constraints.DecimalMin;

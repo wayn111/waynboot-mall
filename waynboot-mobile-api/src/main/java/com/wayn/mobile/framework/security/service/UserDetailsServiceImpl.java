@@ -1,8 +1,8 @@
 package com.wayn.mobile.framework.security.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wayn.common.core.entity.shop.Member;
-import com.wayn.common.core.service.shop.IMemberService;
+import com.wayn.domain.api.trade.entity.Member;
+import com.wayn.domain.api.trade.service.IMemberService;
 import com.wayn.mobile.framework.security.LoginUserDetail;
 import com.wayn.util.enums.UserStatusEnum;
 import com.wayn.util.util.ip.IpUtils;

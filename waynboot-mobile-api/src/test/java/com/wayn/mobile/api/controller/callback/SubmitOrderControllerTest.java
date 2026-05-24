@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller.callback;
 
 import com.alibaba.fastjson.JSON;
-import com.wayn.common.core.service.shop.IMobileOrderService;
+import com.wayn.domain.api.trade.service.IMobileOrderService;
 import com.wayn.data.redis.constant.RedisKeyEnum;
 import com.wayn.data.redis.manager.RedisCache;
 import com.wayn.message.core.dto.OrderDTO;

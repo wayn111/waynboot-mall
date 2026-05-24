@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>waynboot-mall</artifactId>
+        <groupId>com.wayn</groupId>
+        <version>2.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>waynboot-domain-cart</artifactId>
+    <version>2.0.0</version>
+
+    <description>
+        购物车领域：购物车实体、读写操作、聚合查询。
+        待迁入: ICartService, CartServiceImpl, CartReadSupport, Cart entity 等。
+        当前为骨架模块（A-3 试点目标）。
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-domain-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,7 +1,8 @@
 package com.wayn.common.util;
 
 
-import com.wayn.common.core.entity.shop.Order;
+import com.wayn.domain.api.trade.entity.Order;
+import com.wayn.domain.api.trade.response.OrderHandleOption;
 import com.wayn.util.enums.OrderStatusEnum;
 
 import java.util.ArrayList;

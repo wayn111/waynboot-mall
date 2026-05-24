@@ -2,11 +2,11 @@ package com.wayn.mobile.api.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.entity.shop.SearchHistory;
-import com.wayn.common.core.service.shop.IGoodsService;
-import com.wayn.common.core.service.shop.IKeywordService;
-import com.wayn.common.core.service.shop.ISearchHistoryService;
+import com.wayn.domain.api.goods.entity.Goods;
+import com.wayn.domain.api.goods.entity.SearchHistory;
+import com.wayn.domain.api.goods.service.IGoodsService;
+import com.wayn.domain.api.goods.service.IKeywordService;
+import com.wayn.domain.api.goods.service.ISearchHistoryService;
 import com.wayn.common.model.request.SearchRequestVO;
 import com.wayn.common.model.response.SearchGoodsItemResVO;
 import com.wayn.data.elastic.constant.EsConstants;

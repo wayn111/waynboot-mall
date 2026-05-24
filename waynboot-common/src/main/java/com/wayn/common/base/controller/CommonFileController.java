@@ -2,7 +2,7 @@ package com.wayn.common.base.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wayn.common.base.service.UploadService;
-import com.wayn.common.config.WaynConfig;
+import com.wayn.domain.api.common.WaynConfig;
 import com.wayn.common.core.vo.Base64FileVO;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;

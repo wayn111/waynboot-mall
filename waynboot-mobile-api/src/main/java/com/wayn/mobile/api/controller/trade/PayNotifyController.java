@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller.trade;
 
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.service.shop.IPayService;
+import com.wayn.domain.api.trade.service.IPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;

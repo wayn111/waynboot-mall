@@ -2,11 +2,11 @@ package com.wayn.mobile.api.controller.marketing;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.entity.shop.Diamond;
-import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.service.shop.IDiamondService;
-import com.wayn.common.design.strategy.diamond.context.DiamondJumpContext;
-import com.wayn.common.design.strategy.diamond.strategy.DiamondJumpTypeInterface;
+import com.wayn.domain.api.promotion.entity.Diamond;
+import com.wayn.domain.api.goods.entity.Goods;
+import com.wayn.domain.api.promotion.service.IDiamondService;
+import com.wayn.domain.promotion.strategy.diamond.DiamondJumpContext;
+import com.wayn.domain.promotion.strategy.diamond.DiamondJumpTypeInterface;
 import com.wayn.common.model.response.DiamondGoodsResVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;

@@ -60,6 +60,34 @@
             <artifactId>sms4j-spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- 支付渠道适配 -->
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-payment-channel</artifactId>
+        </dependency>
+
+        <!-- 业务领域 -->
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-domain-promotion</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-domain-goods</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-domain-cart</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-domain-inventory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-domain-trade</artifactId>
+        </dependency>
+
         <!-- 验证码 -->
         <dependency>
             <groupId>com.github.whvcse</groupId>

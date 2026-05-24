@@ -4,7 +4,7 @@ import com.wayn.admin.framework.security.model.LoginUserDetail;
 import com.wayn.admin.framework.security.service.TokenService;
 import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.base.service.UploadService;
-import com.wayn.common.config.WaynConfig;
+import com.wayn.domain.api.common.WaynConfig;
 import com.wayn.common.core.entity.system.User;
 import com.wayn.common.core.service.system.IUserService;
 import com.wayn.common.model.response.UserProfileResVO;

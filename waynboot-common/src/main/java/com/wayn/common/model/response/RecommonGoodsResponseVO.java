@@ -1,6 +1,6 @@
 package com.wayn.common.model.response;
 
-import com.wayn.common.core.entity.shop.Goods;
+import com.wayn.domain.api.goods.entity.Goods;
 import lombok.Data;
 
 import java.io.Serial;

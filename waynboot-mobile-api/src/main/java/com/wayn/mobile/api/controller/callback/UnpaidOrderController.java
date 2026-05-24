@@ -1,6 +1,6 @@
 package com.wayn.mobile.api.controller.callback;
 
-import com.wayn.common.core.service.shop.IOrderUnpaidService;
+import com.wayn.domain.api.trade.service.IOrderUnpaidService;
 import com.wayn.util.enums.OrderStatusEnum;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;

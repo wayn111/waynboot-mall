@@ -2,7 +2,7 @@ package com.wayn.mobile.api.controller.trade;
 
 
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.service.shop.IMobileOrderService;
+import com.wayn.domain.api.trade.service.IMobileOrderService;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

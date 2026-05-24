@@ -39,6 +39,16 @@
             <version>${commons.io.version}</version>
         </dependency>
 
+        <!-- BaseEntity / ShopBaseEntity 用 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
         <!-- jwt验证 -->
         <dependency>
             <groupId>com.auth0</groupId>

@@ -3,7 +3,7 @@ package com.wayn.common.core.entity.tool;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.wayn.common.base.entity.ShopBaseEntity;
+import com.wayn.util.entity.ShopBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

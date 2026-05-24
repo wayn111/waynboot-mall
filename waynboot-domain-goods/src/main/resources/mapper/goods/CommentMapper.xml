@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wayn.domain.api.goods.mapper.CommentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ShopCommentResult" type="com.wayn.domain.api.goods.entity.Comment">
+        <result column="id"                 property="id" />
+        <result column="value_id"           property="valueId" />
+        <result column="type"               property="type" />
+        <result column="content"            property="content" />
+        <result column="admin_content"      property="adminContent" />
+        <result column="user_id"            property="userId" />
+        <result column="has_picture"        property="hasPicture" />
+        <result column="pic_urls"           property="picUrls" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="star"               property="star" />
+        <result column="create_time"        property="createTime" />
+        <result column="update_time"        property="updateTime" />
+        <result column="del_flag"           property="delFlag" />
+    </resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ShopUserCommentResult" type="com.wayn.domain.api.goods.response.CommentVO">
+        <result column="id"                 property="id"/>
+        <result column="value_id"           property="valueId"/>
+        <result column="type"               property="type"/>
+        <result column="content"            property="content"/>
+        <result column="admin_content"      property="adminContent"/>
+        <result column="user_id"            property="userId"/>
+        <result column="nickname"           property="username"/>
+        <result column="avatar"             property="avatar"/>
+        <result column="has_picture"        property="hasPicture"/>
+        <result column="pic_urls"           property="picUrls"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="star"               property="star"/>
+        <result column="create_time"        property="createTime"/>
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="selectCommentVo">
+        select id,
+               value_id,
+               type,
+               content,
+               admin_content,
+               user_id,
+               has_picture,
+               pic_urls,
+               star,
+               create_time,
+               update_time,
+               del_flag
+        from shop_comment
+    </sql>
+    <sql id="selectUserCommentVo">
+        select c.id,
+               c.value_id,
+               c.type,
+               c.content,
+               c.admin_content,
+               c.user_id,
+               c.has_picture,
+               c.pic_urls,
+               c.star,
+               c.create_time,
+               c.update_time,
+               m.nickname,
+               c.avatar
+        from shop_comment c
+                 left join shop_member m on c.user_id = m.id
+    </sql>
+
+
+    <select id="selectListPage" resultMap="ShopCommentResult">
+        <include refid="selectCommentVo"/>
+        <where>
+            del_flag = 0
+            <if test="comment.id != null">
+                AND id = #{comment.id}
+            </if>
+            <if test="comment.userId != null">
+                AND user_id = #{comment.userId}
+            </if>
+            <if test="comment.type != null">
+                AND type = #{comment.type}
+            </if>
+            <if test="comment.star != null">
+                AND star = #{comment.star}
+            </if>
+            <if test="comment.hasPicture != null">
+                AND has_picture = #{comment.hasPicture}
+            </if>
+            <if test="comment.startTime != null and comment.startTime != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{comment.startTime},'%Y-%m-%d')
+            </if>
+            <if test="comment.endTime != null and comment.endTime != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{comment.endTime},'%Y-%m-%d')
+            </if>
+            order by create_time desc, id desc
+        </where>
+    </select>
+    <select id="selectByTagType" resultMap="ShopUserCommentResult">
+        <include refid="selectUserCommentVo"/>
+        <where>
+            c.del_flag = 0
+            and c.value_id = #{goodsId}
+            and c.type = 0
+            <if test="tagType == 1">
+                AND star in (4, 5)
+            </if>
+            <if test="tagType == 2">
+                AND star = 3
+            </if>
+            <if test="tagType == 3">
+                AND star in (1, 2)
+            </if>
+            order by c.create_time desc
+        </where>
+    </select>
+    <select id="selectTagNum" resultType="com.wayn.domain.api.goods.response.CommentTagNumVO">
+        select (select count(1)
+                from shop_comment
+                where del_flag = 0
+                  and value_id = #{goodsId}
+                  and type = 0
+                  and star in (4, 5)) as goodsNum,
+               (select count(1)
+                from shop_comment
+                where del_flag = 0
+                  and value_id = #{goodsId}
+                  and type = 0
+                  and star = 3)       as middleNum,
+               (select count(1)
+                from shop_comment
+                where del_flag = 0
+                  and value_id = #{goodsId}
+                  and type = 0
+                  and star in (1, 2)) as badNum,
+               (select count(1)
+                from shop_comment
+                where del_flag = 0
+                  and value_id = #{goodsId}
+                  and type = 0)       as totalNum,
+               (select count(1)
+                from shop_comment
+                where del_flag = 0
+                  and has_picture = 1
+                  and value_id = #{goodsId}
+                  and type = 0)       as hasPictureNum
+    </select>
+
+</mapper>

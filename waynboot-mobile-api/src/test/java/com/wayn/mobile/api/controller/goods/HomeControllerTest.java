@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller.goods;
 
-import com.wayn.common.core.entity.shop.Goods;
-import com.wayn.common.core.service.shop.IHomeService;
+import com.wayn.domain.api.goods.entity.Goods;
+import com.wayn.domain.api.trade.service.IHomeService;
 import com.wayn.common.model.response.RecommonGoodsItemResVO;
 import com.wayn.util.constant.Constants;
 import com.wayn.util.enums.ReturnCodeEnum;

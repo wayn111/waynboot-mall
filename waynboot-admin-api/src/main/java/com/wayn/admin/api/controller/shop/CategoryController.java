@@ -2,8 +2,8 @@ package com.wayn.admin.api.controller.shop;
 
 
 import com.wayn.common.base.controller.BaseController;
-import com.wayn.common.core.entity.shop.Category;
-import com.wayn.common.core.service.shop.ICategoryService;
+import com.wayn.domain.api.goods.entity.Category;
+import com.wayn.domain.api.goods.service.ICategoryService;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

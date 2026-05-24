@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller.member;
 
-import com.wayn.common.core.entity.shop.Member;
-import com.wayn.common.core.service.shop.IMemberService;
+import com.wayn.domain.api.trade.entity.Member;
+import com.wayn.domain.api.trade.service.IMemberService;
 import com.wayn.common.model.request.ProfileRequestVO;
 import com.wayn.common.model.request.UpdatePasswordReqVO;
 import com.wayn.common.model.response.MobileUserAvatarResVO;

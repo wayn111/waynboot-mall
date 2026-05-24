@@ -1,7 +1,7 @@
 package com.wayn.mobile.api.controller.goods;
 
-import com.wayn.common.core.service.shop.IGoodsDetailService;
-import com.wayn.common.model.response.GoodsDetailResponseVO;
+import com.wayn.domain.api.goods.service.IGoodsDetailService;
+import com.wayn.domain.api.goods.response.GoodsDetailResponseVO;
 import com.wayn.util.util.R;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

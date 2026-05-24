@@ -1,6 +1,6 @@
 package com.wayn.common.design.strategy.refund.strategy;
 
-import com.wayn.common.model.request.OrderRefundReqVO;
+import com.wayn.domain.api.trade.request.OrderRefundReqVO;
 import com.wayn.common.model.response.OrderRefundResVO;
 
 /**

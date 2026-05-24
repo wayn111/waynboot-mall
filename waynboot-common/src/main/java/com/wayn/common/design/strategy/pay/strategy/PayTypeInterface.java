@@ -1,7 +1,7 @@
 package com.wayn.common.design.strategy.pay.strategy;
 
-import com.wayn.common.model.request.OrderPayReqVO;
-import com.wayn.common.model.response.OrderPayResVO;
+import com.wayn.domain.api.trade.request.OrderPayReqVO;
+import com.wayn.domain.api.trade.response.OrderPayResVO;
 
 /**
  * 支付策略接口

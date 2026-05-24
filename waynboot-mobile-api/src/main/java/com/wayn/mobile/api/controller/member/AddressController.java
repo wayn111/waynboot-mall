@@ -2,8 +2,8 @@ package com.wayn.mobile.api.controller.member;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.wayn.common.core.entity.shop.Address;
-import com.wayn.common.core.service.shop.IAddressService;
+import com.wayn.domain.api.trade.entity.Address;
+import com.wayn.domain.api.trade.service.IAddressService;
 import com.wayn.common.model.request.AddressSaveReqVO;
 import com.wayn.common.model.response.AddressResVO;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
