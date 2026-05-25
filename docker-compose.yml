@@ -9,7 +9,7 @@ services:
       - /opt/waynboot-mall/upload:/opt/waynboot-mall/upload
       - ./jars/waynboot-mobile-api.jar:/home/app/waynboot-mobile-api.jar
     restart: always
-    command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-mobile-api.jar
+    command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -Dspring.profiles.active=prod -jar /home/app/waynboot-mobile-api.jar
     ports:
       - "82:82"
     environment:
@@ -26,7 +26,7 @@ services:
       - /opt/waynboot-mall/upload:/opt/waynboot-mall/upload
       - ./jars/waynboot-admin-api.jar:/home/app/waynboot-admin-api.jar
     restart: always
-    command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-admin-api.jar
+    command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -Dspring.profiles.active=prod -jar /home/app/waynboot-admin-api.jar
     ports:
       - "81:81"
     environment:
@@ -43,7 +43,7 @@ services:
       - /opt/waynboot-mall/upload:/opt/waynboot-mall/upload
       - ./jars/waynboot-message-consumer.jar:/home/app/waynboot-message-consumer.jar
     restart: always
-    command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -jar /home/app/waynboot-message-consumer.jar
+    command: java -Xms512m -Xmx512m -Duser.timezone=GMT+8 -Dfile.encoding=utf-8 -Dspring.profiles.active=prod -jar /home/app/waynboot-message-consumer.jar
     ports:
       - "85:85"
     environment:
