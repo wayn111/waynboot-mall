@@ -1,90 +1,23 @@
 package com.wayn.domain.trade.service;
 
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import com.wayn.domain.api.common.MybatisPlusTableInfoTestHelper;
+import com.wayn.domain.api.trade.entity.OrderStatusLog;
+import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
+import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
 import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
 import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
+import com.wayn.domain.trade.service.impl.OrderStatusLogServiceImpl;
 import com.wayn.util.enums.OrderStatusEnum;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import org.junit.jupiter.api.BeforeAll;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import org.junit.jupiter.api.Test;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import static org.mockito.ArgumentMatchers.any;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import static org.mockito.Mockito.mock;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import static org.mockito.Mockito.never;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import static org.mockito.Mockito.verify;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 import static org.mockito.Mockito.when;
-import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
-import com.wayn.domain.api.trade.service.OrderStatusLogService;
-import com.wayn.domain.api.trade.entity.OrderStatusLog;
-import com.wayn.domain.api.trade.mapper.OrderStatusLogMapper;
-import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
 
 class OrderStatusLogServiceTest {
 
@@ -96,7 +29,7 @@ class OrderStatusLogServiceTest {
     @Test
     void recordSuccessMapsCommandToStatusLogEntity() {
         OrderStatusLogMapper mapper = mock(OrderStatusLogMapper.class);
-        OrderStatusLogService service = new OrderStatusLogService(mapper);
+        OrderStatusLogService service = new OrderStatusLogServiceImpl(mapper);
         when(mapper.insert(any(OrderStatusLog.class))).thenReturn(1);
 
         service.recordSuccess(OrderStatusChangeCommand.builder()
@@ -127,7 +60,7 @@ class OrderStatusLogServiceTest {
     @Test
     void recordFailureDoesNotInterruptMainTradeFlowWhenInsertFails() {
         OrderStatusLogMapper mapper = mock(OrderStatusLogMapper.class);
-        OrderStatusLogService service = new OrderStatusLogService(mapper);
+        OrderStatusLogService service = new OrderStatusLogServiceImpl(mapper);
         when(mapper.insert(any(OrderStatusLog.class))).thenThrow(new IllegalStateException("db unavailable"));
 
         assertDoesNotThrow(() -> service.recordFailure(OrderStatusChangeCommand.builder()
@@ -147,7 +80,7 @@ class OrderStatusLogServiceTest {
     @Test
     void recordSuccessSkipsNullCommandWithoutTouchingDatabase() {
         OrderStatusLogMapper mapper = mock(OrderStatusLogMapper.class);
-        OrderStatusLogService service = new OrderStatusLogService(mapper);
+        OrderStatusLogService service = new OrderStatusLogServiceImpl(mapper);
 
         assertDoesNotThrow(() -> service.recordSuccess(null));
 
@@ -157,7 +90,7 @@ class OrderStatusLogServiceTest {
     @Test
     void recordFailureNormalizesBlankFailReasonAndRemarkToEmptyText() {
         OrderStatusLogMapper mapper = mock(OrderStatusLogMapper.class);
-        OrderStatusLogService service = new OrderStatusLogService(mapper);
+        OrderStatusLogService service = new OrderStatusLogServiceImpl(mapper);
         when(mapper.insert(any(OrderStatusLog.class))).thenReturn(1);
 
         service.recordFailure(OrderStatusChangeCommand.builder()

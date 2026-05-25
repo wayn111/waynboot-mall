@@ -1,6 +1,6 @@
 # waynboot-mall
 
-`waynboot-mall` is a Maven multi-module e-commerce backend based on Spring Boot 3 and Java 17. It covers the mobile storefront API, admin API, message consumers, scheduled jobs, Redis, Elasticsearch, and monitoring capabilities. The current architecture focuses on goods, orders, inventory, payments, MQ, local message compensation, and reconciliation governance, with the goal of keeping the trade flow maintainable, scalable, and reliable under high concurrency.
+`waynboot-mall` is a Maven multi-module e-commerce backend based on Spring Boot 3 and Java 17. It covers the mobile storefront API, admin API, message consumers, scheduled jobs, Redis, and Elasticsearch. The current architecture focuses on goods, orders, inventory, payments, MQ, local message compensation, and reconciliation governance, with the goal of keeping the trade flow maintainable, scalable, and reliable under high concurrency.
 
 ## Technology Stack
 
@@ -13,7 +13,6 @@
 | Search | Elasticsearch 7 |
 | Messaging | RabbitMQ, delayed messages, local message table |
 | Scheduled Jobs | Spring Scheduled |
-| Monitoring | Spring Boot Admin, Actuator, Micrometer, Prometheus |
 | Payment | WeChat Pay, Alipay, EPay |
 | Testing | JUnit 5, Mockito, Spring Boot Test |
 
@@ -23,14 +22,20 @@
 waynboot-mall
 ├── waynboot-admin-api              Admin management APIs
 ├── waynboot-mobile-api             H5 / mobile storefront APIs
-├── waynboot-common                 Core business, entities, mappers, services, VOs, domain supports
+├── waynboot-common                 Common configuration, aspects, strategy contracts, models, infrastructure
+├── waynboot-domain-api             Cross-domain contracts: entities, mappers, service interfaces, VOs, enums
+├── waynboot-domain-trade           Orders, payment orchestration, state machine, local messages, reconciliation
+├── waynboot-domain-inventory       Stock freeze, inventory flows, Redis stock snapshots, reconciliation
+├── waynboot-domain-goods           Goods, SKUs, categories, search, and Elasticsearch sync
+├── waynboot-domain-cart            Cart reads, writes, and checked goods aggregation
+├── waynboot-domain-promotion       Coupons, marketing slots, and Diamond strategy implementations
+├── waynboot-payment-channel        WeChat Pay, Alipay, and EPay payment / refund adapters
 ├── waynboot-data
 │   ├── waynboot-data-redis         Redis access and cache utilities
 │   └── waynboot-data-elastic       Elasticsearch access capabilities
 ├── waynboot-message
 │   ├── waynboot-message-core       RabbitMQ queues, exchanges, and binding configuration
 │   └── waynboot-message-consumer   MQ consumers
-├── waynboot-monitor                Monitoring module
 ├── waynboot-util                   Common utilities, exceptions, enums, constants
 ├── db-init                         Database initialization and incremental governance SQL
 ├── redis / rabbitmq / es / nginx   Middleware configuration
@@ -55,10 +60,10 @@ Asynchronous consistency layer
   -> Local message table, MQ relay, consumer template, compensation retry
 
 Governance layer
-  -> Redis traffic shaping, inventory reconciliation, payment reconciliation, compensation admin APIs, table shard routing, Spring Scheduled jobs
+  -> Redis traffic shaping, inventory reconciliation, payment reconciliation, compensation admin APIs, Spring Scheduled jobs
 ```
 
-Entry modules do not own core business logic. `waynboot-admin-api` and `waynboot-mobile-api` mainly adapt HTTP requests and responses, while trade logic is centralized in services, support classes, assemblers, and helpers under `waynboot-common`.
+Entry modules do not own core business logic. `waynboot-admin-api` and `waynboot-mobile-api` mainly adapt HTTP requests and responses. Trade, inventory, goods, cart, and promotion implementations are split into `waynboot-domain-*` modules. `waynboot-domain-api` keeps cross-domain contracts, while `waynboot-common` keeps common configuration, aspects, strategy contracts, shared models, and infrastructure.
 
 ## Core Capabilities
 
@@ -149,54 +154,11 @@ Compensation governance capabilities:
 - `LocalMessageCompensationLogService` records failure, dead-letter, and manual retry logs.
 - `TradeOpsController` provides failed message query, metrics, and manual retry APIs.
 
-### Sharding and Query Governance
+### Admin Dashboard Statistics
 
-The project has established monthly shard naming rules for trade tables. These rules can later be connected to ShardingSphere or a dynamic table-name router.
+Admin dashboard statistics are provided by `DashboardController` and exposed under `/shop/dashboard`. They cover core metrics, sales trends, payment channels, top-selling goods, low-stock warnings, member trends, and recent activities. Statistical rules are centralized in `DashboardService`, while `waynboot-admin/src/views/dashboard` only handles presentation and no longer keeps hardcoded dashboard data.
 
-```text
-shop_order_yyyyMM
-shop_order_goods_yyyyMM
-shop_payment_flow_yyyyMM
-local_message_yyyyMM
-```
-
-Recommended indexes:
-
-```sql
--- Order table
-UNIQUE KEY uk_order_sn(order_sn);
-KEY idx_user_create_time(user_id, create_time);
-KEY idx_status_create_time(order_status, create_time);
-
--- Order goods table
-KEY idx_order_goods_order_id(order_id);
-KEY idx_order_goods_product_id(product_id);
-
--- Payment flow table
-UNIQUE KEY uk_payment_flow_key(flow_key);
-KEY idx_payment_flow_order_sn(order_sn);
-KEY idx_payment_flow_pay_id(pay_channel, pay_id);
-
--- Local message table
-UNIQUE KEY uk_local_message_key(message_key);
-KEY idx_local_message_status_retry(status, next_retry_time);
-KEY idx_local_message_biz(biz_type, biz_id);
-```
-
-## Operations and Governance APIs
-
-Admin trade governance APIs are exposed under the `ops/trade` path in `waynboot-admin-api`:
-
-```text
-GET  /ops/trade/local-message/failed?limit=50
-GET  /ops/trade/local-message/metric
-POST /ops/trade/local-message/{messageId}/retry?operator=admin
-POST /ops/trade/stock/snapshot/refresh
-POST /ops/trade/inventory/reconcile
-POST /ops/trade/payment/reconcile
-```
-
-These APIs are mainly used for final consistency troubleshooting, inventory reconciliation, Redis stock snapshot refresh, and daily payment reconciliation.
+See the “后台首页统计逻辑” section in [ONBOARDING.md](./ONBOARDING.md) for detailed statistical rules, API contracts, and frontend integration notes.
 
 ## Scheduled Jobs
 
@@ -236,7 +198,6 @@ inventory_stock.sql              Locked stock fields and inventory flow table
 local_message.sql                Local message table and compensation log table
 order_status_log.sql             Order status log table
 payment_flow.sql                 Payment flow, channel bill, and refund flow tables
-trade_sharding_governance.sql    Table sharding naming rules and index governance suggestions
 ```
 
 SQL files are retained as database evolution entry points. Before applying them, confirm the execution order and idempotency against the target environment.
@@ -271,7 +232,6 @@ mvn "-Dmaven.repo.local=.m2/repository" test
 mvn -pl waynboot-admin-api spring-boot:run
 mvn -pl waynboot-mobile-api spring-boot:run
 mvn -pl waynboot-message/waynboot-message-consumer spring-boot:run
-mvn -pl waynboot-monitor spring-boot:run
 ```
 
 You can also start each module's `*Application` class from the IDE.
@@ -308,17 +268,20 @@ LocalMessageService                Local message state transition
 LocalMessageRelaySupport           Local message delivery and local processor dispatching
 TradeOpsController                 Admin trade governance APIs
 TradeGovernanceScheduledTask       Trade governance Spring Scheduled tasks
-TradeTableShardRouter              Trade table shard naming rules
+DashboardController                Admin dashboard statistics APIs
+DashboardService                   Dashboard statistical rules and VO assembly
+AdminOrderMapper                   Admin order queries and top-selling goods aggregation
 ```
 
-## Roadmap
+Main code locations:
 
-- Import real channel bill files and complete the daily payment reconciliation loop.
-- Add reconciliation difference tables and a difference handling state machine.
-- Connect `TradeTableShardRouter` to ShardingSphere or a dynamic table-name interceptor.
-- Add inventory bucket tables to further reduce MySQL row-lock contention for hot SKUs.
-- Add Prometheus metrics for local message failures, dead letters, MQ backlog, payment differences, inventory differences, and Redis snapshot misses.
-- Establish load-test baselines for goods detail, order submission, payment callback, and local message relay flows.
+```text
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/support/order
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/support/payment
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/outbox
+waynboot-domain-inventory/src/main/java/com/wayn/domain/inventory/support
+waynboot-domain-inventory/src/main/java/com/wayn/domain/inventory/service
+```
 
 ## Frontend Projects
 

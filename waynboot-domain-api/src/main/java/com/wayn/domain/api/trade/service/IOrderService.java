@@ -1,10 +1,9 @@
 package com.wayn.domain.api.trade.service;
 
-import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.domain.api.trade.entity.Order;
+import com.wayn.domain.api.trade.exception.PaymentChannelException;
 import com.wayn.domain.api.trade.request.OrderManagerReqVO;
 import com.wayn.domain.api.trade.request.OrderRefundReqVO;
 import com.wayn.domain.api.trade.request.ShipRequestVO;
@@ -41,7 +40,7 @@ public interface IOrderService extends IService<Order> {
      *
      * @param reqVO
      */
-    void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException;
+    void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, PaymentChannelException;
 
     /**
      * 发货

@@ -5,6 +5,7 @@ import com.wayn.domain.api.trade.enums.PaymentFlowSaveResult;
 import com.wayn.domain.api.trade.mapper.PaymentFlowMapper;
 import com.wayn.domain.api.trade.service.PaymentFlowCreateCommand;
 import com.wayn.domain.api.trade.service.PaymentFlowService;
+import com.wayn.domain.trade.service.impl.PaymentFlowServiceImpl;
 import com.wayn.domain.api.common.MybatisPlusTableInfoTestHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsCreatedWhenInsertSucceeds() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
         when(mapper.insert(any(PaymentFlow.class))).thenReturn(1);
 
         PaymentFlowSaveResult result = service.savePaidFlow(buildCommand("WECHAT:pay-1", "order-1"));
@@ -47,7 +48,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsDuplicateSameOrderWhenFlowAlreadyExistsForSameOrder() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
         when(mapper.insert(any(PaymentFlow.class))).thenThrow(new DuplicateKeyException("duplicate"));
         PaymentFlow existing = new PaymentFlow();
         existing.setFlowKey("WECHAT:pay-1");
@@ -65,7 +66,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsConflictWhenFlowAlreadyExistsForDifferentOrder() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
         when(mapper.insert(any(PaymentFlow.class))).thenThrow(new DuplicateKeyException("duplicate"));
         PaymentFlow existing = new PaymentFlow();
         existing.setFlowKey("WECHAT:pay-1");
@@ -83,7 +84,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsConflictWhenDuplicateFlowCannotBeLoaded() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
         when(mapper.insert(any(PaymentFlow.class))).thenThrow(new DuplicateKeyException("duplicate"));
         when(mapper.selectOne(any())).thenReturn(null);
 
@@ -99,7 +100,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsConflictWhenCommandIsNull() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
 
         PaymentFlowSaveResult result = service.savePaidFlow(null);
 
@@ -114,7 +115,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsConflictWhenFlowKeyIsBlank() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
 
         PaymentFlowSaveResult result = service.savePaidFlow(buildCommand(" ", "order-1"));
 
@@ -129,7 +130,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsConflictWhenPayIdIsBlank() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
 
         PaymentFlowSaveResult result = service.savePaidFlow(buildCommand("WECHAT:pay-1", "order-1", " ", "WECHAT",
                 new BigDecimal("1.00")));
@@ -145,7 +146,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsConflictWhenPayChannelIsBlank() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
 
         PaymentFlowSaveResult result = service.savePaidFlow(buildCommand("WECHAT:pay-1", "order-1", "pay-1", " ",
                 new BigDecimal("1.00")));
@@ -161,7 +162,7 @@ class PaymentFlowServiceTest {
     @Test
     void savePaidFlowReturnsConflictWhenPayAmountIsInvalid() {
         PaymentFlowMapper mapper = mock(PaymentFlowMapper.class);
-        PaymentFlowService service = new PaymentFlowService(mapper);
+        PaymentFlowService service = new PaymentFlowServiceImpl(mapper);
 
         PaymentFlowSaveResult nullAmountResult = service.savePaidFlow(buildCommand("WECHAT:pay-1", "order-1",
                 "pay-1", "WECHAT", null));
@@ -206,3 +207,5 @@ class PaymentFlowServiceTest {
                 .build();
     }
 }
+
+

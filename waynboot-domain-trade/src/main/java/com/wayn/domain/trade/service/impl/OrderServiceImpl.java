@@ -1,10 +1,9 @@
 package com.wayn.domain.trade.service.impl;
 
-import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.domain.api.trade.entity.Order;
+import com.wayn.domain.api.trade.exception.PaymentChannelException;
 import com.wayn.domain.api.trade.mapper.AdminOrderMapper;
 import com.wayn.domain.api.trade.service.IOrderService;
 import com.wayn.domain.trade.support.admin.order.AdminOrderQuerySupport;
@@ -49,11 +48,10 @@ public class OrderServiceImpl extends ServiceImpl<AdminOrderMapper, Order> imple
      *
      * @param reqVO 退款请求
      * @throws UnsupportedEncodingException 编码异常
-     * @throws WxPayException 微信退款异常
-     * @throws AlipayApiException 支付宝退款异常
+     * @throws PaymentChannelException 支付渠道异常
      */
     @Override
-    public void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException {
+    public void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, PaymentChannelException {
         adminOrderRefundSupport.refund(reqVO);
     }
 

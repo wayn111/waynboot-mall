@@ -1,90 +1,23 @@
 package com.wayn.domain.inventory.service;
 
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import com.wayn.domain.api.common.MybatisPlusTableInfoTestHelper;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
 import com.wayn.domain.api.inventory.entity.InventoryFlow;
 import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
+import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
+import com.wayn.domain.api.inventory.service.InventoryFlowService;
+import com.wayn.domain.inventory.service.impl.InventoryFlowServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import org.junit.jupiter.api.Test;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import org.mockito.ArgumentCaptor;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import org.springframework.dao.DuplicateKeyException;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import static org.mockito.ArgumentMatchers.any;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import static org.mockito.Mockito.mock;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import static org.mockito.Mockito.never;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import static org.mockito.Mockito.verify;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 import static org.mockito.Mockito.when;
-import com.wayn.domain.api.inventory.service.InventoryFlowService;
-import com.wayn.domain.api.inventory.service.InventoryFlowCreateCommand;
-import com.wayn.domain.api.inventory.entity.InventoryFlow;
-import com.wayn.domain.api.inventory.mapper.InventoryFlowMapper;
-import com.wayn.domain.api.inventory.enums.InventoryChangeTypeEnum;
 
 class InventoryFlowServiceTest {
 
@@ -99,7 +32,7 @@ class InventoryFlowServiceTest {
     @Test
     void saveFlowInsertsInventoryFlow() {
         InventoryFlowMapper mapper = mock(InventoryFlowMapper.class);
-        InventoryFlowService service = new InventoryFlowService(mapper);
+        InventoryFlowService service = new InventoryFlowServiceImpl(mapper);
         when(mapper.insert(any(InventoryFlow.class))).thenReturn(1);
 
         boolean saved = service.saveFlow(InventoryFlowCreateCommand.builder()
@@ -128,7 +61,7 @@ class InventoryFlowServiceTest {
     @Test
     void saveFlowReturnsFalseWhenFlowKeyAlreadyExists() {
         InventoryFlowMapper mapper = mock(InventoryFlowMapper.class);
-        InventoryFlowService service = new InventoryFlowService(mapper);
+        InventoryFlowService service = new InventoryFlowServiceImpl(mapper);
         when(mapper.insert(any(InventoryFlow.class))).thenThrow(new DuplicateKeyException("duplicate"));
 
         boolean saved = service.saveFlow(InventoryFlowCreateCommand.builder()
@@ -151,7 +84,7 @@ class InventoryFlowServiceTest {
     @Test
     void saveFlowReturnsFalseWhenCommandIsNull() {
         InventoryFlowMapper mapper = mock(InventoryFlowMapper.class);
-        InventoryFlowService service = new InventoryFlowService(mapper);
+        InventoryFlowService service = new InventoryFlowServiceImpl(mapper);
 
         boolean saved = service.saveFlow(null);
 
@@ -166,7 +99,7 @@ class InventoryFlowServiceTest {
     @Test
     void saveFlowReturnsFalseWhenFlowKeyIsBlank() {
         InventoryFlowMapper mapper = mock(InventoryFlowMapper.class);
-        InventoryFlowService service = new InventoryFlowService(mapper);
+        InventoryFlowService service = new InventoryFlowServiceImpl(mapper);
 
         boolean saved = service.saveFlow(InventoryFlowCreateCommand.builder()
                 .flowKey(" ")

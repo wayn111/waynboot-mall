@@ -51,7 +51,7 @@ public class SecurityConfig {
                 // 过滤请求
                 .authorizeHttpRequests(
                         registry -> registry
-                                .requestMatchers("favicon.ico", "/actuator/**", "/login", "/registry",
+                                .requestMatchers("favicon.ico", "/login", "/registry",
                                         "/genMobileCode", "/test/**", "/seckill/**", "/captcha").anonymous()
                                 .requestMatchers("/home/**", "/category/**", "/comment/**", "/search/**",
                                         "/goods/detail/**", "/cart/goodsCount", "/diamond/**", "/coupon/list",

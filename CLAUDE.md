@@ -12,14 +12,18 @@ waynboot-mall 是一个 Spring Boot 3.1 / JDK 17 的开源 H5 商城后端，包
 # 构建（跳过测试），jar 输出到 ./jars/
 mvn clean package -DskipTests
 
-# 运行所有测试（有意义的测试全在 waynboot-common）
-mvn test -pl waynboot-common
+# 运行所有测试
+mvn test
+
+# 按领域模块运行测试
+mvn test -pl waynboot-domain-trade
+mvn test -pl waynboot-domain-inventory
 
 # 运行单个测试类
-mvn test -pl waynboot-common -Dtest=PaymentCallbackSupportTest
+mvn test -pl waynboot-domain-trade -Dtest=PaymentCallbackSupportTest
 
 # 运行单个测试方法
-mvn test -pl waynboot-common -Dtest=PaymentCallbackSupportTest#markOrderPaid_alreadyPaid_skipsUpdate
+mvn test -pl waynboot-domain-trade -Dtest=PaymentCallbackSupportTest#markOrderPaid_alreadyPaid_skipsUpdate
 ```
 
 ## 本地启动
@@ -45,7 +49,14 @@ docker-compose up -d
 
 | 模块 | 职责 |
 |---|---|
-| `waynboot-common` | 所有领域实体、Mapper、Service、业务逻辑（核心模块） |
+| `waynboot-common` | 通用配置、切面、策略接口、通用模型和基础设施 |
+| `waynboot-domain-api` | 跨领域契约：entity / Mapper / Service 接口 / VO / 枚举 |
+| `waynboot-domain-trade` | 订单、支付编排、状态机、本地消息、对账 |
+| `waynboot-domain-inventory` | 库存冻结、库存流水、Redis 库存快照、库存对账 |
+| `waynboot-domain-goods` | 商品、SKU、类目、搜索和 ES 同步 |
+| `waynboot-domain-cart` | 购物车读写与选中商品聚合 |
+| `waynboot-domain-promotion` | 优惠券、营销位和 Diamond 策略实现 |
+| `waynboot-payment-channel` | 微信、支付宝、易支付的支付 / 退款渠道适配 |
 | `waynboot-admin-api` | 管理端 REST 控制器 + Spring Security 配置 + Spring `@Scheduled` 治理任务 |
 | `waynboot-mobile-api` | H5 移动端 REST 控制器 |
 | `waynboot-message` | RabbitMQ 消息消费（core + consumer 子模块） |
@@ -54,20 +65,19 @@ docker-compose up -d
 
 ## 核心架构
 
-### 业务领域（均在 `waynboot-common`）
+### 业务领域（按 `waynboot-domain-*` 拆分）
 
-所有业务逻辑通过 **Support 类**组织，而非直接写在 Service 实现里：
+核心业务逻辑通过 ServiceImpl + Support 类组织，而非直接写在 Controller 中：
 
 ```
-service/shop/support/
-  order/          # 订单提交、取消、生命周期、库存扣减链
-  admin/order/    # 管理端发货、退款
-  payment/        # 支付回调幂等处理
-  goods/          # 商品 ES 同步、变更
-  cart/           # 购物车读写
-  coupon/         # 优惠券领取
-message/          # 本地消息表（outbox 模式）中继与补偿
-trade/            # 分表路由
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/support/order/        # 订单提交、取消、生命周期
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/support/admin/order/  # 管理端发货、退款
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/support/payment/      # 支付回调幂等处理
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/outbox/               # 本地消息表（outbox 模式）中继与补偿
+waynboot-domain-inventory/src/main/java/com/wayn/domain/inventory/support/      # 库存冻结、Redis 预扣、库存快照
+waynboot-domain-goods/src/main/java/com/wayn/domain/goods/support/              # 商品 ES 同步、变更
+waynboot-domain-cart/src/main/java/com/wayn/domain/cart/support/                # 购物车读写
+waynboot-domain-promotion/src/main/java/com/wayn/domain/promotion/support/      # 优惠券领取
 ```
 
 ### 关键设计模式
@@ -100,7 +110,7 @@ Spring `@Scheduled` 调度，运行在 `AdminApplication` 进程内：
 
 - 入口类：`waynboot-admin-api` → `com.wayn.admin.api.schedule.TradeGovernanceScheduledTask`
 - 配置类：`com.wayn.admin.api.schedule.TradeScheduleProperties`，前缀 `wayn.schedule.trade.*`
-- 业务侧 relay：`LocalMessageRelayTask`（`waynboot-common`，每 5 秒一次）
+- 业务侧 relay：`LocalMessageRelayTask`（`waynboot-domain-trade`，每 5 秒一次）
 - 失败处理由 Spring 默认 `TaskUtils.LoggingErrorHandler` 兜底，任务方法不需要 try/catch
 
 ### 治理接口

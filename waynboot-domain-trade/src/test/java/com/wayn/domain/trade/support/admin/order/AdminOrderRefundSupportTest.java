@@ -1,9 +1,8 @@
 package com.wayn.domain.trade.support.admin.order;
 
-import com.alipay.api.AlipayApiException;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.domain.api.trade.entity.Order;
 import com.wayn.domain.api.trade.entity.OrderGoods;
+import com.wayn.domain.api.trade.exception.PaymentChannelException;
 import com.wayn.domain.api.trade.mapper.AdminOrderMapper;
 import com.wayn.domain.api.trade.service.IOrderGoodsService;
 import com.wayn.domain.api.trade.service.OrderStatusLogService;
@@ -60,7 +59,8 @@ class AdminOrderRefundSupportTest {
     private OrderStatusLogService orderStatusLogService;
 
     @Test
-    void refundMarksOrderAsFailedWhenThirdPartyRefundThrows() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
+    void refundMarksOrderAsFailedWhenThirdPartyRefundThrows()
+            throws UnsupportedEncodingException, PaymentChannelException {
         AdminOrderRefundSupport support = buildSupport();
         OrderRefundReqVO reqVO = buildRefundRequest();
         Order order = buildRefundOrder();
@@ -89,7 +89,7 @@ class AdminOrderRefundSupportTest {
     }
 
     @Test
-    void refundThrowsWhenConditionalUpdateAffectsNoRows() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
+    void refundThrowsWhenConditionalUpdateAffectsNoRows() {
         AdminOrderRefundSupport support = buildSupport();
         OrderRefundReqVO reqVO = buildRefundRequest();
         Order order = buildRefundOrder();
@@ -111,7 +111,8 @@ class AdminOrderRefundSupportTest {
     }
 
     @Test
-    void refundRestoresStockWhenThirdPartyRefundSucceeds() throws UnsupportedEncodingException, WxPayException, AlipayApiException {
+    void refundRestoresStockWhenThirdPartyRefundSucceeds()
+            throws UnsupportedEncodingException, PaymentChannelException {
         AdminOrderRefundSupport support = buildSupport();
         OrderRefundReqVO reqVO = buildRefundRequest();
         Order order = buildRefundOrder();

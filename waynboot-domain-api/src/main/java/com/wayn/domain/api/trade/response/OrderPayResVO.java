@@ -1,6 +1,5 @@
 package com.wayn.domain.api.trade.response;
 
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderV3Result;
 import lombok.Data;
 
 /**
@@ -27,6 +26,6 @@ public class OrderPayResVO {
     /**
      * 微信jsapi支付返回
      */
-    private WxPayUnifiedOrderV3Result.JsapiResult jsapiResult;
+    private WxJsapiPayResVO jsapiResult;
 
 }

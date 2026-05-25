@@ -15,7 +15,6 @@ import com.wayn.util.util.spring.SpringContextUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -104,7 +103,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return getCategoryGoodsResponseVO(cateId, responseVO, page, cateList);
     }
 
-    @NotNull
     private CategoryGoodsResponseVO getCategoryGoodsResponseVO(Long cateId, CategoryGoodsResponseVO responseVO, Page<Goods> page, List<Long> cateList) {
         IGoodsService iGoodsService = SpringContextUtil.getBean(IGoodsService.class);
         List<Goods> goods = iGoodsService.selectListPageByCateIds(page, cateList);

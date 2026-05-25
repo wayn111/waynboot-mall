@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wayn.domain.api.promotion.entity.Diamond;
 import com.wayn.domain.api.goods.entity.Goods;
 import com.wayn.domain.api.goods.mapper.GoodsMapper;
-import com.wayn.domain.promotion.strategy.diamond.JumpTypeEnum;
-import com.wayn.domain.promotion.strategy.diamond.DiamondJumpTypeInterface;
-import com.wayn.common.model.response.DiamondGoodsResVO;
+import com.wayn.domain.api.promotion.response.DiamondGoodsResVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

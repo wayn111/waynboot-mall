@@ -1,11 +1,13 @@
 package com.wayn.domain.api.common;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-@Component
+/**
+ * Wayn 全局配置静态访问器。
+ * 契约层保留历史静态读取方式，配置绑定 Bean 由 common 模块提供，避免 domain-api 直接注册 Spring 组件。
+ */
 @ConfigurationProperties(prefix = "wayn")
 public class WaynConfig {
     /**

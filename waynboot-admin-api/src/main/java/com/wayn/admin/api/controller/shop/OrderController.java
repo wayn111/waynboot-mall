@@ -1,13 +1,12 @@
 package com.wayn.admin.api.controller.shop;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.admin.framework.config.properties.ExpressProperties;
 import com.wayn.common.base.controller.BaseController;
 import com.wayn.domain.api.trade.entity.Order;
+import com.wayn.domain.api.trade.exception.PaymentChannelException;
 import com.wayn.domain.api.trade.service.IOrderService;
 import com.wayn.common.model.dto.OrderExportDTO;
 import com.wayn.domain.api.trade.request.OrderManagerReqVO;
@@ -92,12 +91,12 @@ public class OrderController extends BaseController {
      * @param reqVO
      * @return
      * @throws UnsupportedEncodingException
-     * @throws WxPayException
-     * @throws AlipayApiException
+     * @throws PaymentChannelException 支付渠道异常
      */
     @PreAuthorize("@ss.hasPermi('shop:order:refund')")
     @PostMapping("refund")
-    public R<Boolean> refund(@RequestBody @Validated OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException {
+    public R<Boolean> refund(@RequestBody @Validated OrderRefundReqVO reqVO)
+            throws UnsupportedEncodingException, PaymentChannelException {
         iOrderService.refund(reqVO);
         log.info("订单退款完成, orderSn={}, refundMoney={}", reqVO.getOrderSn(), reqVO.getRefundMoney());
         return R.success();
@@ -108,7 +107,6 @@ public class OrderController extends BaseController {
      *
      * @return
      */
-    @PreAuthorize("@ss.hasPermi('shop:order:ship')")
     @PostMapping("listChannel")
     public R<List<ExpressVendorResVO>> channel() {
         List<ExpressVendorResVO> vendors = expressProperties.getVendors().stream()

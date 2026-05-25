@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## 项目结构与模块划分
-本仓库是基于 Spring Boot 3、Java 17 的 Maven 多模块商城后端。业务核心集中在 `waynboot-common`，其中包含 `core`、`dto`、`request`、`response`、`config`、`design` 等共享代码。`waynboot-admin-api` 提供后台管理接口（同时承载 Spring `@Scheduled` 治理定时任务），`waynboot-mobile-api` 提供 H5/移动端接口，`waynboot-message` 负责 RabbitMQ 相关能力，`waynboot-data` 封装 Redis / Elasticsearch，`waynboot-monitor` 负责监控，`waynboot-util` 放通用工具。部署和中间件脚本在 `db-init`、`mysql`、`redis`、`rabbitmq`、`es`、`nginx`、`docker-compose*.yml`。
+本仓库是基于 Spring Boot 3、Java 17 的 Maven 多模块商城后端。`waynboot-admin-api` 提供后台管理接口（同时承载 Spring `@Scheduled` 治理定时任务），`waynboot-mobile-api` 提供 H5/移动端接口，`waynboot-message` 负责 RabbitMQ 相关能力，`waynboot-data` 封装 Redis / Elasticsearch，`waynboot-util` 放枚举、异常、常量和轻量工具。`waynboot-domain-api` 收敛跨领域契约，`waynboot-domain-trade`、`waynboot-domain-inventory`、`waynboot-domain-goods`、`waynboot-domain-cart`、`waynboot-domain-promotion` 分别承载订单、库存、商品、购物车和营销实现，`waynboot-payment-channel` 承载微信、支付宝、易支付的支付 / 退款渠道适配。`waynboot-common` 只保留通用配置、切面、策略接口、通用模型和基础设施。部署和中间件脚本在 `db-init`、`mysql`、`redis`、`rabbitmq`、`es`、`nginx`、`docker-compose*.yml`。
 
 ## 构建、测试与本地运行
 在仓库根目录执行：
@@ -31,7 +31,7 @@ Controller 层新增或调整接口时，默认补充关键业务日志，至少
 新增的 support / helper / assembler 类必须写类级注释；如果实现类已经退化为单纯委托层，也要用简短注释说明它保留的对外职责，避免后续维护者误判为冗余代码。所有新增方法和本轮修改过的方法，默认补齐方法注释；公共方法必须写，关键私有方法在职责不够直观时也要补齐。
 
 ## 模块协作规范
-`admin-api`、`mobile-api` 属于入口层，不重复实现领域逻辑。`waynboot-data` 作为中间件访问层，避免在 API 模块中直接散落 Redis / ES 客户端代码。`waynboot-message-consumer` 只做消费编排，不承载复杂业务。`waynboot-util` 保持轻量，不引入强业务依赖。新增公共能力前先确认是否确实被多个入口模块复用，避免继续堆入 `waynboot-common`。
+`admin-api`、`mobile-api` 属于入口层，不重复实现领域逻辑。`waynboot-data` 作为中间件访问层，避免在 API 模块中直接散落 Redis / ES 客户端代码。`waynboot-message-consumer` 只做消费编排，不承载复杂业务。`waynboot-util` 保持轻量，不引入强业务依赖。新增公共能力前先确认是否确实被多个入口模块复用，避免继续堆入 `waynboot-common`；领域实现优先落到对应 `waynboot-domain-*` 模块，跨域接口和实体才放入 `waynboot-domain-api`。
 
 商品、订单、支付、优惠券、购物车这类核心链路的改造，优先把查询、校验、状态流转、聚合写入、外部适配解耦，避免继续把并发控制、库存回补、支付回调、ES 同步、优惠券回退等逻辑混在单个 ServiceImpl 中。
 
@@ -44,6 +44,6 @@ Controller 层新增或调整接口时，默认补充关键业务日志，至少
 
 对于商品域、订单域这类阶段性重构，除了代码和测试，还应同步补充面向维护者的说明文档，文档内容至少覆盖背景、范围、核心逻辑调整、并发与一致性变化、验证方式、非目标和后续计划。文档统一放在仓库根目录或 `docs/` 下，命名遵循 `<域>_<阶段>_<主题>.md`。
 
-交易链路优化必须从完整链路评估，不要只做单点代码改动。涉及下单、库存、支付、订单状态机、MQ、本地消息、对账、分表和高可用时，需要先梳理"同步主链路 + 异步补偿链路"两段，并说明幂等键、事务边界、失败补偿方式和监控指标。当前项目只保留支付流水、渠道账单、退款流水和对账能力，禁止新增 `shop_payment_profit_sharing_flow` 或其他资金拆分流水表及相关实现。
+交易链路优化必须从完整链路评估，不要只做单点代码改动。涉及下单、库存、支付、订单状态机、MQ、本地消息、对账和高可用时，需要先梳理"同步主链路 + 异步补偿链路"两段，并说明幂等键、事务边界、失败补偿方式和运维检查点。当前项目只保留支付流水、渠道账单、退款流水和对账能力，禁止新增 `shop_payment_profit_sharing_flow` 或其他资金拆分流水表及相关实现。
 
 库存相关改造默认遵循“Redis 削峰、MySQL 兜底”的原则。Redis Lua 预扣只能降低入口流量和热点压力，不能替代 MySQL 条件更新、冻结库存和库存流水。支付成功、超时取消、退款回补等库存动作必须能通过库存流水追踪和幂等处理。

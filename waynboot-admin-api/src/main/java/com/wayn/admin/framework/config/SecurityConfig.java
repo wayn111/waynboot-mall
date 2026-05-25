@@ -48,7 +48,7 @@ public class SecurityConfig {
                 // 过滤请求
                 .authorizeHttpRequests(
                         registry -> registry
-                                .requestMatchers("/favicon.ico", "/login", "/favicon.ico", "/actuator/**").anonymous()
+                                .requestMatchers("/favicon.ico", "/login", "/favicon.ico").anonymous()
                                 .requestMatchers("/slider/**").anonymous()
                                 .requestMatchers("/captcha/**").anonymous()
                                 .requestMatchers("/upload/**").anonymous()

@@ -10,7 +10,6 @@
         <module>waynboot-mobile-api</module>
         <module>waynboot-data</module>
         <module>waynboot-message</module>
-        <module>waynboot-monitor</module>
         <module>waynboot-util</module>
         <module>waynboot-payment-channel</module>
         <module>waynboot-domain-api</module>
@@ -49,32 +48,19 @@
         <jwt.version>4.3.0</jwt.version>
         <qiniu.version>7.12.1</qiniu.version>
         <mail.version>2.0.1</mail.version>
-        <spring-boot-admin.version>3.1.0</spring-boot-admin.version>
         <hutool.version>5.8.20</hutool.version>
         <easyexcel.version>3.2.1</easyexcel.version>
         <weixin-java-pay.version>4.5.0</weixin-java-pay.version>
         <alipay-sdk-java.version>4.38.90.ALL</alipay-sdk-java.version>
         <sms4j.version>2.2.0</sms4j.version>
+        <shedlock.version>5.10.0</shedlock.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.mweirauch</groupId>
-            <artifactId>micrometer-jvm-extras</artifactId>
-            <version>0.2.2</version>
         </dependency>
     </dependencies>
 
@@ -249,6 +235,16 @@
                 <groupId>org.dromara.sms4j</groupId>
                 <artifactId>sms4j-spring-boot-starter</artifactId>
                 <version>${sms4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.javacrumbs.shedlock</groupId>
+                <artifactId>shedlock-spring</artifactId>
+                <version>${shedlock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.javacrumbs.shedlock</groupId>
+                <artifactId>shedlock-provider-redis-spring</artifactId>
+                <version>${shedlock.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>

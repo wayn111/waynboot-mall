@@ -89,17 +89,6 @@
             <artifactId>waynboot-domain-api</artifactId>
         </dependency>
 
-        <!-- 过渡期：common 中的 trade 实现暂时依赖 inventory/goods 实现，
-             待 trade 实现也迁出到 domain-trade 后删除这两个依赖 -->
-        <dependency>
-            <groupId>com.wayn</groupId>
-            <artifactId>waynboot-domain-inventory</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.wayn</groupId>
-            <artifactId>waynboot-domain-goods</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-util</artifactId>

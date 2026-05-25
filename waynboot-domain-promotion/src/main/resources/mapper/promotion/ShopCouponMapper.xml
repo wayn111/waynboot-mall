@@ -36,7 +36,7 @@
           and receive_num <![CDATA[ < ]]> num
     </update>
 
-    <select id="selectCouponListPage" resultType="com.wayn.common.model.response.ShopCouponManageResVO">
+    <select id="selectCouponListPage" resultType="com.wayn.domain.api.promotion.response.ShopCouponManageResVO">
         select * from shop_coupon
         <where>
             del_flag = 0
@@ -54,7 +54,7 @@
             </if>
         </where>
     </select>
-    <select id="fontList" resultType="com.wayn.common.model.response.ShopCouponResVO">
+    <select id="fontList" resultType="com.wayn.domain.api.promotion.response.ShopCouponResVO">
         select * from shop_coupon
         <where>
             del_flag = 0 AND `status` = 1 AND expire_time <![CDATA[ > ]]> now()
@@ -62,7 +62,7 @@
         </where>
     </select>
 
-    <select id="myList" resultType="com.wayn.common.model.response.MemberCouponResVO">
+    <select id="myList" resultType="com.wayn.domain.api.promotion.response.MemberCouponResVO">
         select * from shop_member_coupon
         <where>
             del_flag = 0 AND user_id = #{userId}

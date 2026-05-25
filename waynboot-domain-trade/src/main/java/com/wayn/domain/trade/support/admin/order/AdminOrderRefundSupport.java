@@ -1,12 +1,11 @@
 package com.wayn.domain.trade.support.admin.order;
 
-import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wayn.domain.api.trade.entity.Order;
 import com.wayn.domain.api.trade.entity.OrderGoods;
 import com.wayn.domain.api.trade.enums.OrderStatusChangeTypeEnum;
+import com.wayn.domain.api.trade.exception.PaymentChannelException;
 import com.wayn.domain.api.trade.mapper.AdminOrderMapper;
 import com.wayn.domain.api.trade.service.IOrderGoodsService;
 import com.wayn.domain.api.trade.service.OrderStatusChangeCommand;
@@ -33,12 +32,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import com.wayn.domain.inventory.support.OrderStockSupport;
-import com.wayn.domain.inventory.support.RedisStockPreDeductSupport;
-import com.wayn.domain.inventory.support.RedisStockSnapshotSupport;
-import com.wayn.domain.inventory.support.RedisStockBucketRouter;
-import com.wayn.domain.inventory.support.RedisStockKeySupport;
-import com.wayn.domain.inventory.support.RedisStockReservation;
 
 /**
  * 管理端订单退款支撑服务。
@@ -63,10 +56,9 @@ public class AdminOrderRefundSupport {
      *
      * @param reqVO 退款请求
      * @throws UnsupportedEncodingException 编码异常
-     * @throws WxPayException 微信退款异常
-     * @throws AlipayApiException 支付宝退款异常
+     * @throws PaymentChannelException 支付渠道异常
      */
-    public void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, WxPayException, AlipayApiException {
+    public void refund(OrderRefundReqVO reqVO) throws UnsupportedEncodingException, PaymentChannelException {
         String orderSn = reqVO.getOrderSn();
         BigDecimal refundMoney = reqVO.getRefundMoney();
         Order order = validateRefundableOrder(orderSn, refundMoney);
@@ -124,11 +116,10 @@ public class AdminOrderRefundSupport {
      * @param refundMoney 退款金额
      * @return 退款执行结果
      * @throws UnsupportedEncodingException 编码异常
-     * @throws WxPayException 微信退款异常
-     * @throws AlipayApiException 支付宝退款异常
+     * @throws PaymentChannelException 支付渠道异常
      */
     private RefundExecution executeRefund(Order order, OrderRefundReqVO reqVO, BigDecimal refundMoney)
-            throws UnsupportedEncodingException, WxPayException, AlipayApiException {
+            throws UnsupportedEncodingException, PaymentChannelException {
         try {
             RefundInterface instance = refundContext.getInstance(order.getPayType());
             reqVO.setPayId(order.getPayId());

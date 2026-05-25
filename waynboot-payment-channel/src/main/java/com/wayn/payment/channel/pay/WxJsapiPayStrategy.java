@@ -9,6 +9,7 @@ import com.wayn.domain.api.trade.enums.PayTypeEnum;
 import com.wayn.common.design.strategy.pay.strategy.PayTypeInterface;
 import com.wayn.domain.api.trade.request.OrderPayReqVO;
 import com.wayn.domain.api.trade.response.OrderPayResVO;
+import com.wayn.domain.api.trade.response.WxJsapiPayResVO;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
 import lombok.AllArgsConstructor;
@@ -54,7 +55,25 @@ public class WxJsapiPayStrategy implements PayTypeInterface {
             throw new BusinessException(ReturnCodeEnum.ORDER_CANNOT_PAY_ERROR);
         }
         OrderPayResVO resVO = new OrderPayResVO();
-        resVO.setJsapiResult(result);
+        resVO.setJsapiResult(buildJsapiPayResult(result));
+        return resVO;
+    }
+
+    /**
+     * 将微信 SDK 返回对象转换为项目内部 VO。
+     * 这样 domain-api 不需要依赖微信 SDK，入口层也不会感知渠道适配实现细节。
+     *
+     * @param result 微信 JSAPI 下单结果
+     * @return 前端调起微信支付所需参数
+     */
+    private WxJsapiPayResVO buildJsapiPayResult(WxPayUnifiedOrderV3Result.JsapiResult result) {
+        WxJsapiPayResVO resVO = new WxJsapiPayResVO();
+        resVO.setAppId(result.getAppId());
+        resVO.setTimeStamp(result.getTimeStamp());
+        resVO.setNonceStr(result.getNonceStr());
+        resVO.setPackageValue(result.getPackageValue());
+        resVO.setSignType(result.getSignType());
+        resVO.setPaySign(result.getPaySign());
         return resVO;
     }
 

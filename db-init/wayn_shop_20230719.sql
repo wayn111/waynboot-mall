@@ -1590,6 +1590,7 @@ CREATE TABLE `shop_goods_product`  (
   `specifications` varchar(1023) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '商品规格值列表，采用JSON数组格式',
   `price` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品货品价格',
   `number` int NOT NULL DEFAULT 0 COMMENT '商品货品数量',
+  `locked_stock` int NOT NULL DEFAULT 0 COMMENT '冻结库存数量',
   `default_selected` tinyint(1) NULL DEFAULT 0 COMMENT '是否默认选中（0未选中 1选中）',
   `url` varchar(125) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品货品图片',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
@@ -2497,6 +2498,7 @@ INSERT INTO `sys_menu` VALUES (2111, '详情', 2034, 5, '', NULL, 1, 'F', 0, 0, 
 INSERT INTO `sys_menu` VALUES (2112, '详情', 2047, 5, '', NULL, 1, 'F', 0, 0, 'shop:diamond:info', '#', 'admin', '2023-08-16 09:57:33', '', NULL, '', 0);
 INSERT INTO `sys_menu` VALUES (2113, '详情', 2048, 5, '', NULL, 1, 'F', 0, 0, 'shop:column:info', '#', 'admin', '2023-08-16 09:57:49', '', NULL, '', 0);
 INSERT INTO `sys_menu` VALUES (2114, '详情', 2049, 5, '', NULL, 1, 'F', 0, 0, 'shop:keyword:info', '#', 'admin', '2023-08-16 09:58:12', '', NULL, '', 0);
+INSERT INTO `sys_menu` VALUES (2120, '首页统计', 2033, 90, '', NULL, 1, 'F', 0, 0, 'shop:dashboard:stats', '#', 'admin', '2026-05-25 02:03:38', '', NULL, '后台首页统计查看权限', 0);
 
 -- ----------------------------
 -- Table structure for sys_role

@@ -11,6 +11,7 @@ import com.wayn.domain.api.trade.mapper.PaymentRefundFlowMapper;
 import com.wayn.domain.api.trade.service.PaymentReconciliationDifference;
 import com.wayn.domain.api.trade.service.PaymentReconciliationQuery;
 import com.wayn.domain.api.trade.service.PaymentReconciliationService;
+import com.wayn.domain.trade.service.impl.PaymentReconciliationServiceImpl;
 import com.wayn.domain.api.trade.service.PaymentReconciliationSummary;
 import com.wayn.domain.api.common.MybatisPlusTableInfoTestHelper;
 import com.wayn.util.enums.OrderStatusEnum;
@@ -234,7 +235,7 @@ class PaymentReconciliationServiceTest {
      * @return 支付对账服务
      */
     private PaymentReconciliationService newService() {
-        return new PaymentReconciliationService(paymentFlowMapper, orderMapper, channelBillMapper, refundFlowMapper);
+        return new PaymentReconciliationServiceImpl(paymentFlowMapper, orderMapper, channelBillMapper, refundFlowMapper);
     }
 
     /**
@@ -314,3 +315,5 @@ class PaymentReconciliationServiceTest {
         return java.util.Collections.singletonList(null);
     }
 }
+
+

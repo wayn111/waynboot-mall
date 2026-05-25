@@ -1,6 +1,6 @@
 # waynboot-mall
 
-`waynboot-mall` 是一个基于 Spring Boot 3、Java 17 的 Maven 多模块商城后端项目，覆盖移动端商城、后台管理、消息消费、定时任务、Redis、Elasticsearch 和监控等能力。项目当前重点围绕商品、订单、库存、支付、MQ、本地消息补偿和对账治理进行拆分，目标是让交易链路在高并发场景下更易维护、更可扩展。
+`waynboot-mall` 是一个基于 Spring Boot 3、Java 17 的 Maven 多模块商城后端项目，覆盖移动端商城、后台管理、消息消费、定时任务、Redis 和 Elasticsearch 等能力。项目当前重点围绕商品、订单、库存、支付、MQ、本地消息补偿和对账治理进行拆分，目标是让交易链路在高并发场景下更易维护、更可扩展。
 
 ## 技术栈
 
@@ -13,7 +13,6 @@
 | 搜索 | Elasticsearch 7 |
 | 消息 | RabbitMQ、延迟消息、本地消息表 |
 | 定时任务 | Spring Scheduled |
-| 监控 | Spring Boot Admin、Actuator、Micrometer、Prometheus |
 | 支付 | 微信支付、支付宝、易支付 |
 | 测试 | JUnit 5、Mockito、Spring Boot Test |
 
@@ -23,14 +22,20 @@
 waynboot-mall
 ├── waynboot-admin-api              后台管理接口
 ├── waynboot-mobile-api             H5 / 移动端接口
-├── waynboot-common                 核心业务、实体、Mapper、Service、VO、领域支撑类
+├── waynboot-common                 通用配置、切面、策略接口、通用模型和基础设施
+├── waynboot-domain-api             跨领域契约：实体、Mapper、Service 接口、VO、枚举
+├── waynboot-domain-trade           订单、支付编排、状态机、本地消息、对账
+├── waynboot-domain-inventory       库存冻结、库存流水、Redis 库存快照、库存对账
+├── waynboot-domain-goods           商品、SKU、类目、搜索与 ES 同步
+├── waynboot-domain-cart            购物车读写与选中商品聚合
+├── waynboot-domain-promotion       优惠券、营销位和 Diamond 策略实现
+├── waynboot-payment-channel        微信、支付宝、易支付的支付 / 退款渠道适配
 ├── waynboot-data
 │   ├── waynboot-data-redis         Redis 访问与缓存工具
 │   └── waynboot-data-elastic       Elasticsearch 访问能力
 ├── waynboot-message
 │   ├── waynboot-message-core       RabbitMQ 队列、交换机、绑定配置
 │   └── waynboot-message-consumer   MQ 消费者
-├── waynboot-monitor                监控模块
 ├── waynboot-util                   通用工具、异常、枚举、常量
 ├── db-init                         数据库初始化和增量治理 SQL
 ├── redis / rabbitmq / es / nginx   中间件配置
@@ -55,10 +60,10 @@ Service / Support 编排层
   -> 本地消息表、MQ relay、消费者模板、补偿重试
 
 治理层
-  -> Redis 削峰、库存对账、支付对账、补偿后台、分表路由、Spring Scheduled 定时任务
+  -> Redis 削峰、库存对账、支付对账、补偿后台、Spring Scheduled 定时任务
 ```
 
-入口模块不直接承载核心业务逻辑。`admin-api` 和 `mobile-api` 主要负责接口适配，交易逻辑集中在 `waynboot-common` 的 Service、support、assembler 和 helper 中。
+入口模块不直接承载核心业务逻辑。`admin-api` 和 `mobile-api` 主要负责接口适配；交易、库存、商品、购物车、营销等实现分别收敛在 `waynboot-domain-*` 模块。`waynboot-domain-api` 只放跨领域契约，`waynboot-common` 保留通用配置、切面、策略接口、通用模型和基础设施。
 
 ## 核心业务能力
 
@@ -149,54 +154,11 @@ lockedStock  冻结库存
 - `LocalMessageCompensationLogService` 记录失败、死信和人工重投日志。
 - `TradeOpsController` 提供失败消息查询、指标查看和人工重投接口。
 
-### 分表与查询治理
+### 后台首页统计
 
-项目已沉淀交易表按月分片规则，后续可接入 ShardingSphere 或动态表名路由。
+管理后台首页统计由 `DashboardController` 提供，统一挂载在 `/shop/dashboard` 下，覆盖核心指标、销售趋势、支付渠道、热销商品、库存预警、会员趋势和最近动态。统计口径集中在 `DashboardService`，前端 `waynboot-admin/src/views/dashboard` 只负责展示，不再维护写死数据。
 
-```text
-shop_order_yyyyMM
-shop_order_goods_yyyyMM
-shop_payment_flow_yyyyMM
-local_message_yyyyMM
-```
-
-推荐索引：
-
-```sql
--- 订单主表
-UNIQUE KEY uk_order_sn(order_sn);
-KEY idx_user_create_time(user_id, create_time);
-KEY idx_status_create_time(order_status, create_time);
-
--- 订单明细表
-KEY idx_order_goods_order_id(order_id);
-KEY idx_order_goods_product_id(product_id);
-
--- 支付流水表
-UNIQUE KEY uk_payment_flow_key(flow_key);
-KEY idx_payment_flow_order_sn(order_sn);
-KEY idx_payment_flow_pay_id(pay_channel, pay_id);
-
--- 本地消息表
-UNIQUE KEY uk_local_message_key(message_key);
-KEY idx_local_message_status_retry(status, next_retry_time);
-KEY idx_local_message_biz(biz_type, biz_id);
-```
-
-## 运维治理接口
-
-后台交易治理接口位于 `waynboot-admin-api` 的 `ops/trade` 路径下：
-
-```text
-GET  /ops/trade/local-message/failed?limit=50
-GET  /ops/trade/local-message/metric
-POST /ops/trade/local-message/{messageId}/retry?operator=admin
-POST /ops/trade/stock/snapshot/refresh
-POST /ops/trade/inventory/reconcile
-POST /ops/trade/payment/reconcile
-```
-
-这些接口主要用于最终一致性排查、库存对账、Redis 库存快照刷新和支付日终对账。
+详细统计逻辑、接口口径和前端联动说明见 [ONBOARDING.md](./ONBOARDING.md) 的“后台首页统计逻辑”章节。
 
 ## 定时任务
 
@@ -236,7 +198,6 @@ inventory_stock.sql              冻结库存字段和库存流水表
 local_message.sql                本地消息表和补偿日志表
 order_status_log.sql             订单状态日志表
 payment_flow.sql                 支付流水、渠道账单、退款流水表
-trade_sharding_governance.sql    分表命名和索引治理建议
 ```
 
 SQL 文件保留为数据库结构演进入口，提交前需要结合目标环境执行顺序和幂等性确认。
@@ -271,7 +232,6 @@ mvn "-Dmaven.repo.local=.m2/repository" test
 mvn -pl waynboot-admin-api spring-boot:run
 mvn -pl waynboot-mobile-api spring-boot:run
 mvn -pl waynboot-message/waynboot-message-consumer spring-boot:run
-mvn -pl waynboot-monitor spring-boot:run
 ```
 
 也可以用 IDE 分别启动对应模块的 `*Application`。
@@ -308,17 +268,20 @@ LocalMessageService                本地消息状态流转
 LocalMessageRelaySupport           本地消息投递和本地处理器分发
 TradeOpsController                 后台交易治理接口
 TradeGovernanceScheduledTask       交易治理定时任务（Spring Scheduled）
-TradeTableShardRouter              交易表分片命名规则
+DashboardController                后台首页统计接口
+DashboardService                   后台首页统计口径和 VO 组装
+AdminOrderMapper                   订单管理查询和热销商品聚合查询
 ```
 
-## 后续演进方向
+主要代码位置：
 
-- 接入真实渠道账单文件导入，形成完整支付日终对账闭环。
-- 增加对账差异表和差异处理状态机。
-- 将 `TradeTableShardRouter` 接入 ShardingSphere 或动态表名拦截器。
-- 增加库存桶表，进一步降低热点 SKU 的 MySQL 单行锁竞争。
-- 补充 Prometheus 指标：本地消息失败数、死信数、MQ 堆积、支付差异数、库存差异数、Redis 快照缺失数。
-- 对商品详情、下单、支付回调和本地消息 relay 做压测基线。
+```text
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/support/order
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/support/payment
+waynboot-domain-trade/src/main/java/com/wayn/domain/trade/outbox
+waynboot-domain-inventory/src/main/java/com/wayn/domain/inventory/support
+waynboot-domain-inventory/src/main/java/com/wayn/domain/inventory/service
+```
 
 ## 前端项目
 

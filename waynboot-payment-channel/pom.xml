@@ -13,7 +13,7 @@
 
     <description>
         支付渠道适配层：微信、支付宝、易支付的支付与退款策略实现，以及易支付 SDK 包装。
-        common 通过 PayTypeInterface / RefundInterface / PaymentChannelVerifier 接口反向依赖此模块。
+        common 提供 PayTypeInterface / RefundInterface 策略接口，本模块提供对应渠道实现。
     </description>
 
     <dependencies>

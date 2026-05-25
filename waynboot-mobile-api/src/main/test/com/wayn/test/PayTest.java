@@ -24,7 +24,7 @@ public class PayTest {
     private IPayService payService;
 
     /**
-     * 鏄撴敮浠樹笅鍗曟祴璇?
+     * 易支付下单测试
      */
     @Test
     public void epayPreapreTest() {
@@ -35,4 +35,3 @@ public class PayTest {
         payService.prepay(orderPayReqVO);
     }
 }
-

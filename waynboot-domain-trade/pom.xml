@@ -13,8 +13,7 @@
 
     <description>
         交易领域：订单、支付编排、状态机、本地消息、对账。
-        依赖 cart/promotion/inventory/goods 通过 Service 接口。
-        待迁入: IOrderService, OrderSubmitSupport, PaymentCallbackSupport, LocalMessageService 等。
+        依赖 cart/promotion/inventory/goods 领域能力，承载 OrderSubmitSupport、PaymentCallbackSupport、LocalMessageService 等交易实现。
     </description>
 
     <dependencies>

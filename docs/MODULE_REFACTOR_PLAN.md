@@ -1,10 +1,10 @@
-# 模块拆分演进计划
+# 模块拆分演进记录
 
-本文档列出 waynboot-mall 模块边界优化的两条独立路径：B（支付渠道隔离）和 A（领域模块拆分）。每条路径在独立 PR 中推进，互不依赖。
+本文档记录 waynboot-mall 模块边界优化的历史路径和当前状态，用于后续维护者理解为什么会形成 `domain-api + domain-* + payment-channel` 的模块结构。当前项目已经完成主要领域模块拆分，后续请以仓库根目录 `README.md`、`README_en.md`、`ONBOARDING.md` 和 `CLAUDE.md` 作为最新上手文档。
 
 ---
 
-## 现状结论（2026-05）
+## 历史问题结论（2026-05 重构前）
 
 `waynboot-common` 已经从"通用基础设施收敛点"演变成"全栈业务模块"：
 
@@ -12,9 +12,9 @@
 - 7 个 support 子包按领域切分，但只通过 Java 包名隔离，无编译期约束
 - 支付渠道 SDK（微信/支付宝/易支付）和编排层在同一模块
 
-短期可运行，长期会持续提高维护成本，并在接入 ShardingSphere、抽离微服务、加新领域（履约、风控）时形成阻力。
+短期可运行，长期会持续提高维护成本，并在抽离微服务、加新领域（履约、风控）时形成阻力。
 
-本轮 D（util 瘦身）已完成；B 和 A 留作独立 PR。
+本轮 D（util 瘦身）、B（支付渠道隔离）和 A（领域模块拆分主体）均已推进完成。下文保留原始设计过程，便于追溯决策背景；其中“待迁”“目标模块结构”等历史表述不再代表当前待办。
 
 ---
 
@@ -24,7 +24,7 @@
 
 把 18 个支付/退款渠道实现 + 微信/支付宝/易支付 SDK 依赖迁出到独立模块，common 只保留接口契约。
 
-### 范围
+### 历史迁移范围
 
 迁出到 `waynboot-payment-channel`：
 
@@ -46,42 +46,26 @@ common/design/strategy/refund/context/RefundContext
 
 ### 阻塞点：PaymentCallbackSupport 的耦合
 
-`PaymentCallbackSupport.epayPayNotify()` 直接调用了 `EpaySignUtil.sign()` 做验签。如果把 `EpaySignUtil` 迁出，common 就反向依赖 payment-channel。
+`PaymentCallbackSupport.epayPayNotify()` 仍直接调用 `EpaySignUtil.sign()` 做验签，当前实现位于 `waynboot-domain-trade`，并直接依赖微信 / 支付宝 SDK。
 
-**先做的设计变更**（B 任务前置）：
+**历史设计设想**（未完整落地，当前代码仍由 `PaymentCallbackSupport` 直接完成验签）：
 
-抽象 `PaymentChannelVerifier` 接口，每个渠道在 payment-channel 内实现：
-
-```java
-// 留在 common
-public interface PaymentChannelVerifier {
-    PaymentNotifyChannelEnum channel();
-    boolean verify(HttpServletRequest request);
-    Map<String, String> extractCallbackParams(HttpServletRequest request);
-}
-
-// 迁到 payment-channel
-@Component
-public class EpaySignVerifier implements PaymentChannelVerifier { ... }
-```
-
-`PaymentCallbackSupport` 改为通过 `Map<PaymentNotifyChannelEnum, PaymentChannelVerifier>` 注入，按 channel 路由。
+曾考虑抽象支付回调验签接口，每个渠道在 `payment-channel` 内实现，`PaymentCallbackSupport` 通过渠道枚举路由到对应验签实现。该方案尚未落地，后续如继续剥离 SDK，应重新评估接口边界和依赖方向。
 
 ### 依赖迁移
 
 `waynboot-payment-channel/pom.xml` 已经独立声明 `weixin-java-pay` 和 `alipay-sdk-java`。
 
-`waynboot-common/pom.xml` 暂时保留这两个 SDK 声明，因为 6 个 common 文件还直接 import SDK 类型：
+当前仍有 SDK 依赖未完全剥离，`waynboot-common`、`waynboot-domain-trade`、`waynboot-payment-channel` 都声明了微信 / 支付宝 SDK。保留原因包括：
 
-- `PaymentCallbackSupport`：`com.alipay.api.internal.util.AlipaySignature`、`WxPayNotifyResponse`、`WxPayOrderNotifyResult`、`BaseWxPayResult`、`WxPayService`
-- `AdminOrderRefundSupport`：refund 相关 SDK 类型
-- `OrderServiceImpl` / `IOrderService` / `OrderPayResVO`：`WxPayUnifiedOrderV3Result.JsapiResult`
-- `WxPayServiceConfig`：`WxPayService` Bean 配置
+- `waynboot-domain-trade` 的 `PaymentCallbackSupport` 仍使用 `AlipaySignature`、`WxPayNotifyResponse`、`WxPayOrderNotifyResult`、`BaseWxPayResult`、`WxPayService`。
+- `waynboot-common` 的 `WxPayServiceConfig` 仍提供 `WxPayService` Bean。
+- `waynboot-payment-channel` 承载支付 / 退款渠道适配，正常依赖微信 / 支付宝 SDK。
 
-彻底剥离需要后续重构：
+彻底剥离 SDK 需要后续重构：
 
 1. 把 `OrderPayResVO.jsapiResult` 字段从 `WxPayUnifiedOrderV3Result.JsapiResult` 改为自定义 `WxJsapiPayResult` POJO
-2. `PaymentCallbackSupport` 通过 `PaymentChannelVerifier` 接口（B 阶段第二轮重构再做）反向调用 payment-channel 的验签实现
+2. `PaymentCallbackSupport` 通过新的支付回调验签接口反向调用 payment-channel 的验签实现
 3. `WxPayServiceConfig` 移到 payment-channel
 4. 完成上述步骤后才能从 `waynboot-common/pom.xml` 删除两个 SDK 依赖
 
@@ -93,15 +77,15 @@ mobile-api → common, payment-channel
 payment-channel → common
 ```
 
-### 验证清单
+### 历史验证清单
 
-- `mvn clean package` 全 12 模块通过
+- 历史验证记录：`mvn clean package` 曾在当时模块结构下通过
 - `PaymentCallbackSupportTest` 6 个测试全绿
 - 三种支付渠道回调路径手工 smoke：微信 V3 / 支付宝 / 易支付
 
-### 工作量估算
+### 历史工作量估算
 
-中等。约 25 个文件移动 + 5 个新接口实现 + pom 调整。一次提交完成。
+中等。原计划约 25 个文件移动 + 5 个新接口实现 + pom 调整，当前支付渠道实现已经迁入 `waynboot-payment-channel`。
 
 ---
 
@@ -134,10 +118,10 @@ util → domain-api → common → admin-api / mobile-api
 
 `BaseEntity` 和 `ShopBaseEntity` 从 `com.wayn.common.base.entity` 迁到 `com.wayn.util.entity`。util 加 `mybatis-plus-boot-starter` 和 `jackson-annotations` 依赖。这一步是 domain-api 能独立存在的前提（否则 entity 还要依赖 common）。
 
-### 目标模块结构
+### 历史目标模块结构
 
 ```
-waynboot-common              ← 基础设施 + 暂未迁出的 trade/cart/goods/inventory/home support
+waynboot-common              ← 基础设施 + 暂未迁出的 trade/cart/goods/inventory/home support（历史目标）
 waynboot-domain-api          ← 跨域契约：entity / Service 接口 / Mapper 接口 / 接口涉及的 VO
 waynboot-domain-trade        ← 订单 + 支付编排 + 状态机 + 本地消息（待迁）
 waynboot-domain-goods        ← 商品 + SKU + ES 同步 + 类目（待迁）
@@ -165,7 +149,7 @@ waynboot-domain-inventory    ← 库存 + 流水 + 对账（待迁）
 - **A-5d：9 个 trade ServiceImpl + 30+ 个 trade support（含 chain、admin、payment）+ outbox 全套 + 7 个 Mapper XML 迁到 domain-trade**
 - **测试代码全部跟随对应实现迁到 domain 模块**
 - admin-api / mobile-api 加全部 domain 模块依赖
-- `mvn clean package` 20 模块全过；`mvn test` 全模块跑通，**173 个测试全绿**
+- 历史验证记录：领域拆分完成时曾执行全量构建和测试
 
 ### 当前架构状态（终态）
 
@@ -192,9 +176,8 @@ util → domain-api → domain-promotion → admin-api / mobile-api
 | message-consumer | 8 |
 | domain-cart | 5 |
 | domain-api（TradeLockSupport） | 3 |
-| common（TradeTableShardRouter） | 1 |
 | domain-promotion | 1 |
-| **合计** | **173** |
+| **合计** | **172** |
 
 ### 仍可优化（独立小 PR）
 
@@ -228,7 +211,7 @@ util → domain-api → domain-promotion → admin-api / mobile-api
 
 跨域引用通过 Service 接口传递，禁止跨域直接 import Support 类。
 
-### 执行顺序
+### 历史执行顺序
 
 1. **A-1 盘点**：grep 跨域引用，输出 `cross-domain-imports.txt`
 2. **A-2 骨架**：创建 5 个空 module 的 pom + 包扫描占位
@@ -238,22 +221,22 @@ util → domain-api → domain-promotion → admin-api / mobile-api
 
 每步独立 PR，每步走完都能 `mvn clean package` 通过。
 
-### 风险
+### 历史风险
 
 - Mapper XML 路径变更需要同步调整 `mybatis-plus.mapperLocations`
 - `typeAliasesPackage: com.wayn.**.domain` 需要扫描多模块路径
 - 测试 mock 路径需要更新（特别是 `Wrappers.lambdaQuery` 涉及 TableInfo 的初始化逻辑）
 - 如果两个 domain 之间发现循环依赖，需要先抽 `domain-shared` 或调整 Service 接口位置
 
-### 工作量估算
+### 历史工作量估算
 
-大。约 4 周分 4-5 个 PR 推进。建议先完成 B 再启动 A。
+大。原计划约 4 周分 4-5 个 PR 推进，当前主体拆分已经完成。
 
 ---
 
-## 执行约束
+## 后续维护约束
 
 - 任何一步失败不影响其他步骤的回滚
-- 每个 PR 独立通过 `mvn clean package` + `mvn test -pl waynboot-common`
-- 不与日常业务功能 PR 混合提交
-- A 的试点（A-3）必须把"模板模式"完整跑通后再启动 A-4 / A-5
+- 每个 PR 独立通过 `mvn clean package` + `mvn test`，或至少通过受影响模块测试。
+- 不与日常业务功能 PR 混合提交。
+- 如果继续推进支付 SDK 剥离或领域边界收口，先更新最新架构说明，再进行代码迁移。
