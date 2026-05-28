@@ -1,0 +1,96 @@
+# 数据源配置
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    # 主库数据源
+    master:
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/wayn_shop?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      username: root
+      password: '@@123456Java'
+      pool-name: hikariCP
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 60000
+      max-lifetime: 600000
+      connection-timeout: 5000
+      connection-test-query: SELECT 1
+    # 从库数据源
+    slave:
+      # 从数据源开关/默认关闭
+      enabled: false
+      url:
+      username:
+      password:
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 16789
+      password: Aa@@1688
+      database: 0
+      timeout: 300
+      lettuce:
+        shutdown-timeout: 100ms
+  #配置rabbitMq 服务器
+  rabbitmq:
+    host: 106.14.18.76
+    port: 5672
+    username: guest
+    password: guest
+    # 消息确认配置项
+    # 确认消息已发送到交换机(Exchange)
+    publisher-confirm-type: correlated
+    # 确认消息已发送到队列(Queue)
+    publisher-returns: true
+    listener:
+      simple:
+        # 一个消费者最多可处理的nack（未确认）消息数量
+        prefetch: 1
+        acknowledge-mode: manual  # 消息确认方式，其有三种配置方式，分别是none、manual(手动ack) 和auto(自动ack) 默认auto
+
+es:
+  config:
+    host: 106.14.18.76
+    port: 9200
+    username: elastic
+    password: 123456
+    scheme: http
+    shards: 3
+    replicas: 2
+
+# wx支付配置
+shop:
+  # 开发者应该设置成自己的wx相关信息
+  wxpay:
+    app-id:
+    app-secret:
+    mch-id:
+    mch-key:
+    api-v3key: ""
+    # 将v3支付证书解压放到项目resource文件夹下
+    key-path: "classpath:apiclient_cert.p12"
+    private-cert-path: "classpath:apiclient_cert.pem"
+    private-key-path: "classpath:apiclient_key.pem"
+    notify-url: xxxxx
+  # alipay
+  alipay:
+    app-id:
+    rsa-private-key:
+    alipay-public_key:
+    gateway: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+    charset: UTF-8
+    format: json
+    log_path: /opt/waynboot-mall/log
+    signtype: RSA2
+    notify-url: xxxxx
+  # 易支付
+  epay:
+    apiurl: "https://epay.beiyunzd.cn/"
+    pid: ""
+    key: ""
+    notify-url: xxxxx
+
+wx:
+  appId: ""
+  appSecret: ""

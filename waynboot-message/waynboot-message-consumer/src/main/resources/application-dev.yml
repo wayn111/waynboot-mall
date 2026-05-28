@@ -1,0 +1,32 @@
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      database: 0
+      timeout: 5000
+      expire: 400
+      lettuce:
+        shutdown-timeout: 100ms
+  # 配置rabbitMq 服务器
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    # 消息确认配置项
+    # 确认消息已发送到交换机(Exchange)
+    publisher-confirm-type: correlated
+    # 确认消息已发送到队列(Queue)
+    publisher-returns: true
+    # 虚拟主机名称
+    virtual-host: /
+    listener:
+      simple:
+        # 一个消费者最多可处理的nack（未确认）消息数量，默认是250
+        prefetch: 250
+        # 消息确认方式，其有三种配置方式，分别是none、manual(手动ack) 和auto(自动ack) 默认auto
+        acknowledge-mode: manual
+        concurrency: 1
+        max-concurrency: 1

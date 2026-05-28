@@ -1,0 +1,14 @@
+server:
+  port: 85
+  shutdown: graceful # 优雅关机
+spring:
+  application:
+    name: waynboot-message-consumer
+  profiles:
+      active: dev
+# 日志配置
+logging:
+  level:
+    com.wayn: info
+    org.springframework: info
+

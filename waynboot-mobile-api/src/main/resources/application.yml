@@ -1,0 +1,66 @@
+server:
+  port: 82
+  shutdown: graceful # 优雅关机
+
+spring:
+  application:
+    name: waynboot-mobile-api
+  profiles:
+    active: dev
+  thymeleaf:
+    cache: false
+    suffix: .html
+    check-template-location: false
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 5MB
+      max-file-size: 200MB
+      max-request-size: 200MB
+  jackson:
+    default-property-inclusion: non_null # 接口返回字段值为null的属性不展示
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+# token配置
+token:
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌秘钥
+  secret: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认30天）
+  expireTime: 30
+
+# 日志配置
+logging:
+  file:
+    name: ${LOG_PATH_PREFIX:E:/home/logs}/${spring.application.name}/info.log
+
+# mybatis plus 配置
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: delFlag  # 全局逻辑删除字段值 3.3.0开始支持，详情看下面。
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+  # 搜索指定包别名
+  typeAliasesPackage: com.wayn.**.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+
+# xml 文件热加载
+mybatis-xml-reload:
+  enabled: ${XML_RELOAD:false}
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+
+# wayn配置
+wayn:
+  name: wayn
+  version: 1.3.0
+  email: 166738430@qq.com
+  uploadDir: ${UPLOAD_DIR:E:\waynshop\webp}
+  adminUrl: ${ADMIN_URL:http://localhost:81}
+  mobileUrl: ${MOBILE_URL:http://localhost:82}
+  freightLimit: "0"  # 运费限额
+  freightPrice: "0"  # 运费
+  unpaidOrderCancelDelayTime: 1 # 未支付订单超时时间
+
