@@ -7,7 +7,7 @@
 | 分类 | 技术 |
 | --- | --- |
 | 基础框架 | Spring Boot 3.1.4、Java 17 |
-| Web 与安全 | Spring MVC、Spring Security、JWT |
+| Web 与安全 | Spring MVC、后台 Spring Security + JWT、移动端 Sa-Token |
 | 数据访问 | MyBatis-Plus、MySQL、Druid |
 | 缓存 | Redis、Lettuce、Lua 脚本 |
 | 搜索 | Elasticsearch 7 |
@@ -66,6 +66,27 @@ Service / Support 编排层
 入口模块不直接承载核心业务逻辑。`admin-api` 和 `mobile-api` 主要负责接口适配；交易、库存、商品、购物车、营销等实现分别收敛在 `waynboot-domain-*` 模块。`waynboot-domain-api` 只放跨领域契约，`waynboot-common` 保留通用配置、切面、策略接口、通用模型和基础设施。
 
 ## 核心业务能力
+
+### 移动端鉴权
+
+`waynboot-mobile-api` 已从 Spring Security + JWT 切换为 Sa-Token，后台 `waynboot-admin-api` 仍保留 Spring Security + JWT。这样可以减少移动端入口层的过滤链复杂度，同时避免影响后台已有的 `@PreAuthorize` 权限体系。
+
+移动端鉴权约定：
+
+- 登录接口仍返回 token 字符串，前端请求头仍使用 `Authorization`。
+- 兼容 `Authorization: <token>` 和 `Authorization: Bearer <token>` 两种格式。
+- Sa-Token 登录态和用户快照写入 Redis Session，业务代码通过 `MobileSecurityUtils` 获取当前登录用户。
+- 移动端未登录、鉴权失败由 `MobileSaTokenExceptionHandler` 统一返回业务错误码。
+
+关键代码入口：
+
+```text
+MobileSaTokenConfiguration        Sa-Token 参数、白名单和跨域配置
+MobileAuthorizationHeaderFilter   Authorization 请求头兼容处理
+MobileSaTokenExceptionHandler     移动端 Sa-Token 异常处理
+LoginService                      登录、写入 Sa-Token Session、刷新登录信息
+MobileSecurityUtils               当前用户读取、密码加密和登录快照刷新
+```
 
 ### 商品与购物车
 
