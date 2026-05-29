@@ -7,12 +7,10 @@ import com.wayn.common.model.request.UpdatePasswordReqVO;
 import com.wayn.common.model.response.MobileUserAvatarResVO;
 import com.wayn.common.model.response.MobileUserInfoResVO;
 import com.wayn.mobile.framework.security.LoginUserDetail;
-import com.wayn.mobile.framework.security.service.TokenService;
 import com.wayn.mobile.framework.security.util.MobileSecurityUtils;
 import com.wayn.util.enums.ReturnCodeEnum;
 import com.wayn.util.exception.BusinessException;
 import com.wayn.util.util.R;
-import com.wayn.util.util.ServletUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,8 +34,6 @@ import java.util.Objects;
 @RequestMapping("user")
 public class UserController {
 
-    private final TokenService tokenService;
-
     private final IMemberService iMemberService;
 
     /**
@@ -47,7 +43,7 @@ public class UserController {
      */
     @GetMapping("info")
     public R<MobileUserInfoResVO> getInfo() {
-        LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        LoginUserDetail loginUser = MobileSecurityUtils.getLoginUser();
         Long userId = loginUser.getMember().getId();
         log.info("获取用户信息开始, userId={}", userId);
         MobileUserInfoResVO resVO = toMobileUserInfoResVO(loginUser.getMember());
@@ -68,7 +64,7 @@ public class UserController {
         String mobile = profileRequestVO.getMobile();
         String email = profileRequestVO.getEmail();
         LocalDate birthday = profileRequestVO.getBirthday();
-        LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        LoginUserDetail loginUser = MobileSecurityUtils.getLoginUser();
         Member member = loginUser.getMember();
         log.info("更新用户资料开始, userId={}, nicknameUpdated={}, genderUpdated={}, mobileUpdated={}, emailUpdated={}, birthdayUpdated={}",
                 member.getId(),
@@ -95,7 +91,7 @@ public class UserController {
         boolean updated = iMemberService.updateById(member);
         if (updated) {
             loginUser.setMember(member);
-            tokenService.refreshToken(loginUser);
+            MobileSecurityUtils.refreshLoginUser(loginUser);
         }
         log.info("更新用户资料完成, userId={}, result={}", member.getId(), updated);
         return R.result(updated);
@@ -109,7 +105,7 @@ public class UserController {
      */
     @PostMapping("uploadAvatar")
     public R<MobileUserAvatarResVO> uploadAvatar(@RequestParam String avatar) {
-        LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        LoginUserDetail loginUser = MobileSecurityUtils.getLoginUser();
         Member member = loginUser.getMember();
         log.info("上传用户头像开始, userId={}, avatarLength={}", member.getId(), StringUtils.length(avatar));
         member.setAvatar(avatar);
@@ -118,7 +114,7 @@ public class UserController {
             throw new BusinessException("上传头像失败");
         }
         loginUser.setMember(member);
-        tokenService.refreshToken(loginUser);
+        MobileSecurityUtils.refreshLoginUser(loginUser);
         log.info("上传用户头像完成, userId={}", member.getId());
         return R.success(toMobileUserAvatarResVO(member));
     }
@@ -131,7 +127,7 @@ public class UserController {
      */
     @PostMapping("updatePassword")
     public R<Boolean> updatePassword(@RequestBody @Validated UpdatePasswordReqVO reqVO) {
-        LoginUserDetail loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        LoginUserDetail loginUser = MobileSecurityUtils.getLoginUser();
         Long userId = loginUser.getMember().getId();
         log.info("更新用户密码开始, userId={}", userId);
         String oldPassword = reqVO.getOldPassword();
@@ -150,11 +146,17 @@ public class UserController {
             throw new BusinessException("修改密码失败");
         }
         loginUser.setMember(member);
-        tokenService.refreshToken(loginUser);
+        MobileSecurityUtils.refreshLoginUser(loginUser);
         log.info("更新用户密码完成, userId={}", userId);
         return R.success(Boolean.TRUE);
     }
 
+    /**
+     * 将会员实体转换为移动端用户信息 VO，避免直接暴露数据库实体。
+     *
+     * @param member 会员实体
+     * @return 移动端用户信息 VO
+     */
     private MobileUserInfoResVO toMobileUserInfoResVO(Member member) {
         MobileUserInfoResVO resVO = new MobileUserInfoResVO();
         resVO.setId(member.getId());
@@ -173,6 +175,12 @@ public class UserController {
         return resVO;
     }
 
+    /**
+     * 将会员头像信息转换为移动端头像 VO。
+     *
+     * @param member 会员实体
+     * @return 移动端头像 VO
+     */
     private MobileUserAvatarResVO toMobileUserAvatarResVO(Member member) {
         MobileUserAvatarResVO resVO = new MobileUserAvatarResVO();
         resVO.setUserId(member.getId());

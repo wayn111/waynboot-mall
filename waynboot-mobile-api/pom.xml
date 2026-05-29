@@ -31,6 +31,18 @@
             <groupId>com.wayn</groupId>
             <artifactId>waynboot-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.wayn</groupId>
+            <artifactId>waynboot-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot3-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.wayn</groupId>

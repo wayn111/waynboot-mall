@@ -32,6 +32,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <spring-boot.version>3.5.14</spring-boot.version>
         <mysql.connector.j.version>9.7.0</mysql.connector.j.version>
         <lettuce.version>6.8.2.RELEASE</lettuce.version>
@@ -53,6 +54,7 @@
         <weixin-java-pay.version>4.8.3-20260527.210905</weixin-java-pay.version>
         <alipay-sdk-java.version>4.40.828.ALL</alipay-sdk-java.version>
         <sms4j.version>3.3.5</sms4j.version>
+        <sa-token.version>1.45.0</sa-token.version>
         <shedlock.version>5.16.0</shedlock.version>
         <protobuf-java.version>4.35.0</protobuf-java.version>
         <okhttp.version>4.12.0</okhttp.version>
@@ -99,6 +101,16 @@
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
                 <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-spring-boot3-starter</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-redis-jackson</artifactId>
+                <version>${sa-token.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -537,6 +549,14 @@
                     <compilerArgs>
                         <compilerArg>-parameters</compilerArg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
                 </configuration>
             </plugin>
         </plugins>

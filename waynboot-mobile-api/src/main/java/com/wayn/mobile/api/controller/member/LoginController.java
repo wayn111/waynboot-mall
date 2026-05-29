@@ -1,5 +1,6 @@
 package com.wayn.mobile.api.controller.member;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.PhoneUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -119,6 +120,20 @@ public class LoginController {
     }
 
     /**
+     * 用户退出登录。
+     *
+     * @return R
+     */
+    @PostMapping("/logout")
+    public R<Boolean> logout() {
+        Long userId = MobileSecurityUtils.getUserId();
+        log.info("用户退出登录开始, userId={}", userId);
+        StpUtil.logout();
+        log.info("用户退出登录完成, userId={}", userId);
+        return R.success(Boolean.TRUE);
+    }
+
+    /**
      * 验证码
      *
      * @return R
@@ -143,7 +158,12 @@ public class LoginController {
         return R.success(resVO);
     }
 
-    // 发送短信
+    /**
+     * 发送短信验证码。
+     *
+     * @param reqVO 发送短信验证码参数
+     * @return 发送结果
+     */
     @RequestMapping("genMobileCode")
     public R<Boolean> genMobileCode(@RequestBody @Validated GenMobileCodeReqVO reqVO) {
         String mobile = reqVO.getMobile();
@@ -173,6 +193,12 @@ public class LoginController {
         return R.success();
     }
 
+    /**
+     * 脱敏手机号，避免日志中打印完整手机号。
+     *
+     * @param mobile 手机号
+     * @return 脱敏后的手机号
+     */
     private String maskMobile(String mobile) {
         if (StringUtils.isBlank(mobile) || mobile.length() < 7) {
             return mobile;
