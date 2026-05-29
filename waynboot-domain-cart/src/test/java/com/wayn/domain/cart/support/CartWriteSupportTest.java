@@ -90,7 +90,7 @@ class CartWriteSupportTest {
         BusinessException exception = assertThrows(BusinessException.class, () -> cartWriteSupport.add(cart, 9L));
 
         assertEquals(ReturnCodeEnum.ERROR.getCode(), exception.getCode());
-        verify(cartMapper, never()).insert(any());
+        verify(cartMapper, never()).insert(any(Cart.class));
     }
 
     @Test

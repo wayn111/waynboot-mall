@@ -31,29 +31,41 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <spring-boot.version>3.1.4</spring-boot.version>
-        <mysql.connector.java.version>8.0.30</mysql.connector.java.version>
-        <lettuce.version>6.3.0.RELEASE</lettuce.version>
-        <elasticsearch.version>7.17.14</elasticsearch.version>
-        <mybatis-plus.version>3.5.4.1</mybatis-plus.version>
-        <druid.version>1.2.20</druid.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <spring-boot.version>3.5.14</spring-boot.version>
+        <mysql.connector.j.version>9.7.0</mysql.connector.j.version>
+        <lettuce.version>6.8.2.RELEASE</lettuce.version>
+        <elasticsearch.version>7.17.29</elasticsearch.version>
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
+        <druid.version>1.2.28</druid.version>
         <lombok.version>1.18.26</lombok.version>
-        <commons.io.version>2.11.0</commons.io.version>
-        <commons.collections.version>4.4</commons.collections.version>
-        <commons.fileupload.version>1.5</commons.fileupload.version>
-        <commons-lang3.version>3.12.0</commons-lang3.version>
-        <fastjson.version>2.0.41</fastjson.version>
+        <commons.io.version>2.22.0</commons.io.version>
+        <commons.collections.version>4.5.0</commons.collections.version>
+        <commons.fileupload.version>1.6.0</commons.fileupload.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <fastjson.version>2.0.62</fastjson.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <jwt.version>4.3.0</jwt.version>
         <qiniu.version>7.12.1</qiniu.version>
-        <mail.version>2.0.1</mail.version>
-        <hutool.version>5.8.20</hutool.version>
-        <easyexcel.version>3.2.1</easyexcel.version>
-        <weixin-java-pay.version>4.5.0</weixin-java-pay.version>
-        <alipay-sdk-java.version>4.38.90.ALL</alipay-sdk-java.version>
-        <sms4j.version>2.2.0</sms4j.version>
-        <shedlock.version>5.10.0</shedlock.version>
+        <mail.version>2.0.2</mail.version>
+        <hutool.version>5.8.46</hutool.version>
+        <easyexcel.version>4.0.3</easyexcel.version>
+        <weixin-java-pay.version>4.8.3-20260527.210905</weixin-java-pay.version>
+        <alipay-sdk-java.version>4.40.828.ALL</alipay-sdk-java.version>
+        <sms4j.version>3.3.5</sms4j.version>
+        <shedlock.version>5.16.0</shedlock.version>
+        <protobuf-java.version>4.35.0</protobuf-java.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <okio.version>3.17.0</okio.version>
+        <dom4j.version>2.2.0</dom4j.version>
+        <bouncycastle.version>1.84</bouncycastle.version>
+        <commons.compress.version>1.28.0</commons.compress.version>
+        <log4j.version>2.26.0</log4j.version>
+        <poi.version>5.5.1</poi.version>
+        <lz4.version>1.8.1</lz4.version>
+        <yawk-lz4.version>1.10.1</yawk-lz4.version>
+        <netty.version>4.1.134.Final</netty.version>
+        <tomcat.version>10.1.55</tomcat.version>
     </properties>
 
     <dependencies>
@@ -72,6 +84,156 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-dns</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver-dns</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-classes-epoll</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-epoll</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-unix-common</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-json</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>${okio.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons.compress.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml-lite</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>${lz4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>at.yawk.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>${yawk-lz4.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -123,7 +285,12 @@
 
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
@@ -135,9 +302,9 @@
             </dependency>
 
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.connector.java.version}</version>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.connector.j.version}</version>
                 <scope>runtime</scope>
             </dependency>
 
@@ -212,6 +379,20 @@
                 <groupId>com.alipay.sdk</groupId>
                 <artifactId>alipay-sdk-java</artifactId>
                 <version>${alipay-sdk-java.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>dom4j</groupId>
+                        <artifactId>dom4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.squareup.okhttp3</groupId>
+                        <artifactId>okhttp</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>

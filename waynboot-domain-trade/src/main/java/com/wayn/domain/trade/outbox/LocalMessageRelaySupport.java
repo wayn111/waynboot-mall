@@ -177,7 +177,7 @@ public class LocalMessageRelaySupport {
     private void sendDelayRabbitMessage(LocalMessage message, Message rabbitMessage) {
         delayRabbitTemplate.convertAndSend(message.getExchangeName(), message.getRoutingKey(),
                 rabbitMessage, messagePostProcessor -> {
-                    messagePostProcessor.getMessageProperties().setDelay(message.getDelayMillis());
+                    messagePostProcessor.getMessageProperties().setDelayLong(Long.valueOf(message.getDelayMillis()));
                     return messagePostProcessor;
                 });
     }

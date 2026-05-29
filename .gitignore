@@ -38,3 +38,8 @@ mvnw*
 jars/
 front/
 .m2
+
+# Local Spring profile configs may contain server addresses or secrets.
+**/src/main/resources/application-dev.yml
+**/src/main/resources/application-dev.yaml
+**/src/main/resources/application-dev.properties

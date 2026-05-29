@@ -9,13 +9,14 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ElasticClientConfig {
     @Bean
-    public RestClientBuilder restClientBuilder(ElasticConfig config) {
+    public RestClientBuilder elasticsearchRestClientBuilder(ElasticConfig config) {
         RestClientBuilder builder = RestClient.builder(new HttpHost(config.getHost(), config.getPort(), config.getScheme()));
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(config.getUsername(), config.getPassword()));
@@ -33,7 +34,7 @@ public class ElasticClientConfig {
     }
 
     @Bean
-    public RestHighLevelClient restHighLevelClient(@Autowired RestClientBuilder restClientBuilder) {
-        return new RestHighLevelClient(restClientBuilder);
+    public RestHighLevelClient restHighLevelClient(@Autowired @Qualifier("elasticsearchRestClientBuilder") RestClientBuilder elasticsearchRestClientBuilder) {
+        return new RestHighLevelClient(elasticsearchRestClientBuilder);
     }
 }

@@ -26,8 +26,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.sms4j.api.SmsBlend;
 import org.dromara.sms4j.api.entity.SmsResponse;
+import org.dromara.sms4j.comm.constant.SupplierConstant;
 import org.dromara.sms4j.core.factory.SmsFactory;
-import org.dromara.sms4j.provider.enumerate.SupplierType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -157,13 +157,14 @@ public class LoginController {
         }
         String code = "1234";
         if (profileUtil.isProd()) {
-            SmsBlend smsBlend = SmsFactory.createSmsBlend(SupplierType.ALIBABA);
+            SmsBlend smsBlend = SmsFactory.getBySupplier(SupplierConstant.ALIBABA);
             code = RandomUtil.randomNumbers(4);
             SmsResponse smsResponse = smsBlend.sendMessage(mobile, code);
             if (!smsResponse.isSuccess()) {
-                log.error("发送短信验证码失败, mobile={}, message={}", maskMobile(mobile), smsResponse.getMessage());
+                String errorMessage = String.valueOf(smsResponse.getData());
+                log.error("发送短信验证码失败, mobile={}, message={}", maskMobile(mobile), errorMessage);
                 redisCache.setCacheObject(MOBILE_CODE_SEND_CACHE.getKey(mobile), "1", MOBILE_CODE_SEND_CACHE.getExpireSecond());
-                throw new BusinessException(MOBILE_YZM_SEND_ERROR.getCode(), smsResponse.getMessage());
+                throw new BusinessException(MOBILE_YZM_SEND_ERROR.getCode(), errorMessage);
             }
         }
         redisCache.setCacheObject(MOBILE_CODE_SEND_CACHE.getKey(mobile), "1", MOBILE_CODE_SEND_CACHE.getExpireSecond());

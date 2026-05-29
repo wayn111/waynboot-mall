@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+blocked_files=$(
+    git diff --cached --name-only --diff-filter=ACMRT -- |
+        grep -E '(^|/)application-dev\.(ya?ml|properties)$' || true
+)
+
+if [ -n "$blocked_files" ]; then
+    printf '%s\n' 'Blocked commit: application-dev config files must stay local.' >&2
+    printf '%s\n' 'Remove them from the index or keep only local, ignored copies:' >&2
+    printf '%s\n' "$blocked_files" >&2
+    exit 1
+fi
