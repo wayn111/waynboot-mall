@@ -15,6 +15,11 @@ public class CacheConstants {
      */
     public static final String LOGIN_TOKEN_KEY = CACHE_PREFIX + "login_tokens:";
 
+    /**
+     * 用户会话索引 key 前缀，key 结构：waynboot:user_login_tokens:{userId}
+     */
+    public static final String USER_LOGIN_TOKEN_KEY_PREFIX = CACHE_PREFIX + "user_login_tokens:";
+
 
     public static final String SHOP_HOME_INDEX_HASH = CACHE_PREFIX + "shop_home_index_hash";
     public static final String SHOP_HOME_INDEX_HASH_EXPIRATION_FIELD = "expire_time";

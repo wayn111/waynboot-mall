@@ -2,6 +2,7 @@ package com.wayn.admin.api.controller.system;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wayn.admin.framework.security.service.TokenService;
 import com.wayn.admin.framework.security.util.SecurityUtils;
 import com.wayn.common.annotation.Log;
 import com.wayn.common.base.controller.BaseController;
@@ -13,6 +14,7 @@ import com.wayn.util.constant.SysConstants;
 import com.wayn.util.enums.ModuleEnum;
 import com.wayn.util.enums.OperatorEnum;
 import com.wayn.util.enums.ReturnCodeEnum;
+import com.wayn.util.enums.UserStatusEnum;
 import com.wayn.util.exception.BusinessException;
 import com.wayn.util.util.R;
 import com.wayn.util.util.excel.ExcelUtil;
@@ -43,6 +45,8 @@ public class UserController extends BaseController {
     private IUserService iUserService;
 
     private IRoleService iRoleService;
+
+    private TokenService tokenService;
 
     /**
      * 用户列表
@@ -148,7 +152,11 @@ public class UserController extends BaseController {
     public R<Boolean> changeStatus(@RequestBody User user) {
         iUserService.checkUserAllowed(user);
         user.setUpdateBy(SecurityUtils.getUsername());
-        return R.result(iUserService.updateById(user));
+        boolean updated = iUserService.updateById(user);
+        if (updated && Objects.equals(UserStatusEnum.DISABLE.getCode(), user.getUserStatus()) && user.getUserId() != null) {
+            tokenService.clearUserTokens(user.getUserId());
+        }
+        return R.result(updated);
     }
 
     /**
@@ -160,7 +168,20 @@ public class UserController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:user:delete')")
     @DeleteMapping("/{userIds}")
     public R<Boolean> deleteUser(@PathVariable List<Long> userIds) {
-        return R.result(iUserService.removeByIds(userIds));
+        boolean removed = iUserService.removeByIds(userIds);
+        if (removed) {
+            tokenService.clearUserTokens(userIds);
+        } else {
+            // 兼容逻辑删除场景：若当前用户已不存在（常见于已逻辑删除后重复删除），仍需补清会话。
+            List<Long> notExistsUserIds = userIds.stream()
+                    .filter(Objects::nonNull)
+                    .filter(userId -> iUserService.getById(userId) == null)
+                    .toList();
+            if (!notExistsUserIds.isEmpty()) {
+                tokenService.clearUserTokens(notExistsUserIds);
+            }
+        }
+        return R.result(removed);
     }
 
     /**

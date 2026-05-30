@@ -271,6 +271,32 @@ public class RedisCache {
     }
 
     /**
+     * 往 Set 中新增一个元素。
+     *
+     * @param key 缓存键
+     * @param value 元素值
+     * @param <T> 元素类型
+     * @return 新增条数
+     */
+    public <T> long addCacheSetValue(final String key, final T value) {
+        Long count = redisTemplate.opsForSet().add(key, value);
+        return count == null ? 0 : count;
+    }
+
+    /**
+     * 从 Set 中删除一个元素。
+     *
+     * @param key 缓存键
+     * @param value 元素值
+     * @param <T> 元素类型
+     * @return 删除条数
+     */
+    public <T> long removeCacheSetValue(final String key, final T value) {
+        Long count = redisTemplate.opsForSet().remove(key, value);
+        return count == null ? 0 : count;
+    }
+
+    /**
      * 缓存Map
      *
      * @param key
