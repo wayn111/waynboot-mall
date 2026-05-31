@@ -29,7 +29,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         LoginUserDetail loginUser = tokenService.getLoginUser(request);
         if (Objects.nonNull(loginUser)) {
-            // 删除用户缓存记录
+            // 删除用户缓存记录，并同步清理 user->token 索引。
             tokenService.delLoginUser(loginUser.getToken());
         }
         // 设置状态码
