@@ -27,7 +27,7 @@ spring:
         redis:
             host: 127.0.0.1
             port: 6379
-            password:
+            password: Aa@@1688
             database: 0
             timeout: 300
             lettuce:
@@ -54,7 +54,7 @@ es:
         host: 127.0.0.1
         port: 9200
         username: elastic
-        password: 123456
+        password: "\"123456\""
         scheme: http
         shards: 3
         replicas: 2
