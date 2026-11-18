@@ -39,7 +39,7 @@
         <elasticsearch.version>7.17.29</elasticsearch.version>
         <mybatis-plus.version>3.5.16</mybatis-plus.version>
         <druid.version>1.2.28</druid.version>
-        <lombok.version>1.18.26</lombok.version>
+        <lombok.version>1.18.36</lombok.version>
         <commons.io.version>2.22.0</commons.io.version>
         <commons.collections.version>4.5.0</commons.collections.version>
         <commons.fileupload.version>1.6.0</commons.fileupload.version>
@@ -442,63 +442,63 @@
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-data-redis</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-data-elastic</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-common</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-message-core</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-util</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-payment-channel</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-domain-api</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-domain-cart</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-domain-promotion</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-domain-inventory</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-domain-goods</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.wayn</groupId>
                 <artifactId>waynboot-domain-trade</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
